@@ -2,8 +2,10 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
+<meta name="app-version" content="2.1.1">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="color-scheme" content="light dark">
 <meta name="supported-color-schemes" content="light dark">
 <script>try{var t=localStorage.getItem("thv")==="2"?localStorage.getItem("th"):"warm";document.documentElement.dataset.theme=t||"warm"}catch(e){document.documentElement.dataset.theme="warm"}</script>
@@ -189,9 +191,9 @@ $('#sv').onclick=async()=>{
  const url=$('#u').value.trim();if(!/^https?:\/\//.test(url)){$('#msg').textContent='請貼上 http 或 https 開頭的連結';return}
  const id=cur?cur.id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
  const o={url,platform:plat(url),note:$('#n').value.trim(),text:$('#t').value.trim(),cats:list($('#c').value).map(c=>c.replace(/\s*(→|＞|>|\/)\s*/g,'/')),tags:(addTg(),[...tgs]),due:$('#d').value,pub:$('#pd').value,noRev:$('#nr').checked,acct:$('#ac').value.trim(),shots,read:cur?!!cur.read:false,t:cur?cur.t:Date.now()};
- if(!col){$('#msg').textContent=$('#st').textContent||'請先登入 Google，並等雲端同步完成';return}try{await col.doc(id).set(o);$('#dlg').classList.remove('o')}catch(x){$('#msg').textContent='儲存失敗：'+(x.message||x.code||'')}
+ if(!col){$('#msg').textContent=$('#st').textContent||'請先登入 Google，並等雲端同步完成';return}try{await col.doc(id).set(o);await window.gSync();$('#dlg').classList.remove('o')}catch(x){$('#msg').textContent='儲存失敗：'+(x.message||x.code||'')}
 };
-$('#del').onclick=async()=>{if(!cur)return;if(!armed){armed=true;$('#del').textContent='再按一次確認刪除';return}armed=false;$('#del').textContent='刪除';try{await col.doc(cur.id).delete();$('#dlg').classList.remove('o')}catch(x){$('#msg').textContent='刪除失敗'}};
+$('#del').onclick=async()=>{if(!cur)return;if(!armed){armed=true;$('#del').textContent='再按一次確認刪除';return}armed=false;$('#del').textContent='刪除';try{await col.doc(cur.id).delete();await window.gSync();$('#dlg').classList.remove('o')}catch(x){$('#msg').textContent='刪除失敗'}};
 $('#c').oninput=rc;
 $('#fb').onclick=async()=>{const n=nm($('#fn').value.trim());if(!n)return;if(!col){$('#fh').textContent='請先登入 Google，並等雲端同步完成';return}const p=(sel.c?sel.c+'/':'')+n;if(fp().includes(p)){$('#fh').textContent='這個資料夾已經有了';return}try{await col.doc('folders').set({list:[...new Set([...folders,p])]});$('#fn').value='';open.add(sel.c);render()}catch(x){$('#fh').textContent='建立失敗：'+(x.message||x.code||'')}};
 $('#sd1').checked=show.s;$('#sd2').checked=show.p;$('#sdo').value=sortBy;$('#sd1').onchange=e=>{show.s=e.target.checked;ls('shs',show.s?'1':'0');render()};$('#sd2').onchange=e=>{show.p=e.target.checked;ls('shp',show.p?'1':'0');render()};$('#sdo').onchange=e=>{sortBy=e.target.value;ls('sob',sortBy);render()};
@@ -253,7 +255,7 @@ $('#n').addEventListener('input',()=>{noteAuto=false});
 let ntId='';
 const noteOpen=id=>{const p=posts.find(x=>x.id===id);if(!p)return;ntId=id;$('#nl').textContent='備註：'+(p.url||'');$('#nt').value=p.note||'';$('#nd').style.display='flex';$('#nt').focus()};
 $('#nx').onclick=()=>{$('#nd').style.display='none';ntId=''};
-$('#ns').onclick=async()=>{if(!col||!ntId)return;try{await col.doc(ntId).update({note:$('#nt').value.trim()});$('#nd').style.display='none';ntId=''}catch(x){$('#nl').textContent='儲存失敗：'+(x.message||x.code||'')}};
+$('#ns').onclick=async()=>{if(!col||!ntId)return;try{await col.doc(ntId).update({note:$('#nt').value.trim()});await window.gSync();$('#nd').style.display='none';ntId=''}catch(x){$('#nl').textContent='儲存失敗：'+(x.message||x.code||'')}};
 [['#n1','nc','c'],['#n2','nt2','t'],['#n3','np2','p']].forEach(([s,k,f])=>{$(s).checked=nset[f];$(s).onchange=e=>{nset[f]=e.target.checked;ls(k,e.target.checked?'1':'0');render()}});
 $('#nb').onclick=()=>{$('#np').style.display='flex'};
 $('#f').onchange=async e=>{await addShots([...e.target.files]);e.target.value=''};
@@ -324,7 +326,7 @@ document.addEventListener('click',e=>{if(!e.target.closest('#gmn,#gav'))$('#gmn'
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#gmn').style.display='none'});
 $('#fbo').onclick=()=>{$('#fbr').value=(G.user&&G.user.name)||'';$('#fbs2').textContent='';$('#fbm').style.display='flex';$('#fbn').focus()};
 $('#fbx').onclick=()=>{$('#fbm').style.display='none'};
-$('#fbs').onclick=async()=>{const msg=$('#fbt').value.trim();if(!msg){$('#fbs2').textContent='先寫點內容再送出哦～';return}const b=$('#fbs');b.disabled=true;$('#fbs2').textContent='送出中…';const p=new URLSearchParams();p.append('entry.936790019',$('#fbn').value.trim()||'（未填暱稱）');p.append('entry.540307403',msg);p.append('entry.1631816990',(G.user&&G.user.name)||'未登入');try{await fetch('https://docs.google.com/forms/d/e/1FAIpQLSfGLcB6f3QmmnXIhoUSuoQV9ASiEnVVHFbr4G_8WyYUnD2oAg/formResponse',{method:'POST',mode:'no-cors',body:p});$('#fbt').value='';$('#fbs2').textContent='';$('#fbm').style.display='none';note('送出成功！謝謝你的回饋 🐒')}catch(e){$('#fbs2').textContent='送出失敗，請檢查網路後再試'}finally{b.disabled=false}};
+$('#fbs').onclick=async()=>{const msg=$('#fbt').value.trim();if(!msg){$('#fbs2').textContent='先寫點內容再送出哦～';return}const b=$('#fbs');b.disabled=true;$('#fbs2').textContent='送出中…';const p=new URLSearchParams();p.append('entry.936790019',$('#fbn').value.trim()||'（未填暱稱）');p.append('entry.540307403',msg);p.append('entry.1631816990',(G.user&&G.user.name)||'未登入');try{await fetch('https://docs.google.com/forms/d/e/1FAIpQLSfGLcB6f3QmmnXIhoUSuoQV9ASiEnVVHFbr4G_8WyYUnD2oAg/formResponse',{method:'POST',mode:'no-cors',body:p});$('#fbt').value='';$('#fbs2').textContent='';$('#fbm').style.display='none';note('已送出請求（無法確認 Google 表單是否收到）')}catch(e){$('#fbs2').textContent='送出失敗，請檢查網路後再試'}finally{b.disabled=false}};
 const _u6=$('#u').oninput;$('#u').oninput=()=>{_u6();const v=$('#u').value;if(v&&!$('#pd').value&&/youtube\.com|youtu\.be|facebook\.com|fb\.com|fb\.watch|weibo\.(com|cn)/.test(v))$('#pn').textContent='（這個平台的連結沒有日期資訊，請手動選）'}})();
 let renaming='';
 $('#rx').onclick=()=>{$('#rn').style.display='none';renaming=''};
@@ -342,18 +344,16 @@ const CID='840119973043-eo9lkljcu3bduvu9gae1ggri6i0hr4c7.apps.googleusercontent.
 const SCOPE='openid profile email https://www.googleapis.com/auth/drive.file';
 const D='https://www.googleapis.com/drive/v3/',U='https://www.googleapis.com/upload/drive/v3/',SH='https://sheets.googleapis.com/v4/spreadsheets/';
 const FOLDER='application/vnd.google-apps.folder',SHEET='application/vnd.google-apps.spreadsheet';
-const GG=window.snsGoogle;
-if(window.top!==window){try{if(location.hash)parent.postMessage({gh:location.hash},location.origin)}catch(e){}return}
+const GG=window.snsGoogle;window.SNS_VERSION='2.1.1';
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
-const A={tok:'',exp:0,sub:''};
-const RU=location.origin+location.pathname;
-const ss=(k,v)=>{try{return v===undefined?sessionStorage.getItem(k):v===null?sessionStorage.removeItem(k):sessionStorage.setItem(k,v)}catch(e){return null}};
-const authUrl=x=>{const st=Math.random().toString(36).slice(2)+Date.now().toString(36);ss('gst',st);const q={client_id:CID,redirect_uri:RU,response_type:'token',scope:SCOPE,include_granted_scopes:'true',state:st,...x};Object.keys(q).forEach(k=>{if(!q[k])delete q[k]});return 'https://accounts.google.com/o/oauth2/v2/auth?'+new URLSearchParams(q)};
-const takeTok=p=>{const t=p.get('access_token');if(!t||p.get('state')!==ss('gst'))return false;A.tok=t;A.exp=Date.now()+((+p.get('expires_in')||3600)-90)*1000;ss('gtk',JSON.stringify({t:A.tok,e:A.exp}));return true};
-const silent=()=>new Promise((res,rej)=>{const f=document.createElement('iframe');f.style.display='none';let tm;const done=(err)=>{removeEventListener('message',h);clearTimeout(tm);f.remove();err?rej(new Error(err)):res()};const h=ev=>{if(ev.origin!==location.origin||!ev.data||!ev.data.gh)return;const p=new URLSearchParams(ev.data.gh.replace(/^#/,''));if(takeTok(p))done('');else done(p.get('error')||'silent_failed')};addEventListener('message',h);tm=setTimeout(()=>done('timeout'),10000);f.src=authUrl({prompt:'none',login_hint:ls('gem')||''});document.body.appendChild(f)});
-const tok=async()=>{if(A.tok&&Date.now()<A.exp)return A.tok;try{await silent()}catch(e){expired();throw new Error('登入已過期，請重新登入 Google')}return A.tok};
+const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
+const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
+/* Access Token 由自己的伺服器（Vercel Serverless Function）用加密的 Refresh Token Cookie 換發；前端拿不到 Refresh Token 和 Client Secret */
+let tokP=null;
+const fetchTok=()=>tokP||(tokP=(async()=>{let r;try{r=await fetch('/api/auth/token',{method:'POST',credentials:'same-origin',headers:{'X-Requested-With':'sns'}})}catch(e){throw new Error('連不上登入服務，請檢查網路')}if(r.status===401){const e=new Error('reauth');e.reauth=true;throw e}if(!r.ok)throw new Error('登入服務暫時有問題（'+r.status+'）');const j=await r.json();if(!j.sub)throw new Error('登入服務沒有回傳帳號資訊，請重新登入');if(A.sub&&A.sub!==j.sub){A.locked=true;A.tok='';A.exp=0;$('#st').textContent='偵測到 Google 帳號在別處已切換，為避免資料混用已暫停同步，請重新整理頁面';throw new Error('帳號已切換，請重新整理頁面')}A.tsub=j.sub;A.tok=j.access_token;A.exp=Date.now()+Math.max(60,(+j.expires_in||3600)-120)*1000;return A.tok})().finally(()=>{tokP=null}));
+const tok=async()=>{if(A.locked)throw new Error('帳號已切換，請重新整理頁面');if(A.tok&&Date.now()<A.exp)return A.tok;try{return await fetchTok()}catch(e){if(e.reauth){expired();throw new Error('登入已過期，請重新登入 Google')}throw e}};
 let expiredShown=false;
-const expired=()=>{if(expiredShown)return;expiredShown=true;GG.setUser(null);$('#st').textContent='登入已過期，請按「登入 Google」重新登入（尚未同步的修改會保留）'};
+const expired=()=>{if(expiredShown)return;expiredShown=true;A.tok='';A.exp=0;GG.setUser(null);$('#st').textContent='登入已過期，請按「登入 Google」重新登入（尚未同步的修改會保留）'};
 const api=async(url,o,retry)=>{o=o||{};const t=await tok();const r=await fetch(url,{...o,headers:{...(o.headers||{}),Authorization:'Bearer '+t}});if(r.status===401&&retry!==0){A.tok='';return api(url,o,0)}if(!r.ok){let m='';try{m=(await r.json()).error.message}catch(e){}throw new Error('Google '+r.status+(m?'：'+m:''))}return r};
 const J=async(u,o)=>(await api(u,o)).json();
 const JP=(u,b)=>J(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});
@@ -366,42 +366,116 @@ const rng=(a)=>encodeURIComponent("'"+ids.title.replace(/'/g,"''")+"'!"+a);
 
 /* ---- 試算表 IO ---- */
 const io={
+readRows:async rows=>{const out=[];for(let i=0;i<rows.length;i+=100){const part=rows.slice(i,i+100);const qs=part.map(r=>'ranges='+rng('A'+r+':B'+r)).join('&');const r=await J(SH+ids.sid+'/values:batchGet?majorDimension=ROWS&valueRenderOption=UNFORMATTED_VALUE&'+qs);(r.valueRanges||[]).forEach(v=>out.push((v.values&&v.values[0])||null))}return out},
  load:async()=>{const r=await J(SH+ids.sid+'/values/'+rng('A:B')+'?majorDimension=ROWS&valueRenderOption=UNFORMATTED_VALUE');return r.values||[]},
  write:async(ups,clr)=>{const data=[...ups.map(u=>({range:"'"+ids.title.replace(/'/g,"''")+"'!A"+u.row+':B'+u.row,values:[[u.id,u.j]]})),...clr.map(r=>({range:"'"+ids.title.replace(/'/g,"''")+"'!A"+r+':B'+r,values:[['','']]}))];for(let i=0;i<data.length;i+=300)await JP(SH+ids.sid+'/values:batchUpdate',{valueInputOption:'RAW',data:data.slice(i,i+300)})},
  append:async rows=>{let first=0;for(let i=0;i<rows.length;i+=300){const r=await JP(SH+ids.sid+'/values/'+rng('A:B')+':append?valueInputOption=RAW&insertDataOption=INSERT_ROWS',{values:rows.slice(i,i+300)});const m=/!A(\d+)/.exec((r.updates&&r.updates.updatedRange)||'');if(!m)throw new Error('寫入位置讀取失敗');if(i===0)first=+m[1]}return first}
 };
-function makeStore(io,onErr){
- let docs=new Map(),rowOf=new Map(),pend=new Map(),timer=0,et=0,flushing=null,subs=[];
- const clone=o=>JSON.parse(JSON.stringify(o));
- const ser=o=>{let j=JSON.stringify(o);if(j.length<=49000)return j;const c={...o};for(let i=0;i<30&&j.length>49000;i++){c.text=(c.text||'').slice(0,Math.max(0,Math.floor((c.text||'').length/2)));j=JSON.stringify(c)}return j.slice(0,49000)};
+function makeStore(io,onErr,onState,onConflict){
+ let docs=new Map(),base=new Map(),rowOf=new Map(),pend=new Map(),conf=new Map(),bad=new Map(),forced=new Set(),retry=0,timer=0,et=0,flushing=null,refreshing=null,subs=[];
+ const clone=o=>o===undefined?undefined:JSON.parse(JSON.stringify(o));
+ const isObj=x=>x&&typeof x==='object'&&!Array.isArray(x);
+ const canon=x=>Array.isArray(x)?x.map(canon):isObj(x)?Object.keys(x).sort().reduce((o,k)=>{if(x[k]!==undefined)o[k]=canon(x[k]);return o},{}):x;
+ const eq=(a,b)=>JSON.stringify(canon(a))===JSON.stringify(canon(b));
+ const keyOf=x=>isObj(x)?(x.id!==undefined?'i:'+x.id:x.name!==undefined?'n:'+x.name:'x:'+JSON.stringify(canon(x))):'p:'+JSON.stringify(x);
+ function mergeArr(b,m,r,path,cf){
+  const kb=new Map(b.map(x=>[keyOf(x),x])),km=new Map(m.map(x=>[keyOf(x),x])),kr=new Map(r.map(x=>[keyOf(x),x]));
+  const order=[...new Set([...r.map(keyOf),...m.map(keyOf)])],out=[];
+  for(const k of order){const bv=kb.get(k),mv=km.get(k),rv=kr.get(k);let v;
+   if(eq(mv,bv))v=rv;else if(eq(rv,bv)||eq(rv,mv))v=mv;
+   else if(isObj(mv)&&isObj(rv)&&isObj(bv))v=mergeVal(bv,mv,rv,path+'['+k+']',cf);
+   else{cf.push(path+'['+k+']');v=mv}
+   if(v!==undefined)out.push(v)}
+  return out}
+ function mergeVal(b,m,r,path,cf){
+  if(eq(m,b))return r;if(eq(r,b)||eq(r,m))return m;
+  if(Array.isArray(m)&&Array.isArray(r)&&Array.isArray(b))return mergeArr(b,m,r,path,cf);
+  if(isObj(m)&&isObj(r)&&isObj(b)){const o={};for(const k of new Set([...Object.keys(b),...Object.keys(m),...Object.keys(r)])){const v=mergeVal(b[k],m[k],r[k],path+'.'+k,cf);if(v!==undefined)o[k]=v}return o}
+  cf.push(path||'.');return m}
+ const LIM=49000; // Google 試算表單一儲存格上限 50,000 字元，留一點空間
+ const tooBig=(id,o)=>{let big='',n=0;Object.keys(o||{}).forEach(k=>{const l=JSON.stringify(o[k]===undefined?null:o[k]).length;if(l>n){n=l;big=k}});const e=new Error('這筆收藏的資料太大（超過 Google 試算表單格的 5 萬字元上限'+(big?'，最長的欄位是「'+big+'」':'')+'），沒有寫入雲端；你的修改還留在這個畫面，請縮短內容後再儲存');e.permanent=true;e.code='TOO_BIG';e.docId=id;return e};
+ // 絕不直接截斷 JSON 字串：只縮短 text 欄位後重新序列化；縮短後還是太大就丟出錯誤，不寫入
+ function serialize(id,o){let j=JSON.stringify(o);if(j.length<=LIM){JSON.parse(j);return{j,doc:o,shrunk:false}}
+  if(o&&typeof o.text==='string'&&o.text){const cut=n=>{let t=o.text.slice(0,n);if(/[\ud800-\udbff]$/.test(t))t=t.slice(0,-1);return t},fit=n=>JSON.stringify({...o,text:cut(n)}).length<=LIM;
+   if(fit(0)){let lo=0,hi=o.text.length;while(lo<hi){const mid=(lo+hi+1)>>1;if(fit(mid))lo=mid;else hi=mid-1}const d={...o,text:cut(lo)};j=JSON.stringify(d);JSON.parse(j);if(j.length<=LIM)return{j,doc:d,shrunk:true}}}
+  throw tooBig(id,o)}
+ const trySer=(id,o)=>{try{const r=serialize(id,o);bad.delete(id);return r}catch(e){bad.set(id,e.message);return null}};
  const emit=()=>{clearTimeout(et);et=setTimeout(()=>subs.forEach(f=>f({docs:[...docs].map(([id,o])=>({id,data:()=>clone(o)}))})),0)};
- const sched=()=>{clearTimeout(timer);timer=setTimeout(()=>flush().catch(e=>{onErr&&onErr(e);clearTimeout(timer);timer=setTimeout(sched,6000)}),700)};
+ const tellConf=()=>{onConflict&&onConflict([...conf.values()])};
+ const sched=()=>{onState&&onState('saving');clearTimeout(timer);timer=setTimeout(()=>flush().then(()=>{retry=0}).catch(e=>{onErr&&onErr(e);if(e.permanent)return;retry=Math.min(60000,(retry||3000)*2);clearTimeout(timer);timer=setTimeout(sched,retry)}),700)};
+ const parse=r=>{if(!r||!r[0]||!r[1])return null;try{return JSON.parse(r[1])}catch(e){return null}};
  async function flush(){
   if(flushing)return flushing;
-  flushing=(async()=>{try{
+  flushing=(async()=>{await 0;try{
+   let merged=0;const shrunkIds=[];
    while(pend.size){
-    let batch=[...pend];pend=new Map();
+    const batch=[...pend];pend=new Map();
     try{
-     const ups=[],clr=[],app=[],gone=[];
-     for(const [id,k] of batch){const row=rowOf.get(id);
-      if(k==='d'){if(row)clr.push({row,id});}
-      else{const o=docs.get(id);if(!o)continue;const j=ser(o);if(row)ups.push({row,id,j});else app.push({id,j})}}
-     if(ups.length||clr.length){await io.write(ups,clr.map(c=>c.row));clr.forEach(c=>rowOf.delete(c.id));batch=batch.filter(([id,k])=>k!=='d'&&!ups.some(u=>u.id===id))}
-     else batch=batch.filter(([id,k])=>k!=='d');
-     if(app.length){const s=await io.append(app.map(a=>[a.id,a.j]));app.forEach((a,i)=>rowOf.set(a.id,s+i));batch=[]}
-     else batch=[];
+     const check=batch.filter(([id])=>rowOf.has(id)&&!forced.has(id)&&!conf.has(id));
+     const rem=new Map();
+     if(check.length){const got=await io.readRows(check.map(([id])=>rowOf.get(id)));check.forEach(([id],i)=>rem.set(id,got[i]))}
+     const ups=[],clr=[],app=[],post=[];
+     for(const [id,k] of batch){
+      const row=rowOf.get(id),bs=base.get(id),f=forced.has(id);
+      if(k==='d'){
+       if(!row){post.push(()=>{base.delete(id)});continue}
+       if(f){clr.push(row);post.push(()=>{rowOf.delete(id);base.delete(id)});continue}
+       const rr=rem.get(id),rd=rr&&rr[0]===id?parse(rr):null;
+       if(!rd){post.push(()=>{rowOf.delete(id);base.delete(id)});continue}
+       if(bs&&!eq(rd,bs)){post.push(()=>{conf.set(id,{id,kind:'del',fields:['（你刪除了這筆，但另一台裝置修改過）'],mine:null,remote:rd})});continue}
+       clr.push(row);post.push(()=>{rowOf.delete(id);base.delete(id)});continue}
+      const mine=docs.get(id);if(!mine)continue;
+      const sr=trySer(id,mine);if(!sr)continue;const fin=()=>{base.set(id,clone(sr.doc));if(sr.shrunk){docs.set(id,clone(sr.doc));shrunkIds.push(id)}};
+      if(!row){app.push({id,j:sr.j,fin});continue}
+      if(f){ups.push({row,id,j:sr.j});post.push(fin);continue}
+      const rr=rem.get(id),rd=rr&&rr[0]===id?parse(rr):null;
+      if(!rd){post.push(()=>{conf.set(id,{id,kind:'rdel',fields:['（另一台裝置已刪除這筆，但你修改過）'],mine:clone(mine),remote:null})});continue}
+      if(!bs||eq(rd,bs)){ups.push({row,id,j:sr.j});post.push(fin);continue}
+      const cf=[],mg=mergeVal(bs,mine,rd,'',cf);
+      if(cf.length){post.push(()=>{conf.set(id,{id,kind:'edit',fields:cf,mine:clone(mine),remote:rd,merged:mg})});continue}
+      const sm=trySer(id,mg);if(!sm)continue;ups.push({row,id,j:sm.j});merged++;post.push(()=>{docs.set(id,clone(sm.doc));base.set(id,clone(sm.doc));if(sm.shrunk)shrunkIds.push(id)})}
+     if(ups.length||clr.length)await io.write(ups,clr);
+     if(app.length){const s=await io.append(app.map(a=>[a.id,a.j]));app.forEach((a,i)=>{rowOf.set(a.id,s+i);a.fin()})}
+     post.forEach(f=>f());batch.forEach(([id])=>forced.delete(id));
     }catch(e){for(const [id,k] of batch)if(!pend.has(id))pend.set(id,k);throw e}
    }
-  }finally{flushing=null}})();
+   if(merged||shrunkIds.length)emit();
+   if(conf.size)tellConf();
+   if(bad.size){const e=new Error([...bad.values()][0]);e.permanent=true;e.code='TOO_BIG';throw e}
+   if(conf.size){tellConf();onState&&onState('conflict')}else if(shrunkIds.length)onState&&onState('shrunk');else onState&&onState(merged?'merged':'saved');
+  }catch(e){if(e.permanent)onState&&onState('toobig',e);else onState&&onState('error',e);throw e}finally{flushing=null}})();
   return flushing}
+ async function load(){
+  const rows=await io.load();
+  const oldBase=base,oldRow=rowOf,keep=[...pend].map(([id,k])=>[id,k,docs.get(id)]),confIds=[...conf.keys()],badKeep=[...bad.keys()].filter(id=>!pend.has(id)).map(id=>[id,docs.get(id)]);
+  docs=new Map();rowOf=new Map();base=new Map();
+  rows.forEach((r,i)=>{const d=parse(r);if(d){const id=String(r[0]);docs.set(id,d);rowOf.set(id,i+1);base.set(id,clone(d))}});
+  const hold=id=>{if(oldBase.has(id))base.set(id,oldBase.get(id));else base.delete(id)};
+  for(const [id,k,v] of keep){hold(id);
+   if(k==='d'){docs.delete(id);continue}
+   if(v){docs.set(id,v);if(oldRow.has(id)&&!rowOf.has(id)&&!forced.has(id)){conf.set(id,{id,kind:'rdel',fields:['（另一台裝置已刪除這筆，但你修改過）'],mine:clone(v),remote:null});pend.delete(id)}}}
+  for(const [id,v] of badKeep){hold(id);if(v)docs.set(id,v)}
+  for(const id of confIds){const c=conf.get(id);hold(id);if(c.kind==='del')docs.delete(id);else docs.set(id,clone(c.merged||c.mine))}
+  if(conf.size)tellConf();
+  emit()}
  const api={
-  dirty:()=>pend.size>0||!!flushing,
-  flush,
-  async load(){const rows=await io.load();docs=new Map();rowOf=new Map();rows.forEach((r,i)=>{if(r&&r[0]&&r[1]){try{docs.set(String(r[0]),JSON.parse(r[1]));rowOf.set(String(r[0]),i+1)}catch(e){}}});emit()},
-  async refresh(){await flush();await api.load()},
-  set(id,o){docs.set(id,clone(o));pend.set(id,'w');sched();emit()},
-  update(id,p){docs.set(id,{...(docs.get(id)||{}),...clone(p)});pend.set(id,'w');sched();emit()},
-  del(id){docs.delete(id);pend.set(id,'d');sched();emit()},
+  dirty:()=>pend.size>0||!!flushing||conf.size>0||bad.size>0,
+  hasBad:()=>bad.size>0,
+  badMsg:()=>bad.size?[...bad.values()][0]:'',
+  serialize:(o)=>serialize('?',o).j,
+  hasConflict:()=>conf.size>0,
+  flush,load,
+  refresh(){if(refreshing)return refreshing;refreshing=(async()=>{try{await flush()}catch(e){if(!e.permanent)throw e}await load()})().finally(()=>{refreshing=null});return refreshing},
+  resolve(mode){
+   for(const [id,c] of [...conf]){
+    if(c.kind==='edit'){if(mode==='mine'){docs.set(id,clone(c.merged));forced.add(id);pend.set(id,'w')}else{docs.set(id,clone(c.remote));base.set(id,clone(c.remote))}}
+    else if(c.kind==='rdel'){if(mode==='mine'){rowOf.delete(id);forced.add(id);pend.set(id,'w')}else{docs.delete(id);base.delete(id);rowOf.delete(id)}}
+    else if(c.kind==='del'){if(mode==='mine'){docs.delete(id);forced.add(id);pend.set(id,'d')}else{docs.set(id,clone(c.remote));base.set(id,clone(c.remote))}}
+    conf.delete(id)}
+   tellConf();emit();if(pend.size)sched()},
+  set(id,o){bad.delete(id);docs.set(id,clone(o));pend.set(id,'w');sched();emit()},
+  update(id,p){bad.delete(id);docs.set(id,{...(docs.get(id)||{}),...clone(p)});pend.set(id,'w');sched();emit()},
+  del(id){bad.delete(id);docs.delete(id);pend.set(id,'d');sched();emit()},
   col:{doc:id=>({set:async o=>api.set(id,o),update:async p=>api.update(id,p),delete:async()=>api.del(id)}),onSnapshot(f){subs.push(f);emit()}}
  };
  return api}
@@ -423,26 +497,55 @@ const quota=async()=>{try{const r=await J(D+'about?fields=storageQuota');const q
 /* ---- 套用資料 ---- */
 const onSnap=s=>{$('#st').textContent='';folders=((s.docs.find(d=>d.id==='folders')||{data:()=>({})}).data()||{}).list||[];const sd=s.docs.find(d=>d.id==='settings'),S=sd&&sd.data()||{};if(!sav){cplats=JSON.parse(JSON.stringify(S.plats||[]));pren={...(S.pren||{})};grps=JSON.parse(JSON.stringify(S.grps||[]))}posts=s.docs.filter(d=>d.id!=='folders'&&d.id!=='settings').map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.t||0)-(a.t||0));render()};
 const wipe=()=>{store=null;col=null;ids=null;posts=[];folders=[];cplats=[];pren={};grps=[];IMG.clear();$('#qw').style.display='none';render()};
-const boot=async()=>{$('#st').textContent='同步雲端資料中…';try{await setup();store=makeStore(io,e=>{$('#st').textContent='雲端儲存失敗，稍後會自動重試：'+(e.message||'')});col=store.col;col.onSnapshot(onSnap);await store.load();lastSync=Date.now();$('#st').textContent='';quota()}catch(e){$('#st').textContent='雲端連線失敗：'+(e.message||'')}};
-const afterAuth=async()=>{const ui=await J('https://www.googleapis.com/oauth2/v3/userinfo');const nu={name:ui.name||'',email:ui.email||'',photo:ui.picture||'',sub:ui.sub||''};if(A.sub&&A.sub!==nu.sub)wipe();A.sub=nu.sub;expiredShown=false;GG.setUser(nu);ls('gem',nu.email);if(store){await store.refresh();lastSync=Date.now();quota();$('#st').textContent=''}else await boot()};
-const login=async pr=>{$('#st').textContent='前往 Google 登入…';try{if(store&&store.dirty())await Promise.race([store.flush(),new Promise(r=>setTimeout(r,2000))])}catch(e){}location.href=authUrl(pr==='select_account'?{prompt:'select_account'}:{login_hint:ls('gem')||''})};
-GG.onLogin=()=>login('');
-GG.onSwitch=()=>login('select_account');
-GG.onLogout=()=>{A.tok='';A.exp=0;A.sub='';ss('gtk',null);ls('gem','');if(store&&store.dirty())store.flush().catch(()=>{});setTimeout(wipe,0);$('#st').textContent='已登出。請登入 Google 來載入你的收藏'};
+const boot=async()=>{$('#st').textContent='同步雲端資料中…';try{await setup();store=makeStore(io,e=>{},(a,e)=>{const t=$('#st');if(a==='saving')t.textContent='儲存到雲端中…';else if(a==='saved'){t.textContent='已儲存到雲端 ✓';setTimeout(()=>{if(t.textContent==='已儲存到雲端 ✓')t.textContent=''},2500)}else if(a==='merged'){setTimeout(()=>{t.textContent='已自動合併另一台裝置的修改 ✓';setTimeout(()=>{if(t.textContent==='已自動合併另一台裝置的修改 ✓')t.textContent=''},4000)},40)}else if(a==='conflict')setTimeout(()=>{t.textContent='偵測到跨裝置衝突，請選擇要保留哪一邊'},40);else if(a==='shrunk'){setTimeout(()=>{t.textContent='貼文文字太長，雲端版已縮短到上限內（其他欄位沒有變動）'},40)}else if(a==='toobig'){const m=(e&&e.message)||'這筆資料太大，沒有寫入雲端';t.textContent=m;setTimeout(()=>{t.textContent=m},40)}else if(a==='error'){if(!t.textContent.startsWith('雲端儲存失敗，已取消'))t.textContent='雲端儲存失敗，稍後會自動重試：'+((e&&e.message)||'')}},confUI);col=store.col;col.onSnapshot(onSnap);await store.load();lastSync=Date.now();$('#st').textContent='';quota()}catch(e){$('#st').textContent='雲端連線失敗：'+(e.message||'')}};
+const afterAuth=async()=>{const ui=await J('https://www.googleapis.com/oauth2/v3/userinfo');const nu={name:ui.name||'',email:ui.email||'',photo:ui.picture||'',sub:ui.sub||''};if(!nu.sub||(A.tsub&&nu.sub!==A.tsub))throw new Error('帳號驗證不一致，請重新登入');if(A.sub&&A.sub!==nu.sub)wipe();A.sub=nu.sub;expiredShown=false;GG.setUser(nu);ls('gem',nu.email);if(store){await store.refresh();lastSync=Date.now();quota();$('#st').textContent=''}else await boot()};
+/* 切換帳號前：一定要等雲端寫入成功；失敗就留在原帳號，不清除任何登入狀態 */
+const guardSwitch=async()=>{if(!store)return true;if(store.dirty()){$('#st').textContent='先把修改存到雲端…';try{await store.flush()}catch(e){$('#st').textContent='雲端儲存失敗，已取消切換，仍停留在目前帳號：'+(e.message||'');return false}}if(store.hasConflict()){$('#st').textContent='有跨裝置衝突還沒處理，請先處理再切換帳號';confShow();return false}return true};
+const login=async sel=>{if(!await guardSwitch())return;try{await gisReady()}catch(e){$('#st').textContent=e.message;return}
+ const st=[...crypto.getRandomValues(new Uint8Array(16))].map(b=>b.toString(16).padStart(2,'0')).join('');
+ document.cookie='g_state='+st+'; Path=/api/auth; Max-Age=600; Secure; SameSite=Lax';
+ const cfg={client_id:CID,scope:SCOPE,ux_mode:'redirect',redirect_uri:location.origin+'/api/auth/callback',state:st,error_callback:e=>{$('#st').textContent='登入沒有完成：'+((e&&e.type)||'未知原因')}};
+ if(sel)cfg.select_account=true;else if(ls('gem'))cfg.login_hint=ls('gem');
+ $('#st').textContent='前往 Google 登入…';
+ try{google.accounts.oauth2.initCodeClient(cfg).requestCode()}catch(e){$('#st').textContent='無法開始登入：'+(e.message||'')}};
+GG.onLogin=()=>login(false);
+GG.onSwitch=()=>login(true);
+let outArm=false;
+const doOut=()=>{A.tok='';A.exp=0;A.sub='';A.tsub='';A.locked=false;ls('gem','');outArm=false;GG.setUser(null);wipe();$('#st').textContent='已登出。請登入 Google 來載入你的收藏'};
+$('#gout').onclick=async()=>{$('#gmn').style.display='none';
+ if(store&&(store.dirty()||store.hasConflict())){$('#st').textContent='登出前先把修改存到雲端…';let bad='';try{await store.flush();if(store.hasConflict())bad='有跨裝置衝突還沒處理'}catch(e){bad='還有修改沒存到雲端（'+(e.message||'')+'）'}
+  if(bad){if(!outArm){outArm=true;$('#st').textContent=bad+'。再按一次登出會放棄這些修改';setTimeout(()=>{outArm=false},8000);return}}}
+ try{const r=await fetch('/api/auth/logout',{method:'POST',credentials:'same-origin',headers:{'X-Requested-With':'sns'}});if(!r.ok)throw new Error('http '+r.status)}catch(e){$('#st').textContent='登出失敗：連不上登入服務，請稍後再試';return}
+ doOut()};
+/* ---- 跨裝置衝突視窗 ---- */
+const FL={note:'備註',cats:'資料夾',tags:'標籤',star:'星號',read:'已讀',got:'已下載',grp:'分組',due:'回顧日期',noRev:'不回顧',text:'貼文文字',acct:'發文帳號',pub:'發布日',platform:'平台',url:'連結',shots:'截圖',list:'資料夾清單',grps:'分組',plats:'平台',pren:'平台名稱'};
+let confList=[];
+const confShow=()=>confUI(confList);
+const doRes=async mode=>{if(!store)return;store.resolve(mode);$('#cfs').textContent='處理中…';try{await store.flush();$('#cfs').textContent=''}catch(e){$('#cfs').textContent='儲存失敗：'+(e.message||'')}};
+function confUI(list){confList=list||[];let m=$('#cfm');
+ if(!m){m=document.createElement('div');m.id='cfm';m.style.cssText='display:none;position:fixed;inset:0;background:#0008;z-index:14;align-items:center;justify-content:center;padding:12px';m.innerHTML='<div class="box" style="max-height:85vh;overflow:auto"><b>⚠️ 另一台裝置也改了同一筆資料</b><div style="font-size:13px;color:var(--mut)">為了不讓任何一邊被蓋掉，已先暫停寫入這些項目。請選擇要保留哪一邊：</div><div id="cfl" style="display:flex;flex-direction:column;gap:6px;font-size:13px"></div><div class="row" style="justify-content:flex-start;flex-wrap:wrap"><button class="pri" id="cfm1">全部保留我的修改</button><button id="cfm2">全部採用雲端版本</button></div><div id="cfs" style="font-size:12px;color:var(--mut)"></div></div>';document.body.appendChild(m);$('#cfm1').onclick=()=>doRes('mine');$('#cfm2').onclick=()=>doRes('remote')}
+ if(!confList.length){m.style.display='none';return}
+ $('#cfl').innerHTML=confList.map(c=>{const d=c.mine||c.remote||{};const t=c.id==='settings'?'設定':c.id==='folders'?'資料夾':((d.platform||'')+' '+(d.note||d.url||c.id)).trim().slice(0,50);const fs=[...new Set(c.fields.map(f=>{const k=String(f).replace(/^\./,'').split(/[.\[]/)[0];return FL[k]||k}))].filter(Boolean).join('、');return '<div style="border:1px solid var(--bd);border-radius:8px;padding:6px 8px"><b>'+esc(t)+'</b><br>衝突內容：'+esc(fs||'-')+'</div>'}).join('');m.style.display='flex'}
+window.gSync=()=>store?store.flush():Promise.resolve();
 
 /* ---- 同步（合併重新整理）---- */
-$('#rf').onclick=async()=>{if(!store){$('#st').textContent='請先登入 Google';return}const b=$('#rf');b.disabled=true;$('#st').textContent='從 Google 試算表同步中…';try{await store.refresh();lastSync=Date.now();await quota();note('已同步最新資料')}catch(e){$('#st').textContent='同步失敗：'+(e.message||'')}finally{b.disabled=false}};
+$('#rf').onclick=async()=>{if(!store){$('#st').textContent='請先登入 Google';return}const b=$('#rf');b.disabled=true;$('#st').textContent='從 Google 試算表同步中…';try{await store.refresh();lastSync=Date.now();await quota();if(store.hasBad())$('#st').textContent=store.badMsg();else note('已同步最新資料')}catch(e){$('#st').textContent='同步失敗：'+(e.message||'')}finally{b.disabled=false}};
 document.addEventListener('visibilitychange',()=>{if(!store)return;if(document.hidden){store.flush().catch(()=>{})}else if(Date.now()-lastSync>120000&&!store.dirty()){store.refresh().then(()=>{lastSync=Date.now()}).catch(()=>{})}});
+setInterval(()=>{if(store&&!document.hidden&&!store.dirty()&&Date.now()-lastSync>60000)store.refresh().then(()=>{lastSync=Date.now()}).catch(()=>{})},30000);
 addEventListener('beforeunload',e=>{if(store&&store.dirty()){e.preventDefault();e.returnValue=''}});
 
-/* ---- 啟動：有登入過就嘗試自動登入 ---- */
+/* ---- 啟動：向自己的伺服器要 Access Token；沒有登入就顯示登入按鈕 ---- */
 render();
-const hp=new URLSearchParams(location.hash.replace(/^#/,''));
-if(hp.get('access_token')||hp.get('error')){const ok=takeTok(hp),er=hp.get('error');history.replaceState(null,'',location.pathname+location.search);if(ok){$('#st').textContent='登入成功，載入資料中…';afterAuth().catch(e=>{$('#st').textContent='登入後載入失敗：'+(e.message||'')})}else $('#st').textContent='登入沒有完成：'+(er||'驗證失敗，請再按一次登入')}
-else{let sv=null;try{sv=JSON.parse(ss('gtk')||'null')}catch(e){}
- if(sv&&sv.t&&sv.e>Date.now()){A.tok=sv.t;A.exp=sv.e;$('#st').textContent='載入資料中…';afterAuth().catch(e=>{$('#st').textContent='載入失敗：'+(e.message||'')})}
- else if(ls('gem')){$('#st').textContent='自動登入中…';silent().then(afterAuth).catch(()=>{$('#st').textContent='請按「登入 Google」登入'})}
- else $('#st').textContent='請先登入 Google，你的收藏會存在自己的 Google 雲端硬碟'}
+const lr=new URLSearchParams(location.hash.replace(/^#/,'')).get('login');
+if(lr!==null)history.replaceState(null,'',location.pathname+location.search);
+const ERR={access_denied:'你取消了授權',state_mismatch:'登入驗證碼不符，請再按一次登入',missing_drive_permission:'授權時需要勾選「雲端硬碟」的權限，請重新登入並勾選',token_exchange_failed:'向 Google 換取登入憑證失敗',invalid_grant:'授權已失效，請重新登入',server_error:'登入服務發生錯誤，請稍後再試',userinfo_failed:'無法向 Google 確認登入的帳號，請再試一次',redirect_uri_mismatch:'Google 後台的重新導向網址設定不符'};
+(async()=>{
+ if(lr&&lr.startsWith('error:')){const k=lr.slice(6);$('#st').textContent='登入沒有完成：'+(ERR[k]||k);return}
+ $('#st').textContent=(ls('gem')||lr==='ok')?'載入中…':'請先登入 Google，你的收藏會存在自己的 Google 雲端硬碟';
+ try{await fetchTok();await afterAuth()}
+ catch(e){if(e.reauth)$('#st').textContent=ls('gem')?'請按「登入 Google」登入':'請先登入 Google，你的收藏會存在自己的 Google 雲端硬碟';else $('#st').textContent=e.message||'載入失敗'}
+})();
+
 })();
 
 </script>
