@@ -348,7 +348,8 @@ const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===
 const A={tok:'',exp:0,tc:null,sub:''};let dfd=null;
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>150)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
 const initTC=async()=>{await gisReady();if(A.tc)return;A.tc=google.accounts.oauth2.initTokenClient({client_id:CID,scope:SCOPE,callback:r=>{const d=dfd;dfd=null;if(!d)return;if(r.error)d.rej(new Error(r.error_description||r.error));else{A.tok=r.access_token;A.exp=Date.now()+(Math.max(60,+r.expires_in||3600)-90)*1000;d.res(r)}},error_callback:e=>{const d=dfd;dfd=null;d&&d.rej(new Error((e&&e.type)||'popup_closed'))}})};
-const reqTok=async o=>{await initTC();if(dfd)return dfd.p;const d={};d.p=new Promise((a,b)=>{d.res=a;d.rej=b});dfd=d;A.tc.requestAccessToken(o||{});return d.p};
+const reqTok=async o=>{await initTC();return reqNow(o)};
+const reqNow=o=>{const d={};d.p=new Promise((a,b)=>{d.res=a;d.rej=b});dfd=d;try{A.tc.requestAccessToken(o||{})}catch(e){dfd=null;d.rej(e)}return d.p};
 const tok=async()=>{if(A.tok&&Date.now()<A.exp)return A.tok;try{await reqTok({prompt:'none',hint:ls('gem')||undefined})}catch(e){expired();throw new Error('登入已過期，請重新登入 Google')}return A.tok};
 let expiredShown=false;
 const expired=()=>{if(expiredShown)return;expiredShown=true;GG.setUser(null);$('#st').textContent='登入已過期，請按「登入 Google」重新登入（尚未同步的修改會保留）'};
@@ -423,7 +424,7 @@ const onSnap=s=>{$('#st').textContent='';folders=((s.docs.find(d=>d.id==='folder
 const wipe=()=>{store=null;col=null;ids=null;posts=[];folders=[];cplats=[];pren={};grps=[];IMG.clear();$('#qw').style.display='none';render()};
 const boot=async()=>{$('#st').textContent='同步雲端資料中…';try{await setup();store=makeStore(io,e=>{$('#st').textContent='雲端儲存失敗，稍後會自動重試：'+(e.message||'')});col=store.col;col.onSnapshot(onSnap);await store.load();lastSync=Date.now();$('#st').textContent='';quota()}catch(e){$('#st').textContent='雲端連線失敗：'+(e.message||'')}};
 const afterAuth=async()=>{const ui=await J('https://www.googleapis.com/oauth2/v3/userinfo');const nu={name:ui.name||'',email:ui.email||'',photo:ui.picture||'',sub:ui.sub||''};if(A.sub&&A.sub!==nu.sub)wipe();A.sub=nu.sub;expiredShown=false;GG.setUser(nu);ls('gem',nu.email);if(store){await store.refresh();lastSync=Date.now();quota();$('#st').textContent=''}else await boot()};
-const login=async prompt=>{try{$('#st').textContent='登入中…';await reqTok({prompt,hint:prompt==='select_account'?undefined:(ls('gem')||undefined)});await afterAuth()}catch(e){$('#st').textContent='登入沒有完成：'+(e.message||'')}};
+const login=prompt=>{const o={prompt,hint:prompt==='select_account'?undefined:(ls('gem')||undefined)};if(!A.tc){initTC().catch(()=>{});$('#st').textContent='Google 登入元件還在載入，請等一下再按一次';return Promise.resolve()}$('#st').textContent='登入中…';return reqNow(o).then(afterAuth).catch(e=>{const m=e&&e.message||'';$('#st').textContent=m==='popup_failed_to_open'?'瀏覽器擋住了登入視窗，請允許此網站的彈出視窗後再按一次':m==='popup_closed'?'登入視窗被關閉了，請再按一次':'登入沒有完成：'+m})};
 GG.onLogin=()=>login('');
 GG.onSwitch=()=>login('select_account');
 GG.onLogout=()=>{A.tok='';A.exp=0;A.sub='';ls('gem','');if(store&&store.dirty())store.flush().catch(()=>{});setTimeout(wipe,0);$('#st').textContent='已登出。請登入 Google 來載入你的收藏'};
@@ -434,7 +435,7 @@ document.addEventListener('visibilitychange',()=>{if(!store)return;if(document.h
 addEventListener('beforeunload',e=>{if(store&&store.dirty()){e.preventDefault();e.returnValue=''}});
 
 /* ---- 啟動：有登入過就嘗試自動登入 ---- */
-render();
+render();initTC().catch(()=>{});
 if(ls('gem')){$('#st').textContent='自動登入中…';login('none').then(()=>{if(!store)$('#st').textContent='請按「登入 Google」登入'})}
 else $('#st').textContent='請先登入 Google，你的收藏會存在自己的 Google 雲端硬碟';
 })();
