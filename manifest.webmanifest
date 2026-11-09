@@ -1,0 +1,13 @@
+{
+  "name": "SNS文章收藏夾｜SNS Bookmark",
+  "short_name": "SNS文章收藏夾",
+  "description": "SNS文章收藏夾 SNS Bookmark by littlemonkey805",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#FFF0E9",
+  "theme_color": "#FFF0E9",
+  "icons": [
+    { "src": "assets/favicon.png", "sizes": "109x109", "type": "image/png", "purpose": "any" }
+  ]
+}

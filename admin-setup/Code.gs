@@ -2,13 +2,17 @@
  * @OnlyCurrentDoc
  * （上面這行讓腳本只要求「目前這份試算表」的權限，不會存取你其他的雲端硬碟檔案）
  *
- * SNS_Bookmark 管理中心（V2.5.0）— Google Apps Script
+ * SNS_Bookmark 管理中心（V2.8.0）— Google Apps Script
  *
  * 安裝位置：SNS_Bookmark_Admin 試算表 → 擴充功能 → Apps Script，把這整份貼進 Code.gs。
  * 功能：
- *   1. setupAdminSheet()：建立／修正四個工作表的標題、公式、格式、篩選器、條件式格式（可重複執行，不會刪除資料）。
- *   2. onEdit()：OAuth 測試名單「新增 Mail」、重複 Mail 偵測、取消刪除勾選時更新日期與次數、Q&A 自動填建立／修改日期。
+ *   1. setupAdminSheet()：建立／修正工作表的標題、公式、格式、篩選器、條件式格式（可重複執行，不會刪除資料）。
+ *      V2.8.0 起共六個：使用者總覽、使用者活動紀錄、OAuth 測試名單、使用說明與 Q&A、公告管理、意見回饋紀錄。
+ *      「意見回饋紀錄」是 Google 表單連結到這份試算表後自動產生的回應工作表（程式只負責改名＋在右邊加管理欄位）。
+ *   2. onEdit()：OAuth 測試名單「新增 Mail」、重複 Mail 偵測、取消刪除勾選時更新日期與次數、Q&A 自動填建立／修改日期；
+ *      V2.8.0 新增：公告自動 ID／建立／發布／最後修改時間、固定展開只留一則；意見回饋處理完成時間。
  *   3. onOpen()：試算表上方加入「SNS_Bookmark 管理」選單。
+ *   不需要任何「可安裝的觸發條件」（installable trigger），只用簡易觸發條件 onOpen／onEdit。
  * 這份程式只操作「目前這份試算表」，不會讀寫任何使用者的收藏資料。
  */
 const SNS = {
@@ -16,6 +20,8 @@ const SNS = {
   ACT: '使用者活動紀錄',
   LIST: 'OAuth 測試名單',
   HELP: '使用說明與 Q&A',
+  ANN: '公告管理',
+  FB: '意見回饋紀錄',
   TZ: 'Asia/Taipei',
   LIST_FIRST: 4,           // OAuth 測試名單的資料從第 4 列開始
   ROWS: 1000,              // 預先套用格式的列數
@@ -125,6 +131,10 @@ function onOpen() {
   SpreadsheetApp.getUi().createMenu('SNS_Bookmark 管理')
     .addItem('重新套用格式（不會刪除資料）', 'setupAdminSheet')
     .addItem('檢查設定', 'checkAdminSheet')
+    .addSeparator()
+    .addItem('整理公告排序（置頂 → 發布時間）', 'sortAnnouncements')
+    .addItem('檢查意見回饋歷史筆數', 'checkFeedbackHistory')
+    .addItem('匯入舊回覆（不重複）', 'importMissingFeedback')
     .addToUi();
 }
 
@@ -140,8 +150,11 @@ function setupAdminSheet() {
   setupList_(list);
   setupHelp_(help);
   setupDash_(dash);
+  // V2.8.0：公告管理（不存在才建立；已存在只補標題列、格式與驗證，不碰公告內容）
+  setupAnn_(sheet_(ss, SNS.ANN, Math.min(4, ss.getSheets().length)));
+  const fb = setupFb_(ss);
   ss.setActiveSheet(dash);
-  ss.toast('四個工作表都已設定完成（既有資料沒有被刪除）。', 'SNS_Bookmark', 6);
+  ss.toast(fb.sh ? '六個工作表都已設定完成（既有資料沒有被刪除）。' : '五個工作表已設定完成；「意見回饋紀錄」要先在 Google 表單把回覆連結到這份試算表（見 ADMIN_SETUP.md），再執行一次。', 'SNS_Bookmark', 8);
 }
 function sheet_(ss, name, idx) {
   let sh = ss.getSheetByName(name);
@@ -293,9 +306,12 @@ function protectWarn_(sh, a1s, desc) {
 }
 
 function checkAdminSheet() {
-  const ss = SpreadsheetApp.getActive(), miss = [SNS.DASH, SNS.ACT, SNS.LIST, SNS.HELP].filter(function (n) { return !ss.getSheetByName(n); });
+  const ss = SpreadsheetApp.getActive(), all = [SNS.DASH, SNS.ACT, SNS.LIST, SNS.HELP, SNS.ANN, SNS.FB], miss = all.filter(function (n) { return !ss.getSheetByName(n); });
+  const fb = feedbackSheet_(ss, true);
   const ed = ss.getEditors().map(function (u) { return u.getEmail(); }).filter(function (e) { return /gserviceaccount\.com$/.test(e); });
-  const msg = (miss.length ? '缺少工作表：' + miss.join('、') + '（請執行「重新套用格式」）\n' : '四個工作表都在。\n') +
+  const msg = all.map(function (n) { return (ss.getSheetByName(n) ? '✅ ' : '❌ ') + n; }).join('\n') + '\n' +
+    (miss.length ? '缺少：' + miss.join('、') + (miss.indexOf(SNS.FB) >= 0 && miss.length === 1 ? '（請先在 Google 表單把回覆連結到這份試算表，再執行「重新套用格式」）' : '（請執行「重新套用格式」）') + '\n' : '六個工作表都在。\n') +
+    '意見回饋紀錄：' + (fb.sh ? (fb.linked ? '已連結 Google 表單' : '⚠️ 這個工作表沒有連結 Google 表單（新回饋不會寫進來）') : (fb.canRename ? '找到表單回應工作表「' + fb.canRename + '」，執行「重新套用格式」會把它改名為意見回饋紀錄' : '尚未連結')) + (fb.others && !fb.canRename ? '；另有 ' + fb.others + ' 個表單回應工作表，請確認是否連錯表單' : '') + '\n' +
     '時區：' + ss.getSpreadsheetTimeZone() + (ss.getSpreadsheetTimeZone() === SNS.TZ ? '' : '（應為 Asia/Taipei，請執行「重新套用格式」）') + '\n' +
     'Service Account 編輯者：' + (ed.length ? ed.join('、') : '尚未分享給 Service Account') + '\n' +
     '試算表 ID（填到 Vercel 的 ADMIN_SHEET_ID）：' + ss.getId();
@@ -313,6 +329,8 @@ function onEdit(e) {
       if (r >= SNS.LIST_FIRST && c === 1 && e.range.getNumRows() === 1 && e.range.getNumColumns() === 1) return manualMail_(sh, e);
     }
     if (name === SNS.HELP && r >= 2 && c <= 6) return stampHelp_(sh, e.range);
+    if (name === SNS.ANN && r + e.range.getNumRows() - 1 >= 2) return stampAnn_(sh, e);
+    if (name === SNS.FB) return stampFb_(sh, e);
   } catch (err) {
     SpreadsheetApp.getActive().toast('自動處理失敗：' + (err && err.message), 'SNS_Bookmark', 8);
   }
@@ -388,3 +406,180 @@ function stampHelp_(sh, range) {
   sh.getRange(r0, 7, n, 2).setValues(out.map(function (o) { return [o[1], o[2]]; }));
   // 新增的列：預設勾選「是否顯示」以外保持原狀（是否顯示由管理者自己決定）
 }
+
+/* ========== V2.8.0：公告管理 ========== */
+const ANN_H = ['公告 ID', '分類', '標題', '摘要', '完整內容', '建立時間', '發布時間', '最後修改時間', '是否發布', '是否置頂', '是否固定展開', '是否顯示 NEW', '下架日期', '管理者備註'];
+const ANN_CAT = ['日常分享', '版本更新', '功能介紹', '系統通知', '重要提醒', '其他'];
+// 欄位位置（1 起算）
+const AC_ = { ID: 1, CAT: 2, TITLE: 3, SUM: 4, BODY: 5, CREATED: 6, PUB: 7, MOD: 8, ON: 9, PIN: 10, OPEN: 11, NEW: 12, OFF: 13, NOTE: 14 };
+
+function setupAnn_(sh) {
+  const L = ANN_H.length;
+  ensureCols_(sh, L);
+  // 只寫標題列，不碰第 2 列以後的公告內容
+  sh.getRange(1, 1, 1, L).setValues([ANN_H]);
+  base_(sh, 1, L, [110, 90, 220, 240, 420, 130, 130, 130, 70, 70, 85, 85, 120, 200]);
+  sh.getRange(2, AC_.CAT, SNS.ROWS, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(ANN_CAT, true).setAllowInvalid(false).build());
+  // 核取方塊：已經勾選的公告維持原狀（insertCheckboxes 不會改變既有的 TRUE／FALSE）
+  sh.getRange(2, AC_.ON, SNS.ROWS, 4).insertCheckboxes();
+  sh.getRange(2, AC_.CREATED, SNS.ROWS, 3).setNumberFormat('yyyy-mm-dd hh:mm');
+  sh.getRange(2, AC_.OFF, SNS.ROWS, 1).setNumberFormat('yyyy-mm-dd hh:mm').setDataValidation(SpreadsheetApp.newDataValidation().requireDate().setAllowInvalid(false).setHelpText('請輸入日期（例如 2026-12-31）或日期時間；到了這個時間公告就不再公開顯示，資料仍保留在這裡。').build());
+  [AC_.TITLE, AC_.SUM, AC_.BODY, AC_.NOTE].forEach(function (c) { sh.getRange(2, c, SNS.ROWS, 1).setWrap(true).setVerticalAlignment('top'); });
+  sh.getRange(2, AC_.ID, SNS.ROWS, 1).setFontColor('#888888');
+  sh.getRange(1, AC_.ID).setNote('公告 ID、建立時間、發布時間、最後修改時間由程式自動填寫，請不要手動修改。\n新增公告：直接在空白列填「分類、標題、摘要、完整內容」，預設不發布；確認後勾選「是否發布」才會出現在 App。\n「是否固定展開」同時間只能有一則，勾選新的會自動取消舊的。\n下架日期到了，公告會自動從 App 消失，但資料保留在這裡。');
+  const all = sh.getRange('A2:N');
+  rules_(sh, [
+    rule_([all], '=AND($C2<>"",$M2<>"",$M2<=NOW())', C_.red, function (b) { return b.setFontColor('#999999').setStrikethrough(true); }),
+    rule_([all], '=AND($C2<>"",$I2<>TRUE)', C_.grey, function (b) { return b.setFontColor('#999999'); }),
+    rule_([all], '=AND($C2<>"",$I2=TRUE,$J2=TRUE)', C_.yellow),
+    rule_([sh.getRange('K2:K')], '=$K2=TRUE', '#dbe8fb'),
+  ]);
+  protectWarn_(sh, ['A1:N1', 'A2:A', 'F2:H'], '公告管理：標題列與自動欄位（公告 ID、建立／發布／最後修改時間）由程式維護，請不要修改。');
+}
+
+// 編輯「公告管理」時：自動 ID、建立時間、最後修改時間、發布時間；固定展開只留一則
+function stampAnn_(sh, e) {
+  const rg = e.range, r0 = Math.max(2, rg.getRow()), last = rg.getRow() + rg.getNumRows() - 1, n = last - r0 + 1;
+  if (n <= 0) return;
+  const c0 = rg.getColumn(), c1 = c0 + rg.getNumColumns() - 1, now = new Date(), L = ANN_H.length;
+  const hit = function (a, b) { return c0 <= b && c1 >= a; };
+  // 只動到自動欄位（ID、時間）時不處理，避免把手動誤改當成「修改公告」
+  if (!hit(AC_.CAT, AC_.BODY) && !hit(AC_.ON, AC_.NOTE)) return;
+  const single = rg.getNumRows() === 1 && rg.getNumColumns() === 1;
+  const vals = sh.getRange(r0, 1, n, L).getValues();
+  let openRow = 0, changed = false;
+  vals.forEach(function (v, i) {
+    const used = [AC_.CAT, AC_.TITLE, AC_.SUM, AC_.BODY].some(function (c) { return String(v[c - 1]).trim() !== ''; });
+    if (!used) return;
+    changed = true;
+    if (!String(v[AC_.ID - 1]).trim()) v[AC_.ID - 1] = 'A' + Utilities.formatDate(now, SNS.TZ, 'yyMMddHHmmss') + '-' + (r0 + i);
+    if (!v[AC_.CREATED - 1]) v[AC_.CREATED - 1] = now;
+    v[AC_.MOD - 1] = now;
+    [AC_.ON, AC_.PIN, AC_.OPEN, AC_.NEW].forEach(function (c) { if (v[c - 1] === '') v[c - 1] = false; });
+    const on = v[AC_.ON - 1] === true;
+    if (on) {
+      // 剛剛把「是否發布」從未勾選改成勾選：第一次發布或重新發布，都以這個時間為發布時間
+      const justOn = single && c0 === AC_.ON && String(e.oldValue).toUpperCase() !== 'TRUE';
+      if (justOn || !v[AC_.PUB - 1]) v[AC_.PUB - 1] = now;
+    }
+    // 解除發布時保留原本的發布時間（資料不刪除，重新發布時才更新）
+    if (hit(AC_.OPEN, AC_.OPEN) && v[AC_.OPEN - 1] === true) openRow = r0 + i;
+  });
+  if (!changed) return;
+  sh.getRange(r0, AC_.ID, n, 1).setValues(vals.map(function (v) { return [v[AC_.ID - 1]]; }));
+  sh.getRange(r0, AC_.CREATED, n, 3).setValues(vals.map(function (v) { return [v[AC_.CREATED - 1], v[AC_.PUB - 1], v[AC_.MOD - 1]]; }));
+  sh.getRange(r0, AC_.ON, n, 4).setValues(vals.map(function (v) { return [v[AC_.ON - 1], v[AC_.PIN - 1], v[AC_.OPEN - 1], v[AC_.NEW - 1]]; }));
+  if (openRow) keepOneOpen_(sh, openRow);
+}
+function keepOneOpen_(sh, keep) {
+  const lastRow = sh.getLastRow(); if (lastRow < 2) return;
+  const rg = sh.getRange(2, AC_.OPEN, lastRow - 1, 1), v = rg.getValues();
+  let n = 0;
+  const out = v.map(function (x, i) { if (x[0] === true && i + 2 !== keep) { n++; return [false]; } return [x[0]]; });
+  if (n) { rg.setValues(out); SpreadsheetApp.getActive().toast('「固定展開」同時只能有一則：已自動取消其他 ' + n + ' 則公告的固定展開。', 'SNS_Bookmark', 6); }
+}
+// 選單：依「置頂 → 發布時間新到舊 → 建立時間新到舊 → 公告 ID」整理列順序（整列一起移動，內容不變）
+function sortAnnouncements() {
+  const sh = SpreadsheetApp.getActive().getSheetByName(SNS.ANN);
+  if (!sh) return SpreadsheetApp.getActive().toast('找不到「公告管理」工作表，請先執行「重新套用格式」。', 'SNS_Bookmark', 6);
+  const last = sh.getLastRow(); if (last < 3) return;
+  sh.getRange(2, 1, last - 1, ANN_H.length).sort([{ column: AC_.PIN, ascending: false }, { column: AC_.PUB, ascending: false }, { column: AC_.CREATED, ascending: false }, { column: AC_.ID, ascending: true }]);
+  SpreadsheetApp.getActive().toast('公告已依「置頂 → 發布時間」排好（App 本來就會自動排序，這只是讓試算表比較好看）。', 'SNS_Bookmark', 6);
+}
+
+/* ========== V2.8.0：意見回饋紀錄（Google 表單原始回覆＋管理者處理欄位，同一個工作表） ========== */
+const FB_ADMIN = ['管理者處理狀態', '管理者備註', '處理完成時間'];
+const FB_STATUS = ['待處理', '處理中', '已處理', '暫不採納'];
+const FB_DONE = ['已處理', '暫不採納'];
+const formUrl_ = function (sh) { try { return sh.getFormUrl() || ''; } catch (e) { return ''; } };
+// 找出 Google 表單連結的回應工作表；只有一個時改名為「意見回饋紀錄」（Google 表單用工作表內部編號追蹤，改名不影響寫入）
+function feedbackSheet_(ss, readOnly) {
+  const sh = ss.getSheetByName(SNS.FB);
+  const linked = ss.getSheets().filter(function (s) { return formUrl_(s); });
+  if (sh) return { sh: sh, linked: !!formUrl_(sh), others: linked.filter(function (s) { return s.getSheetId() !== sh.getSheetId(); }).length };
+  if (linked.length === 1 && readOnly) return { sh: null, linked: false, others: 1, canRename: linked[0].getName() };
+  if (linked.length === 1) { linked[0].setName(SNS.FB); return { sh: linked[0], linked: true, renamed: true, others: 0 }; }
+  return { sh: null, linked: false, others: linked.length };
+}
+function fbHead_(sh) {
+  const lc = Math.max(1, sh.getLastColumn());
+  const h = sh.getRange(1, 1, 1, lc).getValues()[0].map(function (x) { return String(x).trim(); });
+  const idx = {}; FB_ADMIN.forEach(function (n) { const i = h.indexOf(n); if (i >= 0) idx[n] = i + 1; });
+  let lastForm = 0; h.forEach(function (x, i) { if (x && FB_ADMIN.indexOf(x) < 0) lastForm = i + 1; });
+  return { h: h, idx: idx, lastForm: lastForm };
+}
+function colA1_(c) { let s = ''; while (c > 0) { const m = (c - 1) % 26; s = String.fromCharCode(65 + m) + s; c = Math.floor((c - 1) / 26); } return s; }
+// 在原始回覆欄位的「右側」補上管理者欄位（已存在就沿用，不會重複新增、不會移動原始欄位）
+function setupFb_(ss) {
+  const f = feedbackSheet_(ss);
+  if (!f.sh) return f;
+  const sh = f.sh;
+  const H = fbHead_(sh);
+  if (!H.lastForm) return Object.assign(f, { empty: true });
+  let next = Math.max(H.lastForm, Object.keys(H.idx).reduce(function (m, k) { return Math.max(m, H.idx[k]); }, 0));
+  FB_ADMIN.forEach(function (n) { if (!H.idx[n]) { next++; if (sh.getMaxColumns() < next) sh.insertColumnsAfter(sh.getMaxColumns(), next - sh.getMaxColumns()); sh.getRange(1, next).setValue(n); H.idx[n] = next; } });
+  const st = H.idx[FB_ADMIN[0]], nt = H.idx[FB_ADMIN[1]], dt = H.idx[FB_ADMIN[2]];
+  const rows = Math.max(SNS.ROWS, sh.getMaxRows() - 1);
+  if (sh.getMaxRows() < rows + 1) sh.insertRowsAfter(sh.getMaxRows(), rows + 1 - sh.getMaxRows());
+  sh.setFrozenRows(1);
+  sh.getRange(1, 1, 1, H.lastForm).setFontWeight('bold').setBackground('#e8eef3');
+  [st, nt, dt].forEach(function (c) { sh.getRange(1, c).setFontWeight('bold').setBackground('#fff2cc'); });
+  sh.getRange(2, st, rows, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(FB_STATUS, true).setAllowInvalid(false).setHelpText('空白＝待處理').build());
+  sh.getRange(2, nt, rows, 1).setWrap(true).setVerticalAlignment('top');
+  sh.getRange(2, dt, rows, 1).setNumberFormat('yyyy-mm-dd hh:mm');
+  sh.setColumnWidth(st, 110); sh.setColumnWidth(nt, 260); sh.setColumnWidth(dt, 135);
+  const L = colA1_(Math.max(st, nt, dt)), S = colA1_(st), rgAll = sh.getRange('A2:' + L);
+  rules_(sh, [
+    rule_([rgAll], '=AND($A2<>"",$' + S + '2="已處理")', C_.green),
+    rule_([rgAll], '=AND($A2<>"",$' + S + '2="暫不採納")', C_.grey, function (b) { return b.setFontColor('#888888'); }),
+    rule_([rgAll], '=AND($A2<>"",$' + S + '2="處理中")', C_.orange),
+    rule_([rgAll], '=AND($A2<>"",$' + S + '2="")', C_.yellow),
+  ]);
+  protectWarn_(sh, ['A:' + colA1_(H.lastForm)], '意見回饋紀錄：左邊是 Google 表單寫入的原始回覆，請不要修改；處理狀態、備註請填在右邊黃色標題的欄位。');
+  return Object.assign(f, { lastForm: H.lastForm, st: st, nt: nt, dt: dt });
+}
+// 編輯「意見回饋紀錄」的處理狀態時，自動填／清除處理完成時間（Google 表單寫入新回覆不會觸發 onEdit，不會互相覆蓋）
+function stampFb_(sh, e) {
+  const H = fbHead_(sh), st = H.idx[FB_ADMIN[0]], dt = H.idx[FB_ADMIN[2]];
+  if (!st || !dt) return;
+  const rg = e.range, r0 = Math.max(2, rg.getRow()), last = rg.getRow() + rg.getNumRows() - 1, c0 = rg.getColumn(), c1 = c0 + rg.getNumColumns() - 1;
+  if (last < r0) return;
+  if (c1 <= H.lastForm) { SpreadsheetApp.getActive().toast('提醒：這裡是 Google 表單的原始回覆，建議不要修改；處理狀態與備註請填在右邊的管理欄位。', 'SNS_Bookmark', 6); return; }
+  if (!(c0 <= st && c1 >= st)) return;
+  const n = last - r0 + 1, now = new Date();
+  const s = sh.getRange(r0, st, n, 1).getValues(), d = sh.getRange(r0, dt, n, 1).getValues();
+  const out = s.map(function (x, i) { const v = String(x[0]).trim(); if (FB_DONE.indexOf(v) >= 0) return [d[i][0] || now]; return ['']; });
+  sh.getRange(r0, dt, n, 1).setValues(out);
+}
+const FB_OLD = '意見回饋_舊回覆';
+function fbKey_(v) { return v.map(function (x) { return x instanceof Date ? 'D' + x.getTime() : String(x).trim(); }).join('␟'); }
+function fbRows_(sh, cols) {
+  const last = sh.getLastRow(); if (last < 2) return [];
+  const v = sh.getRange(2, 1, last - 1, Math.max(1, sh.getLastColumn())).getValues();
+  return v.map(function (r) { return cols.map(function (c) { return c ? r[c - 1] : ''; }); }).filter(function (r) { return r.some(function (x) { return String(x).trim() !== ''; }); });
+}
+// 比對「意見回饋紀錄」與（選用的）舊回覆複本：回報筆數、重複、缺少的筆數。只讀取，不修改任何資料。
+function feedbackHistory_(doImport) {
+  const ss = SpreadsheetApp.getActive(), f = feedbackSheet_(ss, true);
+  if (!f.sh) return '找不到「意見回饋紀錄」：請先在 Google 表單把回覆連結到這份試算表（ADMIN_SETUP.md 第 9 節），再執行「重新套用格式」。';
+  const H = fbHead_(f.sh), formCols = H.h.slice(0, H.lastForm).map(function (x, i) { return i + 1; });
+  const cur = fbRows_(f.sh, formCols), seen = {}; let dup = 0;
+  cur.forEach(function (r) { const k = fbKey_(r); if (seen[k]) dup++; seen[k] = 1; });
+  let msg = '「意見回饋紀錄」原始回覆：' + cur.length + ' 筆' + (dup ? '（其中 ' + dup + ' 筆內容完全重複，請人工確認）' : '，沒有重複') + '。\n';
+  const old = ss.getSheetByName(FB_OLD);
+  if (!old) return msg + '沒有找到「' + FB_OLD + '」工作表，所以不做舊資料比對（如果表單一直都有保存回覆，連結後 Google 會自動把全部歷史回覆寫進來，不需要匯入）。';
+  const oh = old.getRange(1, 1, 1, Math.max(1, old.getLastColumn())).getValues()[0].map(function (x) { return String(x).trim(); });
+  const map = H.h.slice(0, H.lastForm).map(function (n) { const i = oh.indexOf(n); return i >= 0 ? i + 1 : 0; });
+  const lost = H.h.slice(0, H.lastForm).filter(function (n, i) { return !map[i]; });
+  const olds = fbRows_(old, map), miss = olds.filter(function (r) { return !seen[fbKey_(r)]; });
+  msg += '「' + FB_OLD + '」：' + olds.length + ' 筆；已在意見回饋紀錄中：' + (olds.length - miss.length) + ' 筆；缺少：' + miss.length + ' 筆。' + (lost.length ? '\n舊資料沒有這些欄位（匯入時留白）：' + lost.join('、') : '');
+  if (doImport && miss.length) {
+    const start = f.sh.getLastRow() + 1;
+    if (f.sh.getMaxRows() < start + miss.length) f.sh.insertRowsAfter(f.sh.getMaxRows(), start + miss.length - f.sh.getMaxRows());
+    f.sh.getRange(start, 1, miss.length, H.lastForm).setValues(miss);
+    msg += '\n已把缺少的 ' + miss.length + ' 筆加到最後面（舊資料工作表沒有被修改或刪除）。再執行一次也不會重複匯入。';
+  } else if (doImport) msg += '\n沒有需要匯入的資料。';
+  return msg;
+}
+function checkFeedbackHistory() { SpreadsheetApp.getUi().alert('意見回饋歷史資料檢查', feedbackHistory_(false), SpreadsheetApp.getUi().ButtonSet.OK); }
+function importMissingFeedback() { SpreadsheetApp.getUi().alert('匯入舊回覆（不重複）', feedbackHistory_(true), SpreadsheetApp.getUi().ButtonSet.OK); }
