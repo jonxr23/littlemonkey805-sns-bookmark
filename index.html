@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2.2.0">
+<meta name="app-version" content="2.3.0">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -53,22 +53,110 @@ button{cursor:pointer}
 #bd::-webkit-calendar-picker-indicator{opacity:1;display:block}
 img[data-gid]:not([src]){visibility:hidden}
 </style>
+<style id="v230">
+/* ===== V2.3.0 介面包（全部使用既有主題變數，不寫死主題色） ===== */
+/* 桌機版寬度：依瀏覽器實際寬度自動填滿，側欄固定寬度 */
+.w{max-width:2400px;padding:14px clamp(14px,1.6vw,28px)}
+#lay{gap:clamp(16px,1.6vw,28px)}
+@media(min-width:901px){#sb{width:232px}}
+.board .col{flex:1 0 260px;max-width:440px}
+/* 標題旁 ⓘ 使用說明：可見圖示很小，點擊熱區靠透明 padding 放大 */
+#hlp{display:inline-block;border:0;background:transparent;box-shadow:none;padding:12px 10px;margin:-12px -10px -12px -9px;line-height:0;vertical-align:-2px;color:color-mix(in srgb,var(--tfg,var(--pfg,var(--fg))) 42%,transparent);cursor:pointer;border-radius:0;-webkit-tap-highlight-color:transparent}
+#hlp svg{width:11px;height:11px;display:block}
+#hlp:hover{color:color-mix(in srgb,var(--tfg,var(--pfg,var(--fg))) 75%,transparent)}
+#hlp:focus-visible{outline:2px solid var(--acc);outline-offset:-9px;border-radius:50%}
+/* 工具列：按鈕文字不換行、不拆字 */
+header .row>*{flex:none}
+header .row button,header .row select{white-space:nowrap}
+@media(max-width:900px){header .row{flex-wrap:wrap}}
+@media(max-width:560px){header .row{width:100%;justify-content:flex-start;gap:6px}header .row>select{flex:1 1 calc(50% - 3px);min-width:0}header .row>button,header .row>span>button{padding:7px 10px}}
+/* 共用彈窗結構（沿用 .box 的底色、圓角、陰影） */
+.ov{display:none;position:fixed;inset:0;background:#0008;z-index:12;align-items:center;justify-content:center;padding:12px}
+.ov.o{display:flex}
+.ov>.box{max-height:calc(100vh - 24px);overflow:hidden}
+@supports(height:100dvh){.ov>.box{max-height:calc(100dvh - 24px)}}
+.mh{flex:none;justify-content:space-between!important;align-items:center}
+.mb{flex:1 1 auto;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:8px;overscroll-behavior:contain}
+.mf{flex:none;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--bd)}
+.pvb,.hlpb{max-width:640px}
+/* 明細預覽 */
+.card.cl{cursor:pointer}.card.cl:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+tr[data-cid]{cursor:pointer}tr.sel{background:color-mix(in srgb,#2f80ed 25%,transparent)}
+.pvi{display:flex;gap:8px;flex-wrap:wrap}
+.pvim{padding:0;border:1px solid var(--bd);border-radius:10px;overflow:hidden;width:120px;height:120px;cursor:zoom-in;background:var(--bd);flex:none}
+.pvim img{width:100%;height:100%;object-fit:cover;display:block}
+.pvh{font-size:17px;font-weight:700;overflow-wrap:anywhere}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:0;font-size:14px}
+.kv dt{color:var(--mut);white-space:nowrap}
+.kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.kv a{color:var(--lnk)}
+.pvn{color:var(--mut)}
+.pvl{font-size:13px;color:var(--mut);font-weight:600}
+.pvt{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--card);color:var(--fg);border:1px solid var(--bd);border-radius:var(--r);padding:8px 10px;font-size:14px}
+@media(max-width:480px){.kv{grid-template-columns:1fr;gap:0}.kv dd{margin-bottom:8px}}
+/* 圖片放大 */
+.lb{background:#000c;z-index:45;flex-direction:column}
+.lb img{max-width:calc(100vw - 24px);max-height:calc(100vh - 90px);object-fit:contain;border-radius:8px}
+.lbc{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));right:12px}
+.lbn{position:absolute;top:50%;transform:translateY(-50%);font-size:24px;padding:6px 14px}
+#lbp{left:10px}#lbn{right:10px}
+.lbk{color:#fff;font-size:13px;margin-top:8px}
+/* 確認彈窗 */
+.askb{max-width:440px}
+.askm{margin:0;font-size:16px;font-weight:700;overflow-wrap:anywhere}.askd{margin:0}.askl{margin:0;font-size:13px;color:var(--mut)}
+.asks{font-size:13px;font-weight:600}.asks:empty{display:none}
+#askm .row{flex-wrap:wrap}
+/* 使用說明 Accordion */
+.hs{font-size:13px;font-weight:700;color:var(--mut);margin:6px 0 2px}
+.hq{border:1px solid var(--bd);border-radius:var(--r);background:var(--card);color:var(--fg)}
+.hq+.hq{margin-top:6px}
+.hq summary{list-style:none;cursor:pointer;display:flex;gap:8px;align-items:flex-start;padding:10px 12px;font-weight:600}
+.hq summary::-webkit-details-marker{display:none}
+.hq .ha{margin-left:auto;color:var(--mut);transition:transform .18s;flex:none}
+.hq[open] .ha{transform:rotate(90deg)}
+.hq .hn{color:var(--acc);flex:none}
+.hq .hb{padding:0 12px 12px;white-space:pre-line;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+.hv{font-size:12px;color:var(--mut);text-align:right}
+/* 資料夾搜尋與樹狀 */
+.fqw{margin:0 0 8px}
+.fqw>input{width:100%}
+.fqw>input:placeholder-shown~.xc{display:none}
+#tl{max-height:min(58vh,560px);overflow:auto;overscroll-behavior:contain}
+@media(max-width:900px){#tl{max-height:none}}
+#cs{max-height:240px}
+.tn .chip{min-width:0;white-space:normal;overflow-wrap:anywhere}
+.tn.anc .chip,.pr.anc .pk{opacity:.62}
+.crumb{color:var(--mut);font-size:12px;font-weight:400}
+.chip.on .crumb,.pk.on .crumb{color:inherit;opacity:.85}
+mark{background:color-mix(in srgb,var(--acc) 24%,transparent);color:inherit;border-radius:3px;padding:0 1px}
+.fqe{display:block;color:var(--mut);font-size:13px;padding:6px 4px}
+.ed svg{display:block}
+.tn .fdl{display:flex;align-items:center}
+.tg2{width:24px;flex:none;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:12px;align-self:stretch}
+.tg2[data-o2]{cursor:pointer}
+.csel{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--mut)}
+#rcf .chip{font-size:12px;padding:3px 10px}
+#rcf:empty{display:none}
+.fres{display:flex;flex-direction:column;gap:2px;max-height:200px;overflow:auto;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:4px}
+.fres:empty{display:none}
+.fdm{font-size:12px;color:var(--pfg,var(--mut));margin:0 0 6px;overflow-wrap:anywhere}.fdm:empty{display:none}
+</style>
 </head>
 <body>
 <div id="iqw" style="display:none;position:sticky;top:0;z-index:29;background:#ffe9c7;color:#8a4b00;font-weight:600;font-size:13px;text-align:center;padding:6px 12px;border-bottom:1px solid #e6c27a"></div>
 <div id="qw" style="display:none;position:sticky;top:0;z-index:30;background:#fff3b0;color:#c0392b;font-weight:700;text-align:center;padding:8px 12px;border-bottom:1px solid #e6d27a">⚠️ 請留意，Google 空間已不足 100M ⚠️</div>
 <div class="w">
-<header><h1>🔖 SNS文章收藏夾</h1><div class="row">
+<header><h1>🔖 SNS文章收藏夾<button type="button" id="hlp" aria-label="使用說明與常見問題" title="使用說明與常見問題"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.7" fill="none" stroke="currentColor" stroke-width="1.15"/><path d="M8 7.1v4.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="4.8" r=".85" fill="currentColor"/></svg></button></h1><div class="row">
 <select id="th" aria-label="主題"><option value="warm">暖米綠</option><option value="dark">深色</option><option value="clean">簡約</option><option value="cute">可愛</option><option value="custom">自訂</option></select>
 <select id="vw" aria-label="顯示方式"><option value="cards">卡片</option><option value="list">列表</option><option value="wall">圖片牆</option><option value="time">時間軸</option><option value="table">表格</option><option value="board">看板</option></select><button id="pfb" title="平台管理">🌐</button><button id="nb" title="回顧通知設定">🔔</button><span style="position:relative"><button id="sgb">設定 ▾</button><div id="sgm"><button data-sg="pfb">🌐 平台管理</button><button data-sg="nb">🔔 回顧通知設定</button><button data-sg="fbo">💬 意見回饋</button></div></span><button id="cb" title="自訂外觀">🎨</button><button id="bk">備份</button><button id="rf" title="重新整理">⟳</button></div></header>
 <div class="bar tb"><input id="q" type="search" placeholder="搜尋備註、文字、標籤、連結"><button id="qb" title="清除所有篩選">✕ 清除</button><button id="tgb" class="chip">🏷 標籤</button><select id="sdp"><option value="">全部平台</option><option>IG</option><option>Threads</option><option>X</option><option>Facebook</option><option>YouTube</option><option>Dcard</option><option>PTT</option><option>網頁</option></select><button id="dtb" class="chip">📅 日期</button><button id="bmb" class="chip">☑ 批次</button><button class="pri" id="add">＋新增</button></div>
-<div class="ctl"><label><input type="checkbox" id="sd1">顯示收藏日</label><label><input type="checkbox" id="sd2">顯示發布日</label><select id="sdo"><option value="t">依收藏日排序</option><option value="pub">依發布日排序</option></select><select id="sdd"><option value="d">新 → 舊</option><option value="a">舊 → 新</option></select></div><div id="np" style="display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:12px"><div class="box ctl" style="align-items:flex-start;flex-wrap:nowrap"><div class="row" style="justify-content:space-between;align-items:center;width:100%"><b>🔔 回顧通知設定</b><button id="nq" title="關閉">✕</button></div><label><input type="checkbox" id="n1">自訂的待回顧日期（到期那天）</label><label><input type="checkbox" id="n2">每年的收藏日（沒填待回顧日期的收藏）</label><label><input type="checkbox" id="n3">每年的發布日（沒填待回顧日期的收藏）</label><span style="font-size:12px;flex-basis:100%">全部取消＝不回顧。提醒會顯示在首頁最上面（打開頁面時），不是手機推播通知。這個設定只存在目前這個裝置。</span></div></div><div id="cp" class="ctl" style="display:none"><label>背景<input type="color" id="c1"></label><label>卡片<input type="color" id="c2"></label><label>標題顏色<input type="color" id="c6"></label><label>頁面文字<input type="color" id="c5"></label><label>卡片／按鈕文字<input type="color" id="c3"></label><label>重點色<input type="color" id="c4"></label><button id="bgb">上傳背景圖</button><input id="bgf" type="file" accept="image/*" style="display:none"><label>背景濃度<input type="range" id="bgo" min="10" max="100" step="5"></label><button id="bgx">移除背景</button><button id="cr">重設</button><span style="font-size:12px;flex-basis:100%">背景圖建議（兩種裝置的設定各自獨立、不會同步）：<br>💻 電腦：橫式，1920×1080 以上，主體放中間偏上。<br>📱 手機：直式，1080×1920 左右，主體放畫面中間。<br>上傳後會自動壓縮到最長邊 1920 px。</span></div><div id="dr" class="ctl" style="display:none"><span>依</span><select id="dk"><option value="t">收藏日</option><option value="pub">發布日</option></select><input id="df" type="date"><span>～</span><input id="dt" type="date"><select id="dpre"><option value="">快速選擇</option><option value="0">今天</option><option value="7">近 7 天</option><option value="30">近 30 天</option><option value="y">今年</option></select><button id="dc">清除</button><span style="font-size:12px">只選左邊那格＝指定那一天；兩格都選＝區間</span></div><div id="chips"></div><div id="tagp"></div><div id="tree"><div class="th2"><b>📁 資料夾</b><button id="fa" class="chip">＋新增</button></div><div id="fadd" style="display:none"><input id="fp" type="hidden"><div id="fpw" class="cas"></div><div class="bar"><input id="fn" placeholder="資料夾名稱"><button id="fb" class="pri">建立</button></div><div id="fh" style="font-size:12px;color:var(--mut);margin-top:4px"></div></div><div id="rn" style="display:none"><div class="bar"><input id="rv" placeholder="新名稱"><button id="rs" class="pri">儲存</button><button id="rx">取消</button></div><div id="rh" style="font-size:12px;color:var(--mut);margin:4px 0 8px"></div></div><div id="tl"></div></div><div id="st">載入中…</div><div id="due"></div><main id="ls" class="cards"></main>
+<div class="ctl"><label><input type="checkbox" id="sd1">顯示收藏日</label><label><input type="checkbox" id="sd2">顯示發布日</label><select id="sdo"><option value="t">依收藏日排序</option><option value="pub">依發布日排序</option></select><select id="sdd"><option value="d">新 → 舊</option><option value="a">舊 → 新</option></select></div><div id="np" style="display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:12px"><div class="box ctl" style="align-items:flex-start;flex-wrap:nowrap"><div class="row" style="justify-content:space-between;align-items:center;width:100%"><b>🔔 回顧通知設定</b><button id="nq" title="關閉">✕</button></div><label><input type="checkbox" id="n1">自訂的待回顧日期（到期那天）</label><label><input type="checkbox" id="n2">每年的收藏日（沒填待回顧日期的收藏）</label><label><input type="checkbox" id="n3">每年的發布日（沒填待回顧日期的收藏）</label><span style="font-size:12px;flex-basis:100%">全部取消＝不回顧。提醒會顯示在首頁最上面（打開頁面時），不是手機推播通知。這個設定只存在目前這個裝置。</span></div></div><div id="cp" class="ctl" style="display:none"><label>背景<input type="color" id="c1"></label><label>卡片<input type="color" id="c2"></label><label>標題顏色<input type="color" id="c6"></label><label>頁面文字<input type="color" id="c5"></label><label>卡片／按鈕文字<input type="color" id="c3"></label><label>重點色<input type="color" id="c4"></label><button id="bgb">上傳背景圖</button><input id="bgf" type="file" accept="image/*" style="display:none"><label>背景濃度<input type="range" id="bgo" min="10" max="100" step="5"></label><button id="bgx">移除背景</button><button id="cr">重設</button><span style="font-size:12px;flex-basis:100%">背景圖建議（兩種裝置的設定各自獨立、不會同步）：<br>💻 電腦：橫式，1920×1080 以上，主體放中間偏上。<br>📱 手機：直式，1080×1920 左右，主體放畫面中間。<br>上傳後會自動壓縮到最長邊 1920 px。</span></div><div id="dr" class="ctl" style="display:none"><span>依</span><select id="dk"><option value="t">收藏日</option><option value="pub">發布日</option></select><input id="df" type="date"><span>～</span><input id="dt" type="date"><select id="dpre"><option value="">快速選擇</option><option value="0">今天</option><option value="7">近 7 天</option><option value="30">近 30 天</option><option value="y">今年</option></select><button id="dc">清除</button><span style="font-size:12px">只選左邊那格＝指定那一天；兩格都選＝區間</span></div><div id="chips"></div><div id="tagp"></div><div id="tree"><div class="th2"><b>📁 資料夾</b><button id="fa" class="chip">＋新增</button></div><div class="xw fqw"><input id="fq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋資料夾（例如 Be）" aria-label="搜尋資料夾"><button type="button" class="xc" id="fqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="fdm" class="fdm" aria-live="polite"></div><div id="fadd" style="display:none"><input id="fp" type="hidden"><div id="fpw" class="cas"></div><div class="bar"><input id="fn" placeholder="資料夾名稱"><button id="fb" class="pri">建立</button></div><div id="fh" style="font-size:12px;color:var(--mut);margin-top:4px"></div></div><div id="rn" style="display:none"><div class="bar"><input id="rv" placeholder="新名稱"><button id="rs" class="pri">儲存</button><button id="rx">取消</button></div><div id="rh" style="font-size:12px;color:var(--mut);margin:4px 0 8px"></div></div><div id="tl"></div></div><div id="st">載入中…</div><div id="due"></div><main id="ls" class="cards"></main>
 </div>
 <div id="dlg"><div class="box"><div class="row" style="justify-content:space-between;align-items:center"><b>收藏</b><button type="button" id="dx" title="關閉">✕</button></div>
 <label>連結 <span id="pl"></span></label>
 <div class="bar"><input id="u" type="url" placeholder="https://…"><button id="ps">貼上</button></div><div id="pm" style="font-size:12px;color:var(--mut)"></div><div id="pqw" class="bar" style="display:none;flex-wrap:wrap;align-items:center"><span id="pqt" style="font-size:12px;flex-basis:100%;overflow-wrap:anywhere"></span><select id="pq"></select><input id="pqn" placeholder="新平台名稱" style="display:none"><button type="button" id="pqb" style="display:none">建立</button></div><div class="g2"><div><label>備註（為什麼想存？）</label><input id="n"></div><div><label>發文帳號 <span id="an"></span></label><input id="ac" placeholder="例如 @username"></div></div>
 
-<label>分類（點資料夾選取，可多選）</label><input id="c" type="hidden"><div id="cs"></div><div id="rn2" style="display:none"><div class="bar"><input id="rv2" placeholder="新名稱"><button type="button" id="rs2" class="pri">儲存</button><button type="button" id="rx2">取消</button></div><div id="rh2" style="font-size:12px;color:var(--mut);margin-top:4px"></div></div><label>找不到想要的？在這裡新增（先選放在哪一層，再輸入名稱）</label><input id="dp" type="hidden"><div id="dpw" class="cas"></div><div class="bar"><input id="dn" placeholder="新資料夾名稱"><button type="button" id="db">＋建立並選取</button></div>
+<label>分類（點資料夾選取，可多選）</label><input id="c" type="hidden"><div id="csel" class="csel"></div><div id="rcf" class="sg"></div><div class="xw fqw"><input id="csq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋資料夾（例如 Be）" aria-label="搜尋分類資料夾"><button type="button" class="xc" id="csqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="cs"></div><div id="rn2" style="display:none"><div class="bar"><input id="rv2" placeholder="新名稱"><button type="button" id="rs2" class="pri">儲存</button><button type="button" id="rx2">取消</button></div><div id="rh2" style="font-size:12px;color:var(--mut);margin-top:4px"></div></div><label>找不到想要的？在這裡新增（先選放在哪一層，再輸入名稱）</label><input id="dp" type="hidden"><div id="dpw" class="cas"></div><div class="bar"><input id="dn" placeholder="新資料夾名稱"><button type="button" id="db">＋建立並選取</button></div>
 <label>標籤（打逗號或按 Enter 就會變成標籤塊，點 × 刪除）</label><input id="g" type="hidden"><div id="tgw" class="tw"><div id="tgc"></div><input id="gi" placeholder="輸入標籤…"></div><div id="tgs2"></div>
 <label>貼上的文字（選填，搜尋用）</label><textarea id="t"></textarea>
 <div class="g2"><div><label>原貼文發布日 <span id="pn"></span></label><input id="pd" type="date"></div><div><label>待回顧日期（選填）</label><input id="d" type="date"></div></div><div style="font-size:12px;color:var(--mut)">待回顧日期不填，就會在每年的收藏日、發布日回顧</div><label style="display:flex;gap:6px;align-items:center"><input id="nr" type="checkbox" style="width:16px;height:16px;padding:0"> 不回顧（這一篇不要跳回顧）</label>
@@ -81,10 +169,13 @@ img[data-gid]:not([src]){visibility:hidden}
 <div id="bkp" style="display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:12px"><div class="box"><div class="row" style="justify-content:space-between;align-items:center"><b>備份與還原</b><button id="bkx" title="關閉">✕</button></div><button id="bkd">⬇ 下載備份檔</button><label>⬆ 從備份檔還原（相同的收藏會被覆蓋，不會刪掉現有的收藏）</label><input id="bku" type="file" accept=".json,application/json"><div id="bkm" style="font-size:13px;color:var(--mut)"></div></div></div>
 <div id="pfm" style="display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:12px"><div class="box"><div class="row" style="justify-content:space-between;align-items:center"><b>🌐 平台管理</b><button id="pfx" title="關閉">✕</button></div><div id="pfl" style="display:flex;flex-direction:column;gap:6px"></div><div id="pfh" style="font-size:12px;color:var(--mut)">改名後，這個平台底下所有收藏的平台名稱會一起更新。新平台要在新增收藏時貼上連結才能加入。</div></div></div>
 <div id="gpm" style="display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:12px"><div class="box"><div class="row" style="justify-content:space-between;align-items:center"><b>🔠 分組</b><button id="gpx" title="關閉">✕</button></div><div id="gpt" style="font-size:12px;color:var(--mut)"></div><div id="gpl" style="display:flex;flex-direction:column;gap:6px"></div><div class="row" style="justify-content:flex-start"><button id="gpa">＋新增分組</button><button id="gpn" style="display:none">取消分組</button></div></div></div>
-<div id="bm" style="display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:flex-start;justify-content:center;overflow:auto;padding:20px 12px"><div class="box"><div class="row" style="justify-content:space-between;align-items:center"><b id="bmt">批次操作</b><button id="bmx" title="關閉">✕</button></div><label>資料夾（先選資料夾；「加入」保留原本的，「移到」取代原本的）</label><input id="bf" type="hidden"><div id="bfw" class="cas"></div><div class="row" style="justify-content:flex-start"><button data-ba="fadd">加入此資料夾</button><button data-ba="fmov">移到此資料夾</button><button data-ba="fdel">從此資料夾移除</button><button data-ba="fclr">清空資料夾</button></div><label>標籤（用逗號隔開）</label><input id="bt" placeholder="標籤1, 標籤2"><div class="row" style="justify-content:flex-start"><button data-ba="tadd">加入標籤</button><button data-ba="tdel">移除標籤</button></div><label>回顧</label><div class="row" style="justify-content:flex-start;flex-wrap:wrap"><button data-ba="nr1">設為不回顧</button><button data-ba="nr0">取消不回顧</button><span style="display:inline-flex;gap:4px;align-items:center;flex-wrap:nowrap"><input id="bd" type="date" style="width:auto;min-width:140px"><button type="button" id="bdc" title="清除已選的日期" style="flex:none">✕</button></span><button data-ba="due1">設定回顧日期</button><button data-ba="due0">清除回顧日期</button></div><label>發文帳號</label><div class="row" style="justify-content:flex-start;flex-wrap:wrap"><input id="bac" placeholder="@username" style="flex:1;min-width:120px"><button data-ba="acc1">設定帳號</button><button data-ba="acc0">清除帳號</button></div><label>星號與分組</label><div class="row" style="justify-content:flex-start;flex-wrap:wrap;align-items:center"><button data-ba="st1" style="flex:none;white-space:nowrap">加星號</button><button data-ba="st0" style="flex:none;white-space:nowrap">取消星號</button><span style="display:inline-flex;gap:8px;align-items:center;flex-wrap:nowrap;min-width:0;max-width:100%"><select id="bg" style="flex:0 1 auto;min-width:0;width:auto;max-width:100%"></select><button data-ba="grp" style="flex:none;white-space:nowrap">套用分組</button></span><button data-ba="del" style="flex:none;white-space:nowrap">刪除所選</button><span id="bmm" style="font-size:13px;color:var(--mut);flex:1 1 100%"></span></div></div></div>
+<div id="bm" style="display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:flex-start;justify-content:center;overflow:auto;padding:20px 12px"><div class="box"><div class="row" style="justify-content:space-between;align-items:center"><b id="bmt">批次操作</b><button id="bmx" title="關閉">✕</button></div><label>資料夾（先選資料夾；「加入」保留原本的，「移到」取代原本的）</label><div class="xw fqw"><input id="bfq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋資料夾（例如 Be），或用下面的選單逐層選" aria-label="搜尋資料夾"><button type="button" class="xc" id="bfqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="bfr" class="fres"></div><input id="bf" type="hidden"><div id="bfw" class="cas"></div><div class="row" style="justify-content:flex-start"><button data-ba="fadd">加入此資料夾</button><button data-ba="fmov">移到此資料夾</button><button data-ba="fdel">從此資料夾移除</button><button data-ba="fclr">清空資料夾</button></div><label>標籤（用逗號隔開）</label><input id="bt" placeholder="標籤1, 標籤2"><div class="row" style="justify-content:flex-start"><button data-ba="tadd">加入標籤</button><button data-ba="tdel">移除標籤</button></div><label>回顧</label><div class="row" style="justify-content:flex-start;flex-wrap:wrap"><button data-ba="nr1">設為不回顧</button><button data-ba="nr0">取消不回顧</button><span style="display:inline-flex;gap:4px;align-items:center;flex-wrap:nowrap"><input id="bd" type="date" style="width:auto;min-width:140px"><button type="button" id="bdc" title="清除已選的日期" style="flex:none">✕</button></span><button data-ba="due1">設定回顧日期</button><button data-ba="due0">清除回顧日期</button></div><label>發文帳號</label><div class="row" style="justify-content:flex-start;flex-wrap:wrap"><input id="bac" placeholder="@username" style="flex:1;min-width:120px"><button data-ba="acc1">設定帳號</button><button data-ba="acc0">清除帳號</button></div><label>星號與分組</label><div class="row" style="justify-content:flex-start;flex-wrap:wrap;align-items:center"><button data-ba="st1" style="flex:none;white-space:nowrap">加星號</button><button data-ba="st0" style="flex:none;white-space:nowrap">取消星號</button><span style="display:inline-flex;gap:8px;align-items:center;flex-wrap:nowrap;min-width:0;max-width:100%"><select id="bg" style="flex:0 1 auto;min-width:0;width:auto;max-width:100%"></select><button data-ba="grp" style="flex:none;white-space:nowrap">套用分組</button></span><button data-ba="del" style="flex:none;white-space:nowrap">刪除所選</button><span id="bmm" style="font-size:13px;color:var(--mut);flex:1 1 100%"></span></div></div></div>
 <div id="bb" style="display:none;position:fixed;left:0;right:0;bottom:0;background:var(--card);color:var(--fg);border-top:1px solid var(--bd);padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));z-index:8;gap:8px;align-items:center;flex-wrap:wrap"><span id="bn"></span><button id="bsa">全選目前清單</button><button id="bsc">取消選取</button><button class="pri" id="bgo2">批次操作…</button><button id="bex">結束批次</button></div>
 <button id="fbo" style="display:none" aria-hidden="true"></button>
 <div id="fbm" style="display:none;position:fixed;inset:0;z-index:30;align-items:center;justify-content:center;padding:14px;background:rgba(20,18,15,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)"><div class="box" style="width:min(92vw,560px);max-height:90vh;overflow:auto;gap:12px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="font-size:15px;line-height:1.7"><b>💬 給小猴的意見回饋：</b><br>有什麼問題或想許願調整的都可以跟我說哦！雖然…我不見得會改哈哈哈哈🤣</div><button type="button" id="fbx" aria-label="關閉" title="關閉">✕</button></div><input id="fbn" maxlength="30" placeholder="尼素誰？不寫就是匿名喔～"><textarea id="fbt" style="min-height:160px" placeholder="在這裡輸入你想對小猴說的話..."></textarea><input id="fbr" type="hidden" name="systemRealName"><div id="fbs2" style="font-size:13px;color:var(--mut)"></div><div class="row"><button class="pri" id="fbs">送出</button></div></div></div>
+<div id="pvm" class="ov" role="dialog" aria-modal="true" aria-labelledby="pvt"><div class="box pvb"><div class="row mh"><b id="pvt">收藏明細</b><button type="button" id="pvx" title="關閉" aria-label="關閉">✕</button></div><div class="mb" id="pvc"></div><div class="mf"><button type="button" id="pvd">刪除</button><button type="button" id="pve">編輯</button><button type="button" id="pvn">取消</button></div></div></div>
+<div id="hlpm" class="ov" role="dialog" aria-modal="true" aria-labelledby="hlpt"><div class="box hlpb"><div class="row mh"><b id="hlpt">使用說明與常見問題</b><button type="button" id="hlpx" title="關閉" aria-label="關閉">✕</button></div><div class="mb" id="hlpc"></div></div></div>
+<div id="lbm" class="ov lb" role="dialog" aria-modal="true" aria-label="圖片放大"><button type="button" id="lbx" class="lbc" title="關閉" aria-label="關閉">✕</button><button type="button" id="lbp" class="lbn" aria-label="上一張">‹</button><img id="lbi" alt=""><button type="button" id="lbn" class="lbn" aria-label="下一張">›</button><div id="lbk" class="lbk"></div></div>
 <script>
 const $=s=>document.querySelector(s);
 document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const q=s=>document.querySelector(s),on=s=>{const x=q(s);return !!x&&x.style.display!=='none'};let h=1;if(on('#fbm'))q('#fbx').click();else if(on('#nd'))q('#nx').click();else if(on('#np'))q('#nq').click();else if(on('#bkp'))q('#bkx').click();else if(on('#pfm'))q('#pfx').click();else if(on('#gpm'))q('#gpx').click();else if(on('#bm'))q('#bmx').click();else if(on('#rn2'))q('#rx2').click();else if(q('#dlg')&&q('#dlg').classList.contains('o'))q('#cx').click();else if(on('#rn'))q('#rx').click();else if(on('#fadd'))q('#fa').click();else h=0;if(h){e.preventDefault();e.stopPropagation()}},true);
@@ -118,34 +209,34 @@ const nm=c=>c.replace(/\s*(→|＞|>|\/)\s*/g,'/');
 const kids=pre=>fp().filter(p=>{const a=p.split('/');return a.length===(pre?pre.split('/').length+1:1)&&(!pre||p.startsWith(pre+'/'))});
 const drawCas=el=>{const v=el.value||'',seg=v?v.split('/'):[];let h='';for(let i=0;i<=seg.length;i++){const pre=seg.slice(0,i).join('/'),ks=kids(pre);if(i>0&&!ks.length)break;const cur=seg.slice(0,i+1).join('/');h+=`<select data-lv="${i}"><option value="">${i?'（放在 '+esc(seg[i-1])+' 裡面）':'最上層'}</option>${ks.map(p=>`<option value="${esc(p)}"${p===cur?' selected':''}>${esc(p.split('/').pop())}</option>`).join('')}</select>`}$('#'+el.id+'w').innerHTML=h};
 const ps=(el,keep)=>{if(keep!==undefined)el.value=keep;drawCas(el)};
-const rc=()=>{const a=list($('#c').value).map(nm),all=fp();$('#cs').innerHTML=all.length?all.map(k=>{const s=k.split('/');return `<div class="pr"><button type="button" class="pk ${a.includes(k)?'on':''}" style="padding-left:${8+(s.length-1)*16}px" data-k="${esc(k)}"><span>${a.includes(k)?'☑':'☐'}</span>${esc(s[s.length-1])}</button><button type="button" class="ed" data-dn="${esc(k)}" title="改名">✎</button></div>`}).join(''):'<span style="color:var(--mut);font-size:13px;padding:4px">還沒有資料夾，在下面輸入名稱建立第一個</span>';ps($('#dp'))};
+const rc=()=>pkDraw();
 function render(){isDue.c=0;posts.sort((a,b)=>{const pb=sortBy==='pub',ka=pb?a.pub||'':a.t||0,kb=pb?b.pub||'':b.t||0;if(pb&&!ka&&kb)return 1;if(pb&&ka&&!kb)return -1;const c=ka<kb?-1:ka>kb?1:0,d=sortAsc?1:-1;return c*d||((a.t||0)-(b.t||0))*d});
  
  const today=new Date().toLocaleDateString('sv-SE'),cs=new Set(),ts=new Set();
  posts.forEach(p=>{(p.cats||[]).forEach(c=>{let a='';c.split('/').forEach(s=>{a+=(a?'/':'')+s;cs.add(a)})});(p.tags||[]).forEach(t=>ts.add(t))});
  const ch=(a,k,v,l)=>`<button class="chip ${a?'on':''}" data-${k}="${esc(v)}">${l}</button>`;
- const paths=fp(),vis=p=>{const a=p.split('/');return a.slice(0,-1).every((_,i)=>open.has(a.slice(0,i+1).join('/')))};const act=sel.c||sel.t||sel.u||plSel||dueOnly||starOnly||gSel||noFolder||$('#q').value.trim()||$('#df').value||$('#dt').value;$('#chips').innerHTML=($('#qb').className=act?'clr':'','')+ch(!act,'a','','全部<span style="float:right;opacity:.6">'+posts.length+'</span>')+ch(sel.u,'u','1','未讀<span style="float:right;opacity:.6">'+posts.filter(p=>!p.read).length+'</span>')+ch(treeOn,'f','1','📁 資料夾')+ch(noFolder,'nf','1','📂 未分類<span style="float:right;opacity:.6">'+posts.filter(p=>!(p.cats||[]).length).length+'</span>')+ch(starOnly,'sf','1','⭐ 加星號<span style="float:right;opacity:.6">'+posts.filter(p=>p.star).length+'</span>')+grps.map(g=>ch(gSel===g.id,'gf',g.id,'<span class="gd" style="background:'+esc(g.color)+'"></span>'+esc(g.name)+'<span style="float:right;opacity:.6">'+posts.filter(p=>p.grp===g.id).length+'</span>')).join('')+(grps.length?ch(gSel==='_','gf','_','未分組<span style="float:right;opacity:.6">'+posts.filter(p=>!p.grp).length+'</span>'):'')+ch(false,'gm','1','🔠 管理分組');{const L=[...new Set([...['IG','Threads','X','Facebook','YouTube','Dcard','PTT'].map(n=>pren[n]||n),...cplats.map(c=>c.name),...posts.map(p=>p.platform).filter(Boolean),'網頁'])];$('#sdp').innerHTML='<option value="">全部平台</option>'+L.map(n=>`<option>${esc(n)}</option>`).join('');$('#sdp').value=plSel}$('#tgb').textContent='🏷 標籤 '+ts.size+(sel.t?' · #'+sel.t:'');$('#tgb').className='chip'+(tagsOn||sel.t?' on':'');$('#dtb').className='chip'+(($('#df').value||$('#dt').value)?' on':'');$('#tagp').style.display=tagsOn?'':'none';const tc={};posts.forEach(p=>(p.tags||[]).forEach(t=>tc[t]=(tc[t]||0)+1));$('#tagp').innerHTML=ts.size?[...ts].sort().map(t=>`<button class="chip ${sel.t===t?'on':''}" style="--h:${thue(t)}" data-t="${esc(t)}">#${esc(t)} <small>${tc[t]}</small></button>`).join(''):'<span style="color:var(--mut);font-size:13px">還沒有標籤。新增收藏時輸入標籤，就會出現在這裡。</span>';$('#tree').style.display=treeOn?'':'none';ps($('#fp'));$('#tl').innerHTML=paths.length?paths.filter(vis).map(p=>{const a=p.split('/'),n=posts.filter(x=>(x.cats||[]).some(c=>c===p||c.startsWith(p+'/'))).length,k=paths.some(x=>x.startsWith(p+'/'));return `<div class="tn" style="padding-left:${(a.length-1)*16}px"><span ${k?`data-o="${esc(p)}"`:''}>${k?(open.has(p)?'▾':'▸'):''}</span><button class="chip ${sel.c===p?'on':''}" data-c="${esc(p)}">📁 ${esc(a[a.length-1])} <small style="opacity:.65">${n}</small></button><button class="ed" data-n="${esc(p)}" title="改名">✎</button></div>`}).join(''):'<span style="color:var(--mut);font-size:13px">還沒有資料夾，在下面輸入名稱，按「＋新增資料夾」。</span>';
+ const paths=fp(),vis=p=>{const a=p.split('/');return a.slice(0,-1).every((_,i)=>open.has(a.slice(0,i+1).join('/')))};const act=sel.c||sel.t||sel.u||plSel||dueOnly||starOnly||gSel||noFolder||$('#q').value.trim()||$('#df').value||$('#dt').value;$('#chips').innerHTML=($('#qb').className=act?'clr':'','')+ch(!act,'a','','全部<span style="float:right;opacity:.6">'+posts.length+'</span>')+ch(sel.u,'u','1','未讀<span style="float:right;opacity:.6">'+posts.filter(p=>!p.read).length+'</span>')+ch(treeOn,'f','1','📁 資料夾')+ch(noFolder,'nf','1','📂 未分類<span style="float:right;opacity:.6">'+posts.filter(p=>!(p.cats||[]).length).length+'</span>')+ch(starOnly,'sf','1','⭐ 加星號<span style="float:right;opacity:.6">'+posts.filter(p=>p.star).length+'</span>')+grps.map(g=>ch(gSel===g.id,'gf',g.id,'<span class="gd" style="background:'+esc(g.color)+'"></span>'+esc(g.name)+'<span style="float:right;opacity:.6">'+posts.filter(p=>p.grp===g.id).length+'</span>')).join('')+(grps.length?ch(gSel==='_','gf','_','未分組<span style="float:right;opacity:.6">'+posts.filter(p=>!p.grp).length+'</span>'):'')+ch(false,'gm','1','🔠 管理分組');{const L=[...new Set([...['IG','Threads','X','Facebook','YouTube','Dcard','PTT'].map(n=>pren[n]||n),...cplats.map(c=>c.name),...posts.map(p=>p.platform).filter(Boolean),'網頁'])];$('#sdp').innerHTML='<option value="">全部平台</option>'+L.map(n=>`<option>${esc(n)}</option>`).join('');$('#sdp').value=plSel}$('#tgb').textContent='🏷 標籤 '+ts.size+(sel.t?' · #'+sel.t:'');$('#tgb').className='chip'+(tagsOn||sel.t?' on':'');$('#dtb').className='chip'+(($('#df').value||$('#dt').value)?' on':'');$('#tagp').style.display=tagsOn?'':'none';const tc={};posts.forEach(p=>(p.tags||[]).forEach(t=>tc[t]=(tc[t]||0)+1));$('#tagp').innerHTML=ts.size?[...ts].sort().map(t=>`<button class="chip ${sel.t===t?'on':''}" style="--h:${thue(t)}" data-t="${esc(t)}">#${esc(t)} <small>${tc[t]}</small></button>`).join(''):'<span style="color:var(--mut);font-size:13px">還沒有標籤。新增收藏時輸入標籤，就會出現在這裡。</span>';$('#tree').style.display=treeOn?'':'none';ps($('#fp'));drawSb();
  const q=$('#q').value.trim().toLowerCase();
  const shown=posts.filter(p=>(!sel.c||(p.cats||[]).some(c=>c===sel.c||c.startsWith(sel.c+'/')))&&(!sel.t||(p.tags||[]).includes(sel.t))&&(!sel.u||!p.read)&&(!plSel||p.platform===plSel)&&dmatch(p)&&(!dueOnly||isDue(p))&&(!starOnly||p.star)&&(!noFolder||!(p.cats||[]).length)&&(!gSel||(gSel==='_'?!p.grp:p.grp===gSel))&&(!q||[p.note,p.text,p.url,p.acct,...(p.cats||[]),...(p.tags||[])].join(' ').toLowerCase().includes(q)));
  const due=getDue();const _unused=(()=>{const y=today.slice(0,4),md=today.slice(5),r=[];posts.forEach(p=>{if(p.due){if(nset.c&&p.due<=today&&!p.read)r.push(p);return}const t=new Date(p.t||0).toLocaleDateString('sv-SE');if(nset.t&&t.slice(5)===md&&t.slice(0,4)<y)r.push({...p,why:'收藏 '+(y-t.slice(0,4))+' 週年'});else if(nset.p&&p.pub&&p.pub.slice(5)===md&&p.pub.slice(0,4)<y)r.push({...p,why:'發布 '+(y-p.pub.slice(0,4))+' 週年'})});return r})();
  $('#due').innerHTML=due.length?`<div class="due"><div><button class="chip" data-do="1" style="padding:1px 8px">${dueOpen?'▾':'▸'}</button> 待回顧 ${due.length} 張： <button class="chip ${dueOnly?'on':''}" data-dq="1">${dueOnly?'顯示全部':'只看這些'}</button></div><div style="margin-top:4px;display:${dueOpen?'block':'none'}">${due.map(p=>`<a href="#" data-e="${p.id}">${esc(p.note||p.url)}${p.why?'（'+p.why+'）':''}</a>`).join('、')}</div></div>`:'';
  $('#ls').className=view==='cards'?'cards':'list';
- const cardH=(p=>`<article class="card${bmode&&bsel.has(p.id)?' sel':''}" data-cid="${p.id}"><div class="th" style="${p.shots&&p.shots[0]?'':'background:'+(PC[p.platform]||PC[Object.keys(pren).find(k=>pren[k]===p.platform)]||'hsl('+thue(p.platform)+' 45% 40%)')+';color:#fff'}">${p.shots&&p.shots[0]?`<img loading="lazy" data-gid="${p.shots[0]}" alt="">`:`<span style="text-align:center;padding:6px;overflow-wrap:anywhere"><b>${esc(p.platform)}</b>${(inferLabel(p.url)||{}).show?`<br><small>${esc(inferLabel(p.url).show)}</small>`:''}</span>`}</div><div class="bd"><div class="meta">${esc(p.platform)}${p.acct?' · <a href="#" data-ac="'+esc(p.acct)+'">'+esc(p.acct)+'</a>':''}${dates(p)?' · '+dates(p):''}${p.read?' · 已讀':''}${p.shots&&p.shots.length>1?' · '+p.shots.length+' 張':''}</div><div class="note">${esc(p.note||p.url)}</div>${p.text?`<div class="snip">${esc(p.text.slice(0,90))}</div>`:''}<div class="tg">${(p.cats||[]).map(c=>`<span class="fc">📁 ${esc(c.replace(/\//g,' → '))}</span>`).join('　')}${(p.cats||[]).length&&(p.tags||[]).length?'　':''}${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</div><div class="act">${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">開啟原文</a>`:''}<button data-r="${p.id}">${p.read?'標為未讀':'標為已讀'}</button><button data-sr="${p.id}"${p.star?' style="color:#f5b301;border-color:#f5b301"':''}>${p.star?'★':'☆'}</button>${gdot(p)}<button data-gt="${p.id}"${p.got?' style="background:#dfdddd;color:#444;border-color:#dfdddd"':''}>已下載</button><button data-nt="${p.id}">備註</button><span class="ed2"><button data-e="${p.id}">編輯</button><button data-dl="${p.id}">${delArm===p.id?'再按一次刪除':'刪除'}</button></span></div></div></article>`);
+ const cardH=(p=>`<article class="card${bmode&&bsel.has(p.id)?' sel':''}${bmode?'':' cl'}" data-cid="${p.id}"${bmode?'':' tabindex="0"'}><div class="th" style="${p.shots&&p.shots[0]?'':'background:'+(PC[p.platform]||PC[Object.keys(pren).find(k=>pren[k]===p.platform)]||'hsl('+thue(p.platform)+' 45% 40%)')+';color:#fff'}">${p.shots&&p.shots[0]?`<img loading="lazy" data-gid="${p.shots[0]}" alt="">`:`<span style="text-align:center;padding:6px;overflow-wrap:anywhere"><b>${esc(p.platform)}</b>${(inferLabel(p.url)||{}).show?`<br><small>${esc(inferLabel(p.url).show)}</small>`:''}</span>`}</div><div class="bd"><div class="meta">${esc(p.platform)}${p.acct?' · <a href="#" data-ac="'+esc(p.acct)+'">'+esc(p.acct)+'</a>':''}${dates(p)?' · '+dates(p):''}${p.read?' · 已讀':''}${p.shots&&p.shots.length>1?' · '+p.shots.length+' 張':''}</div><div class="note">${esc(p.note||p.url)}</div>${p.text?`<div class="snip">${esc(p.text.slice(0,90))}</div>`:''}<div class="tg">${(p.cats||[]).map(c=>`<span class="fc">📁 ${esc(c.replace(/\//g,' → '))}</span>`).join('　')}${(p.cats||[]).length&&(p.tags||[]).length?'　':''}${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</div><div class="act">${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">開啟原文</a>`:''}<button data-r="${p.id}">${p.read?'標為未讀':'標為已讀'}</button><button data-sr="${p.id}"${p.star?' style="color:#f5b301;border-color:#f5b301"':''}>${p.star?'★':'☆'}</button>${gdot(p)}<button data-gt="${p.id}"${p.got?' style="background:#dfdddd;color:#444;border-color:#dfdddd"':''}>已下載</button><button data-nt="${p.id}">備註</button><span class="ed2"><button data-e="${p.id}">編輯</button><button data-dl="${p.id}">刪除</button></span></div></div></article>`);
 const dkey=p=>sortBy==='pub'?(p.pub||''):new Date(p.t||0).toLocaleDateString('sv-SE');
 let out='<p style="color:var(--mut)">還沒有符合的收藏。</p>',cls='cards';
 if(shown.length){
-if(view==='table'){cls='tbl';out=`<div style="overflow-x:auto"><table><tr><th></th><th>平台</th><th>備註</th><th>資料夾</th><th>標籤</th><th>收藏日</th><th>發布日</th><th></th></tr>${shown.map(p=>`<tr><td>${p.shots&&p.shots[0]?`<img data-gid="${p.shots[0]}" alt="">`:''}</td><td>${esc(p.platform)}</td><td>${esc(p.note||p.url)}</td><td>${(p.cats||[]).map(c=>esc(c.replace(/\//g,' → '))).join('<br>')}</td><td>${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</td><td>${new Date(p.t||0).toLocaleDateString('sv-SE')}</td><td>${esc(p.pub||'')}</td><td>${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">原文</a> `:''}<button data-r="${p.id}">${p.read?'未讀':'已讀'}</button> <button data-e="${p.id}">編輯</button></td></tr>`).join('')}</table></div>`}
+if(view==='table'){cls='tbl';out=`<div style="overflow-x:auto"><table><tr><th></th><th>平台</th><th>備註</th><th>資料夾</th><th>標籤</th><th>收藏日</th><th>發布日</th><th></th></tr>${shown.map(p=>`<tr data-cid="${p.id}"${bmode&&bsel.has(p.id)?' class="sel"':''}><td>${p.shots&&p.shots[0]?`<img data-gid="${p.shots[0]}" alt="">`:''}</td><td>${esc(p.platform)}</td><td>${esc(p.note||p.url)}</td><td>${(p.cats||[]).map(c=>esc(c.replace(/\//g,' → '))).join('<br>')}</td><td>${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</td><td>${new Date(p.t||0).toLocaleDateString('sv-SE')}</td><td>${esc(p.pub||'')}</td><td>${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">原文</a> `:''}<button data-r="${p.id}">${p.read?'未讀':'已讀'}</button> <button data-e="${p.id}">編輯</button></td></tr>`).join('')}</table></div>`}
 else if(view==='time'){cls='tl';const g={};shown.forEach(p=>{const k=dkey(p).slice(0,7)||'0000';(g[k]=g[k]||[]).push(p)});out=Object.keys(g).sort((a,b)=>a==='0000'?1:b==='0000'?-1:sortAsc?a.localeCompare(b):b.localeCompare(a)).map(k=>`<h3 class="gh">${k==='0000'?'未填日期':k}</h3><div class="list">${g[k].map(cardH).join('')}</div>`).join('')}
 else if(view==='board'){cls='board';const g={};shown.forEach(p=>{const cs=(p.cats||[]).length?p.cats.map(c=>c.split('/')[0]):['未分類'];[...new Set(cs)].forEach(k=>(g[k]=g[k]||[]).push(p))});out=Object.keys(g).sort().map(k=>`<div class="col"><h3 class="gh">📁 ${esc(k)} <small>${g[k].length}</small></h3>${g[k].map(cardH).join('')}</div>`).join('')}
 else{cls=view==='list'?'list':view==='wall'?'wall':'cards';out=shown.map(cardH).join('')}
 }
-$('#ls').className=cls;$('#ls').innerHTML=out;window.gHyd&&gHyd();lastShown=shown.map(p=>p.id);$('#bb').style.display=bmode?'flex':'none';$('#bn').textContent='已選 '+bsel.size+' 張（直接點卡片就能選取）';$('#bmb').className='chip'+(bmode?' on':'');
+$('#ls').className=cls;$('#ls').innerHTML=out;window.gHyd&&gHyd();lastShown=shown.map(p=>p.id);$('#bb').style.display=bmode?'flex':'none';$('#bn').textContent='已選 '+bsel.size+' 張（直接點卡片就能選取）';$('#bmb').className='chip'+(bmode?' on':'');pvSync();
 }
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-a],[data-c],[data-t],[data-u],[data-r],[data-e],[data-o],[data-f],[data-k],[data-n],[data-g],[data-z],[data-nt],[data-gt],[data-sr],[data-dl],[data-dq],[data-sf],[data-ac],[data-gp],[data-gf],[data-gm],[data-bs],[data-nf],[data-do]');if(!b)return;
  const d=b.dataset;
  if('a'in d||'z'in d){noFolder=false;gSel='';dueOnly=starOnly=false;sel={c:'',t:'',u:false};plSel='';$('#sdp').value='';$('#q').value='';$('#df').value=$('#dt').value=''}
- else if('c'in d){noFolder=false;sel={c:sel.c===d.c?'':d.c,t:'',u:false};if(sel.c)open.add(sel.c)}
+ else if('c'in d){noFolder=false;sel={c:sel.c===d.c?'':d.c,t:'',u:false};if(sel.c&&!fq)open.add(sel.c)}
  else if('o'in d){open.has(d.o)?open.delete(d.o):open.add(d.o)}
  else if('n'in d){renaming=d.n;$('#rv').value=d.n.split('/').pop();$('#rn').style.display='';$('#rh').textContent='重新命名：'+d.n.replace(/\//g,' → ');$('#rv').focus();return}
  else if('f'in d)treeOn=!treeOn;
@@ -153,7 +244,7 @@ document.addEventListener('click',e=>{
  else if('nt'in d){noteOpen(d.nt);return}
  else if('gt'in d){const p=posts.find(x=>x.id===d.gt);col&&p&&col.doc(p.id).update({got:!p.got});return}
  else if('sr'in d){const p=posts.find(x=>x.id===d.sr);col&&p&&col.doc(p.id).update({star:!p.star});return}
- else if('dl'in d){if(delArm===d.dl){delArm='';col&&col.doc(d.dl).delete()}else{delArm=d.dl;render();setTimeout(()=>{if(delArm===d.dl){delArm='';render()}},3000)}return}
+ else if('dl'in d){askDelPosts([d.dl]);return}
  else if('dq'in d)dueOnly=!dueOnly;
  else if('sf'in d)starOnly=!starOnly;
  else if('nf'in d){noFolder=!noFolder;if(noFolder)sel.c=''}
@@ -163,7 +254,7 @@ document.addEventListener('click',e=>{
  else if('gm'in d){gTarget='';gOpen();return}
  else if('gf'in d)gSel=gSel===d.gf?'':d.gf;
  else if('bs'in d){bsel.has(d.bs)?bsel.delete(d.bs):bsel.add(d.bs)}
- else if('k'in d){const i=$('#c'),a=list(i.value).map(nm);i.value=(a.includes(d.k)?a.filter(x=>x!==d.k):[...a,d.k]).join(', ');rc();drawTg();return}
+ else if('k'in d){const i=$('#c'),a=list(i.value).map(nm);if(!a.includes(d.k))rcfTouch([d.k]);i.value=(a.includes(d.k)?a.filter(x=>x!==d.k):[...a,d.k]).join(', ');rc();drawTg();return}
  else if('t'in d)sel={c:'',t:sel.t===d.t?'':d.t,u:false};
  else if('u'in d)sel={c:'',t:'',u:!sel.u};
  else if('r'in d){const p=posts.find(x=>x.id===d.r);col&&p&&col.doc(p.id).update({read:!p.read});return}
@@ -178,7 +269,7 @@ $('#sh').onclick=e=>{const x=e.target.dataset.x;if(x!==undefined){shots.splice(+
 let origShots=[],sessUp=[];
 function openDlg(id){
  cur=id?posts.find(p=>p.id===id):null;const p=cur||{};
- $('#u').value=p.url||'';$('#n').value=p.note||'';$('#c').value=(p.cats||[]).join(', ');tgs=[...(p.tags||[])];$('#gi').value='';drawTg();rc();$('#rn2').style.display='none';armed=false;$('#del').textContent='刪除';$('#t').value=p.text||'';$('#d').value=p.due||'';$('#pd').value=p.pub||'';pdAuto=false;noteAuto=false;$('#nr').checked=!!p.noRev;$('#ac').value=p.acct||'';acAuto=false;$('#an').textContent='';$('#pn').textContent='';
+ $('#u').value=p.url||'';$('#n').value=p.note||'';$('#c').value=(p.cats||[]).join(', ');tgs=[...(p.tags||[])];$('#gi').value='';pkReset();drawTg();rc();$('#rn2').style.display='none';armed=false;$('#del').textContent='刪除';$('#t').value=p.text||'';$('#d').value=p.due||'';$('#pd').value=p.pub||'';pdAuto=false;noteAuto=false;$('#nr').checked=!!p.noRev;$('#ac').value=p.acct||'';acAuto=false;$('#an').textContent='';$('#pn').textContent='';
  window.gImgs&&sessUp.length&&gImgs.abandon(sessUp.splice(0));origShots=[...(p.shots||[])];sessUp=[];shots=[...(p.shots||[])];drawShots();$('#dh').style.display=cur?'':'none';$('#msg').textContent=col?'':($('#st').textContent||'還在連線儲存空間，請稍候');$('#del').style.display=cur?'':'none';$('#shw').style.display='';
  $('#u').oninput();$('#dlg').classList.add('o');$('#dlg').scrollTop=0;requestAnimationFrame(()=>{$('#dlg').scrollTop=0});if(!cur)paste();
 }
@@ -197,7 +288,7 @@ $('#sv').onclick=async()=>{
  if(!col){$('#msg').textContent=$('#st').textContent||'請先登入 Google，並等雲端同步完成';return}try{await col.doc(id).set(o);await window.gSync()}catch(x){$('#msg').textContent='儲存失敗：'+(x.message||x.code||'')+'（圖片沒有被刪除，你的修改也還在，可再按一次儲存）';return}
  $('#dlg').classList.remove('o');{const removed=origShots.filter(x=>!shots.includes(x)),dropped=sessUp.filter(x=>!shots.includes(x)),kept=sessUp.filter(x=>shots.includes(x));sessUp=[];origShots=[];if(window.gImgs)gImgs.afterSave(removed.concat(dropped),kept)}
 };
-$('#del').onclick=async()=>{if(!cur)return;if(!armed){armed=true;$('#del').textContent='再按一次確認刪除';return}armed=false;$('#del').textContent='刪除';try{await col.doc(cur.id).delete();await window.gSync();$('#dlg').classList.remove('o')}catch(x){$('#msg').textContent='刪除失敗'}};
+$('#del').onclick=()=>{if(!cur)return;askDelPosts([cur.id],{after:()=>{$('#dlg').classList.remove('o');if(window.gImgs&&sessUp.length)gImgs.abandon(sessUp.splice(0))}})};
 $('#c').oninput=rc;
 $('#fb').onclick=async()=>{const n=nm($('#fn').value.trim());if(!n)return;if(!col){$('#fh').textContent='請先登入 Google，並等雲端同步完成';return}const p=(sel.c?sel.c+'/':'')+n;if(fp().includes(p)){$('#fh').textContent='這個資料夾已經有了';return}try{await col.doc('folders').set({list:[...new Set([...folders,p])]});$('#fn').value='';open.add(sel.c);render()}catch(x){$('#fh').textContent='建立失敗：'+(x.message||x.code||'')}};
 $('#sd1').checked=show.s;$('#sd2').checked=show.p;$('#sdo').value=sortBy;$('#sd1').onchange=e=>{show.s=e.target.checked;ls('shs',show.s?'1':'0');render()};$('#sd2').onchange=e=>{show.p=e.target.checked;ls('shp',show.p?'1':'0');render()};$('#sdo').onchange=e=>{sortBy=e.target.value;ls('sob',sortBy);render()};
@@ -291,7 +382,7 @@ $('#gpx').onclick=()=>{$('#gpm').style.display='none'};
 $('#gpa').onclick=()=>{const cs=['#e74c3c','#f39c12','#2ecc71','#3498db','#9b59b6','#e84393','#1abc9c','#95a5a6'];grps.push({id:'g'+Date.now().toString(36),name:'分組 '+(grps.length+1),color:cs[grps.length%cs.length]});saveS();gRender();render()};
 $('#gpn').onclick=async()=>{if(gTarget&&col)await col.doc(gTarget).update({grp:''});$('#gpm').style.display='none'};
 $('#gpl').onchange=e=>{const t=e.target.dataset,g=grps.find(x=>x.id===(t.gc||t.gn));if(!g)return;if(t.gc){g.color=e.target.value;gRender()}else g.name=e.target.value.trim()||g.name;saveS();render()};
-$('#gpl').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const t=b.dataset;if(t.gk){gCol=gCol===t.gk?'':t.gk;gRender();return}if(t.gp){const g=grps.find(x=>x.id===t.gp);if(g){g.color=t.cv;saveS();gRender();render()}return}if(t.ga){if(gTarget&&col)await col.doc(gTarget).update({grp:t.ga});$('#gpm').style.display='none'}else if(t.gd){const g=grps.find(x=>x.id===t.gd);if(!g)return;if(gArm===t.gd){gArm='';grps=grps.filter(x=>x!==g);await saveS();if(col)for(const p of posts)if(p.grp===g.id)await col.doc(p.id).update({grp:''});if(gSel===g.id)gSel='';gRender();render()}else{gArm=t.gd;e.target.textContent='再按一次刪除';setTimeout(()=>{if(gArm===t.gd){gArm='';gRender()}},3000)}}};
+$('#gpl').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const t=b.dataset;if(t.gk){gCol=gCol===t.gk?'':t.gk;gRender();return}if(t.gp){const g=grps.find(x=>x.id===t.gp);if(g){g.color=t.cv;saveS();gRender();render()}return}if(t.ga){if(gTarget&&col)await col.doc(gTarget).update({grp:t.ga});$('#gpm').style.display='none'}else if(t.gd){const g=grps.find(x=>x.id===t.gd);if(!g)return;if(!await snsAsk({title:'刪除分組',main:'確定要刪除分組「'+g.name+'」嗎？',sub:'收藏不會被刪除，原本在這個分組的收藏會變成「未分組」。',cancel:'取消',ok:'刪除分組'}))return;grps=grps.filter(x=>x!==g);await saveS();if(col)for(const p of posts)if(p.grp===g.id)await col.doc(p.id).update({grp:''});if(gSel===g.id)gSel='';gRender();render()}};
 $('#bmb').onclick=()=>{bmode=!bmode;bsel.clear();render()};
 $('#bex').onclick=()=>{bmode=false;bsel.clear();render()};
 $('#bsa').onclick=()=>{lastShown.forEach(id=>bsel.add(id));render()};
@@ -302,7 +393,7 @@ $('#bmx').onclick=()=>{$('#bm').style.display='none'};
 casOn($('#bf'));
 const BF={fadd:p=>({cats:[...new Set([...(p.cats||[]),$('#bf').value])]}),fmov:p=>({cats:[$('#bf').value]}),fdel:p=>({cats:(p.cats||[]).filter(c=>{const f=$('#bf').value;return c!==f&&!c.startsWith(f+'/')})}),fclr:()=>({cats:[]}),tadd:p=>({tags:[...new Set([...(p.tags||[]),...list($('#bt').value)])]}),tdel:p=>({tags:(p.tags||[]).filter(t=>!list($('#bt').value).includes(t))}),nr1:()=>({noRev:true}),nr0:()=>({noRev:false}),due1:()=>({due:$('#bd').value}),due0:()=>({due:''}),st1:()=>({star:true}),st0:()=>({star:false}),grp:()=>({grp:$('#bg').value}),acc1:()=>({acct:$('#bac').value.trim()}),acc0:()=>({acct:''})};
 $('#bm').onclick=async e=>{const a=e.target.dataset.ba;if(!a)return;const m=$('#bmm');if(!col){m.textContent='請先登入 Google，並等雲端同步完成';return}if(!bsel.size){m.textContent='還沒有選取卡片';return}if((a==='fadd'||a==='fmov'||a==='fdel')&&!$('#bf').value){m.textContent='請先選一個資料夾';return}if((a==='tadd'||a==='tdel')&&!list($('#bt').value).length){m.textContent='請先輸入標籤';return}if(a==='acc1'&&!$('#bac').value.trim()){m.textContent='請先輸入帳號';return}if(a==='due1'&&!$('#bd').value){m.textContent='請先選日期';return}
-if(a==='del'){if(bArm!=='del'){bArm='del';e.target.textContent='再按一次：刪除所選 '+bsel.size+' 張';setTimeout(()=>{if(bArm==='del'){bArm='';e.target.textContent='刪除所選'}},3000);return}bArm='';e.target.textContent='刪除所選'}
+if(a==='del'){askBatchDel();return}
 const ids=[...bsel];let n=0;try{for(const id of ids){const p=posts.find(x=>x.id===id);if(!p)continue;if(a==='del')await col.doc(id).delete();else await col.doc(id).update(BF[a](p));n++;m.textContent='處理中… '+n+'/'+ids.length}if(a==='del')bsel.clear();m.textContent='完成：已處理 '+n+' 張';render()}catch(x){m.textContent='失敗：'+(x.message||x.code||'')}};
 const detTags=()=>{const s=new Set((($('#t').value||'').match(/[#＃][^\s#＃,，.。!！?？、:：;；()（）\[\]{}"'「」]+/g)||[]).map(x=>x.slice(1)));const L=inferLabel($('#u').value||'');const TM=($('#u').value||'').match(/threads\.(?:net|com)\/(?:tag\/([^/?#]+)|search\?(?=[^#]*serp_type=tags)[^#]*?q=([^&#]+))/);if(TM){try{s.add(decodeURIComponent((TM[1]||TM[2]).replace(/\+/g,' ')))}catch(e){}}if(L&&L.show&&L.show[0]==='#')s.add(L.show.slice(1));return[...s]};
 $('#t').addEventListener('input',()=>drawTg());
@@ -338,17 +429,214 @@ $('#rs').onclick=async()=>{const old=renaming;if(!old)return;const nn=nm($('#rv'
 const mk=async(par,raw)=>{const n=nm(raw.trim());if(!n)return null;if(!col)throw new Error('請先登入 Google，並等雲端同步完成');const p=(par?par+'/':'')+n;if(!fp().includes(p)){await col.doc('folders').set({list:[...new Set([...folders,p])]});folders=[...folders,p]}return p};
 $('#fa').onclick=()=>{const o=$('#fadd'),show=o.style.display==='none';o.style.display=show?'':'none';if(show){ps($('#fp'),sel.c);$('#fh').textContent='';$('#fn').focus()}};
 $('#fb').onclick=async()=>{try{const par=$('#fp').value,p=await mk(par,$('#fn').value);if(p){$('#fn').value='';$('#fh').textContent='已建立：'+p.replace(/\//g,' → ');open.add(par);render()}}catch(x){$('#fh').textContent=x.message||'建立失敗'}};
-$('#db').onclick=async()=>{try{const p=await mk($('#dp').value,$('#dn').value);if(p){const a=list($('#c').value).map(nm);if(!a.includes(p))a.push(p);$('#c').value=a.join(', ');$('#dn').value='';$('#msg').textContent='';rc()}}catch(x){$('#msg').textContent=x.message||'建立失敗'}};
+$('#db').onclick=async()=>{try{const p=await mk($('#dp').value,$('#dn').value);if(p){const a=list($('#c').value).map(nm);if(!a.includes(p))a.push(p);rcfTouch([p]);$('#c').value=a.join(', ');$('#dn').value='';$('#msg').textContent='';rc()}}catch(x){$('#msg').textContent=x.message||'建立失敗'}};
 $('#bk').onclick=()=>{$('#bkm').textContent='';$('#bkp').style.display='flex'};
 $('#bkx').onclick=()=>{$('#bkp').style.display='none'};
 $('#bkd').onclick=async()=>{const m=$('#bkm');if(!dl){m.textContent='無法下載備份檔';return}try{await dl.save({filename:'SNS收藏備份-'+new Date().toLocaleDateString('sv-SE')+'.json',data:JSON.stringify({app:'sns-bookmarks',v:2,exported:Date.now(),posts,folders,plats:cplats,pren,grps},null,1)});m.textContent='已下載備份檔'}catch(x){m.textContent='下載失敗：'+(x.message||x.code||'')}};
+/* ===== V2.3.0 介面包：明細預覽、刪除確認彈窗、資料夾刪除／搜尋、最近使用、使用說明 ===== */
+const note2=(t,keep)=>setTimeout(()=>{$('#st').textContent=t;if(!keep)setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},6000)},80);
+const under=(c,p)=>c===p||c.startsWith(p+'/');
+const delHold=new Map();let delBusy=false;
+/* ---- 共用確認彈窗（沿用 .box 主題樣式；Esc／點遮罩＝取消） ---- */
+const askEl=document.createElement('div');askEl.id='askm';askEl.className='ov';askEl.style.zIndex='40';askEl.setAttribute('role','alertdialog');askEl.setAttribute('aria-modal','true');askEl.setAttribute('aria-labelledby','askt');
+askEl.innerHTML='<div class="box askb"><div class="row mh"><b id="askt"></b><button type="button" id="askx" title="關閉" aria-label="關閉">✕</button></div><div id="askc" class="mb"></div><div id="asks" class="asks" aria-live="polite"></div><div class="row"><button type="button" id="askn"></button><button type="button" class="pri" id="asky"></button></div></div>';
+document.body.appendChild(askEl);
+let askCur=null;
+const askBtns=on=>[$('#askn'),$('#asky'),$('#askx')].forEach(b=>{b.disabled=!on});
+const askClose=v=>{if(!askCur)return;const c=askCur;askCur=null;askEl.classList.remove('o');c.res(v);try{c.fb&&document.contains(c.fb)&&c.fb.focus()}catch(e){}};
+window.snsAsk=o=>new Promise(res=>{if(askCur)askClose(false);askCur={...o,res,fb:document.activeElement};$('#askt').textContent=o.title||'確認';
+ $('#askc').innerHTML=(o.main?'<p class="askm">'+esc(o.main)+'</p>':'')+(o.sub?'<p class="askd">'+esc(o.sub)+'</p>':'')+(o.lines||[]).filter(Boolean).map(l=>'<p class="askl">'+esc(l)+'</p>').join('');
+ $('#askn').textContent=o.cancel||'取消';$('#asky').textContent=o.ok||'確定';$('#asks').textContent='';askBtns(true);askEl.classList.add('o');setTimeout(()=>{try{$('#askn').focus()}catch(e){}},0)});
+$('#asky').onclick=async()=>{const c=askCur;if(!c)return;if(!c.onOk)return askClose(true);askBtns(false);$('#asks').textContent=c.busy||'處理中…';let r;try{r=await c.onOk(t=>{if(askCur===c)$('#asks').textContent=t})}catch(e){r={msg:'發生錯誤：'+((e&&e.message)||'')}}if(askCur!==c)return;if(r===true)return askClose(true);askBtns(true);$('#asks').textContent=(r&&r.msg)||'';if(r&&r.close)askClose(false)};
+$('#askn').onclick=()=>{if(!$('#askn').disabled)askClose(false)};$('#askx').onclick=$('#askn').onclick;
+askEl.addEventListener('mousedown',e=>{if(e.target===askEl&&!$('#askn').disabled)askClose(false)});
+
+/* ---- 刪除收藏：先寫入 Sheets 成功才算完成；失敗就把資料放回來 ---- */
+const IMGNOTE='沒有被其他收藏使用的圖片，會一起移到 Google Drive 垃圾桶。';
+async function delPosts(ids){
+ const st=window.gStore&&gStore();if(!col||!st)throw new Error('請先登入 Google，並等雲端同步完成');
+ const snap=new Map();ids.forEach(id=>{const d=st.get(id);if(d)snap.set(id,d)});
+ delBusy=true;snap.forEach((d,id)=>delHold.set(id,{id,...d}));
+ let err=null;const ok=[],fail=[],conf=[],stuck=[],gone=ids.filter(id=>!snap.has(id));
+ try{
+  for(const id of snap.keys())await col.doc(id).delete();
+  try{await window.gSync()}catch(e){err=e}
+  const pend=new Set(st.pendingIds()),cf=new Set(st.confIds());
+  for(const id of snap.keys()){if(cf.has(id))conf.push(id);else if(pend.has(id)){if(st.revertDel(id,snap.get(id)))fail.push(id);else stuck.push(id)}else ok.push(id)}
+ }finally{delBusy=false;delHold.clear();const rm=new Set([...ok,...gone,...conf,...stuck]);posts=posts.filter(p=>!rm.has(p.id));render()}
+ return{ok,fail,conf,stuck,gone,err}}
+const delFailMsg=r=>{const why=r.err?'（'+(r.err.message||r.err.code||'雲端寫入失敗')+'）':'';const a=[];
+ if(r.fail.length)a.push(r.fail.length+' 張刪除失敗'+why+'，卡片已保留，可以再試一次');
+ if(r.conf.length)a.push(r.conf.length+' 張因為另一台裝置剛修改過而暫停刪除，請在衝突視窗選擇要保留哪一邊');
+ if(r.stuck.length)a.push(r.stuck.length+' 張的刪除還沒寫入雲端'+why+'，系統會自動重試，請先不要關閉頁面');
+ return a.join('；')};
+window.askDelPosts=(ids,o)=>{o=o||{};snsAsk({title:'確認刪除',main:'是否刪除此卡片？',sub:'刪除後就沒救了，要重 Key 喔喔喔~~',lines:[IMGNOTE],cancel:'等等！讓我糾結一下',ok:'對喇！快刪',busy:'刪除中…',
+ onOk:async()=>{const r=await delPosts(ids);if(r.ok.length||(r.gone.length&&!r.fail.length&&!r.conf.length&&!r.stuck.length)){pvClose();o.after&&o.after();note2('已刪除 1 張卡片');return true}
+  const m=delFailMsg(r);if(r.conf.length||r.stuck.length){pvClose();note2(m,true);return{close:true}}return{msg:m}}})};
+const askBatchDel=()=>{const ids=[...bsel];if(!ids.length){$('#bmm').textContent='還沒有選取卡片';return}
+ snsAsk({title:'批次刪除確認',main:'是否批次刪除選取卡片？',sub:'刪除後就沒救了，要一張一張重 Key 喔喔喔~~',lines:['目前選取 '+ids.length+' 張卡片。',IMGNOTE],cancel:'等等！讓我糾結一下',ok:'對喇！快刪',busy:'刪除中…（共 '+ids.length+' 張）',
+ onOk:async()=>{const r=await delPosts(ids);[...r.ok,...r.gone].forEach(id=>bsel.delete(id));const n=r.ok.length+r.gone.length,bad=r.fail.length+r.conf.length+r.stuck.length;
+  const m=bad?'刪除成功 '+n+' 張，失敗 '+bad+' 張：'+delFailMsg(r)+'（失敗的卡片仍保持選取）':'完成：已刪除 '+n+' 張卡片';
+  render();$('#bmt').textContent='批次操作（已選 '+bsel.size+' 張）';setTimeout(()=>{$('#bmm').textContent=m},90);return true}})};
+
+/* ---- 明細預覽（唯讀） ---- */
+let pvId='',pvKey='',pvFb=null;
+const pvEl=$('#pvm');
+const pvHTML=p=>{const g=grps.find(x=>x.id===p.grp),none='<span class="pvn">未設定</span>',row=(k,v)=>'<dt>'+k+'</dt><dd>'+v+'</dd>',shots=(p.shots||[]).filter(x=>typeof x==='string'),t=new Date(p.t||0);
+ return (shots.length?'<div class="pvi">'+shots.map((id,i)=>'<button type="button" class="pvim" data-lb="'+i+'" aria-label="放大第 '+(i+1)+' 張圖片"><img data-gid="'+esc(id)+'" alt=""></button>').join('')+'</div>':'')
+ +'<div class="pvh">'+esc(p.note||'（沒有備註）')+'</div><dl class="kv">'
+ +row('平台',esc(p.platform||'網頁'))
+ +row('發文帳號',p.acct?esc(p.acct):none)
+ +row('原始網址',/^https?:\/\//.test(p.url||'')?'<a href="'+esc(p.url)+'" target="_blank" rel="noopener noreferrer">'+esc(p.url)+'</a>':(p.url?esc(p.url):none))
+ +row('資料夾',(p.cats||[]).length?p.cats.map(c=>'<span class="fc">📁 '+esc(c.replace(/\//g,' → '))+'</span>').join(''):'<span class="pvn">📂 未分類</span>')
+ +row('標籤',(p.tags||[]).length?p.tags.map(x=>'<span class="tp" style="--h:'+thue(x)+'">'+esc(x)+'</span>').join(''):none)
+ +row('分組',g?'<span class="gd" style="background:'+esc(g.color)+'"></span>'+esc(g.name):'<span class="pvn">未分組</span>')
+ +row('星號',p.star?'★ 已加星號':'<span class="pvn">☆ 沒有星號</span>')
+ +row('閱讀狀態',p.read?'已讀':'未讀')
+ +row('已下載',p.got?'已標記':'<span class="pvn">未標記</span>')
+ +row('收藏日期',esc(t.toLocaleDateString('sv-SE')+' '+t.toTimeString().slice(0,5)))
+ +row('發布日期',p.pub?esc(p.pub):none)
+ +row('待回顧日期',p.noRev?'<span class="pvn">不回顧（這一篇不要跳回顧）</span>':(p.due?esc(p.due):none))
+ +'</dl><div class="pvl">貼上的文字</div>'+(p.text?'<div class="pvt">'+esc(p.text)+'</div>':'<div class="pvn">（沒有）</div>')};
+function pvDraw(force){const p=posts.find(x=>x.id===pvId)||delHold.get(pvId);if(!p){const was=pvId;pvClose();if(was&&!delBusy)note2('這張卡片已經不存在（可能已在另一台裝置刪除）');return}const k=JSON.stringify(p)+'|'+JSON.stringify(grps);if(!force&&k===pvKey)return;pvKey=k;const sc=$('#pvc').scrollTop;$('#pvc').innerHTML=pvHTML(p);$('#pvc').scrollTop=sc;window.gHyd&&gHyd()}
+window.pvOpen=id=>{if(!posts.some(x=>x.id===id))return;pvFb=document.activeElement;pvId=id;pvKey='';pvDraw(true);$('#pvc').scrollTop=0;pvEl.classList.add('o');setTimeout(()=>{try{$('#pvx').focus()}catch(e){}},0)};
+function pvClose(){if(!pvId&&!pvEl.classList.contains('o'))return;pvId='';pvKey='';pvEl.classList.remove('o');$('#pvc').innerHTML='';try{pvFb&&document.contains(pvFb)&&pvFb.focus()}catch(e){}pvFb=null}
+const pvSync=()=>{if(pvId&&!delBusy)pvDraw()};
+$('#pvx').onclick=$('#pvn').onclick=()=>pvClose();
+$('#pvd').onclick=()=>{if(pvId)askDelPosts([pvId])};
+$('#pve').onclick=()=>{const id=pvId;if(!id)return;pvClose();openDlg(id)};
+pvEl.addEventListener('mousedown',e=>{if(e.target===pvEl)pvClose()});
+$('#pvc').addEventListener('click',e=>{const b=e.target.closest('[data-lb]');if(!b)return;const p=posts.find(x=>x.id===pvId);if(p)lbOpen((p.shots||[]).filter(x=>typeof x==='string'),+b.dataset.lb)});
+/* 點卡片任意非操作區域開啟明細；批次模式時維持原本的「點卡片＝選取」 */
+const pvSkip=t=>!!t.closest('button,a,input,select,textarea,label,.tp,[data-gid][href]');
+$('#ls').addEventListener('click',e=>{if(bmode||pvSkip(e.target))return;const c=e.target.closest('[data-cid]');if(!c)return;try{const s=getSelection();if(s&&String(s).trim()&&c.contains(s.anchorNode))return}catch(x){}pvOpen(c.dataset.cid)});
+$('#ls').addEventListener('keydown',e=>{if(bmode||(e.key!=='Enter'&&e.key!==' '))return;const c=e.target.closest&&e.target.closest('.card[data-cid]');if(!c||e.target!==c)return;e.preventDefault();pvOpen(c.dataset.cid)});
+/* ---- 圖片放大（GIF 會照常播放） ---- */
+let lbL=[],lbI=0;const lbEl=$('#lbm');
+const lbShow=()=>{const id=lbL[lbI];$('#lbi').removeAttribute('src');$('#lbi').dataset.gid=id;window.gHyd&&gHyd();$('#lbk').textContent=lbL.length>1?(lbI+1)+' / '+lbL.length:'';$('#lbp').style.display=$('#lbn').style.display=lbL.length>1?'':'none'};
+function lbOpen(L,i){if(!L.length)return;lbL=L;lbI=Math.max(0,Math.min(i||0,L.length-1));lbShow();lbEl.classList.add('o');setTimeout(()=>{try{$('#lbx').focus()}catch(e){}},0)}
+function lbClose(){lbEl.classList.remove('o');delete $('#lbi').dataset.gid;$('#lbi').removeAttribute('src')}
+$('#lbx').onclick=lbClose;$('#lbp').onclick=()=>{lbI=(lbI-1+lbL.length)%lbL.length;lbShow()};$('#lbn').onclick=()=>{lbI=(lbI+1)%lbL.length;lbShow()};
+lbEl.addEventListener('mousedown',e=>{if(e.target===lbEl)lbClose()});
+
+/* ---- 資料夾搜尋（左側資料夾區、新增／編輯收藏、批次操作共用同一套邏輯） ---- */
+const FS={
+ m(q){const parts=String(q||'').trim().toLowerCase().split(/[%％*＊]+/).map(s=>s.trim()).filter(Boolean);if(!parts.length)return null;const fn=n=>{n=String(n).toLowerCase();let i=0;for(const s of parts){const j=n.indexOf(s,i);if(j<0)return false;i=j+s.length}return true};fn.parts=parts;return fn},
+ filter(paths,q){const m=FS.m(q);if(!m)return null;const hit=new Set(),show=new Set();for(const p of paths){if(m(p.split('/').pop())){hit.add(p);const a=p.split('/');for(let i=1;i<=a.length;i++)show.add(a.slice(0,i).join('/'))}}return{hit,show,parts:m.parts}},
+ hl(name,parts){if(!parts)return esc(name);const low=name.toLowerCase();let out='',i=0;for(const s of parts){const j=low.indexOf(s,i);if(j<0)break;out+=esc(name.slice(i,j))+'<mark>'+esc(name.slice(j,j+s.length))+'</mark>';i=j+s.length}return out+esc(name.slice(i))},
+ label(p,f,full){const a=p.split('/'),n=a.pop(),hit=!!f&&f.hit.has(p);return (a.length&&(full||hit)?'<small class="crumb">'+esc(a.join(' → '))+' →</small> ':'')+(hit?FS.hl(n,f.parts):esc(n))},
+ rows(paths,f,isOpen){const par=new Set();paths.forEach(p=>{const i=p.lastIndexOf('/');if(i>0)par.add(p.slice(0,i))});const vis=p=>{const a=p.split('/');for(let i=1;i<a.length;i++)if(!isOpen(a.slice(0,i).join('/')))return false;return true};
+  return paths.filter(p=>f?f.show.has(p):vis(p)).map(p=>({p,depth:p.split('/').length-1,kids:par.has(p),open:f?paths.some(x=>x.startsWith(p+'/')&&f.show.has(x)):isOpen(p),anc:!!f&&!f.hit.has(p),label:FS.label(p,f)}))}
+};
+window.snsFS=FS;
+const TRASH='<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 4.5h11M6.5 4.5V3h3v1.5M4 4.5l.7 8.6c.05.5.45.9.95.9h4.7c.5 0 .9-.4.95-.9L12 4.5M6.7 7v4.5M9.3 7v4.5"/></svg>';
+let fq='';
+function sbTree(paths){if(!paths.length)return '<span style="color:var(--mut);font-size:13px">還沒有資料夾，按上面的「＋新增」建立第一個。</span>';const f=FS.filter(paths,fq);if(f&&!f.hit.size)return '<span class="fqe">找不到名稱包含「'+esc(fq.trim())+'」的資料夾</span>';
+ const cnt=p=>posts.filter(x=>(x.cats||[]).some(c=>under(c,p))).length;
+ return FS.rows(paths,f,p=>open.has(p)).map(r=>'<div class="tn'+(r.anc?' anc':'')+'" style="padding-left:'+r.depth*16+'px"><span'+(r.kids&&!f?' data-o="'+esc(r.p)+'"':'')+'>'+(r.kids?(r.open?'▾':'▸'):'')+'</span><button class="chip '+(sel.c===r.p?'on':'')+'" data-c="'+esc(r.p)+'" title="'+esc(r.p.replace(/\//g,' → '))+'">📁 '+r.label+' <small style="opacity:.65">'+cnt(r.p)+'</small></button><button class="ed" data-n="'+esc(r.p)+'" title="改名" aria-label="改名">✎</button><button class="ed fdl" data-fd="'+esc(r.p)+'" title="刪除資料夾" aria-label="刪除資料夾">'+TRASH+'</button></div>').join('')}
+const drawSb=()=>{$('#tl').innerHTML=sbTree(fp())};
+$('#fq').oninput=()=>{fq=$('#fq').value;drawSb()};
+$('#fqx').onclick=()=>{$('#fq').value='';fq='';drawSb();$('#fq').focus()};
+$('#fq').onkeydown=e=>{if(e.key==='Escape'&&$('#fq').value){e.stopPropagation();$('#fqx').click()}};
+/* ---- 刪除資料夾：只移除資料夾結構與分類關係，收藏與圖片全部保留 ---- */
+$('#tl').addEventListener('click',e=>{const b=e.target.closest('[data-fd]');if(b)askDelFolder(b.dataset.fd)});
+function askDelFolder(path){if(!col){note2('請先登入 Google，並等雲端同步完成');return}
+ const subs=fp().filter(x=>x.startsWith(path+'/')).length,aff=posts.filter(p=>(p.cats||[]).some(c=>under(c,path))),un=aff.filter(p=>p.cats.every(c=>under(c,path))).length;
+ snsAsk({title:'刪除資料夾',main:'確定要刪除資料夾「'+path.replace(/\//g,' → ')+'」嗎？',lines:['子資料夾：'+subs+' 個'+(subs?'（會一起刪除）':''),'會影響 '+aff.length+' 筆收藏的分類'+(un?'，其中 '+un+' 筆沒有其他分類，會變成「未分類」':''),'收藏卡片、圖片、網址、備註、標籤、日期等內容全部保留，只會移除收藏與這些資料夾之間的分類關係；Google Drive 的圖片不會被刪除。'],cancel:'取消',ok:'刪除資料夾',busy:'先把修改存到雲端…',
+ onOk:async say=>{const r=await delFolder(path,say);if(r.ok){note2(r.msg);return true}if(r.close){note2(r.msg,true);return{close:true}}return{msg:r.msg}}})}
+async function delFolder(path,say){const st=window.gStore&&gStore();if(!col||!st)return{msg:'請先登入 Google，並等雲端同步完成'};
+ try{await window.gSync()}catch(e){return{msg:'目前無法寫入雲端，已取消刪除資料夾（沒有任何變更）：'+(e.message||'')}}
+ if(st.hasConflict())return{close:true,msg:'有跨裝置衝突還沒處理，請先在衝突視窗選擇，再刪除資料夾（沒有任何變更）'};
+ say('讀取最新的雲端資料…');
+ try{await st.refresh()}catch(e){return{msg:'無法讀取最新的雲端資料，已取消刪除資料夾（沒有任何變更）：'+(e.message||'')}}
+ if(st.pendingIds().length||st.hasConflict())return{msg:'雲端還有未完成的寫入，已取消刪除資料夾（沒有任何變更），請稍後再試'};
+ const SKIP=new Set(['folders','settings','imgq']),fl=((st.get('folders')||{}).list||[]).filter(x=>typeof x==='string');
+ const docs=st.ids().filter(id=>!SKIP.has(id)).map(id=>[id,st.get(id)]).filter(([,d])=>d&&typeof d==='object');
+ const known=fl.concat(...docs.map(([,d])=>Array.isArray(d.cats)?d.cats:[]));
+ if(!known.some(c=>typeof c==='string'&&(under(c,path)||c.startsWith(path+'/'))))return{close:true,msg:'資料夾「'+path.replace(/\//g,' → ')+'」已經不存在（可能已在另一台裝置刪除或改名）'};
+ const aff=docs.filter(([,d])=>Array.isArray(d.cats)&&d.cats.some(c=>under(c,path)));
+ const keepAnc=[];{const a=path.split('/');for(let i=1;i<a.length;i++)keepAnc.push(a.slice(0,i).join('/'))}
+ const nl=[...new Set([...fl.filter(c=>!under(c,path)),...keepAnc])];
+ say('更新 '+aff.length+' 筆收藏的分類並寫入雲端…');
+ for(const [id,d] of aff)await col.doc(id).update({cats:d.cats.filter(c=>!under(c,path))});
+ await col.doc('folders').set({list:nl});folders=nl;
+ let err=null;try{await window.gSync()}catch(e){err=e}
+ const mine=new Set([...aff.map(x=>x[0]),'folders']),pend=st.pendingIds().filter(id=>mine.has(id)),cf=st.confIds().filter(id=>mine.has(id));
+ if(sel.c&&under(sel.c,path))sel.c='';[...open].forEach(o=>{if(under(o,path))open.delete(o)});[...open2].forEach(o=>{if(under(o,path))open2.delete(o)});render();
+ const nm2=path.replace(/\//g,' → ');
+ if(!pend.length&&!cf.length)return{ok:true,msg:'已刪除資料夾「'+nm2+'」，'+aff.length+' 筆收藏的分類已更新（收藏與圖片都保留）'};
+ if(cf.length)return{close:true,msg:'資料夾「'+nm2+'」已刪除，但有 '+cf.length+' 筆收藏另一台裝置剛好也改過，請在衝突視窗選擇要保留哪一邊'};
+ const pm='資料夾「'+nm2+'」已在這台裝置刪除，但還有 '+pend.length+' 筆變更（共 '+(aff.length+1)+' 筆）尚未寫入雲端'+(err?'（'+(err.message||'')+'）':'')+'。系統會自動重試，請先不要關閉頁面；也可以按 ⟳ 重試';fdWatch(mine,pm);return{close:true,msg:pm}}
+let fdT=0;
+function fdWatch(ids,msg){const el=$('#fdm'),done='資料夾刪除已全部寫入雲端 ✓';el.textContent=msg;clearInterval(fdT);fdT=setInterval(()=>{const st=window.gStore&&gStore();if(!st){clearInterval(fdT);el.textContent='';return}const left=st.pendingIds().filter(id=>ids.has(id)).length,cf=st.confIds().filter(id=>ids.has(id)).length;
+ if(cf){el.textContent='資料夾刪除有 '+cf+' 筆遇到跨裝置衝突，請在衝突視窗選擇要保留哪一邊';return}
+ if(!left){clearInterval(fdT);el.textContent=done;note2(done);setTimeout(()=>{if(el.textContent===done)el.textContent=''},6000)}
+ else el.textContent='資料夾已在這台裝置刪除，還有 '+left+' 筆變更尚未寫入雲端，系統會自動重試，請先不要關閉頁面；也可以按 ⟳ 重試'},1500)}
+
+/* ---- 新增／編輯收藏的分類選擇：搜尋、樹狀收合、已選、最近使用 ---- */
+let open2=new Set(),csq='';
+const pkSel=()=>list($('#c').value).map(nm);
+const rcfKey=()=>'rcf:'+((window.snsGoogle&&snsGoogle.user&&snsGoogle.user.email)||'-');
+const rcfGet=()=>{try{const a=JSON.parse(ls(rcfKey())||'[]');return Array.isArray(a)?a.filter(x=>x&&typeof x.k==='string').sort((x,y)=>y.t-x.t).map(x=>x.k):[]}catch(e){return[]}};
+const rcfTouch=ks=>{try{let a=JSON.parse(ls(rcfKey())||'[]');if(!Array.isArray(a))a=[];const t=Date.now();ks.forEach(k=>{a=a.filter(x=>x&&x.k!==k);a.push({k,t})});a.sort((x,y)=>y.t-x.t);ls(rcfKey(),JSON.stringify(a.slice(0,30)))}catch(e){}};
+function pkReset(){csq='';$('#csq').value='';const a=pkSel(),all=fp();open2=new Set();if(all.length<=15)all.forEach(p=>open2.add(p));else a.forEach(c=>{const s=c.split('/');for(let i=1;i<s.length;i++)open2.add(s.slice(0,i).join('/'))})}
+function pkDraw(){const a=pkSel(),all=fp(),f=FS.filter(all,csq);
+ $('#csel').innerHTML=a.length?'<span>已選 '+a.length+' 個：</span>'+a.map(c=>'<span class="tc">📁 '+esc(c.replace(/\//g,' → '))+'<b data-ck="'+esc(c)+'" title="取消選取" role="button" aria-label="取消選取">×</b></span>').join(''):'<span>還沒有選分類（不選就是「未分類」）</span>';
+ const rs=rcfGet().filter(k=>all.includes(k)).slice(0,8);
+ $('#rcf').innerHTML=rs.length?'<span>🕘 最近使用：</span>'+rs.map(k=>'<button type="button" class="chip'+(a.includes(k)?' on':'')+'" data-rk="'+esc(k)+'" title="'+(a.includes(k)?'已選取':'加入分類')+'">'+(a.includes(k)?'✓ ':'+ ')+esc(k.replace(/\//g,' → '))+'</button>').join(''):'';
+ if(!all.length)$('#cs').innerHTML='<span style="color:var(--mut);font-size:13px;padding:4px">還沒有資料夾，在下面輸入名稱建立第一個</span>';
+ else if(f&&!f.hit.size)$('#cs').innerHTML='<span class="fqe">找不到名稱包含「'+esc(csq.trim())+'」的資料夾</span>';
+ else $('#cs').innerHTML=FS.rows(all,f,p=>open2.has(p)).map(r=>{const on=a.includes(r.p);return '<div class="pr'+(r.anc?' anc':'')+'" style="padding-left:'+r.depth*16+'px"><span class="tg2"'+(r.kids&&!f?' data-o2="'+esc(r.p)+'" role="button" aria-label="'+(r.open?'收合':'展開')+'"':'')+'>'+(r.kids?(r.open?'▾':'▸'):'')+'</span><button type="button" class="pk '+(on?'on':'')+'" data-k="'+esc(r.p)+'" aria-pressed="'+on+'"><span>'+(on?'☑':'☐')+'</span><span>'+r.label+'</span></button><button type="button" class="ed" data-dn="'+esc(r.p)+'" title="改名">✎</button></div>'}).join('');
+ ps($('#dp'))}
+$('#csq').oninput=()=>{csq=$('#csq').value;pkDraw()};
+$('#csqx').onclick=()=>{$('#csq').value='';csq='';pkDraw();$('#csq').focus()};
+$('#csq').onkeydown=e=>{if(e.key==='Enter')e.preventDefault();if(e.key==='Escape'&&$('#csq').value){e.stopPropagation();$('#csqx').click()}};
+$('#cs').addEventListener('click',e=>{const t=e.target.closest('[data-o2]');if(!t)return;const p=t.dataset.o2;open2.has(p)?open2.delete(p):open2.add(p);pkDraw()});
+$('#dlg').addEventListener('click',e=>{const r=e.target.closest('[data-rk]'),x=e.target.closest('[data-ck]');if(!r&&!x)return;const a=pkSel();
+ if(r){const k=r.dataset.rk;if(!a.includes(k)){a.push(k);rcfTouch([k])}}else{const k=x.dataset.ck;a.splice(a.indexOf(k),1)}
+ $('#c').value=a.join(', ');pkDraw();drawTg()});
+/* ---- 批次操作的資料夾搜尋 ---- */
+let bfq='';
+const bfDraw=()=>{const f=FS.filter(fp(),bfq),el=$('#bfr');if(!f){el.innerHTML='';return}el.innerHTML=f.hit.size?[...f.hit].map(p=>'<button type="button" class="pk'+($('#bf').value===p?' on':'')+'" data-bp="'+esc(p)+'"><span>📁 '+FS.label(p,f,true)+'</span></button>').join(''):'<span class="fqe">找不到名稱包含「'+esc(bfq.trim())+'」的資料夾</span>'};
+$('#bfq').oninput=()=>{bfq=$('#bfq').value;bfDraw()};
+$('#bfqx').onclick=()=>{$('#bfq').value='';bfq='';bfDraw();$('#bfq').focus()};
+$('#bfr').addEventListener('click',e=>{const b=e.target.closest('[data-bp]');if(!b)return;$('#bf').value=b.dataset.bp;drawCas($('#bf'));bfDraw()});
+{const _o=$('#bgo2').onclick;$('#bgo2').onclick=()=>{bfq='';$('#bfq').value='';bfDraw();_o()};const _w=$('#bfw').onchange;$('#bfw').onchange=e=>{_w(e);bfDraw()}}
+
+/* ---- 使用說明與常見問題（V2.3.0 為內建靜態內容；V2.5.0 起改由管理者試算表提供） ---- */
+const HELP=[
+ {id:'n1',type:'notice',order:1,title:'Google 帳號及登入',body:'你的收藏存在你自己的 Google 雲端硬碟：「SNS_Bookmark」資料夾裡的「SNS_Bookmark_Data」試算表（收藏資料）和「SNS_Bookmark_Images」資料夾（圖片）。\nApp 只能存取它自己建立的檔案，看不到你雲端硬碟裡的其他檔案。\n目前 App 是測試階段，Google 大約每 7 天會要求重新登入一次，重新登入後資料都還在。\n切換帳號或登出前，App 會先把修改存到雲端；存不進去時會停在原本的帳號，不會把資料寫到別的帳號。'},
+ {id:'n2',type:'notice',order:2,title:'雲端同步',body:'新增、修改、刪除後會自動存到雲端，頁面上方會顯示「已儲存到雲端 ✓」。\n頁面開著時大約每 30～60 秒自動同步一次；想馬上看到另一台裝置的修改，按右上角的 ⟳。\n顯示「儲存到雲端中…」時，請先不要關閉頁面。\n兩台裝置同時改到同一筆收藏時，會跳出視窗讓你選擇保留哪一邊，不會默默蓋掉。'},
+ {id:'n3',type:'notice',order:3,title:'圖片格式及容量',body:'目前版本（V2.3.0）上傳的圖片都會自動壓縮成 JPG（最長邊 1000 px）再存到 Google 雲端硬碟。\n因此 GIF 動畫會變成靜態圖片，PNG 的透明背景也不會保留。\n部分格式（例如 iPhone 的 HEIC）在某些瀏覽器無法讀取，請先轉成 JPG 或 PNG 再上傳。\nGoogle 雲端硬碟剩不到 100 MB 時，頁面最上方會出現黃色提醒。'},
+ {id:'n4',type:'notice',order:4,title:'收藏刪除後無法復原',body:'刪除收藏前會跳出確認視窗；確認後，收藏資料就無法從 App 復原（App 沒有回收桶）。\n沒有被其他收藏使用的圖片會移到 Google 雲端硬碟的垃圾桶，約 30 天內可以從雲端硬碟垃圾桶還原圖片檔，但收藏卡片本身不會回來。\n刪除「資料夾」不一樣：只會移除資料夾和分類關係，收藏卡片與圖片都會保留；沒有其他分類的收藏會變成「未分類」。'},
+ {id:'n5',type:'notice',order:5,title:'備份及還原',body:'按右上角「備份」→「下載備份檔」，會下載一個 JSON 檔，內容包含收藏、資料夾、自訂平台和分組設定。\n備份檔只記錄圖片的雲端 ID，不包含圖片檔本身；還原到另一個 Google 帳號時，圖片不會顯示。\n還原時，相同的收藏會被備份檔覆蓋，不會刪掉現有的其他收藏。\n建議定期下載備份，存在自己的電腦或手機。'},
+ {id:'q1',type:'qa',order:1,title:'為什麼手機與電腦的資料不同步？',body:'1. 先確認兩台裝置登入的是同一個 Google 帳號（點右上角頭像就能看到 Email）。\n2. 按右上角的 ⟳ 立即同步；頁面開著時也會每 30～60 秒自動同步。\n3. 如果有一台顯示「雲端儲存失敗」或跳出衝突視窗，請先在那台處理。\n4. 手機若把網頁加到主畫面，請完全關掉再開，才會載入最新版本。'},
+ {id:'q2',type:'qa',order:2,title:'為什麼圖片上傳失敗？',body:'常見原因：\n・還沒登入 Google，或雲端同步還沒完成（等頁面上方的「同步雲端資料中…」消失）。\n・網路中斷，或登入已過期（依提示重新登入）。\n・Google 雲端硬碟空間不足（頁面最上方會出現黃色提醒）。\n・瀏覽器無法讀取這種圖片格式（例如部分瀏覽器的 HEIC），請先轉成 JPG 或 PNG。'},
+ {id:'q3',type:'qa',order:3,title:'如何更換 Google 帳號？',body:'點右上角的頭像 →「🔀 切換帳號」，再選擇要使用的 Google 帳號。\n每個帳號的收藏都存在各自的雲端硬碟，不會混在一起。\n切換前 App 會先把修改存到雲端；如果存不進去，會停在原本的帳號並提示原因。'},
+ {id:'q4',type:'qa',order:4,title:'如何搜尋及選擇資料夾？',body:'左側「📁 資料夾」區上方有搜尋框，輸入資料夾名稱的一部分就能找到，不分大小寫，也不用從第一個字開始（例如輸入 Be 或 reen 都能找到 FreenBecky）。\n搜尋結果會顯示完整路徑，例如「泰百 → FreenBecky」和「KPOP → FreenBecky」，同名的資料夾也分得出來。\n新增／編輯收藏的「分類」也有同樣的搜尋框，可以多選；搜尋或清除搜尋都不會取消已選的分類。上方的「最近使用」可以一鍵加入常用資料夾。\n按 ▸／▾ 可以展開或收合子資料夾。'},
+ {id:'q5',type:'qa',order:5,title:'刪除收藏後可以復原嗎？',body:'不行，App 沒有回收桶，刪除前請在確認視窗再看一次。\n如果之前有下載備份檔，可以用「備份 → 從備份檔還原」把那一筆加回來；若圖片顯示「已在雲端移除」，可以先到 Google 雲端硬碟的垃圾桶還原那張圖片。'},
+ {id:'q6',type:'qa',order:6,title:'點卡片會發生什麼事？',body:'點卡片空白處或文字，會打開「收藏明細」，可以看到這筆收藏的完整內容（唯讀，不會不小心改到）。\n明細最下面有「刪除」「編輯」「取消」：按「編輯」才會進入修改畫面；按「刪除」會再跳出確認視窗。\n卡片上的按鈕（星號、已讀、開啟原文、編輯、刪除…）照原本的方式運作，不會打開明細。\n批次模式下，點卡片是「選取」，不會打開明細。'},
+ {id:'q7',type:'qa',order:7,title:'怎麼刪除資料夾？會不會刪到收藏？',body:'在左側資料夾區，按資料夾右邊的垃圾桶圖示，確認後就會刪除這個資料夾和它所有的子資料夾。\n收藏卡片、圖片、標籤、備註、日期全部保留；只有「收藏放在這個資料夾」的分類關係會被移除。\n如果收藏還有其他資料夾，就保留其他資料夾；沒有其他資料夾的收藏會變成「📂 未分類」。'}
+];
+const hlpEl=$('#hlpm');let hlpFb=null;
+function hlpDraw(items){const box=$('#hlpc');box.textContent='';const vis=(items||[]).filter(x=>x&&x.show!==false&&String(x.title||'').trim()).sort((a,b)=>(+a.order||0)-(+b.order||0));
+ [['notice','注意事項'],['qa','常見問題 Q&A']].forEach(([ty,h])=>{const L=vis.filter(x=>x.type===ty);if(!L.length)return;const hd=document.createElement('div');hd.className='hs';hd.textContent=h;box.appendChild(hd);
+  L.forEach((it,i)=>{const d=document.createElement('details'),s=document.createElement('summary'),n=document.createElement('span'),t=document.createElement('span'),a=document.createElement('span'),b=document.createElement('div');d.className='hq';n.className='hn';n.textContent=ty==='qa'?'Q：':(i+1)+'.';t.textContent=String(it.title);a.className='ha';a.textContent='›';a.setAttribute('aria-hidden','true');s.append(n,t,a);b.className='hb';b.textContent=String(it.body||'');d.append(s,b);box.appendChild(d)})});
+ const v=document.createElement('div');v.className='hv';v.textContent='SNS文章收藏夾 V'+(window.SNS_VERSION||'');box.appendChild(v)}
+function hlpOpen(){hlpFb=document.activeElement;hlpDraw(HELP);hlpEl.classList.add('o');$('#hlpc').scrollTop=0;setTimeout(()=>{try{$('#hlpx').focus()}catch(e){}},0)}
+function hlpClose(){hlpEl.classList.remove('o');try{hlpFb&&document.contains(hlpFb)&&hlpFb.focus()}catch(e){}hlpFb=null}
+window.snsHelp={draw:hlpDraw,open:hlpOpen,close:hlpClose};
+$('#hlp').onclick=e=>{e.stopPropagation();hlpOpen()};$('#hlpx').onclick=hlpClose;
+hlpEl.addEventListener('mousedown',e=>{if(e.target===hlpEl)hlpClose()});
+/* Esc：由最上層的新視窗開始關（在原本的 Esc 處理之前執行） */
+window.addEventListener('keydown',e=>{if(e.key!=='Escape')return;let h=1;if(lbEl.classList.contains('o'))lbClose();else if(askEl.classList.contains('o')){if(!$('#askn').disabled)askClose(false)}else if(hlpEl.classList.contains('o'))hlpClose();else if(pvEl.classList.contains('o'))pvClose();else h=0;if(h){e.preventDefault();e.stopPropagation()}},true);
 /* ===== Google 串接：登入 / 雲端硬碟 / 試算表 / 容量 / 意見回饋 ===== */
 (()=>{
 const CID='840119973043-eo9lkljcu3bduvu9gae1ggri6i0hr4c7.apps.googleusercontent.com';
 const SCOPE='openid profile email https://www.googleapis.com/auth/drive.file';
 const D='https://www.googleapis.com/drive/v3/',U='https://www.googleapis.com/upload/drive/v3/',SH='https://sheets.googleapis.com/v4/spreadsheets/';
 const FOLDER='application/vnd.google-apps.folder',SHEET='application/vnd.google-apps.spreadsheet';
-const GG=window.snsGoogle;window.SNS_VERSION='2.2.0';
+const GG=window.snsGoogle;window.SNS_VERSION='2.3.0';
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
@@ -468,6 +756,9 @@ function makeStore(io,onErr,onState,onConflict,opts){
   hasBad:()=>bad.size>0,
   get:id=>clone(docs.get(id)),
   ids:()=>[...docs.keys()],
+  pendingIds:()=>[...pend.keys()],
+  confIds:()=>[...conf.keys()],
+  revertDel(id,o){if(pend.get(id)!=='d'||conf.has(id)||flushing||!o)return false;pend.delete(id);docs.set(id,clone(o));emit();return true},
   badMsg:()=>bad.size?[...bad.values()][0]:'',
   serialize:(o)=>serialize('?',o).j,
   hasConflict:()=>conf.size>0,
@@ -592,7 +883,7 @@ dl={save:async({filename,data})=>{const a=document.createElement('a');a.href=URL
 const quota=async()=>{try{const r=await J(D+'about?fields=storageQuota');const q=r.storageQuota||{},lim=+q.limit,used=+q.usage;$('#qw').style.display=(lim>0&&lim-used<100*1048576)?'block':'none'}catch(e){}};
 
 /* ---- 套用資料 ---- */
-const onSnap=s=>{$('#st').textContent='';try{imgs.warn()}catch(e){}folders=((s.docs.find(d=>d.id==='folders')||{data:()=>({})}).data()||{}).list||[];const sd=s.docs.find(d=>d.id==='settings'),S=sd&&sd.data()||{};if(!sav){cplats=JSON.parse(JSON.stringify(S.plats||[]));pren={...(S.pren||{})};grps=JSON.parse(JSON.stringify(S.grps||[]))}posts=s.docs.filter(d=>d.id!=='folders'&&d.id!=='settings'&&d.id!=='imgq').map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.t||0)-(a.t||0));render()};
+const onSnap=s=>{$('#st').textContent='';try{imgs.warn()}catch(e){}folders=((s.docs.find(d=>d.id==='folders')||{data:()=>({})}).data()||{}).list||[];const sd=s.docs.find(d=>d.id==='settings'),S=sd&&sd.data()||{};if(!sav){cplats=JSON.parse(JSON.stringify(S.plats||[]));pren={...(S.pren||{})};grps=JSON.parse(JSON.stringify(S.grps||[]))}posts=s.docs.filter(d=>d.id!=='folders'&&d.id!=='settings'&&d.id!=='imgq').map(d=>({id:d.id,...d.data()})).concat([...delHold.values()].filter(h=>!s.docs.some(d=>d.id===h.id))).sort((a,b)=>(b.t||0)-(a.t||0));render()};
 /* 刪除收藏時，先記下這筆收藏的圖片；等 Sheets 真的刪除成功後，統一檢查引用再清理 */
 const wrapCol=c=>({...c,doc:id=>{const d=c.doc(id);return{...d,delete:async()=>{const p=store&&store.get(id),sh=(p&&Array.isArray(p.shots)?p.shots:[]).filter(x=>typeof x==='string');await d.delete();if(sh.length)imgs.collect(sh)}}}});
 const wipe=()=>{imgs.reset();$('#iqw').style.display='none';DEAD.clear();store=null;col=null;ids=null;posts=[];folders=[];cplats=[];pren={};grps=[];IMG.clear();$('#qw').style.display='none';render()};
@@ -613,7 +904,7 @@ let outArm=false;
 const doOut=()=>{A.tok='';A.exp=0;A.sub='';A.tsub='';A.locked=false;ls('gem','');outArm=false;GG.setUser(null);wipe();$('#st').textContent='已登出。請登入 Google 來載入你的收藏'};
 $('#gout').onclick=async()=>{$('#gmn').style.display='none';
  if(store&&(store.dirty()||store.hasConflict())){$('#st').textContent='登出前先把修改存到雲端…';let bad='';try{await store.flush();if(store.hasConflict())bad='有跨裝置衝突還沒處理'}catch(e){bad='還有修改沒存到雲端（'+(e.message||'')+'）'}
-  if(bad){if(!outArm){outArm=true;$('#st').textContent=bad+'。再按一次登出會放棄這些修改';setTimeout(()=>{outArm=false},8000);return}}}
+  if(bad){$('#st').textContent=bad;if(!await window.snsAsk({title:'還有修改沒存到雲端',main:bad+'。',sub:'現在登出會放棄這些修改。',cancel:'先不要登出',ok:'仍要登出'})){$('#st').textContent=bad+'，已取消登出';return}}}
  try{const r=await fetch('/api/auth/logout',{method:'POST',credentials:'same-origin',headers:{'X-Requested-With':'sns'}});if(!r.ok)throw new Error('http '+r.status)}catch(e){$('#st').textContent='登出失敗：連不上登入服務，請稍後再試';return}
  doOut()};
 /* ---- 跨裝置衝突視窗 ---- */
@@ -626,6 +917,7 @@ function confUI(list){confList=list||[];let m=$('#cfm');
  if(!confList.length){m.style.display='none';return}
  $('#cfl').innerHTML=confList.map(c=>{const d=c.mine||c.remote||{};const t=c.id==='settings'?'設定':c.id==='folders'?'資料夾':((d.platform||'')+' '+(d.note||d.url||c.id)).trim().slice(0,50);const fs=[...new Set(c.fields.map(f=>{const k=String(f).replace(/^\./,'').split(/[.\[]/)[0];return FL[k]||k}))].filter(Boolean).join('、');return '<div style="border:1px solid var(--bd);border-radius:8px;padding:6px 8px"><b>'+esc(t)+'</b><br>衝突內容：'+esc(fs||'-')+'</div>'}).join('');m.style.display='flex'}
 window.gSync=()=>store?store.flush():Promise.resolve();
+window.gStore=()=>store;
 
 /* ---- 同步（合併重新整理）---- */
 $('#rf').onclick=async()=>{if(!store){$('#st').textContent='請先登入 Google';return}const b=$('#rf');b.disabled=true;$('#st').textContent='從 Google 試算表同步中…';try{const sq=imgs.stat();if(sq.total){await imgs.retryAll()}await store.refresh();lastSync=Date.now();await quota();if(store.hasBad())$('#st').textContent=store.badMsg();else{note('已同步最新資料');if(sq.total)imgs.process({force:true,ignoreWait:true,retryStuck:true}).then(imgs.report).catch(()=>{})}}catch(e){$('#st').textContent='同步失敗：'+(e.message||'')}finally{b.disabled=false}};
