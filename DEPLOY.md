@@ -1,27 +1,91 @@
-# SNS文章收藏夾 V2.8.1 部署指南（正式替換 V2.6.0）
+# SNS文章收藏夾 V2.8.3 部署指南（直接取代目前正式版）
 
-> 本包只交付檔案。小克沒有 commit、沒有 push GitHub、沒有部署 Vercel、沒有修改環境變數、Google Console、Service Account 或管理試算表。下面是你確認後要做的正式替換步驟。
+> **部署紀錄**：本包只交付檔案。小克**沒有** commit、push GitHub 或部署 Vercel，因為這個工作環境連不到你的 GitHub 專案和 Vercel 帳號，也沒有你的權限。下面第四節的部署紀錄請你推送後自己填。小克也沒有修改環境變數、Google Console、Service Account 或管理試算表。
 
 ## 一、正式部署方式（已確認）
 
+- **不建立 Git 分支、不使用 Vercel Preview、不另外開測試網址、不平行部署多個版本。**
+- V2.8.2 是這次程式修改的唯一基底；完成後直接更新 GitHub `main` → Vercel 自動部署 **Production**，以 **V2.8.3 直接取代目前正式版**。
+- 正式網址不變：**https://littlemonkey805-sns-bookmark.vercel.app/**
+- 你 11/10 的截圖裡，正式網站已經顯示 `v2.8.1`。所以這次是 **V2.8.1（或你已部署的 V2.8.2）→ V2.8.3**。
+- 部署後直接在正式網址做桌機、手機與真實 Google 驗收（`TEST_REPORT.md` 第五節）。
+
+## 二、部署前準備（約 3 分鐘）
+
+1. **記下目前正式版**：Vercel → 專案 → Deployments，記下目前標示 Production 的那一筆（時間或網址）；GitHub `main` 最新一筆 commit 也記下來。出問題時用這一筆回復。
+2. **保留 V2.8.2 完整備份**：`sns-bookmark-v2.8.2-complete.zip` 先留著不要刪。只是備份，**不要**另外部署它。
+3. **備份收藏**：用平常的帳號打開正式網站，按右上「備份」下載一份備份檔。
+
+## 三、管理試算表／Apps Script：**免更新**
+
+- V2.8.3 的 `admin-setup/Code.gs` 和 V2.8.2、V2.8.1 逐位元相同，這次沒有改 API、Apps Script、OAuth 範圍、環境變數、Service Account 或試算表欄位。
+- **只有一個前提**：上 V2.8.1 時，你已經照舊版說明貼上這份 Code.gs、執行過 `setupAdminSheet`，「檢查設定」有六個 ✅。如果當時還沒做，請先做 `admin-setup/ADMIN_SETUP.md` 最後的「V2.8.0 更新步驟」，不然公告會載入失敗（`502 sheet_missing`）。
+
+## 四、更新網站（GitHub main → Vercel Production）
+
+1. 解壓縮 `sns-bookmark-v2.8.3-complete.zip`，得到唯一最外層資料夾 `sns-bookmark-v2.8.3`。
+2. 把資料夾**裡面所有檔案與資料夾**（含隱藏檔 `.vercelignore`）複製到 Git 專案根目錄，覆蓋同名檔案。不要把外層資料夾整個再套一層。
+   - 這次真正變動的網站檔案：`index.html`、`package.json`，**新增** `assets/monkey-logo.png`（漢堡選單小猴 Logo，一定要一起上傳，否則選單頂端會缺圖）。
+   - 說明文件：`CHANGELOG.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V2.8.2.md`（舊報告改名）、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`admin-setup/ADMIN_SETUP.md`、`brand-assets/素材清單.md`。
+   - 沒有變：`api/` 全部、`admin-setup/Code.gs`、`vercel.json`、`.vercelignore`、`manifest.webmanifest`、其他 `assets/` 圖檔。
+3. 確認 GitHub Desktop 的變更清單有 `assets/monkey-logo.png`，再直接 commit 到 `main` 並 Push。commit 訊息建議：`V2.8.3：分組管理入口、新增資料夾流程、手機選單品牌標頭、作者署名、預設主題背景圖修正`。
+4. Vercel → Deployments：確認最新一筆是 **Ready** 且標示 **Production**。
+5. 打開正式網址，左側資料夾欄（手機在 ☰ 選單）最底部應顯示：
+   - 電腦：`作者：littlemonkey805`，下一行 `版本：v2.8.3 / 更新：2026-11-10 14:21`
+   - 手機：`作者：littlemonkey805 / 版本：v2.8.3 / 更新：2026-11-10 14:21`（同一行）
+   如果還是舊版本號：電腦按 Ctrl＋F5，手機把分頁或主畫面捷徑完全關掉再開。
+
+### 部署紀錄（請推送後填寫）
+
+| 項目 | 內容 |
+|---|---|
+| 部署前 Production（回復用） | （填 Vercel 那一筆的時間／網址） |
+| 部署前 `main` commit | （填） |
+| V2.8.3 `main` commit | （填） |
+| Vercel Production 狀態 | （Ready／Error） |
+| 正式網址顯示版本 | （應為 v2.8.3 / 更新：2026-11-10 14:21） |
+
+### 關於「更新時間」
+
+專案沒有建置步驟（Vercel 直接發布靜態檔案），所以畫面上的更新時間來自 `index.html` 開頭的 `<meta name="app-build">`，是**小克打包時寫入的台北時間**，不是使用者開網頁的時間，也不會寫死成舊日期。它**不是** Vercel 實際建置的時間；要改成 Vercel 自動寫入，就得在 `vercel.json` 加建置指令，會動到部署架構，這版沒有做（見 CHANGELOG）。之後手動改了 index.html 再發布，請一起改這一行和 `app-version`。
+
+## 五、正式版回復方式（出問題時）
+
+- **最快**：Vercel → Deployments → 找到第二節記下的那一筆 →「⋯」→ **Promote to Production**（或 Instant Rollback）。之後再把 GitHub `main` 也還原（下一點），避免下次 push 又部署 V2.8.3。
+- **GitHub**：在 `main` 對 V2.8.3 那一筆 commit 做 Revert（GitHub Desktop：History → 右鍵 → Revert changes in commit）→ Push。
+- **資料相容性**：V2.8.3 沒有改收藏資料格式。新增的 localStorage「pbg」（預設主題背景圖）舊版不會讀，回復後預設主題不顯示背景圖，「自訂」主題的設定不受影響。
+
+---
+
+# 附錄：V2.6.0 → V2.8.x 首次升級說明（保留參考）
+
+> 以下是 V2.8.1／V2.8.2 時從 V2.6.0 首次升級的完整步驟，保留給「管理試算表還沒升級」或「全新安裝」時參考；文中的版本號與 ZIP 名稱請換成 V2.8.3。
+
+
+> 本包只交付檔案。小克沒有 commit、沒有 push GitHub、沒有部署 Vercel、沒有修改環境變數、Google Console、Service Account 或管理試算表。下面是你確認後要做的正式替換步驟。
+
+### A1. 正式部署方式（已確認）
+
 - **不建立 Git 分支、不使用 Preview、不維持兩個版本並行。**
-- 直接以 **V2.8.1 替換目前正式網站 V2.6.0**：更新 GitHub `main` → Vercel 自動部署 **Production**。
+- 直接以 **V2.8.2 替換目前正式網站 V2.6.0**：更新 GitHub `main` → Vercel 自動部署 **Production**。
 - 只有一個正式網址：**https://littlemonkey805-sns-bookmark.vercel.app/**
 - 部署後直接在這個正式網址做桌機、手機與真實 Google 整合測試（清單見 `TEST_REPORT.md` 第五節）。
 - 保留回復方式（第五節）。
 
-V2.7.0、V2.8.0 沒有單獨上線，這一次是 **V2.6.0 → V2.8.1** 一次到位。
+V2.7.0、V2.8.0 沒有單獨上線，這一次是 **V2.6.0 → V2.8.2** 一次到位。
 
-## 二、部署前準備（約 5 分鐘，建議都做）
+### A2. 部署前準備（約 5 分鐘，建議都做）
+
+0. **（V2.8.2）先清掉空白收藏**：如果現在卡片模式是空白、只有表格看得到，先在表格找「平台、備註都空白、收藏日 1970-01-01」的列，點開後按「刪除」。不清也可以，V2.8.2 上線後這種資料會顯示成有 ⚠️ 提示的卡片，到時再刪。**不要**直接去 Google 試算表刪列。
 
 1. **記下目前正式版**：Vercel → 專案 → Deployments，找到目前標示 Production 的那一筆（V2.6.0），記下它的時間或網址；GitHub `main` 最新一筆 commit 也記下來。出問題時用這一筆回復。
 2. **備份收藏**：用平常的帳號打開正式網站，按右上「備份」下載一份備份檔。
 3. **備份管理試算表**：開啟 `SNS_Bookmark_Admin` → 檔案 → 建立副本（副本只是保險，不會被程式使用）。
 4. **備份目前的 Apps Script**：管理試算表 → 擴充功能 → Apps Script，把現在的 `Code.gs` 全選複製，貼到記事本存起來。
 
-## 三、先更新管理試算表（必須先完成；此時不要部署網站）
+### A3. 先更新管理試算表（必須先完成；此時不要部署網站）
 
-> **順序不可顛倒：先完成本節的管理端升級與驗證，再進行第四節的 GitHub `main`／Vercel Production 更新。不要先部署網站。** V2.8.1 的公告 API 需要「公告管理」工作表；如果網站先部署、管理表還沒有這張工作表，公告 API 會回傳 `502 sheet_missing`，公告中心無法正常載入。
+> **順序不可顛倒：先完成本節的管理端升級與驗證，再進行第四節的 GitHub `main`／Vercel Production 更新。不要先部署網站。** V2.8.2 的公告 API 需要「公告管理」工作表；如果網站先部署、管理表還沒有這張工作表，公告 API 會回傳 `502 sheet_missing`，公告中心無法正常載入。
 
 ### A. 更新 Apps Script
 
@@ -49,9 +113,9 @@ V2.7.0、V2.8.0 沒有單獨上線，這一次是 **V2.6.0 → V2.8.1** 一次�
 
 詳細操作及歷史回覆處理方式另見 `admin-setup/ADMIN_SETUP.md`「V2.8.0 更新步驟」。
 
-## 四、更新網站（GitHub main → Vercel Production；管理端驗證完成後才做）
+### A4. 更新網站（GitHub main → Vercel Production；管理端驗證完成後才做）
 
-1. 解壓縮 `sns-bookmark-v2.8.1-complete.zip`，得到唯一最外層資料夾 `sns-bookmark-v2.8.1`。
+1. 解壓縮 `sns-bookmark-v2.8.2-complete.zip`，得到唯一最外層資料夾 `sns-bookmark-v2.8.2`。
 2. 把資料夾**裡面所有檔案與資料夾**（含隱藏檔 `.vercelignore`）複製到 Git 專案根目錄，覆蓋同名檔案。不要把外層資料夾整個再套一層：
    - 會被更新：`index.html`、`package.json`、`.vercelignore`、`admin-setup/Code.gs`、`admin-setup/ADMIN_SETUP.md`、各說明文件。
    - **會新增**：`api/announcements.js`、`assets/`、`brand-assets/`、`manifest.webmanifest` 及歷史測試報告。
@@ -59,21 +123,22 @@ V2.7.0、V2.8.0 沒有單獨上線，這一次是 **V2.6.0 → V2.8.1** 一次�
    - 沒有變：`vercel.json`、`api/_lib/`、`api/auth/`、`api/activity.js`、`api/help.js`。
 3. 直接 commit 到 GitHub `main` 並 Push。**不建立分支、不使用 Preview、不維持兩個版本並行。** Vercel 會自動部署 Production；不需要修改任何環境變數。
 4. Vercel → Deployments 確認最新一筆是 **Ready** 且標示 **Production**。
-5. 打開唯一正式網址 `https://littlemonkey805-sns-bookmark.vercel.app/`，左側資料夾欄（手機在 ☰ 抽屜）最底部應顯示「版本：v2.8.1」。桌機、手機都在這個正式網址驗收；手機加到主畫面的請完全關掉再打開。
+5. 打開唯一正式網址 `https://littlemonkey805-sns-bookmark.vercel.app/`，左側資料夾欄（手機在 ☰ 抽屜）最底部應顯示「版本：v2.8.2」。桌機、手機都在這個正式網址驗收；手機加到主畫面的請完全關掉再打開。
 
-## 五、正式版回復方式（出問題時）
+### A5. 正式版回復方式（出問題時）
 
 **網站**（擇一）：
-- **最快**：Vercel → Deployments → 找到第二節記下的 V2.6.0 那一筆 → 「⋯」→ **Promote to Production**（或 Instant Rollback）。幾秒內正式網址就回到 V2.6.0。之後再把 GitHub `main` 也還原（下一點），避免下次 push 又部署 V2.8.1。
-- **GitHub**：在 `main` 對 V2.8.1 那一筆 commit 做 Revert（GitHub Desktop：History → 右鍵那一筆 → Revert changes in commit）→ Push，Vercel 會自動部署回 V2.6.0。
+- **最快**：Vercel → Deployments → 找到第二節記下的 V2.6.0 那一筆 → 「⋯」→ **Promote to Production**（或 Instant Rollback）。幾秒內正式網址就回到 V2.6.0。之後再把 GitHub `main` 也還原（下一點），避免下次 push 又部署 V2.8.2。
+- **GitHub**：在 `main` 對 V2.8.2 那一筆 commit 做 Revert（GitHub Desktop：History → 右鍵那一筆 → Revert changes in commit）→ Push，Vercel 會自動部署回 V2.6.0。
 
-**資料相容性**：V2.7.0～V2.8.1 都沒有改收藏資料格式，V2.6.0 可以直接讀取。回復後：
+**資料相容性**：V2.7.0～V2.8.2 都沒有改收藏資料格式，V2.6.0 可以直接讀取。回復後：
 - 「品牌桃」變回「可愛」、相簿模式與 📢 公告入口消失；分組選擇器新增的分組仍然存在。
 - 主題：V2.6.0 只會讀取裝置上的主題設定，已經被轉成品牌桃的裝置會顯示「可愛」主題，可以手動切回。
 
 **管理試算表**：新的「公告管理」「意見回饋紀錄」可以保留，V2.6.0 不會讀取它們；新版 Code.gs 也不需要退回（原本四個工作表的功能相同）。真的要退回時，把第二節備份的舊 Code.gs 貼回去即可。
 
-## 六、其他注意事項
+
+## 其他注意事項
 
 ### 瀏覽器分頁圖示（Favicon）沒有立刻換掉？
 
@@ -88,6 +153,7 @@ V2.7.0、V2.8.0 沒有單獨上線，這一次是 **V2.6.0 → V2.8.1** 一次�
 | 淺色背景 Logo | `assets/logo-light.png` | SNS文章收藏夾-主題適應版-淺色.png |
 | 深色背景 Logo | `assets/logo-dark.png` | SNS文章收藏夾-主題適應版-深色.png |
 | 自訂上傳背景 Logo | `assets/logo-custom.png` | SNS文章收藏夾-主題適應版-自訂背景.png（與深色版同一張，刻意共用） |
+| 手機漢堡選單小猴 Logo | `assets/monkey-logo.png` | 猴子Logo.png（＝ V2.8.3 參考附件 00_小猴Logo_唯一指定原始素材.png，逐位元相同，未修改） |
 | 分頁圖示 | `assets/favicon.png` | Fav小.png（左右各補 1px 透明成正方形，圖案像素不動） |
 | iPhone 主畫面圖示 | `assets/apple-touch-icon.png` | Fav小.png（同上，透明處補純白） |
 
@@ -113,7 +179,7 @@ V2.7.0、V2.8.0 沒有單獨上線，這一次是 **V2.6.0 → V2.8.1** 一次�
 - 新增或修改環境變數後都要 **Redeploy** 才會生效。
 - 所有密鑰只放在 Vercel 環境變數；不要貼進 HTML、GitHub、Issue 或任何聊天對話。
 
-## 七、全新安裝（第一次部署，參考用）
+## 全新安裝（第一次部署，參考用）
 
 ### 1. Vercel 環境變數（Project → Settings → Environment Variables）
 
@@ -136,7 +202,7 @@ V2.7.0、V2.8.0 沒有單獨上線，這一次是 **V2.6.0 → V2.8.1** 一次�
 
 ### 3. 部署
 
-1. 把 `sns-bookmark-v2.8.1` 資料夾裡的所有檔案（含 `.vercelignore`）放進 Git 專案根目錄。
+1. 把 `sns-bookmark-v2.8.3` 資料夾裡的所有檔案（含 `.vercelignore`）放進 Git 專案根目錄。
 2. 在 Vercel 設好四個環境變數。
 3. Push 或 Redeploy。
 4. 打開網站 → 按「登入 Google」。
