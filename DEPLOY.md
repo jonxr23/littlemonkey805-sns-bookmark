@@ -22,7 +22,7 @@
    - 和 `main`（V2.10.2）比，網站檔案只有 `index.html`、`package.json` 有變；沒有新增或刪除網站檔案。
    - 說明文件：`CHANGELOG.md`、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V2.10.2.md`、`TEST_REPORT-V2.10.3.md`（舊報告改名，**新檔要一起上傳**）、`admin-setup/ADMIN_SETUP.md`、`brand-assets/素材清單.md`。
 3. commit 到 `main`（建議訊息：`Release SNS Bookmark V2.10.4`），Vercel 會自動部署。
-4. 正式網址側邊欄最底部應顯示 `版本：v2.10.4 / 更新：2026-11-11 04:57`。
+4. 正式網址側邊欄最底部應顯示 `版本：v2.10.4 / 更新：2026-11-11 05:08`。
 
 ## 四、回復
 
@@ -31,7 +31,7 @@
 
 ## 五、更新時間的來源（沒有改）
 
-畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-11 04:57）。
+畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-11 05:08）。
 
 ---
 
