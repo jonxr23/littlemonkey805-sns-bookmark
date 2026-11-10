@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="app-version" content="2.10.4">
-<meta name="app-build" content="2026-11-11 05:08">
+<meta name="app-build" content="2026-11-11 05:21">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -718,6 +718,9 @@ h1.brand #ann svg path{stroke-width:.96}
 .udup[hidden]{display:none}
 /* 上方的平台提示（#pm）空白時，抵掉它多佔的一段表單間距，讓警告框上下都和其他欄位一樣是 8px×介面大小 */
 #pm:empty+.udup{margin-top:calc(-8px*var(--ui))}
+/* V2.10.4：儲存列上方的重複提醒（猴猴選 B）：⚠️＋紅色粗體字、白底、3px 白框、外圍一圈淡紅邊；深色背景時錯誤色太淺，白底上改用深紅字 */
+#msg.msgw{display:block;color:var(--err)!important;background:#fff;border:3px solid #fff;border-radius:calc(10px*var(--ui));padding:calc(8px*var(--ui)) calc(12px*var(--ui));font-weight:600;box-shadow:0 0 0 1px color-mix(in srgb,var(--err) 25%,transparent)}
+:root[data-theme=dark] #msg.msgw,:root[style*="color-scheme: dark"] #msg.msgw{color:#c62828!important;box-shadow:0 0 0 1px rgba(198,40,40,.35)}
 /* V2.10.4：電腦／平板（>900px）頂部最後一排「顯示收藏日／顯示發布日／排序」和下方側邊欄、卡片之間原本 0px，加 10px×介面大小 的間距 */
 @media(min-width:901px){#tp{padding-bottom:calc(10px*var(--ui))}}
 .udup span{flex:1 1 calc(180px*var(--ui));min-width:0;overflow-wrap:anywhere}
@@ -1214,6 +1217,8 @@ const nuU=u=>{try{const x=new URL(String(u||'').trim());let h=x.hostname.toLower
  const q=[...x.searchParams].filter(([k])=>!/^(utm_\w*|igsh|igshid|xmt|fbclid|gclid|mibextid|rdid|share_id|ref_src|ref_url)$/i.test(k)).sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:0);
  return h+p+(q.length?'?'+q.map(a=>a.join('=')).join('&'):'')}catch(e){return String(u||'').trim().toLowerCase()}};
 let dupShown=false;
+/* V2.10.4：儲存列上方的重複提醒用醒目樣式（.msgw）；#msg 換成其他訊息時自動恢復原本樣式 */
+{const mg=$('#msg');if(mg)new MutationObserver(()=>{if(mg.classList.contains('msgw')&&!mg.textContent.startsWith('⚠️ 這個網址已經收藏過'))mg.classList.remove('msgw')}).observe(mg,{childList:true,characterData:true,subtree:true})}
 function dupFind(){const v=$('#u').value.trim();if(!/^https?:\/\//.test(v))return[];const k=nuU(v);if(cur&&cur.url&&nuU(cur.url)===k)return[];return posts.filter(p=>p&&p.url&&(!cur||p.id!==cur.id)&&nuU(p.url)===k).sort((a,b)=>(b.t||0)-(a.t||0))}
 function dupChk(){const el=$('#udup');if(!el)return;const L=dupFind();dupShown=L.length>0;el.textContent='';if(!L.length){/* V2.10.4：Threads 手機分享的短網址（threads.com/share/…）沒有貼文代碼，無法比對，改提示無法檢查 */const v=$('#u').value.trim();if(/^https?:\/\//.test(v)&&/^threads\.net\/share\//.test(nuU(v))){const t=document.createElement('span');t.textContent='⚠️ 溫馨提醒：這是 Threads 手機分享的短網址，無法檢查是否已收藏過。';el.append(t);el.hidden=false;return}el.hidden=true;return}const p=L[0],d=new Date(p.t||0),s=document.createElement('span'),b=document.createElement('button');
  const tt=String(p.note||'').trim();s.textContent='⚠️ 溫馨提醒：這個網址已於 '+d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' 收藏過囉'+(tt?'，原收藏標題為「'+(tt.length>30?tt.slice(0,30)+'…':tt)+'」':'')+'。仍可再次收藏。';
@@ -1228,7 +1233,7 @@ $('#f').onchange=async e=>{
 $('#sv').onclick=async()=>{
  const url=$('#u').value.trim();if(!/^https?:\/\//.test(url)){$('#msg').textContent='請貼上 http 或 https 開頭的連結';return}
  /* V2.10.4：儲存時再檢查一次重複網址；還沒顯示過提示（例如雲端資料晚一步載入）就先提示，再按一次儲存仍會新增 */
- if(dupFind().length&&!dupShown){dupChk();$('#msg').textContent='這個網址已經收藏過；確定要再存一筆，請再按一次儲存';return}
+ if(dupFind().length&&!dupShown){dupChk();const mg=$('#msg');mg.textContent='⚠️ 這個網址已經收藏過；確定要再存一筆，請再按一次儲存';mg.classList.add('msgw');return}
  const id=cur?cur.id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
  const o={...(cur&&window.gStore&&gStore()?(gStore().get(cur.id)||{}):{}),url,platform:plat(url),note:$('#n').value.trim(),text:$('#t').value.trim(),cats:list($('#c').value).map(c=>c.replace(/\s*(→|＞|>|\/)\s*/g,'/')),tags:(addTg(),[...tgs]),due:$('#d').value,pub:$('#pd').value,noRev:$('#nr').checked,acct:$('#ac').value.trim(),shots,read:cur?!!cur.read:false,t:cur?cur.t:Date.now()};if(xims.length)o.ximgs=[...xims];else delete o.ximgs;
  if(!col){$('#msg').textContent=$('#st').textContent||'請先登入 Google，並等雲端同步完成';return}const isNew=!cur;try{await col.doc(id).set(o);await window.gSync();window.snsAct&&snsAct(isNew?'add':'edit',true)}catch(x){$('#msg').textContent='儲存失敗：'+(x.message||x.code||'')+'（圖片沒有被刪除，你的修改也還在，可再按一次儲存）';return}
