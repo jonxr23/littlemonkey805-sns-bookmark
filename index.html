@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2.10.2">
-<meta name="app-build" content="2026-11-11 02:36">
+<meta name="app-version" content="2.10.3">
+<meta name="app-build" content="2026-11-11 03:30">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -698,6 +698,17 @@ body.sorting,body.sorting *{cursor:grabbing!important;-webkit-user-select:none!i
  h1.brand #ann .ant{display:inline}
  h1.brand #hlp:hover,h1.brand #ann:hover{color:var(--tfg,var(--pfg,var(--fg)))!important}
 }
+</style>
+<style id="v2103">
+/* V2.10.3：「使用說明」「公告」兩個標題列入口在所有寬度鎖定同一組文字樣式（字型、字級、字重、字距、行高、顏色），避免瀏覽器預設或文字自動縮放造成大小不一；喇叭圖示的線條原本只佔 16px 畫布的約 10px（ⓘ 佔 13.4px），看起來比較小，以右側為基準放大 1.2 倍到和 ⓘ 相近（畫布仍 16px，不影響排列，圖示與「公告」的間距不變），線條粗細維持相同 */
+h1.brand #hlp,h1.brand #ann{font-family:inherit!important;font-size:calc(12.5px*var(--ui))!important;font-weight:500!important;letter-spacing:0!important;line-height:1!important;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+h1.brand #hlp .hlt,h1.brand #ann .ant{font:inherit!important;letter-spacing:inherit!important;color:inherit!important}
+h1.brand #ann svg{overflow:visible;transform:scale(1.2);transform-origin:87.5% 50%}
+h1.brand #ann svg path{stroke-width:.96}
+/* V2.10.3：浮動按鈕三顆對齊同一條垂直中心線（＋新增、↑Top 寬 66、⋯ 寬 64，各往左 1px 置中；原本往右偏 16px）。垂直順序、間距、尺寸、背景色不變 */
+#qfab .qf{left:calc(-1px*var(--ui))}
+/* V2.10.3：深色、簡約主題的浮動「＋新增」「↑Top」改白字（依猴猴指定；背景不變） */
+:root[data-theme=dark] #qfab .qf,:root[data-theme=clean] #qfab .qf{color:#fff}
 </style>
 </head>
 <body>
@@ -1646,7 +1657,7 @@ window.snsImg=IMGF;
  const cr=(a,b)=>{const x=lum(a),y=lum(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
  const col=v=>{pr.style.color=v;return rgb(getComputedStyle(pr).color)};
  const best=(bg,cands)=>{let b=null,bc=0;for(const c of cands){const k=cr(bg,col(c));if(k>bc+.01){bc=k;b=c}}return b};
- const tone=()=>{const main=col('var(--fab)'),mix=col('var(--fab2)');fab.style.setProperty('--fab-fg',cr(main,col('var(--on)'))>=4.5?'var(--on)':best(main,['var(--on)','var(--fg)','var(--acc-ink)','#ffffff','#1d1d1f']));fab.style.setProperty('--fab2-fg',best(mix,['var(--fg)','var(--on)','var(--acc-ink)','#ffffff','#1d1d1f']));const ao=fab.style.getPropertyValue('--fab-fg'),R=document.documentElement;if(R.style.getPropertyValue('--acc-on')!==ao)R.style.setProperty('--acc-on',ao)};
+ const tone=()=>{const main=col('var(--fab)'),mix=col('var(--fab2)');fab.style.setProperty('--fab-fg',cr(main,col('var(--on)'))>=4.5?'var(--on)':best(main,['var(--on)','var(--fg)','var(--acc-ink)','#ffffff','#1d1d1f']));fab.style.setProperty('--fab2-fg',['var(--on)','var(--fg)','var(--acc-soft-fg)','var(--acc-ink)'].find(c=>cr(mix,col(c))>=4.5)||best(mix,['var(--fg)','var(--on)','var(--acc-ink)','#ffffff','#1d1d1f']));/* V2.10.3：＋新增／↑Top 文字色比照一般「＋新增」（主題的 --on），對比不足 4.5 時依序改用主題文字色 */const ao=fab.style.getPropertyValue('--fab-fg'),R=document.documentElement;if(R.style.getPropertyValue('--acc-on')!==ao)R.style.setProperty('--acc-on',ao)};
  tone();new MutationObserver(()=>requestAnimationFrame(tone)).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','style','data-ui']});window.snsFabTone=tone})();
 /* V2.10.0：資料夾／分組排序切換與拖曳。拖曳只在「同一層的資料夾」或「分組清單」之間調整順序；放開後只寫入 settings 的 sort 欄位。 */
 /* ---- V2.10.1 雲端狀態提示：⟳ 同步（同步中／已同步最新資料／同步失敗）、啟動同步、儲存到雲端（儲存中／已儲存到雲端 ✓／儲存失敗）、自動合併，共用這一個提示。電腦放在頂部「📢 公告」旁邊，手機放在圓形 ⟳ 同步按鈕旁邊；
@@ -2011,15 +2022,19 @@ window.snsBatch=(()=>{const LS=$('#ls');let anchor=null,drag=null,td=null,lp=nul
  const clean=j=>(Array.isArray(j&&j.items)?j.items:[]).filter(x=>x&&typeof x.title==='string'&&x.title.trim()&&Number.isFinite(+x.pub)).map(x=>({id:String(x.id||''),cat:String(x.cat||'其他').slice(0,20),title:String(x.title).slice(0,200),summary:String(x.summary||'').slice(0,600),body:String(x.body||''),pub:+x.pub,pin:x.pin===true,new:x.new===true,open:x.open===true}));
  const mk=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e};
  const draw=L=>{box.textContent='';if(!L.length){box.appendChild(mk('div','aem','目前沒有公告～小猴還在想要說什麼🤔'));return}
-  let opened=false;const SL=sortL(L),MAX=5;let hist=null;SL.forEach((it,ix)=>{if(ix===MAX){const n=SL.length-MAX,t=mk('button','ahb');t.type='button';t.setAttribute('aria-expanded','false');const lab=o=>t.textContent=o?'⌃ 收起歷史公告':'⌄ 歷史公告（'+n+'）';lab(false);hist=mk('div','ahist');hist.hidden=true;t.onclick=()=>{const o=hist.hidden;hist.hidden=!o;t.setAttribute('aria-expanded',o?'true':'false');lab(o);/* V2.10.2：展開時取消五則高度限制，改用與「使用說明」相同的視窗高度上限；收起時恢復原高度 */if(o)box.style.maxHeight='';else{box.scrollTop=0;capH()}};box.append(t,hist)}const d=mk('details','hq'),s=mk('summary'),h=mk('div','ahd'),tl=mk('div','atl'),me=mk('div','ame');d.dataset.aid=it.id;
+  let opened=false;const SL=sortL(L),MAX=5;let hist=null;SL.forEach((it,ix)=>{if(ix===MAX){const n=SL.length-MAX,t=mk('button','ahb');t.type='button';t.setAttribute('aria-expanded','false');const lab=o=>t.textContent=o?'⌃ 收起歷史公告':'⌄ 歷史公告（'+n+'）';lab(false);hist=mk('div','ahist');hist.hidden=true;t.onclick=()=>{const o=hist.hidden;hist.hidden=!o;t.setAttribute('aria-expanded',o?'true':'false');lab(o);/* V2.10.2：展開時取消五則高度限制，改用與「使用說明」相同的視窗高度上限；收起時恢復原高度 */if(o)box.style.maxHeight='';else{box.scrollTop=0;fitH()}};box.append(t,hist)}const d=mk('details','hq'),s=mk('summary'),h=mk('div','ahd'),tl=mk('div','atl'),me=mk('div','ame');d.dataset.aid=it.id;
    if(it.pin){const p=mk('span','apin','📌');p.title='置頂';p.setAttribute('aria-label','置頂');tl.appendChild(p)}
    tl.appendChild(mk('span','att2',it.title));if(it.new)tl.appendChild(mk('span','anew','NEW'));
    me.append(mk('span','acat',it.cat),mk('span','atm',fmt(it.pub)));h.append(tl,me);if(it.summary)h.appendChild(mk('div','asm',it.summary));
    const a=mk('span','ha','›');a.setAttribute('aria-hidden','true');s.append(h,a);const b=mk('div','hb',it.body||it.summary);d.append(s,b);
-   if(it.open&&!opened){d.open=true;opened=true}(hist||box).appendChild(d)});
+   if(it.open&&!opened){d.open=true;opened=true;d.dataset.ai='1'}(hist||box).appendChild(d)});
   const v=mk('div','hv','SNS文章收藏夾 V'+(window.SNS_VERSION||''));box.appendChild(v);capH()};
  /* V2.10.0：超過五則時，清單高度固定在「五則＋歷史公告按鈕」的高度（再受原本的螢幕高度上限限制），歷史公告展開後只在清單內捲動 */
- const capH=()=>{box.style.maxHeight='';const t=box.querySelector('.ahb');if(!t||!el.classList.contains('o'))return;const h=Math.ceil(t.getBoundingClientRect().bottom-box.getBoundingClientRect().top+box.scrollTop+parseFloat(getComputedStyle(box).paddingBottom||0)+(box.querySelector('.hv')?box.querySelector('.hv').getBoundingClientRect().height+8:0));box.style.maxHeight=h+'px'};addEventListener('resize',()=>{if(el.classList.contains('o')){const h=box.querySelector('.ahist');if(h&&!h.hidden)return;const s=box.scrollTop;capH();box.scrollTop=s}});
+ const capH=()=>{box.style.maxHeight='';const t=box.querySelector('.ahb');if(!t||!el.classList.contains('o'))return;const h=Math.ceil(t.getBoundingClientRect().bottom-box.getBoundingClientRect().top+box.scrollTop+parseFloat(getComputedStyle(box).paddingBottom||0)+(box.querySelector('.hv')?box.querySelector('.hv').getBoundingClientRect().height+8:0));box.style.maxHeight=h+'px'};addEventListener('resize',()=>{if(el.classList.contains('o')){const h=box.querySelector('.ahist');if((h&&!h.hidden)||userOpen())return;const s=box.scrollTop;capH();box.scrollTop=s}});
+ /* V2.10.3：點開公告內容（展開單則全文）時，同樣取消五則高度限制、改用與「使用說明」相同的上限；全部收起後恢復原本縮小高度。預設展開的那一則不算（維持原本開啟時的尺寸）；內部捲動不變 */
+ const userOpen=()=>[...box.querySelectorAll('details.hq[open]')].some(d=>!d.dataset.ai);
+ const fitH=()=>{const h=box.querySelector('.ahist');if((h&&!h.hidden)||userOpen())box.style.maxHeight='';else capH()};
+ box.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.classList||!d.classList.contains('hq'))return;if(!d.open)delete d.dataset.ai;if(!el.classList.contains('o'))return;const s=box.scrollTop;fitH();box.scrollTop=s},true);
  const banner=(text,retry)=>{const b=mk('div','hbn');b.appendChild(mk('span','',text));if(retry){const k=mk('button','','重試');k.type='button';k.onclick=()=>refresh();b.appendChild(k)}box.prepend(b)};
  async function load(){const r=await fetch('/api/announcements',{cache:'no-store',credentials:'same-origin'});let j={};try{j=await r.json()}catch(e){}if(!r.ok)throw new Error(j.error==='not_configured'?'not_configured':j.error==='sheet_missing'?'sheet_missing':'HTTP '+r.status);if(!Array.isArray(j.items))throw new Error('格式錯誤');return clean(j)}
  async function refresh(){const my=++seq;if(!mem){box.textContent='';box.appendChild(mk('div','aem','載入公告中…'))}
@@ -2040,7 +2055,7 @@ const CID='840119973043-eo9lkljcu3bduvu9gae1ggri6i0hr4c7.apps.googleusercontent.
 const SCOPE='openid profile email https://www.googleapis.com/auth/drive.file';
 const D='https://www.googleapis.com/drive/v3/',U='https://www.googleapis.com/upload/drive/v3/',SH='https://sheets.googleapis.com/v4/spreadsheets/';
 const FOLDER='application/vnd.google-apps.folder',SHEET='application/vnd.google-apps.spreadsheet';
-const GG=window.snsGoogle;window.SNS_VERSION='2.10.2';
+const GG=window.snsGoogle;window.SNS_VERSION='2.10.3';
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
