@@ -1,4 +1,43 @@
-# SNS文章收藏夾 V2.10.1 部署指南（**由你自行上傳 GitHub `main`，Vercel 自動部署 Production**）
+# SNS文章收藏夾 V2.10.2 部署指南（**等你驗收安裝包後再安排正式部署**）
+
+> **部署紀錄**：小克只完成開發、測試與安裝包。**沒有** push、**沒有**開分支、**沒有** Preview、**沒有**觸發 Vercel。沒有修改環境變數、Google Console、Service Account、管理試算表或 Apps Script。
+
+## 一、基準與回復版本
+
+| 項目 | 內容 |
+|---|---|
+| GitHub Repository | `jonxr23/littlemonkey805-sns-bookmark` |
+| 開發基準 | GitHub `main` commit `cc1441197dd9e341c7fcb0423abdcb7e760dcf9f`（V2.10.1 最終版） |
+| 回復版本 | V2.10.1 ＝ `cc14411`（再往前：V2.10.0 ＝ `1b778e5`） |
+| 正式網址 | https://littlemonkey805-sns-bookmark.vercel.app/（不變） |
+
+## 二、管理試算表／Apps Script：**免更新**
+
+`admin-setup/Code.gs` 和 V2.10.1 逐位元相同；API、OAuth、環境變數、Service Account、試算表欄位都沒有改。
+
+## 三、上傳步驟（驗收後；GitHub main → Vercel Production）
+
+1. Vercel → Deployments：確認目前 Production 是 `cc14411` / V2.10.1。
+2. 解壓縮 `sns-bookmark-v2.10.2-complete.zip`，把 `sns-bookmark-v2.10.2` 資料夾**裡面**所有檔案（含隱藏檔 `.vercelignore`）複製到 Git 專案根目錄覆蓋。
+   - 和 `main`（V2.10.1）比，網站檔案只有 `index.html`、`package.json` 有變；沒有新增或刪除網站檔案。
+   - 說明文件：`CHANGELOG.md`、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V2.10.1.md`（由原本的 `TEST_REPORT.md` 改名，**新檔要一起上傳**）、`admin-setup/ADMIN_SETUP.md`、`brand-assets/素材清單.md`。
+3. commit 到 `main`（建議訊息：`Release SNS Bookmark V2.10.2`），Vercel 會自動部署。
+4. 正式網址側邊欄最底部應顯示 `版本：v2.10.2 / 更新：2026-11-11 02:36`。
+
+## 四、回復
+
+- Vercel → Deployments → `cc14411` 那一筆 → **Promote to Production**（或 Instant Rollback），再在 GitHub Revert V2.10.2 的 commit。
+- V2.10.2 沒有改任何資料格式，回到 V2.10.1 不影響資料。
+
+## 五、更新時間的來源（沒有改）
+
+畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-11 02:36）。
+
+---
+
+# 附錄：V2.10.1 部署說明（保留參考）
+
+## V2.10.1 部署指南（**由你自行上傳 GitHub `main`，Vercel 自動部署 Production**）
 
 > **部署紀錄**：小克只完成開發、檢查、測試與安裝包。依 V2.10.1 指令，**沒有** push、**沒有**開分支、**沒有** Preview 或支線包、**沒有**觸發 Vercel。沒有修改環境變數、Google Console、Service Account、管理試算表或 Apps Script。
 
@@ -160,7 +199,7 @@ Vercel 專案狀態：小克沒有 Vercel 權限，**沒有確認** Production �
 
 # 附錄 B：V2.6.0 → V2.8.x 首次升級說明（保留參考）
 
-> 以下是 V2.8.1／V2.8.2 時從 V2.6.0 首次升級的完整步驟，保留給「管理試算表還沒升級」或「全新安裝」時參考；文中的版本號與 ZIP 名稱請換成 V2.10.1。
+> 以下是 V2.8.1／V2.8.2 時從 V2.6.0 首次升級的完整步驟，保留給「管理試算表還沒升級」或「全新安裝」時參考；文中的版本號與 ZIP 名稱請換成 V2.10.2。
 
 
 > 本包只交付檔案。小克沒有 commit、沒有 push GitHub、沒有部署 Vercel、沒有修改環境變數、Google Console、Service Account 或管理試算表。下面是你確認後要做的正式替換步驟。
@@ -303,7 +342,7 @@ V2.7.0、V2.8.0 沒有單獨上線，這一次是 **V2.6.0 → V2.8.2** 一次�
 
 ### 3. 部署
 
-1. 把 `sns-bookmark-v2.10.1` 資料夾裡的所有檔案（含 `.vercelignore`）放進 Git 專案根目錄。
+1. 把 `sns-bookmark-v2.10.2` 資料夾裡的所有檔案（含 `.vercelignore`）放進 Git 專案根目錄。
 2. 在 Vercel 設好四個環境變數。
 3. Push 或 Redeploy。
 4. 打開網站 → 按「登入 Google」。

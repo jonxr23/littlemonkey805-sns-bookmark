@@ -1,6 +1,6 @@
 {
   "name": "sns-bookmark",
-  "version": "2.10.1",
+  "version": "2.10.2",
   "private": true,
   "engines": {
     "node": ">=18"

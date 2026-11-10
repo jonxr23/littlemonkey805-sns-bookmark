@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2.10.1">
-<meta name="app-build" content="2026-11-11 01:09">
+<meta name="app-version" content="2.10.2">
+<meta name="app-build" content="2026-11-11 02:36">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -670,6 +670,33 @@ body.sorting,body.sorting *{cursor:grabbing!important;-webkit-user-select:none!i
  .tsw>.tl,.tsw>.tr{padding:calc(6px*var(--ui)) calc(5px*var(--ui))}
  .sdo{width:30px;height:30px}
  #sb .th2 #fa{width:30px;height:30px}
+}
+</style>
+<style id="v2102">
+/* ===== V2.10.2 ===== */
+/* 雲端同步／儲存提示：一般狀態（同步中、已同步、儲存中、已儲存、合併）沒有底色與外框，只有輕量文字＋小圖示；只有失敗是紅色醒目提示。位置、時機、顯示時間不變 */
+.syn{gap:calc(4px*var(--ui));padding:calc(2px*var(--ui)) calc(2px*var(--ui));border:0;border-radius:0;background:none;color:var(--tfg,var(--pfg,var(--fg)));font-weight:500}
+.syn.ok,.syn.ing{background:none;border:0;color:var(--tfg,var(--pfg,var(--fg)))}
+.syn .syi{width:calc(14px*var(--ui));height:calc(14px*var(--ui));flex:none;opacity:.75}
+.syn.ing .syi{animation:synSpin 1.1s linear infinite}
+@keyframes synSpin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.syn.ing .syi{animation:none}}
+.syn.err{padding:calc(3px*var(--ui)) calc(9px*var(--ui));border:1px solid color-mix(in srgb,var(--err,#c62828) 55%,transparent);border-radius:999px;background:color-mix(in srgb,var(--err,#c62828) 7%,var(--bg));color:var(--err,#c62828);font-weight:600}
+.syn.err .syi{opacity:1}
+/* 資料夾樹狀圖展開／收合三角形：SVG 畫布 20×20（實心三角形，展開時轉 90°＝原本的 ▾），點擊熱區、列高、縮排都不變；
+   三角形在熱區內往右移一點，縮短與 📁 之間的空白（不動資料夾圖示位置，所以各層對齊不變） */
+#sb .tn>span>.tri{--tx:calc(1px*var(--ui));width:calc(20px*var(--ui));height:calc(20px*var(--ui));flex:none;fill:currentColor;transform:translateX(var(--tx));transition:transform .15s ease}
+#sb .tn>span>.tri.o{transform:translateX(var(--tx)) rotate(90deg)}
+@media(max-width:900px){#sb .tn>span>.tri{--tx:calc(1.5px*var(--ui))}html[data-ui=l] #sb .tn>span>.tri,html[data-ui=xl] #sb .tn>span>.tri{--tx:0px}}
+@media (prefers-reduced-motion:reduce){#sb .tn>span>.tri{transition:none}}
+
+/* V2.10.2：手機版標題列（381–640px，與「使用說明」顯示文字的範圍相同）：公告顯示「喇叭圖示＋公告」；兩個入口字級、顏色、高度（32px）一致並垂直置中；「使用說明」圖示左移約半個字（7px）；兩個入口加起來的總寬度與 V2.10.1 相同，Logo、漢堡選單、頭像位置與換行行為不變。≤380px 維持兩者都只顯示圖示 */
+@media(max-width:640px) and (min-width:381px){
+ h1.brand #hlp,h1.brand #ann{box-sizing:border-box;height:calc(32px*var(--ui))!important;padding:0!important;gap:calc(3px*var(--ui))!important;font-size:calc(12.5px*var(--ui))!important;font-weight:500!important;line-height:1!important;align-items:center!important;vertical-align:middle!important;color:color-mix(in srgb,var(--tfg,var(--pfg,var(--fg))) 68%,transparent)!important}
+ h1.brand #hlp{margin:calc(-8px*var(--ui)) 0 calc(-8px*var(--ui)) calc(9px*var(--ui))!important}
+ h1.brand #ann{margin:calc(-8px*var(--ui)) 0 calc(-8px*var(--ui)) calc(8px*var(--ui))!important}
+ h1.brand #ann .ant{display:inline}
+ h1.brand #hlp:hover,h1.brand #ann:hover{color:var(--tfg,var(--pfg,var(--fg)))!important}
 }
 </style>
 </head>
@@ -1433,7 +1460,7 @@ let fq='';
 function sbTree(paths){if(!paths.length)return '<span style="color:var(--mut);font-size:calc(13px*var(--ui))">還沒有資料夾，按上面的「＋新增」建立第一個。</span>';const f=FS.filter(paths,fq);if(f&&!f.hit.size)return '<span class="fqe">找不到名稱包含「'+esc(fq.trim())+'」的資料夾</span>';
  const cnt=p=>posts.filter(x=>(x.cats||[]).some(c=>under(c,p))).length;
  const dOn=sortS.f.m==='custom'&&!f;
- return FS.rows(paths,f,p=>open.has(p)).map(r=>{const nmx=esc(r.p.split('/').pop());return '<div class="tn'+(r.anc?' anc':'')+(dOn?' dz':'')+'" data-fp="'+esc(r.p)+'" style="padding-left:'+r.depth*16+'px"><span'+(r.kids&&!f?' data-o="'+esc(r.p)+'" role="button" aria-expanded="'+r.open+'" aria-label="'+(r.open?'收合':'展開')+'「'+nmx+'」"':'')+'>'+(r.kids?(r.open?'▾':'▸'):'')+'</span><button class="chip '+(sel.c===r.p?'on':'')+'" data-c="'+esc(r.p)+'" title="'+esc(r.p.replace(/\//g,' → '))+'">📁 '+r.label+' <small style="opacity:.65">'+cnt(r.p)+'</small></button><button type="button" class="ed fmn" data-fm="'+esc(r.p)+'" aria-haspopup="menu" aria-expanded="false" title="編輯／刪除" aria-label="「'+nmx+'」的更多操作">⋮</button></div>'}).join('')}
+ return FS.rows(paths,f,p=>open.has(p)).map(r=>{const nmx=esc(r.p.split('/').pop());return '<div class="tn'+(r.anc?' anc':'')+(dOn?' dz':'')+'" data-fp="'+esc(r.p)+'" style="padding-left:'+r.depth*16+'px"><span'+(r.kids&&!f?' data-o="'+esc(r.p)+'" role="button" aria-expanded="'+r.open+'" aria-label="'+(r.open?'收合':'展開')+'「'+nmx+'」"':'')+'>'+(r.kids?'<svg class="tri'+(r.open?' o':'')+'" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M5.5 4 16 10 5.5 16z"/></svg>':'')+'</span><button class="chip '+(sel.c===r.p?'on':'')+'" data-c="'+esc(r.p)+'" title="'+esc(r.p.replace(/\//g,' → '))+'">📁 '+r.label+' <small style="opacity:.65">'+cnt(r.p)+'</small></button><button type="button" class="ed fmn" data-fm="'+esc(r.p)+'" aria-haspopup="menu" aria-expanded="false" title="編輯／刪除" aria-label="「'+nmx+'」的更多操作">⋮</button></div>'}).join('')}
 const drawSb=()=>{window.snsFpop&&snsFpop.close();$('#tl').innerHTML=sbTree(fOrd(fp()));srtDraw()};
 $('#fq').oninput=()=>{fq=$('#fq').value;drawSb()};
 $('#fqx').onclick=()=>{$('#fq').value='';fq='';drawSb();$('#fq').focus()};
@@ -1629,7 +1656,8 @@ window.snsSyn=(()=>{const el=document.createElement('span');el.id='syn';el.class
  /* 手機上 ⟳ 後面放不下時，提示換到下一行，並對齊在 ⟳ 正下方（不會跑到最左邊離按鈕很遠） */
  const fit=()=>{el.style.marginLeft='';if(el.hidden||!mq.matches)return;const rf=$('#rf'),row=el.parentElement;if(!rf||!row)return;const a=rf.getBoundingClientRect(),e=el.getBoundingClientRect();if(e.top<a.bottom-2)return;const r=row.getBoundingClientRect(),pl=parseFloat(getComputedStyle(row).paddingLeft)||0;el.style.marginLeft=Math.max(0,Math.min(a.left-r.left-pl,r.width-pl-e.width))+'px'};
  addEventListener('resize',()=>requestAnimationFrame(fit));
- let tm=0;const set=(t,kind,ms)=>{clearTimeout(tm);el.textContent=t||'';el.className='syn'+(kind?' '+kind:'');el.hidden=!t;el.title=t||'';fit();if(t&&ms)tm=setTimeout(()=>{if(el.textContent===t){el.textContent='';el.hidden=true;fit()}},ms)};
+ const IC={ing:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',ok:'<path d="m17 15-5.5 5.5L9 18"/><path d="M5 17.743A7 7 0 1 1 15.71 10h1.79a4.5 4.5 0 0 1 1.5 8.742"/>',err:'<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>'};
+ let tm=0;const set=(t,kind,ms)=>{clearTimeout(tm);el.textContent=t||'';if(t&&IC[kind])el.insertAdjacentHTML('afterbegin','<svg class="syi" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+IC[kind]+'</svg>');el.className='syn'+(kind?' '+kind:'');el.hidden=!t;el.title=t||'';fit();if(t&&ms)tm=setTimeout(()=>{if(el.textContent===t){el.textContent='';el.hidden=true;fit()}},ms)};
  const place2=()=>{place();fit()};mq.addEventListener?mq.addEventListener('change',fit):mq.addListener(fit);
  return{set,el,place:place2,fit}})();
 /* ===== V2.10.1：資料夾／分組排序（共用元件） =====
@@ -1983,7 +2011,7 @@ window.snsBatch=(()=>{const LS=$('#ls');let anchor=null,drag=null,td=null,lp=nul
  const clean=j=>(Array.isArray(j&&j.items)?j.items:[]).filter(x=>x&&typeof x.title==='string'&&x.title.trim()&&Number.isFinite(+x.pub)).map(x=>({id:String(x.id||''),cat:String(x.cat||'其他').slice(0,20),title:String(x.title).slice(0,200),summary:String(x.summary||'').slice(0,600),body:String(x.body||''),pub:+x.pub,pin:x.pin===true,new:x.new===true,open:x.open===true}));
  const mk=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e};
  const draw=L=>{box.textContent='';if(!L.length){box.appendChild(mk('div','aem','目前沒有公告～小猴還在想要說什麼🤔'));return}
-  let opened=false;const SL=sortL(L),MAX=5;let hist=null;SL.forEach((it,ix)=>{if(ix===MAX){const n=SL.length-MAX,t=mk('button','ahb');t.type='button';t.setAttribute('aria-expanded','false');const lab=o=>t.textContent=o?'⌃ 收起歷史公告':'⌄ 歷史公告（'+n+'）';lab(false);hist=mk('div','ahist');hist.hidden=true;t.onclick=()=>{const o=hist.hidden;hist.hidden=!o;t.setAttribute('aria-expanded',o?'true':'false');lab(o);if(!o)box.scrollTop=0};box.append(t,hist)}const d=mk('details','hq'),s=mk('summary'),h=mk('div','ahd'),tl=mk('div','atl'),me=mk('div','ame');d.dataset.aid=it.id;
+  let opened=false;const SL=sortL(L),MAX=5;let hist=null;SL.forEach((it,ix)=>{if(ix===MAX){const n=SL.length-MAX,t=mk('button','ahb');t.type='button';t.setAttribute('aria-expanded','false');const lab=o=>t.textContent=o?'⌃ 收起歷史公告':'⌄ 歷史公告（'+n+'）';lab(false);hist=mk('div','ahist');hist.hidden=true;t.onclick=()=>{const o=hist.hidden;hist.hidden=!o;t.setAttribute('aria-expanded',o?'true':'false');lab(o);/* V2.10.2：展開時取消五則高度限制，改用與「使用說明」相同的視窗高度上限；收起時恢復原高度 */if(o)box.style.maxHeight='';else{box.scrollTop=0;capH()}};box.append(t,hist)}const d=mk('details','hq'),s=mk('summary'),h=mk('div','ahd'),tl=mk('div','atl'),me=mk('div','ame');d.dataset.aid=it.id;
    if(it.pin){const p=mk('span','apin','📌');p.title='置頂';p.setAttribute('aria-label','置頂');tl.appendChild(p)}
    tl.appendChild(mk('span','att2',it.title));if(it.new)tl.appendChild(mk('span','anew','NEW'));
    me.append(mk('span','acat',it.cat),mk('span','atm',fmt(it.pub)));h.append(tl,me);if(it.summary)h.appendChild(mk('div','asm',it.summary));
@@ -1991,7 +2019,7 @@ window.snsBatch=(()=>{const LS=$('#ls');let anchor=null,drag=null,td=null,lp=nul
    if(it.open&&!opened){d.open=true;opened=true}(hist||box).appendChild(d)});
   const v=mk('div','hv','SNS文章收藏夾 V'+(window.SNS_VERSION||''));box.appendChild(v);capH()};
  /* V2.10.0：超過五則時，清單高度固定在「五則＋歷史公告按鈕」的高度（再受原本的螢幕高度上限限制），歷史公告展開後只在清單內捲動 */
- const capH=()=>{box.style.maxHeight='';const t=box.querySelector('.ahb');if(!t||!el.classList.contains('o'))return;const h=Math.ceil(t.getBoundingClientRect().bottom-box.getBoundingClientRect().top+box.scrollTop+parseFloat(getComputedStyle(box).paddingBottom||0)+(box.querySelector('.hv')?box.querySelector('.hv').getBoundingClientRect().height+8:0));box.style.maxHeight=h+'px'};addEventListener('resize',()=>{if(el.classList.contains('o')){const s=box.scrollTop;const h=box.querySelector('.ahist');const ex=h&&!h.hidden;if(ex)h.hidden=true;capH();if(ex)h.hidden=false;box.scrollTop=s}});
+ const capH=()=>{box.style.maxHeight='';const t=box.querySelector('.ahb');if(!t||!el.classList.contains('o'))return;const h=Math.ceil(t.getBoundingClientRect().bottom-box.getBoundingClientRect().top+box.scrollTop+parseFloat(getComputedStyle(box).paddingBottom||0)+(box.querySelector('.hv')?box.querySelector('.hv').getBoundingClientRect().height+8:0));box.style.maxHeight=h+'px'};addEventListener('resize',()=>{if(el.classList.contains('o')){const h=box.querySelector('.ahist');if(h&&!h.hidden)return;const s=box.scrollTop;capH();box.scrollTop=s}});
  const banner=(text,retry)=>{const b=mk('div','hbn');b.appendChild(mk('span','',text));if(retry){const k=mk('button','','重試');k.type='button';k.onclick=()=>refresh();b.appendChild(k)}box.prepend(b)};
  async function load(){const r=await fetch('/api/announcements',{cache:'no-store',credentials:'same-origin'});let j={};try{j=await r.json()}catch(e){}if(!r.ok)throw new Error(j.error==='not_configured'?'not_configured':j.error==='sheet_missing'?'sheet_missing':'HTTP '+r.status);if(!Array.isArray(j.items))throw new Error('格式錯誤');return clean(j)}
  async function refresh(){const my=++seq;if(!mem){box.textContent='';box.appendChild(mk('div','aem','載入公告中…'))}
@@ -2012,7 +2040,7 @@ const CID='840119973043-eo9lkljcu3bduvu9gae1ggri6i0hr4c7.apps.googleusercontent.
 const SCOPE='openid profile email https://www.googleapis.com/auth/drive.file';
 const D='https://www.googleapis.com/drive/v3/',U='https://www.googleapis.com/upload/drive/v3/',SH='https://sheets.googleapis.com/v4/spreadsheets/';
 const FOLDER='application/vnd.google-apps.folder',SHEET='application/vnd.google-apps.spreadsheet';
-const GG=window.snsGoogle;window.SNS_VERSION='2.10.1';
+const GG=window.snsGoogle;window.SNS_VERSION='2.10.2';
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
