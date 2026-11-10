@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2.10.3">
-<meta name="app-build" content="2026-11-11 04:13">
+<meta name="app-version" content="2.10.4">
+<meta name="app-build" content="2026-11-11 04:43">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -712,6 +712,15 @@ h1.brand #ann svg path{stroke-width:.96}
 /* V2.10.3：深色、簡約主題的浮動「＋新增」「↑Top」改白字（依猴猴指定；背景不變） */
 :root[data-theme=dark] #qfab .qf,:root[data-theme=clean] #qfab .qf{color:#fff}
 </style>
+<style id="v2104">
+/* V2.10.4：重複網址提示（連結欄下方；淡黃底，文字用主題文字色） */
+.udup{display:flex;flex-wrap:wrap;align-items:center;gap:calc(6px*var(--ui)) calc(8px*var(--ui));margin-top:0;padding:calc(7px*var(--ui)) calc(10px*var(--ui));border-radius:calc(10px*var(--ui));border:1px solid color-mix(in srgb,var(--sel,#FFD46B) 70%,var(--bd));background:color-mix(in srgb,var(--sel,#FFD46B) 22%,var(--card));color:var(--fg);font-size:calc(12.5px*var(--ui));line-height:1.5}
+.udup[hidden]{display:none}
+/* 上方的平台提示（#pm）空白時，抵掉它多佔的一段表單間距，讓警告框上下都和其他欄位一樣是 8px×介面大小 */
+#pm:empty+.udup{margin-top:calc(-8px*var(--ui))}
+.udup span{flex:1 1 calc(180px*var(--ui));min-width:0;overflow-wrap:anywhere}
+.udup button{flex:none;padding:calc(4px*var(--ui)) calc(10px*var(--ui));font-size:calc(12.5px*var(--ui));border-radius:calc(999px*var(--ui))}
+</style>
 </head>
 <body>
 <div id="iqw" style="display:none;position:sticky;top:0;z-index:29;background:#ffe9c7;color:#8a4b00;font-weight:600;font-size:calc(13px*var(--ui));text-align:center;padding:calc(6px*var(--ui)) calc(12px*var(--ui));border-bottom:1px solid #e6c27a"></div>
@@ -725,7 +734,7 @@ h1.brand #ann svg path{stroke-width:.96}
 </div>
 <div id="dlg"><div class="box"><div class="row" style="justify-content:space-between;align-items:center"><b>收藏</b><button type="button" id="dx" title="關閉">✕</button></div>
 <label>連結 <span id="pl"></span></label>
-<div class="bar"><input id="u" type="url" placeholder="https://…"><button id="ps">貼上</button></div><div id="pm" style="font-size:calc(12px*var(--ui));color:var(--mut)"></div><div id="pqw" class="bar" style="display:none;flex-wrap:wrap;align-items:center"><span id="pqt" style="font-size:calc(12px*var(--ui));flex-basis:100%;overflow-wrap:anywhere"></span><select id="pq"></select><input id="pqn" placeholder="新平台名稱" style="display:none"><button type="button" id="pqb" style="display:none">建立</button></div><div class="g2 g2n"><div><label>備註（其實是標題😂）</label><input id="n"></div><div><label>發文帳號 <span id="an"></span></label><div class="ach">使用手機分享時，無法自動取得發文帳號，請自行填寫（選填）</div><input id="ac" placeholder="例如 @username"></div></div>
+<div class="bar"><input id="u" type="url" placeholder="https://…"><button id="ps">貼上</button></div><div id="pm" style="font-size:calc(12px*var(--ui));color:var(--mut)"></div><div id="udup" class="udup" role="status" hidden></div><div id="pqw" class="bar" style="display:none;flex-wrap:wrap;align-items:center"><span id="pqt" style="font-size:calc(12px*var(--ui));flex-basis:100%;overflow-wrap:anywhere"></span><select id="pq"></select><input id="pqn" placeholder="新平台名稱" style="display:none"><button type="button" id="pqb" style="display:none">建立</button></div><div class="g2 g2n"><div><label>備註（其實是標題😂）</label><input id="n"></div><div><label>發文帳號 <span id="an"></span></label><div class="ach">使用手機分享時，無法自動取得發文帳號，請自行填寫（選填）</div><input id="ac" placeholder="例如 @username"></div></div>
 
 <label>分類（可多選）</label><input id="c" type="hidden"><div class="cbar"><div id="csel" class="csel"></div><button type="button" id="cmb">📁 選擇資料夾</button></div><div id="rcf" class="sg"></div><div class="xw fqw"><input id="csq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋資料夾（例如 Be）" aria-label="搜尋分類資料夾"><button type="button" class="xc" id="csqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="cs"></div><div id="rn2" style="display:none"><div class="bar"><input id="rv2" placeholder="新名稱"><button type="button" id="rs2" class="pri">儲存</button><button type="button" id="rx2">取消</button></div><div id="rh2" style="font-size:calc(12px*var(--ui));color:var(--mut);margin-top:calc(4px*var(--ui))"></div></div><div id="oldmk" hidden><input id="dp" type="hidden"><div id="dpw" class="cas"></div><div class="bar"><input id="dn" placeholder="新資料夾名稱"><button type="button" id="db">＋建立並選取</button></div></div>
 <label>標籤（打逗號或按 Enter 就會變成標籤塊，點 × 刪除）</label><input id="g" type="hidden"><div id="tgw" class="tw"><div id="tgc"></div><input id="gi" placeholder="輸入標籤…"></div><div id="tgs2"></div>
@@ -1182,7 +1191,7 @@ document.addEventListener('click',e=>{
 });
 async function paste(manual){const m=$('#pm');try{const t=(await Promise.race([navigator.clipboard.readText(),new Promise((_,r)=>setTimeout(r,2500))])).trim();if(/^https?:\/\//.test(t)){$('#u').value=t;$('#u').oninput();if(manual)m.textContent=''}else if(manual){m.textContent='剪貼簿裡沒有連結，請先複製貼文連結';$('#u').focus()}}catch(e){if(manual){m.textContent='這裡讀不到剪貼簿：請點一下連結欄，手機長按選「貼上」，電腦按 Ctrl+V';$('#u').focus()}}}
 $('#ps').onclick=paste;
-$('#u').oninput=()=>{const v=$('#u').value;$('#pl').textContent=v?'→ '+plat(v):'';const i=v?inferDate(v):'';if(i&&(!$('#pd').value||pdAuto)){$('#pd').value=i;pdAuto=true;$('#pn').textContent='（自動推算，可修改）'}else if(!i&&pdAuto){$('#pd').value='';pdAuto=false;$('#pn').textContent=''}};$('#pd').oninput=()=>{pdAuto=false;$('#pn').textContent=''};
+$('#u').oninput=()=>{const v=$('#u').value;$('#pl').textContent=v?'→ '+plat(v):'';const i=v?inferDate(v):'';if(i&&(!$('#pd').value||pdAuto)){$('#pd').value=i;pdAuto=true;$('#pn').textContent='（自動推算，可修改）'}else if(!i&&pdAuto){$('#pd').value='';pdAuto=false;$('#pn').textContent=''}dupChk()};$('#pd').oninput=()=>{pdAuto=false;$('#pn').textContent=''};
 function drawShots(){window.gHyd&&setTimeout(gHyd,0);$('#sh').innerHTML=shots.map((id,i)=>`<div><a data-gid="${id}" href="#" target="_blank" rel="noopener"><img data-gid="${id}" alt=""></a><b data-x="${i}">×</b></div>`).join('')+xims.map((u,i)=>`<div class="xsh"><a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${XIMG.img(u)}</a><b data-xx="${i}" title="移除這張外部圖片（只移除引用，不影響 Google 雲端硬碟）">×</b><i>🔗 外部</i></div>`).join('')}
 $('#sh').onclick=e=>{const x=e.target.dataset.x,xx=e.target.dataset.xx;if(x!==undefined){shots.splice(+x,1);drawShots()}else if(xx!==undefined){xims.splice(+xx,1);drawShots()}};
 let origShots=[],sessUp=[];
@@ -1193,6 +1202,20 @@ function openDlg(id){
  $('#u').oninput();$('#dlg').classList.add('o');$('#dlg').scrollTop=0;requestAnimationFrame(()=>{$('#dlg').scrollTop=0});if(!cur)paste();
 }
 $('#add').onclick=()=>openDlg();
+/* V2.10.4：重複網址偵測。比對前把網址整理成同一種寫法（去掉分享追蹤參數、www./m.、結尾斜線；twitter.com＝x.com、threads.com＝threads.net；X／IG／Threads／YouTube 依貼文代碼比對）。只讀已載入的收藏，不改資料 */
+const nuU=u=>{try{const x=new URL(String(u||'').trim());let h=x.hostname.toLowerCase().replace(/^(www|m|mobile)\./,''),m;if(h==='twitter.com')h='x.com';if(h==='threads.com')h='threads.net';const p=x.pathname.replace(/\/+$/,'');
+ if(h==='x.com'&&(m=p.match(/\/status(?:es)?\/(\d+)/)))return 'x:'+m[1];
+ if(h==='instagram.com'&&(m=p.match(/\/(?:p|reels?|tv)\/([\w-]+)/)))return 'ig:'+m[1];
+ if(h==='threads.net'&&(m=p.match(/\/post\/([\w-]+)/)))return 'th:'+m[1];
+ if(h==='youtu.be'&&p.length>1)return 'yt:'+p.slice(1).split('/')[0];
+ if(h==='youtube.com'){const v=x.searchParams.get('v');if(v)return 'yt:'+v;if(m=p.match(/\/(?:shorts|live|embed)\/([\w-]+)/))return 'yt:'+m[1]}
+ const q=[...x.searchParams].filter(([k])=>!/^(utm_\w*|igsh|igshid|xmt|fbclid|gclid|mibextid|rdid|share_id|ref_src|ref_url)$/i.test(k)).sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:0);
+ return h+p+(q.length?'?'+q.map(a=>a.join('=')).join('&'):'')}catch(e){return String(u||'').trim().toLowerCase()}};
+let dupShown=false;
+function dupFind(){const v=$('#u').value.trim();if(!/^https?:\/\//.test(v))return[];const k=nuU(v);if(cur&&cur.url&&nuU(cur.url)===k)return[];return posts.filter(p=>p&&p.url&&(!cur||p.id!==cur.id)&&nuU(p.url)===k).sort((a,b)=>(b.t||0)-(a.t||0))}
+function dupChk(){const el=$('#udup');if(!el)return;const L=dupFind();dupShown=L.length>0;el.textContent='';if(!L.length){el.hidden=true;return}const p=L[0],d=new Date(p.t||0),s=document.createElement('span'),b=document.createElement('button');
+ const tt=String(p.note||'').trim();s.textContent='⚠️ 溫馨提醒：這個網址已於 '+d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' 收藏過囉'+(tt?'，原收藏標題為「'+(tt.length>30?tt.slice(0,30)+'…':tt)+'」':'')+'。仍可再次收藏。';
+ b.type='button';b.textContent='查看';b.setAttribute('aria-label','查看已收藏的那筆');b.onclick=()=>{window.pvOpen&&pvOpen(p.id)};el.append(s,b);el.hidden=false}
 $('#cx').onclick=()=>{$('#dlg').classList.remove('o');IMGF.cancel();if(window.gImgs&&sessUp.length)gImgs.abandon(sessUp.splice(0))};
 const comp=(f,mx)=>new Promise(r=>{const im=new Image();im.onload=async()=>{const k=Math.min(1,(mx||1000)/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);let q=.75,b=await new Promise(z=>c.toBlob(z,'image/jpeg',q));while(b&&b.size>4e5&&q>.5){q-=.1;b=await new Promise(z=>c.toBlob(z,'image/jpeg',q))}r(b||f)};im.onerror=()=>r(f);im.src=URL.createObjectURL(f)});
 $('#f').onchange=async e=>{
@@ -1202,6 +1225,8 @@ $('#f').onchange=async e=>{
 };
 $('#sv').onclick=async()=>{
  const url=$('#u').value.trim();if(!/^https?:\/\//.test(url)){$('#msg').textContent='請貼上 http 或 https 開頭的連結';return}
+ /* V2.10.4：儲存時再檢查一次重複網址；還沒顯示過提示（例如雲端資料晚一步載入）就先提示，再按一次儲存仍會新增 */
+ if(dupFind().length&&!dupShown){dupChk();$('#msg').textContent='這個網址已經收藏過；確定要再存一筆，請再按一次儲存';return}
  const id=cur?cur.id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
  const o={...(cur&&window.gStore&&gStore()?(gStore().get(cur.id)||{}):{}),url,platform:plat(url),note:$('#n').value.trim(),text:$('#t').value.trim(),cats:list($('#c').value).map(c=>c.replace(/\s*(→|＞|>|\/)\s*/g,'/')),tags:(addTg(),[...tgs]),due:$('#d').value,pub:$('#pd').value,noRev:$('#nr').checked,acct:$('#ac').value.trim(),shots,read:cur?!!cur.read:false,t:cur?cur.t:Date.now()};if(xims.length)o.ximgs=[...xims];else delete o.ximgs;
  if(!col){$('#msg').textContent=$('#st').textContent||'請先登入 Google，並等雲端同步完成';return}const isNew=!cur;try{await col.doc(id).set(o);await window.gSync();window.snsAct&&snsAct(isNew?'add':'edit',true)}catch(x){$('#msg').textContent='儲存失敗：'+(x.message||x.code||'')+'（圖片沒有被刪除，你的修改也還在，可再按一次儲存）';return}
@@ -2059,7 +2084,7 @@ const CID='840119973043-eo9lkljcu3bduvu9gae1ggri6i0hr4c7.apps.googleusercontent.
 const SCOPE='openid profile email https://www.googleapis.com/auth/drive.file';
 const D='https://www.googleapis.com/drive/v3/',U='https://www.googleapis.com/upload/drive/v3/',SH='https://sheets.googleapis.com/v4/spreadsheets/';
 const FOLDER='application/vnd.google-apps.folder',SHEET='application/vnd.google-apps.spreadsheet';
-const GG=window.snsGoogle;window.SNS_VERSION='2.10.3';
+const GG=window.snsGoogle;window.SNS_VERSION='2.10.4';
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
