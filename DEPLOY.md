@@ -23,7 +23,7 @@
    - 說明文件：`CHANGELOG.md`、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V2.10.0.md`（由原本的 `TEST_REPORT.md` 改名）、`admin-setup/ADMIN_SETUP.md`、`brand-assets/素材清單.md`。
    - 如果是用 GitHub 網頁上傳：`TEST_REPORT-V2.10.0.md` 是新檔，`TEST_REPORT.md` 會被新內容覆蓋，兩個都要上傳。
 3. commit 到 `main`（建議訊息：`Release SNS Bookmark V2.10.1`）。Vercel 會自動部署 Production。
-4. Vercel 最新一筆 **Ready**＋**Production** 後，打開正式網址，側邊欄最底部應顯示 `版本：v2.10.1 / 更新：2026-11-11 00:10`。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
+4. Vercel 最新一筆 **Ready**＋**Production** 後，打開正式網址，側邊欄最底部應顯示 `版本：v2.10.1 / 更新：2026-11-11 01:09`。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
 
 ### 部署紀錄（上線後請填）
 
@@ -32,7 +32,7 @@
 | 部署前 Production | （應為 1b778e5 / V2.10.0） |
 | V2.10.1 `main` commit | （填） |
 | Vercel Production 狀態 | （Ready／Error） |
-| 正式網址顯示版本 | （應為 v2.10.1 / 更新：2026-11-11 00:10） |
+| 正式網址顯示版本 | （應為 v2.10.1 / 更新：2026-11-11 01:09） |
 
 ## 四、回復
 
@@ -41,7 +41,7 @@
 
 ## 五、更新時間的來源（沒有改）
 
-畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`，是小克打包時寫入的台北時間（2026-11-11 00:10），不是 Vercel 建置時間。
+畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`，是小克打包時寫入的台北時間（2026-11-11 01:09），不是 Vercel 建置時間。
 
 ---
 
