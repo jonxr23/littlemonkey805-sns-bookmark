@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="app-version" content="2.10.3">
-<meta name="app-build" content="2026-11-11 04:07">
+<meta name="app-build" content="2026-11-11 04:13">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -707,8 +707,8 @@ h1.brand #ann svg{overflow:visible;transform:scale(1.2);transform-origin:87.5% 5
 h1.brand #ann svg path{stroke-width:.96}
 /* V2.10.3：浮動按鈕三顆對齊同一條垂直中心線（＋新增、↑Top 寬 66、⋯ 寬 64，各往左 1px 置中；原本往右偏 16px）。垂直順序、間距、尺寸、背景色不變 */
 #qfab .qf{left:calc(-1px*var(--ui))}
-/* V2.10.3：收藏視窗「備註」「發文帳號」在所有寬度都上下排列（同手機版），兩者之間加 14px×介面大小 的間距 */
-.g2.g2n{grid-template-columns:1fr;row-gap:calc(14px*var(--ui))}
+/* V2.10.3：收藏視窗「備註」「發文帳號」在所有寬度都上下排列（同手機版），兩者之間加 7px×介面大小 的小間距（字的上緣約 8px，與日期欄位的「標題→輸入框」間距相當） */
+.g2.g2n{grid-template-columns:1fr;row-gap:calc(7px*var(--ui))}
 /* V2.10.3：深色、簡約主題的浮動「＋新增」「↑Top」改白字（依猴猴指定；背景不變） */
 :root[data-theme=dark] #qfab .qf,:root[data-theme=clean] #qfab .qf{color:#fff}
 </style>
