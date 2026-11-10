@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2.10.0">
-<meta name="app-build" content="2026-11-10 20:53">
+<meta name="app-version" content="2.10.1">
+<meta name="app-build" content="2026-11-11 00:10">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -458,11 +458,11 @@ body{height:100%;margin:0;display:flex;flex-direction:column;overflow:hidden}
     ① 主畫面最上方品牌列（☰、Logo、使用說明、公告、頭像）與 ② 側邊抽屜最上方品牌標題列，在任何介面大小都維持原本尺寸（--ui 固定為 1），而且永遠固定。
     ③ 特大 150% 時，只把抽屜品牌標題列「以下」改成一整塊自然捲動（不再分區、不再面板內捲動）；標題列本身不動。小／中／大維持分區固定與面板內捲動。 */
  header>div:first-child,#gbox,#sbh{--ui:1;font-size:15px}
- html[data-ui=xl] #sb{padding-top:0;overflow-y:auto;overscroll-behavior:contain}
- html[data-ui=xl] #sb>#sbh{position:sticky;top:0;z-index:2;background:var(--bg);padding-top:calc(16px + env(safe-area-inset-top,0px));margin-bottom:10px}
- html[data-ui=xl] #sb>#sbp{flex:none;min-height:0}
- html[data-ui=xl] #sbp>#tree,html[data-ui=xl] #sbp>#sgl{flex:none}
- html[data-ui=xl] #sb #tl,html[data-ui=xl] #sb #sgll{flex:none;overflow:visible;max-height:none}
+ html[data-ui=l] #sb,html[data-ui=xl] #sb{padding-top:0;overflow-y:auto;overscroll-behavior:contain}
+ html[data-ui=l] #sb>#sbh,html[data-ui=xl] #sb>#sbh{position:sticky;top:0;z-index:2;background:var(--bg);padding-top:calc(16px + env(safe-area-inset-top,0px));margin-bottom:10px}
+ html[data-ui=l] #sb>#sbp,html[data-ui=xl] #sb>#sbp{flex:none;min-height:0}
+ html[data-ui=l] #sbp>#tree,html[data-ui=xl] #sbp>#tree,html[data-ui=l] #sbp>#sgl,html[data-ui=xl] #sbp>#sgl{flex:none}
+ html[data-ui=l] #sb #tl,html[data-ui=xl] #sb #tl,html[data-ui=l] #sb #sgll,html[data-ui=xl] #sb #sgll{flex:none;overflow:visible;max-height:none}
  /* 大／特大尺寸的手機側邊抽屜：抽屜可以更寬（最多 94% 螢幕寬），資料夾列的展開／編輯／刪除按鈕維持原本的觸控大小、不再跟著放大，
     把空間留給資料夾名稱，避免名稱被擠成一個字一行（「中」不受影響） */
  html[data-ui=l] #sb,html[data-ui=xl] #sb{width:min(94vw,calc(320px*var(--ui)))}
@@ -488,26 +488,11 @@ body{height:100%;margin:0;display:flex;flex-direction:column;overflow:hidden}
 <style id="v2100">
 /* ===== V2.10.0 ===== */
 /* 排序切換（A→Z／自訂排序）與拖曳把手 */
-.srt{display:flex;align-items:center;flex-wrap:wrap;gap:calc(4px*var(--ui)) calc(8px*var(--ui));margin:0 0 calc(8px*var(--ui))}
-.srt .seg{display:inline-flex;border:1px solid var(--bd);border-radius:999px;overflow:hidden;background:var(--card)}
-.srt .seg button{border:0;border-radius:0;background:transparent;color:var(--mut);padding:calc(4px*var(--ui)) calc(10px*var(--ui));font-size:calc(12px*var(--ui));font-weight:600;line-height:1.4;min-height:0}
-.srt .seg button+button{border-left:1px solid var(--bd)}
-.srt .seg button.on{background:color-mix(in srgb,var(--acc) 22%,var(--card));color:var(--acc-ink)}
-.srth{font-size:calc(11.5px*var(--ui));color:var(--mut)}
-.dh{flex:none;display:inline-flex;align-items:center;justify-content:center;width:calc(16px*var(--ui));margin-right:calc(-2px*var(--ui));align-self:stretch;font-style:normal;font-size:calc(15px*var(--ui));color:var(--mut);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;border-radius:calc(6px*var(--ui))}
-.dh:hover{background:var(--bd);color:var(--fg)}
-.dh0{cursor:default;visibility:hidden}
-/* 自訂排序時多了把手，把展開箭頭與名稱左內距收窄一點，名稱寬度和 A→Z 時接近 */
-#sb #tl .tn>.dh+span{width:calc(18px*var(--ui))}
-#sb #tl .tn>.dh~.chip{padding-left:calc(4px*var(--ui));padding-right:calc(6px*var(--ui))}
-@media(max-width:900px){#sb #tl .tn>.dh+span{width:calc(16px*var(--ui))}#sb #tl .tn>.dh~.chip{padding-left:calc(6px*var(--ui));padding-right:calc(8px*var(--ui))}}
 #sgll .sgr{display:flex;align-items:center;gap:calc(2px*var(--ui))}
 #sgll .sgr .chip{flex:1 1 auto;min-width:0}
 body.sorting,body.sorting *{cursor:grabbing!important;user-select:none!important;-webkit-user-select:none!important}
-.dragging{opacity:.45}
 .drop-b{box-shadow:inset 0 calc(3px*var(--ui)) 0 var(--acc)}
 .drop-a{box-shadow:inset 0 calc(-3px*var(--ui)) 0 var(--acc)}
-@media(max-width:900px){.dh{width:calc(26px*var(--ui));margin-right:calc(-4px*var(--ui));font-size:calc(18px*var(--ui))}html[data-ui=l] #sb .dh,html[data-ui=xl] #sb .dh{width:30px;margin-right:-6px;font-size:24px}html[data-ui=l] #sb #tl .tn>.dh+span,html[data-ui=xl] #sb #tl .tn>.dh+span{width:8px}.srt .seg button{padding:calc(7px*var(--ui)) calc(12px*var(--ui));font-size:calc(13px*var(--ui))}}
 /* 公告：歷史公告入口；標題兩段字級一致（前段粗體、括號內維持一般字重） */
 #annt .ats{font-size:calc(19px*var(--ui))}
 #annc .ahb{display:block;width:100%;margin:calc(10px*var(--ui)) 0 0;padding:calc(8px*var(--ui)) calc(12px*var(--ui));border:1px dashed var(--bd);border-radius:var(--r);background:transparent;color:var(--mut);font-size:calc(13px*var(--ui));font-weight:600;text-align:center}
@@ -541,14 +526,118 @@ body.sorting,body.sorting *{cursor:grabbing!important;user-select:none!important
  .bar.tb>#bmb,.bar.tb>#qb,.bar.tb>#add{padding-left:calc(4px*var(--ui));padding-right:calc(4px*var(--ui))}
  .bar.tb>#sdp{padding-left:calc(4px*var(--ui));padding-right:calc(2px*var(--ui))}
 }
-/* 電腦版「特大」：第一排（品牌、使用說明、公告、頭像、主題、檢視、設定、🎨、備份、⟳）維持 100%；側邊欄改成單一捲動區 */
+/* 電腦版「大」「特大」（V2.10.1 起「大」與「特大」相同）：第一排（品牌、使用說明、公告、頭像、主題、檢視、設定、🎨、備份、⟳）維持 100%；側邊欄改成單一捲動區 */
 @media(min-width:901px){
- html[data-ui=xl] header{--ui:1;font-size:15px}
- html[data-ui=xl] #sb{overflow-y:auto;overscroll-behavior:contain}
- html[data-ui=xl] #sb>#sbp{flex:none;min-height:0}
- html[data-ui=xl] #sbp>#tree,html[data-ui=xl] #sbp>#sgl{flex:none}
- html[data-ui=xl] #sb #tl,html[data-ui=xl] #sb #sgll{flex:none;overflow:visible;max-height:none}
+ html[data-ui=l] header,html[data-ui=xl] header{--ui:1;font-size:15px}
+ html[data-ui=l] #sb,html[data-ui=xl] #sb{overflow-y:auto;overscroll-behavior:contain}
+ html[data-ui=l] #sb>#sbp,html[data-ui=xl] #sb>#sbp{flex:none;min-height:0}
+ html[data-ui=l] #sbp>#tree,html[data-ui=xl] #sbp>#tree,html[data-ui=l] #sbp>#sgl,html[data-ui=xl] #sbp>#sgl{flex:none}
+ html[data-ui=l] #sb #tl,html[data-ui=xl] #sb #tl,html[data-ui=l] #sb #sgll,html[data-ui=xl] #sb #sgll{flex:none;overflow:visible;max-height:none}
 }
+</style>
+<style id="v2101">
+/* ===== V2.10.1 ===== */
+/* 標題列：標題靠左，右側依序「調整順序圖示 → A→Z／自訂開關 →（資料夾才有）＋新增」；放不下時整組換到下一行靠右 */
+#sb .th2{flex-wrap:wrap;gap:calc(4px*var(--ui));margin-bottom:calc(6px*var(--ui))}
+#sb .th2>b{margin-right:auto;white-space:nowrap}
+.srtc{display:inline-flex;align-items:center;gap:calc(4px*var(--ui));flex:none;margin-left:auto}
+.thr{display:inline-flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:calc(4px*var(--ui));flex:0 1 auto;max-width:100%;margin-left:auto}
+.thr>.srtc{margin-left:0}
+.srtc:empty{display:none}
+.sdo{display:inline-flex;align-items:center;justify-content:center;width:calc(28px*var(--ui));height:calc(28px*var(--ui));padding:0;border:1px solid var(--bd);border-radius:50%;background:var(--card);color:var(--acc-ink);flex:none;min-height:0;line-height:1}
+.sdo[hidden]{display:none}
+.sdo:hover{background:color-mix(in srgb,var(--acc) 12%,var(--card))}
+.sdo svg{width:calc(15px*var(--ui));height:calc(15px*var(--ui))}
+/* A→Z／自訂 撥動開關：所有顏色都取自目前主題（含自訂顏色）。選中區塊＝主題強調色，文字＝依實際底色挑對比夠的文字色 */
+.tsw{position:relative;display:inline-grid;grid-template-columns:1fr 1fr;align-items:stretch;flex:none;padding:2px;margin:0;border:1px solid var(--bd);border-radius:999px;background:color-mix(in srgb,var(--fg) 6%,var(--card));color:var(--mut);font-size:calc(12px*var(--ui));font-weight:600;line-height:1.2;min-height:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tsw>.tl,.tsw>.tr{position:relative;z-index:1;padding:calc(4px*var(--ui)) calc(9px*var(--ui));text-align:center;white-space:nowrap;color:var(--mut);transition:color .22s ease}
+.tsw>.tk{position:absolute;z-index:0;top:2px;bottom:2px;left:2px;width:calc(50% - 2px);border-radius:999px;background:var(--acc);box-shadow:0 1px 2px rgba(0,0,0,.14);transition:transform .22s cubic-bezier(.4,0,.2,1)}
+.tsw.r>.tk{transform:translateX(100%)}
+.tsw:not(.r)>.tl,.tsw.r>.tr{color:var(--acc-on,var(--on))}
+.tsw:hover{border-color:color-mix(in srgb,var(--acc) 45%,var(--bd))}
+.tsw:focus-visible,.sdo:focus-visible,.fmn:focus-visible,.smv:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.tsw>.tk,.tsw>.tl,.tsw>.tr{transition:none}}
+/* 一般清單：自訂排序時整列可拖曳（電腦按住後移動、手機長按），平常沒有把手；拖曳中才顯示 ⠿ */
+#sb .dz{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+body.sorting,body.sorting *{cursor:grabbing!important;-webkit-user-select:none!important;user-select:none!important}
+.dragging{opacity:.75;background:color-mix(in srgb,var(--acc) 12%,var(--card));border-radius:calc(8px*var(--ui))}
+.drop-b{box-shadow:inset 0 calc(3px*var(--ui)) 0 var(--acc)}
+.drop-a{box-shadow:inset 0 calc(-3px*var(--ui)) 0 var(--acc)}
+#tl .tn.dragging>span{position:relative;color:transparent}
+#tl .tn.dragging>span::after{content:'⠿';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--acc-ink);font-size:calc(17px*var(--ui))}
+#sgll .sgr{position:relative;display:flex;align-items:center}
+#sgll .sgr .chip{flex:1 1 auto;min-width:0}
+#sgll .sgr.dragging::before,.srr.dragging::before{content:'⠿';position:absolute;left:calc(2px*var(--ui));top:0;bottom:0;display:flex;align-items:center;color:var(--acc-ink);font-size:calc(15px*var(--ui));z-index:1}
+/* 資料夾列：⋮ 取代 ✎／🗑，空間還給名稱；展開箭頭與 📁 距離縮短；上下留白收斂 */
+#sb .tn{gap:0;margin:calc(1px*var(--ui)) 0}
+#sb .tn>span{position:relative;z-index:1;width:calc(24px*var(--ui));height:calc(28px*var(--ui));margin-right:calc(-2px*var(--ui))}
+#sb .tn>span:not([data-o]){pointer-events:none}
+#sb .tn .chip{padding:calc(5px*var(--ui)) calc(8px*var(--ui)) calc(5px*var(--ui)) calc(6px*var(--ui))}
+#sb .tn .fmn{flex:none;align-self:stretch;display:inline-flex;align-items:center;justify-content:center;min-width:calc(26px*var(--ui));padding:0 calc(4px*var(--ui));font-size:calc(17px*var(--ui));font-weight:700;line-height:1;border-radius:calc(8px*var(--ui))}
+#sb .tn .fmn:hover,#sb .tn .fmn[aria-expanded=true]{background:var(--bd);color:var(--fg)}
+#sb #chips{padding-bottom:calc(8px*var(--ui))}
+#sb .sbq{margin-bottom:calc(6px*var(--ui))}
+#sb .fqw{margin-bottom:calc(6px*var(--ui))}
+#sb #sgll{gap:calc(1px*var(--ui))}
+#sb #sgll .chip{padding:calc(6px*var(--ui)) calc(10px*var(--ui))}
+@media(max-width:900px){
+ #sb .tn{margin:calc(1px*var(--ui)) 0}
+ /* 展開／收合：熱區 40px（和名稱前方的留白重疊，不擠壓名稱）；箭頭本身維持小巧 */
+ #sb .tn>span{width:calc(40px*var(--ui));height:calc(40px*var(--ui));margin-right:calc(-12px*var(--ui));font-size:calc(15px*var(--ui))}
+ #sb .tn .chip{padding:calc(9px*var(--ui)) calc(6px*var(--ui)) calc(9px*var(--ui)) calc(12px*var(--ui))}
+ #sb .tn .fmn{min-width:calc(36px*var(--ui));padding:0 calc(6px*var(--ui));font-size:calc(19px*var(--ui))}
+ #sb .th2 .chip{padding:calc(7px*var(--ui)) calc(10px*var(--ui))}
+ #sb #sgll .chip{padding:calc(10px*var(--ui)) calc(12px*var(--ui))}
+ .sdo{width:calc(32px*var(--ui));height:calc(32px*var(--ui))}
+ .tsw{font-size:calc(13px*var(--ui))}
+ .tsw>.tl,.tsw>.tr{padding:calc(6px*var(--ui)) calc(8px*var(--ui))}
+ html[data-ui=l] #sb .tn>span,html[data-ui=xl] #sb .tn>span{width:40px;height:40px;margin-right:-12px}
+ html[data-ui=l] #sb .tn .chip,html[data-ui=xl] #sb .tn .chip{padding:10px 6px 10px 12px}
+ html[data-ui=l] #sb .tn .fmn,html[data-ui=xl] #sb .tn .fmn{min-width:36px;padding:0 6px;font-size:22px}
+}
+/* ⋮ 浮動選單：浮在按鈕旁邊，不推擠清單；空間不夠時自動改到上方 */
+.fpop{position:fixed;z-index:35;display:flex;flex-direction:column;min-width:calc(132px*var(--ui));padding:calc(5px*var(--ui));background:var(--card);color:var(--fg);border:1px solid var(--bd);border-radius:calc(12px*var(--ui));box-shadow:0 calc(8px*var(--ui)) calc(24px*var(--ui)) rgba(0,0,0,.18)}
+.fpop[hidden]{display:none}
+.fpop button{display:flex;align-items:center;gap:calc(8px*var(--ui));width:100%;text-align:left;border:0;background:transparent;color:var(--fg);padding:calc(9px*var(--ui)) calc(12px*var(--ui));border-radius:calc(8px*var(--ui));font-size:calc(14px*var(--ui));min-height:0}
+.fpop button:hover,.fpop button:focus-visible{background:color-mix(in srgb,var(--acc) 12%,var(--card))}
+.fpop .fpd{color:var(--err,#c62828)}
+.fpop .fpd svg{width:calc(14px*var(--ui));height:calc(14px*var(--ui))}
+@media(max-width:900px){.fpop button{padding:calc(12px*var(--ui)) calc(14px*var(--ui));font-size:calc(15px*var(--ui))}}
+/* 排序彈窗（資料夾／分組共用）：高度接近「使用說明」再短一點；拖曳、指定位置都只改暫存，按「保存」才寫入 */
+#srtm{z-index:30}#srpm{z-index:31}
+#srtm>.srtb{display:flex;flex-direction:column;width:min(100%,calc(560px*var(--ui)));height:calc(100vh - calc(24px*var(--ui)) - 8vh);max-height:calc(100vh - calc(24px*var(--ui)))}
+@supports(height:100dvh){#srtm>.srtb{height:calc(100dvh - calc(24px*var(--ui)) - 8dvh);max-height:calc(100dvh - calc(24px*var(--ui)))}}
+#srtm .srtb:focus{outline:none}
+.srtd{flex:none;margin:calc(2px*var(--ui)) 0 calc(10px*var(--ui));font-size:calc(13px*var(--ui));line-height:1.55;color:var(--mut)}
+#srtl{gap:calc(4px*var(--ui));padding:calc(2px*var(--ui)) calc(2px*var(--ui)) calc(8px*var(--ui))}
+.srr{position:relative;flex:none;display:flex;align-items:center;gap:calc(8px*var(--ui));min-height:calc(46px*var(--ui));padding:calc(6px*var(--ui)) calc(6px*var(--ui)) calc(6px*var(--ui)) calc(14px*var(--ui) + var(--d,0)*18px*var(--ui));border:1px solid var(--bd);border-radius:calc(10px*var(--ui));background:color-mix(in srgb,var(--fg) 3%,var(--card));color:var(--fg);cursor:grab;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.srr .sri{flex:none}
+.srr .gd{flex:none}
+.srr .srn{flex:1 1 auto;min-width:0;overflow-wrap:anywhere;font-size:calc(14px*var(--ui))}
+.srr.moved{animation:srrHl 1.4s ease}
+@keyframes srrHl{0%,40%{background:color-mix(in srgb,var(--acc) 22%,var(--card));border-color:color-mix(in srgb,var(--acc) 55%,var(--bd))}}
+.smv{flex:none;display:inline-flex;align-items:center;justify-content:center;width:calc(36px*var(--ui));height:calc(36px*var(--ui));padding:0;border:1px solid var(--bd);border-radius:50%;background:var(--card);color:var(--acc-ink);cursor:pointer;min-height:0}
+.smv:hover{background:color-mix(in srgb,var(--acc) 12%,var(--card))}
+.srts{flex:1 1 auto;min-width:0;align-self:center;font-size:calc(12.5px*var(--ui));color:var(--mut);line-height:1.5}
+.srts.err{color:var(--err,#c62828)}
+#srtm .mf{align-items:center}
+#srpm>.srpb{display:flex;flex-direction:column;width:min(100%,calc(420px*var(--ui)))}
+#srpl{gap:calc(6px*var(--ui))}
+.srpo{display:flex;flex-direction:column;align-items:flex-start;gap:1px;width:100%;text-align:left;padding:calc(10px*var(--ui)) calc(12px*var(--ui));border:1px solid var(--bd);border-radius:calc(10px*var(--ui));background:var(--card);color:var(--fg);font-size:calc(14px*var(--ui));min-height:0}
+.srpo:hover:not([disabled]){background:color-mix(in srgb,var(--acc) 12%,var(--card))}
+.srpo[disabled]{opacity:.55;cursor:default}
+.srpo small{font-size:calc(11.5px*var(--ui));color:var(--mut)}
+@media(max-width:900px){.srr{min-height:calc(50px*var(--ui))}.smv{width:calc(40px*var(--ui));height:calc(40px*var(--ui))}.srpo{padding:calc(12px*var(--ui)) calc(14px*var(--ui));font-size:calc(15px*var(--ui))}}
+/* 手機「大」「特大」：設定列、工具列等移到卡片區最上方（見 snsTpFlow），只有品牌列固定 */
+#tpx{display:flex;flex-direction:column}
+#tpx>header.hdx{margin-bottom:calc(8px*var(--ui))}
+#tpx>.bar.tb{margin-top:0}
+/* 同步狀態提示（V2.10.1）：電腦在「公告」旁、手機在 ⟳ 旁；跟著文字流排列，不蓋住任何按鈕 */
+.syn{display:inline-flex;align-items:center;max-width:min(46vw,calc(320px*var(--ui)));padding:calc(3px*var(--ui)) calc(9px*var(--ui));margin-left:calc(6px*var(--ui));border-radius:999px;border:1px solid var(--bd);background:var(--card);color:var(--mut);font-size:calc(12.5px*var(--ui));font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;flex:0 1 auto;min-width:0}
+.syn[hidden]{display:none}
+.syn.ok{background:var(--acc-soft,color-mix(in srgb,var(--acc) 22%,var(--card)));color:var(--acc-soft-fg,var(--fg));border-color:color-mix(in srgb,var(--acc) 40%,var(--bd))}
+.syn.err{color:var(--err,#c62828);border-color:color-mix(in srgb,var(--err,#c62828) 45%,var(--bd));white-space:normal}
+@media(max-width:900px){.syn{margin-left:0;max-width:100%}}
 </style>
 </head>
 <body>
@@ -559,7 +648,7 @@ body.sorting,body.sorting *{cursor:grabbing!important;user-select:none!important
 <select id="th" aria-label="主題"><option value="cute">品牌桃</option><option value="warm">暖米綠</option><option value="dark">深色</option><option value="clean">簡約</option><option value="custom">自訂</option></select>
 <select id="vw" aria-label="顯示方式"><option value="cards">卡片</option><option value="list">列表</option><option value="wall">圖片牆</option><option value="album">相簿</option><option value="time">時間軸</option><option value="table">表格</option><option value="board">看板</option></select><button id="pfb" title="平台管理">🌐</button><button id="nb" title="回顧通知設定">🔔</button><span style="position:relative"><button id="sgb">設定 ▾</button><div id="sgm"><button data-sg="pfb">🌐 平台管理</button><button data-sg="nb">🔔 回顧通知設定</button><button data-sg="uib">🔍 介面大小</button><button data-sg="fbo">💬 意見回饋</button></div></span><button id="cb" title="自訂外觀">🎨</button><button id="bk">備份</button><button id="rf" title="重新整理">⟳</button></div></header>
 <div class="bar tb"><input id="q" type="search" placeholder="搜尋備註、文字、標籤、連結"><button id="qb" title="清除所有篩選">✕ 清除篩選</button><button id="tgb" class="chip">🏷️ 標籤</button><select id="sdp"><option value="">全部平台</option><option>IG</option><option>Threads</option><option>X</option><option>YouTube</option><option>網頁</option></select><button id="dtb" class="chip">📅 日期</button><button id="bmb" class="chip">☑ 批次</button><button class="pri" id="add">＋新增</button><i class="tbbr" aria-hidden="true"></i></div>
-<div class="ctl"><label><input type="checkbox" id="sd1">顯示收藏日</label><label><input type="checkbox" id="sd2">顯示發布日</label><select id="sdo"><option value="t">依收藏日排序</option><option value="pub">依發布日排序</option></select><select id="sdd"><option value="d">新 → 舊</option><option value="a">舊 → 新</option></select></div><div id="np" style="display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:calc(12px*var(--ui))"><div class="box ctl" style="align-items:flex-start;flex-wrap:nowrap"><div class="row" style="justify-content:space-between;align-items:center;width:100%"><b>🔔 回顧通知設定</b><button id="nq" title="關閉">✕</button></div><label><input type="checkbox" id="n1">自訂的待回顧日期（到期那天）</label><label><input type="checkbox" id="n2">每年的收藏日（沒填待回顧日期的收藏）</label><label><input type="checkbox" id="n3">每年的發布日（沒填待回顧日期的收藏）</label><span style="font-size:calc(12px*var(--ui));flex-basis:100%">全部取消＝不回顧。提醒會顯示在首頁最上面（打開頁面時），不是手機推播通知。這個設定只存在目前這個裝置。</span></div></div><div id="cp" class="ctl" style="display:none"><label>背景<input type="color" id="c1"></label><label>卡片<input type="color" id="c2"></label><label>標題顏色<input type="color" id="c6"></label><label>頁面文字<input type="color" id="c5"></label><label>卡片／按鈕文字<input type="color" id="c3"></label><label>重點色<input type="color" id="c4"></label><button id="bgb">上傳背景圖</button><input id="bgf" type="file" accept="image/*" style="display:none"><label>背景濃度<input type="range" id="bgo" min="10" max="100" step="5"></label><button id="bgx">移除背景</button><button id="cr">重設</button><span style="font-size:calc(12px*var(--ui));flex-basis:100%">背景圖建議（兩種裝置的設定各自獨立、不會同步）：<br>💻 電腦：橫式，1920×1080 以上，主體放中間偏上。<br>📱 手機：直式，1080×1920 左右，主體放畫面中間。<br>上傳後會自動壓縮到最長邊 1920 px。</span></div><div id="dr" class="ctl" style="display:none"><span>依</span><select id="dk"><option value="t">收藏日</option><option value="pub">發布日</option></select><input id="df" type="date"><span>～</span><input id="dt" type="date"><select id="dpre"><option value="">快速選擇</option><option value="0">今天</option><option value="7">近 7 天</option><option value="30">近 30 天</option><option value="y">今年</option></select><button id="dc">清除</button><span style="font-size:calc(12px*var(--ui))">只選左邊那格＝指定那一天；兩格都選＝區間</span></div><div id="chips"></div><div id="tagp"></div><div id="tree"><div class="th2"><b>📁 資料夾</b><button id="fa" class="chip">＋新增</button></div><div class="srt" id="fsrt"></div><div class="xw fqw"><input id="fq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋資料夾（例如 Be）" aria-label="搜尋資料夾"><button type="button" class="xc" id="fqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="fdm" class="fdm" aria-live="polite"></div><div id="fadd" style="display:none"><input id="fp" type="hidden"><div id="fpw" class="cas"></div><div class="bar"><input id="fn" placeholder="資料夾名稱"><button id="fb" class="pri">建立</button></div><div id="fh" style="font-size:calc(12px*var(--ui));color:var(--mut);margin-top:calc(4px*var(--ui))"></div></div><div id="rn" style="display:none"><div class="bar"><input id="rv" placeholder="新名稱"><button id="rs" class="pri">儲存</button><button id="rx">取消</button></div><div id="rh" style="font-size:calc(12px*var(--ui));color:var(--mut);margin:calc(4px*var(--ui)) 0 calc(8px*var(--ui))"></div></div><div id="tl"></div></div><div id="st">載入中…</div><div id="due"></div><main id="ls" class="cards"></main>
+<div class="ctl"><label><input type="checkbox" id="sd1">顯示收藏日</label><label><input type="checkbox" id="sd2">顯示發布日</label><select id="sdo"><option value="t">依收藏日排序</option><option value="pub">依發布日排序</option></select><select id="sdd"><option value="d">新 → 舊</option><option value="a">舊 → 新</option></select></div><div id="np" style="display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:calc(12px*var(--ui))"><div class="box ctl" style="align-items:flex-start;flex-wrap:nowrap"><div class="row" style="justify-content:space-between;align-items:center;width:100%"><b>🔔 回顧通知設定</b><button id="nq" title="關閉">✕</button></div><label><input type="checkbox" id="n1">自訂的待回顧日期（到期那天）</label><label><input type="checkbox" id="n2">每年的收藏日（沒填待回顧日期的收藏）</label><label><input type="checkbox" id="n3">每年的發布日（沒填待回顧日期的收藏）</label><span style="font-size:calc(12px*var(--ui));flex-basis:100%">全部取消＝不回顧。提醒會顯示在首頁最上面（打開頁面時），不是手機推播通知。這個設定只存在目前這個裝置。</span></div></div><div id="cp" class="ctl" style="display:none"><label>背景<input type="color" id="c1"></label><label>卡片<input type="color" id="c2"></label><label>標題顏色<input type="color" id="c6"></label><label>頁面文字<input type="color" id="c5"></label><label>卡片／按鈕文字<input type="color" id="c3"></label><label>重點色<input type="color" id="c4"></label><button id="bgb">上傳背景圖</button><input id="bgf" type="file" accept="image/*" style="display:none"><label>背景濃度<input type="range" id="bgo" min="10" max="100" step="5"></label><button id="bgx">移除背景</button><button id="cr">重設</button><span style="font-size:calc(12px*var(--ui));flex-basis:100%">背景圖建議（兩種裝置的設定各自獨立、不會同步）：<br>💻 電腦：橫式，1920×1080 以上，主體放中間偏上。<br>📱 手機：直式，1080×1920 左右，主體放畫面中間。<br>上傳後會自動壓縮到最長邊 1920 px。</span></div><div id="dr" class="ctl" style="display:none"><span>依</span><select id="dk"><option value="t">收藏日</option><option value="pub">發布日</option></select><input id="df" type="date"><span>～</span><input id="dt" type="date"><select id="dpre"><option value="">快速選擇</option><option value="0">今天</option><option value="7">近 7 天</option><option value="30">近 30 天</option><option value="y">今年</option></select><button id="dc">清除</button><span style="font-size:calc(12px*var(--ui))">只選左邊那格＝指定那一天；兩格都選＝區間</span></div><div id="chips"></div><div id="tagp"></div><div id="tree"><div class="th2"><b>📁 資料夾</b><span class="thr"><span class="srtc" id="fsrt"></span><button id="fa" class="chip">＋新增</button></span></div><div class="xw fqw"><input id="fq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋資料夾（例如 Be）" aria-label="搜尋資料夾"><button type="button" class="xc" id="fqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="fdm" class="fdm" aria-live="polite"></div><div id="fadd" style="display:none"><input id="fp" type="hidden"><div id="fpw" class="cas"></div><div class="bar"><input id="fn" placeholder="資料夾名稱"><button id="fb" class="pri">建立</button></div><div id="fh" style="font-size:calc(12px*var(--ui));color:var(--mut);margin-top:calc(4px*var(--ui))"></div></div><div id="rn" style="display:none"><div class="bar"><input id="rv" placeholder="新名稱"><button id="rs" class="pri">儲存</button><button id="rx">取消</button></div><div id="rh" style="font-size:calc(12px*var(--ui));color:var(--mut);margin:calc(4px*var(--ui)) 0 calc(8px*var(--ui))"></div></div><div id="tl"></div></div><div id="st">載入中…</div><div id="due"></div><main id="ls" class="cards"></main>
 </div>
 <div id="dlg"><div class="box"><div class="row" style="justify-content:space-between;align-items:center"><b>收藏</b><button type="button" id="dx" title="關閉">✕</button></div>
 <label>連結 <span id="pl"></span></label>
@@ -947,10 +1036,17 @@ const nm=c=>c.replace(/\s*(→|＞|>|\/)\s*/g,'/');
 let sortS={f:{m:'az',o:[]},g:{m:'custom',o:[]}};
 const sortNorm=x=>{const o=x&&typeof x==='object'?x:{};const n=(v,dm)=>({m:v&&(v.m==='az'||v.m==='custom')?v.m:dm,o:v&&Array.isArray(v.o)?[...new Set(v.o.filter(t=>typeof t==='string'&&t))]:[]});return{f:n(o.f,'az'),g:n(o.g,'custom')}};
 const fpar=p=>{const i=p.lastIndexOf('/');return i>0?p.slice(0,i):''};
-const fOrd=paths=>{if(sortS.f.m!=='custom')return paths;const idx=new Map(sortS.f.o.map((p,i)=>[p,i])),kd=new Map();paths.forEach(p=>{const k=fpar(p);if(!kd.has(k))kd.set(k,[]);kd.get(k).push(p)});const out=[],walk=k=>{(kd.get(k)||[]).slice().sort((a,b)=>{const x=idx.has(a)?idx.get(a):1e9,y=idx.has(b)?idx.get(b):1e9;return x-y||sp(a,b)}).forEach(q=>{out.push(q);walk(q)})};walk('');return out.length===paths.length?out:paths};
+const fOrd=paths=>sortS.f.m!=='custom'?paths:fOrdO(paths,sortS.f.o);
+const fOrdO=(paths,o)=>{const idx=new Map(o.map((p,i)=>[p,i])),kd=new Map();paths.forEach(p=>{const k=fpar(p);if(!kd.has(k))kd.set(k,[]);kd.get(k).push(p)});const out=[],walk=k=>{(kd.get(k)||[]).slice().sort((a,b)=>{const x=idx.has(a)?idx.get(a):1e9,y=idx.has(b)?idx.get(b):1e9;return x-y||sp(a,b)}).forEach(q=>{out.push(q);walk(q)})};walk('');return out.length===paths.length?out:paths};
 const gOrd=()=>{const L=grps.slice();if(sortS.g.m==='az')return L.sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0);const idx=new Map(sortS.g.o.map((id,i)=>[id,i])),ai=new Map(grps.map((g,i)=>[g.id,i]));return L.sort((a,b)=>{const x=idx.has(a.id)?idx.get(a.id):1e9,y=idx.has(b.id)?idx.get(b.id):1e9;return x-y||ai.get(a.id)-ai.get(b.id)})};
 const sortRe=(old,re)=>{if(sortS.f.o.some(c=>c===old||c.startsWith(old+'/'))){sortS.f.o=[...new Set(sortS.f.o.map(re))];saveS()}};
-function srtDraw(){const tch=matchMedia('(hover: none) and (pointer: coarse)').matches;const mk=(k,lab)=>{const m=sortS[k].m;return '<div class="seg" role="group" aria-label="'+lab+'排序方式"><button type="button" data-srt="'+k+'" data-m="az" aria-pressed="'+(m==='az')+'" class="'+(m==='az'?'on':'')+'">A→Z</button><button type="button" data-srt="'+k+'" data-m="custom" aria-pressed="'+(m==='custom')+'" class="'+(m==='custom'?'on':'')+'">自訂排序</button></div>'+(m==='custom'?'<span class="srth">'+(tch?'長按':'按住')+' ⠿ 拖曳調整順序</span>':'')};const a=document.getElementById('fsrt'),b=document.getElementById('gsrt');if(a)a.innerHTML=mk('f','資料夾');if(b)b.innerHTML=mk('g','分組')}
+/* V2.10.1：排序方式改成左右撥動開關（左 A→Z／右 自訂），自訂時左邊多一個「調整順序」小圖示。
+   沿用同一個元件，只是更新狀態（不重建），切換時才有滑動效果 */
+const SVG_ORD='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>';
+const SVG_DTL='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg>';
+function srtDraw(){[['f','資料夾','fsrt'],['g','分組','gsrt']].forEach(([k,lab,id])=>{const box=document.getElementById(id);if(!box)return;
+  if(!box.firstChild)box.innerHTML='<button type="button" class="sdo" data-sdo="'+k+'" title="調整順序" aria-label="調整'+lab+'順序" hidden>'+SVG_ORD+'</button><button type="button" class="tsw'+(sortS[k].m==='custom'?' r':'')+'" role="switch" data-srt="'+k+'" title="切換排序方式"><span class="tk" aria-hidden="true"></span><span class="tl">A→Z</span><span class="tr">自訂</span></button>';
+  const c=sortS[k].m==='custom',sw=box.querySelector('.tsw');sw.classList.toggle('r',c);sw.setAttribute('aria-checked',String(c));sw.setAttribute('aria-label',lab+'排序方式：'+(c?'自訂':'A→Z')+'（點一下切換成'+(c?'A→Z':'自訂')+'）');box.querySelector('.sdo').hidden=!c})}
 const sortClean=()=>{const ids=new Set(grps.map(g=>g.id));sortS.g.o=sortS.g.o.filter(id=>ids.has(id))};
 const kids=pre=>fp().filter(p=>{const a=p.split('/');return a.length===(pre?pre.split('/').length+1:1)&&(!pre||p.startsWith(pre+'/'))});
 const drawCas=el=>{const v=el.value||'',seg=v?v.split('/'):[];let h='';for(let i=0;i<=seg.length;i++){const pre=seg.slice(0,i).join('/'),ks=kids(pre);if(i>0&&!ks.length)break;const cur=seg.slice(0,i+1).join('/');h+=`<select data-lv="${i}"><option value="">${i?'（放在 '+esc(seg[i-1])+' 裡面）':'最上層'}</option>${ks.map(p=>`<option value="${esc(p)}"${p===cur?' selected':''}>${esc(p.split('/').pop())}</option>`).join('')}</select>`}$('#'+el.id+'w').innerHTML=h};
@@ -961,9 +1057,9 @@ function render(){isDue.c=0;posts.sort((a,b)=>{const pb=sortBy==='pub',ka=pb?a.p
  const today=new Date().toLocaleDateString('sv-SE'),cs=new Set(),ts=new Set();
  posts.forEach(p=>{(p.cats||[]).forEach(c=>{let a='';c.split('/').forEach(s=>{a+=(a?'/':'')+s;cs.add(a)})});(p.tags||[]).forEach(t=>ts.add(t))});
  const ch=(a,k,v,l)=>`<button class="chip ${a?'on':''}" data-${k}="${esc(v)}">${l}</button>`;
- const paths=fp(),vis=p=>{const a=p.split('/');return a.slice(0,-1).every((_,i)=>open.has(a.slice(0,i+1).join('/')))};const act=sel.c||sel.t||sel.u||plSel||dueOnly||starOnly||gotOnly||gSel||noFolder||$('#q').value.trim()||$('#df').value||$('#dt').value;$('#chips').innerHTML=($('#qb').className=act?'clr':'','')+'<div class="sbq">'+ch(!act,'a','','<span class="ql">全部</span><span class="qn">'+posts.length+'</span>')+ch(sel.u,'u','1','<span class="ql">未讀</span><span class="qn">'+posts.filter(p=>!p.read).length+'</span>')+ch(gotOnly,'dn','1','<span class="ql">已下載</span><span class="qn">'+posts.filter(p=>p.got).length+'</span>')+'</div><div class="sbn">'+ch(sbMode==='f','f','1','📁 資料夾')+ch(noFolder,'nf','1','📂 未分類<span style="float:right;opacity:.6">'+posts.filter(p=>!(p.cats||[]).length).length+'</span>')+ch(starOnly,'sf','1','⭐ 加星號<span style="float:right;opacity:.6">'+posts.filter(p=>p.star).length+'</span>')+ch(sbMode==='g','gl','1','📚 分組'+(gSel?'<span class="gsn">'+(gSel==='_'?'未分組':esc((grps.find(g=>g.id===gSel)||{}).name||''))+'</span>':''))+ch(false,'gm','1','🔠 管理分組')+'</div>';srtDraw();if($('#sgll')){const gd=sortS.g.m==='custom'&&grps.length>1;$('#sgll').classList.toggle('gdr',gd);$('#sgll').innerHTML=grps.length?gOrd().map(g=>{const c=ch(gSel===g.id,'gf',g.id,'<span class="gd" style="background:'+esc(g.color)+'"></span>'+esc(g.name)+'<span style="float:right;opacity:.6">'+posts.filter(p=>p.grp===g.id).length+'</span>');return gd?'<div class="sgr" data-gr="'+esc(g.id)+'"><i class="dh" data-gh="'+esc(g.id)+'" title="拖曳調整順序" aria-label="拖曳調整「'+esc(g.name)+'」的順序">⠿</i>'+c+'</div>':c}).join('')+(gd?'<div class="sgr sgr0"><i class="dh dh0" aria-hidden="true"></i>':'')+ch(gSel==='_','gf','_','未分組<span style="float:right;opacity:.6">'+posts.filter(p=>!p.grp).length+'</span>')+(gd?'</div>':''):'<div class="sge">還沒有分組。按上面的「🔠 管理分組」新增。</div>'}{const L=[...new Set([...['IG','Threads','X','YouTube'].map(n=>pren[n]||n),...cplats.map(c=>c.name),...posts.map(p=>p.platform).filter(Boolean),'網頁'])];$('#sdp').innerHTML='<option value="">全部平台</option>'+L.map(n=>`<option>${esc(n)}</option>`).join('');$('#sdp').value=plSel}$('#tgb').textContent='🏷️ 標籤 '+ts.size+(sel.t?' · #'+sel.t:'');$('#tgb').className='chip'+(tagsOn||sel.t?' on':'');$('#dtb').className='chip'+(($('#df').value||$('#dt').value)?' on':'');$('#tagp').style.display=tagsOn?'':'none';const tc={};posts.forEach(p=>(p.tags||[]).forEach(t=>tc[t]=(tc[t]||0)+1));$('#tagp').innerHTML=ts.size?[...ts].sort().map(t=>`<button class="chip ${sel.t===t?'on':''}" style="--h:${thue(t)}" data-t="${esc(t)}">#${esc(t)} <small>${tc[t]}</small></button>`).join(''):'<span style="color:var(--mut);font-size:calc(13px*var(--ui))">還沒有標籤。新增收藏時輸入標籤，就會出現在這裡。</span>';$('#tree').style.display=sbMode==='f'?'':'none';if($('#sgl'))$('#sgl').style.display=sbMode==='g'?'':'none';ps($('#fp'));drawSb();
+ const paths=fp(),vis=p=>{const a=p.split('/');return a.slice(0,-1).every((_,i)=>open.has(a.slice(0,i+1).join('/')))};const act=sel.c||sel.t||sel.u||plSel||dueOnly||starOnly||gotOnly||gSel||noFolder||$('#q').value.trim()||$('#df').value||$('#dt').value;$('#chips').innerHTML=($('#qb').className=act?'clr':'','')+'<div class="sbq">'+ch(!act,'a','','<span class="ql">全部</span><span class="qn">'+posts.length+'</span>')+ch(sel.u,'u','1','<span class="ql">未讀</span><span class="qn">'+posts.filter(p=>!p.read).length+'</span>')+ch(gotOnly,'ndl','1','<span class="ql">未下載</span><span class="qn">'+posts.filter(p=>!p.got).length+'</span>')+'</div><div class="sbn">'+ch(sbMode==='f','f','1','📁 資料夾')+ch(noFolder,'nf','1','📂 未分類<span style="float:right;opacity:.6">'+posts.filter(p=>!(p.cats||[]).length).length+'</span>')+ch(starOnly,'sf','1','⭐ 加星號<span style="float:right;opacity:.6">'+posts.filter(p=>p.star).length+'</span>')+ch(sbMode==='g','gl','1','📚 分組'+(gSel?'<span class="gsn">'+(gSel==='_'?'未分組':esc((grps.find(g=>g.id===gSel)||{}).name||''))+'</span>':''))+ch(false,'gm','1','🔠 管理分組')+'</div>';srtDraw();if($('#sgll')){const gd=sortS.g.m==='custom'&&grps.length>1;$('#sgll').classList.toggle('gdr',gd);$('#sgll').innerHTML=grps.length?gOrd().map(g=>{const c=ch(gSel===g.id,'gf',g.id,'<span class="gd" style="background:'+esc(g.color)+'"></span>'+esc(g.name)+'<span style="float:right;opacity:.6">'+posts.filter(p=>p.grp===g.id).length+'</span>');return gd?'<div class="sgr dz" data-gr="'+esc(g.id)+'">'+c+'</div>':c}).join('')+ch(gSel==='_','gf','_','未分組<span style="float:right;opacity:.6">'+posts.filter(p=>!p.grp).length+'</span>'):'<div class="sge">還沒有分組。按上面的「🔠 管理分組」新增。</div>'}{const L=[...new Set([...['IG','Threads','X','YouTube'].map(n=>pren[n]||n),...cplats.map(c=>c.name),...posts.map(p=>p.platform).filter(Boolean),'網頁'])];$('#sdp').innerHTML='<option value="">全部平台</option>'+L.map(n=>`<option>${esc(n)}</option>`).join('');$('#sdp').value=plSel}$('#tgb').textContent='🏷️ 標籤 '+ts.size+(sel.t?' · #'+sel.t:'');$('#tgb').className='chip'+(tagsOn||sel.t?' on':'');$('#dtb').className='chip'+(($('#df').value||$('#dt').value)?' on':'');$('#tagp').style.display=tagsOn?'':'none';const tc={};posts.forEach(p=>(p.tags||[]).forEach(t=>tc[t]=(tc[t]||0)+1));$('#tagp').innerHTML=ts.size?[...ts].sort().map(t=>`<button class="chip ${sel.t===t?'on':''}" style="--h:${thue(t)}" data-t="${esc(t)}">#${esc(t)} <small>${tc[t]}</small></button>`).join(''):'<span style="color:var(--mut);font-size:calc(13px*var(--ui))">還沒有標籤。新增收藏時輸入標籤，就會出現在這裡。</span>';$('#tree').style.display=sbMode==='f'?'':'none';if($('#sgl'))$('#sgl').style.display=sbMode==='g'?'':'none';ps($('#fp'));drawSb();
  const q=$('#q').value.trim().toLowerCase();
- const shown=posts.filter(p=>(!sel.c||(p.cats||[]).some(c=>c===sel.c||c.startsWith(sel.c+'/')))&&(!sel.t||(p.tags||[]).includes(sel.t))&&(!sel.u||!p.read)&&(!plSel||p.platform===plSel)&&dmatch(p)&&(!dueOnly||isDue(p))&&(!starOnly||p.star)&&(!gotOnly||p.got)&&(!noFolder||!(p.cats||[]).length)&&(!gSel||(gSel==='_'?!p.grp:p.grp===gSel))&&(!q||[p.note,p.text,p.url,p.acct,...(p.cats||[]),...(p.tags||[])].join(' ').toLowerCase().includes(q)));
+ const shown=posts.filter(p=>(!sel.c||(p.cats||[]).some(c=>c===sel.c||c.startsWith(sel.c+'/')))&&(!sel.t||(p.tags||[]).includes(sel.t))&&(!sel.u||!p.read)&&(!plSel||p.platform===plSel)&&dmatch(p)&&(!dueOnly||isDue(p))&&(!starOnly||p.star)&&(!gotOnly||!p.got)&&(!noFolder||!(p.cats||[]).length)&&(!gSel||(gSel==='_'?!p.grp:p.grp===gSel))&&(!q||[p.note,p.text,p.url,p.acct,...(p.cats||[]),...(p.tags||[])].join(' ').toLowerCase().includes(q)));
  const due=getDue();const _unused=(()=>{const y=today.slice(0,4),md=today.slice(5),r=[];posts.forEach(p=>{if(p.due){if(nset.c&&p.due<=today&&!p.read)r.push(p);return}const t=new Date(p.t||0).toLocaleDateString('sv-SE');if(nset.t&&t.slice(5)===md&&t.slice(0,4)<y)r.push({...p,why:'收藏 '+(y-t.slice(0,4))+' 週年'});else if(nset.p&&p.pub&&p.pub.slice(5)===md&&p.pub.slice(0,4)<y)r.push({...p,why:'發布 '+(y-p.pub.slice(0,4))+' 週年'})});return r})();
  $('#due').innerHTML=due.length?`<div class="due"><div><button class="chip" data-do="1" style="padding:1px 8px">${dueOpen?'▾':'▸'}</button> 待回顧 ${due.length} 張： <button class="chip ${dueOnly?'on':''}" data-dq="1">${dueOnly?'顯示全部':'只看這些'}</button></div><div style="margin-top:4px;display:${dueOpen?'block':'none'}">${due.map(p=>`<a href="#" data-e="${p.id}">${esc(p.note||p.url)}${p.why?'（'+p.why+'）':''}</a>`).join('、')}</div></div>`:'';
  $('#ls').className=view==='cards'?'cards':'list';
@@ -980,7 +1076,7 @@ else{cls=view==='list'?'list':view==='wall'?'wall':'cards';out=shown.map(cardH).
 $('#ls').className=cls;$('#ls').innerHTML=out;window.gHyd&&gHyd();lastShown=shown.map(p=>p.id);$('#bb').style.display=bmode?'flex':'none';$('#bn').textContent='已選 '+bsel.size+' 張（直接點卡片就能選取）';$('#bmb').className='chip'+(bmode?' on':'');pvSync();typeof BDB!=='undefined'&&setTimeout(BDB.upd,0);
 }
 document.addEventListener('click',e=>{
- const b=e.target.closest('[data-a],[data-c],[data-t],[data-u],[data-r],[data-e],[data-o],[data-f],[data-k],[data-n],[data-g],[data-z],[data-nt],[data-gt],[data-sr],[data-dl],[data-dq],[data-sf],[data-ac],[data-gp],[data-gf],[data-gm],[data-bs],[data-nf],[data-do],[data-dn],[data-gl]');if(!b)return;
+ const b=e.target.closest('[data-a],[data-c],[data-t],[data-u],[data-r],[data-e],[data-o],[data-f],[data-k],[data-n],[data-g],[data-z],[data-nt],[data-gt],[data-sr],[data-dl],[data-dq],[data-sf],[data-ac],[data-gp],[data-gf],[data-gm],[data-bs],[data-nf],[data-do],[data-ndl],[data-gl]');if(!b)return;
  const d=b.dataset;
  if('a'in d||'z'in d){noFolder=false;gSel='';dueOnly=starOnly=gotOnly=false;sel={c:'',t:'',u:false};plSel='';$('#sdp').value='';$('#q').value='';$('#df').value=$('#dt').value=''}
  else if('c'in d){noFolder=false;sel={c:sel.c===d.c?'':d.c,t:'',u:false};if(sel.c&&!fq)open.add(sel.c)}
@@ -994,7 +1090,7 @@ document.addEventListener('click',e=>{
  else if('dl'in d){askDelPosts([d.dl]);return}
  else if('dq'in d)dueOnly=!dueOnly;
  else if('sf'in d)starOnly=!starOnly;
- else if('dn'in d)gotOnly=!gotOnly;
+ else if('ndl'in d){gotOnly=!gotOnly;if(gotOnly)sel={...sel,u:false}}
  else if('gl'in d){sbMode='g';treeOn=false}
  else if('nf'in d){noFolder=!noFolder;if(noFolder)sel.c=''}
  else if('do'in d)dueOpen=!dueOpen;
@@ -1005,7 +1101,7 @@ document.addEventListener('click',e=>{
  else if('bs'in d){bsel.has(d.bs)?bsel.delete(d.bs):bsel.add(d.bs)}
  else if('k'in d){const i=$('#c'),a=list(i.value).map(nm);if(!a.includes(d.k))rcfTouch([d.k]);i.value=(a.includes(d.k)?a.filter(x=>x!==d.k):[...a,d.k]).join(', ');rc();drawTg();return}
  else if('t'in d)sel={c:'',t:sel.t===d.t?'':d.t,u:false};
- else if('u'in d)sel={c:'',t:'',u:!sel.u};
+ else if('u'in d){sel={c:'',t:'',u:!sel.u};if(sel.u)gotOnly=false}
  else if('r'in d){const p=posts.find(x=>x.id===d.r);col&&p&&col.doc(p.id).update({read:!p.read});return}
  else if('e'in d){e.preventDefault();openDlg(d.e);return}
  render();
@@ -1127,7 +1223,7 @@ const avgColor=f=>new Promise(r=>{const im=new Image();im.onload=()=>{const c=do
 $('#nq').onclick=()=>{$('#np').style.display='none'};
 ['#np','#bkp','#pfm','#gpm','#bm','#fbm'].forEach(s=>$(s).addEventListener('mousedown',e=>{if(e.target===$(s))$(s).style.display='none'}));
 $('#bku').onchange=async e=>{const f=e.target.files[0],m=$('#bkm');e.target.value='';if(!f)return;if(!col){m.textContent='請先登入 Google，並等雲端同步完成';return}try{const j=JSON.parse(await f.text()),arr=Array.isArray(j)?j:j.posts;if(!Array.isArray(arr))throw new Error('這不是收藏夾的備份檔');let n=0;for(const p of arr){if(!p||typeof p.id!=='string'||!p.id||p.id.includes('/')||p.id==='folders'||p.id==='settings'||!p.url)continue;const {id,...o}=p;await col.doc(id).set(o);n++;m.textContent='還原中… '+n+'/'+arr.length}if(Array.isArray(j.folders)&&j.folders.length)await col.doc('folders').set({list:[...new Set([...folders,...j.folders])]});if(Array.isArray(j.grps))grps=[...grps,...j.grps.filter(x=>!grps.some(g=>g.id===x.id))];if(j.plats||j.pren||j.grps){cplats=[...cplats,...(j.plats||[]).filter(x=>!cplats.some(c=>c.name===x.name))];pren={...pren,...(j.pren||{})};await saveS()}m.textContent='完成：還原了 '+n+' 筆收藏'}catch(x){m.textContent='還原失敗：'+(x.message||x.code||'檔案無法讀取')}};
-let sav=0;const saveS=async()=>{if(!col)return;sav++;try{sortClean();await col.doc('settings').set({plats:cplats,pren,grps,sort:sortS})}catch(x){$('#st').textContent='設定儲存失敗：'+(x.message||x.code||'')}finally{sav--}};
+let sav=0;const saveS=async strict=>{if(!col){if(strict)throw new Error('請先登入 Google，並等雲端同步完成');return}sav++;try{sortClean();await col.doc('settings').set({plats:cplats,pren,grps,sort:sortS})}catch(x){$('#st').textContent='設定儲存失敗：'+(x.message||x.code||'');if(strict)throw x}finally{sav--}};
 const inferAcct=u=>{let m;try{if((m=u.match(/(?:x|twitter)\.com\/(\w{1,15})\/status\//))&&m[1]!=='i')return '@'+m[1];if(m=u.match(/threads\.(?:net|com)\/@([\w.]+)\/post\//))return '@'+m[1];if(m=u.match(/instagram\.com\/([\w.]+)\/(?:p|reel|reels|tv)\//)){if(!['p','reel','reels','tv','explore'].includes(m[1]))return '@'+m[1]}if(m=u.match(/youtube\.com\/@([\w.-]+)/))return '@'+m[1];if((m=u.match(/^https?:\/\/(?:[\w-]+\.)*facebook\.com\/([\w.-]+)\/(?:posts|videos|photos|reels?)\//i))&&!/^(?:groups|pages|events|watch|photo|photos|reel|reels|story\.php|permalink\.php|profile\.php|share|sharer|hashtag|people|marketplace|gaming|login|media)$/i.test(m[1]))return '@'+m[1]}catch(e){}return ''};
 const _u3=$('#u').oninput;
 $('#u').oninput=()=>{_u3();const v=$('#u').value,a=v?inferAcct(v):'';if(a&&(!$('#ac').value||acAuto)){$('#ac').value=a;acAuto=true;$('#an').textContent='（自動偵測，可修改）'}else if(!a&&acAuto){$('#ac').value='';acAuto=false;$('#an').textContent=''}let h='';try{h=new URL(v).hostname}catch(e){}const w=$('#pqw');if(h&&plat(v)==='網頁'){if(w.style.display==='none'){$('#pq').innerHTML='<option value="">一般網頁</option>'+cplats.map(c=>`<option value="${esc(c.name)}">歸到「${esc(c.name)}」</option>`).join('')+'<option value="+">＋新增平台…</option>';$('#pqn').style.display='none';$('#pqb').style.display='none'}w.style.display='flex';$('#pqt').textContent=h+' 不是已知平台：'}else w.style.display='none'};
@@ -1172,13 +1268,13 @@ $('#ls').addEventListener('click',e=>{if(!bmode)return;if(e.target.closest('butt
 $('#dx').onclick=()=>$('#cx').click();
 const _u5=$('#u').oninput;$('#u').oninput=()=>{_u5();const v=$('#u').value;if(v&&!$('#ac').value&&/threads\.(net|com)|instagram\.com/.test(v)&&!inferAcct(v))$('#an').textContent='（這種連結裡沒有帳號，請手動填）'};
 $('#gi').parentNode.querySelector('.xc').onclick=()=>{tgs=[];$('#gi').value='';drawTg();$('#gi').focus()};
-(()=>{const w=document.querySelector('.w'),wrap=document.createElement('div'),sb=document.createElement('aside'),mn=document.createElement('div');wrap.id='lay';sb.id='sb';mn.id='mn';w.insertBefore(wrap,$('#tagp'));const tp=document.createElement('div');tp.id='tp';w.insertBefore(tp,w.firstElementChild);tp.append(w.querySelector('header'),w.querySelector('.bar.tb'),$('#sd1').closest('.ctl'),$('#cp'),$('#dr'));const sbp=document.createElement('div');sbp.id='sbp';const sgl=document.createElement('div');sgl.id='sgl';sgl.style.display='none';sgl.innerHTML='<div class="th2"><b>📚 分組</b></div><div class="srt" id="gsrt"></div><div id="sgll"></div>';sbp.append($('#tree'),sgl);sb.append($('#chips'),sbp);mn.append($('#tagp'),$('#st'),$('#due'),$('#ls'));wrap.append(sb,mn)})();
+(()=>{const w=document.querySelector('.w'),wrap=document.createElement('div'),sb=document.createElement('aside'),mn=document.createElement('div');wrap.id='lay';sb.id='sb';mn.id='mn';w.insertBefore(wrap,$('#tagp'));const tp=document.createElement('div');tp.id='tp';w.insertBefore(tp,w.firstElementChild);tp.append(w.querySelector('header'),w.querySelector('.bar.tb'),$('#sd1').closest('.ctl'),$('#cp'),$('#dr'));const sbp=document.createElement('div');sbp.id='sbp';const sgl=document.createElement('div');sgl.id='sgl';sgl.style.display='none';sgl.innerHTML='<div class="th2"><b>📚 分組</b><span class="srtc" id="gsrt"></span></div><div id="sgll"></div>';sbp.append($('#tree'),sgl);sb.append($('#chips'),sbp);mn.append($('#tagp'),$('#st'),$('#due'),$('#ls'));wrap.append(sb,mn)})();
 
 $('#sgm').onclick=e=>{const t=e.target.dataset.sg;if(!t)return;$('#sgm').style.display='none';$('#'+t).click()};
 document.addEventListener('click',e=>{if(!e.target.closest('#sgm,#sgb'))$('#sgm').style.display='none'});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#sgm').style.display='none'});
-(()=>{const h=document.querySelector('header'),b=document.createElement('button'),s=document.createElement('div'),k=document.createElement('div'),sb=$('#sb'),cl=()=>{sb.classList.remove('open');k.classList.remove('open')};b.id='hb';b.textContent='☰';b.title='選單';s.style.cssText='display:flex;align-items:center;gap:8px';h.insertBefore(s,h.firstChild);s.append(b,h.querySelector('h1'));k.id='sbk';document.body.appendChild(k);b.onclick=()=>{sb.classList.toggle('open');k.classList.toggle('open')};k.onclick=cl;sb.addEventListener('click',e=>{if(e.target.closest('[data-c],[data-a],[data-u],[data-nf],[data-sf],[data-gf],[data-gm],[data-dn],#fa'))cl()});document.addEventListener('keydown',e=>{if(e.key==='Escape')cl()})})();
-(()=>{const hd=document.querySelector('header'),rw=hd.querySelector('.row'),gb=document.createElement('div');gb.id='gbox';gb.innerHTML='<button id="gin" class="bt"><b style="color:#4285F4">G</b> 登入 Google</button><button id="gav" style="display:none" aria-label="帳號選單"></button><div id="gmn"><div id="gnm"></div><button id="gsw">🔀 切換帳號</button><button id="gout">🚪 登出</button></div>';const mq=matchMedia('(max-width:900px)'),place=()=>{if(mq.matches)hd.insertBefore(gb,rw);else rw.insertBefore(gb,$('#th'))};place();mq.addEventListener('change',place);
+(()=>{const h=document.querySelector('header'),b=document.createElement('button'),s=document.createElement('div'),k=document.createElement('div'),sb=$('#sb'),cl=()=>{sb.classList.remove('open');k.classList.remove('open')};b.id='hb';b.textContent='☰';b.title='選單';s.style.cssText='display:flex;align-items:center;gap:8px';h.insertBefore(s,h.firstChild);s.append(b,h.querySelector('h1'));k.id='sbk';document.body.appendChild(k);b.onclick=()=>{sb.classList.toggle('open');k.classList.toggle('open')};k.onclick=cl;sb.addEventListener('click',e=>{if(e.target.closest('[data-c],[data-a],[data-u],[data-nf],[data-sf],[data-gf],[data-gm],[data-ndl],#fa'))cl()});document.addEventListener('keydown',e=>{if(e.key==='Escape')cl()})})();
+(()=>{const hd=document.querySelector('header'),rw=hd.querySelector('.row'),gb=document.createElement('div');gb.id='gbox';gb.innerHTML='<button id="gin" class="bt"><b style="color:#4285F4">G</b> 登入 Google</button><button id="gav" style="display:none" aria-label="帳號選單"></button><div id="gmn"><div id="gnm"></div><button id="gsw">🔀 切換帳號</button><button id="gout">🚪 登出</button></div>';const mq=matchMedia('(max-width:900px)'),place=()=>{if(mq.matches){if(rw.parentNode===hd)hd.insertBefore(gb,rw);else hd.appendChild(gb)}else rw.insertBefore(gb,$('#th'))};place();mq.addEventListener('change',place);
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},4000)};
 const G=window.snsGoogle={user:null,onLogin:null,onSwitch:null,onLogout:null,setUser(u){G.user=u||null;const a=$('#gav');$('#gin').style.display=u?'none':'';a.style.display=u?'':'none';$('#gmn').style.display='none';if(u){a.innerHTML=u.photo?'<img alt="" referrerpolicy="no-referrer" src="'+esc(u.photo)+'">':esc((u.name||'?').slice(0,1));$('#gnm').textContent=(u.name||'')+(u.email?' · '+u.email:'')}}};
 $('#gin').onclick=()=>{if(G.onLogin)G.onLogin();else{G.setUser({name:'示範使用者',email:'demo@example.com',photo:''});note('目前是示範模式：還沒有串接真正的 Google 登入')}};
@@ -1303,8 +1399,8 @@ let fq='';
 function sbTree(paths){if(!paths.length)return '<span style="color:var(--mut);font-size:calc(13px*var(--ui))">還沒有資料夾，按上面的「＋新增」建立第一個。</span>';const f=FS.filter(paths,fq);if(f&&!f.hit.size)return '<span class="fqe">找不到名稱包含「'+esc(fq.trim())+'」的資料夾</span>';
  const cnt=p=>posts.filter(x=>(x.cats||[]).some(c=>under(c,p))).length;
  const dOn=sortS.f.m==='custom'&&!f;
- return FS.rows(paths,f,p=>open.has(p)).map(r=>'<div class="tn'+(r.anc?' anc':'')+'" data-fp="'+esc(r.p)+'" style="padding-left:'+r.depth*16+'px">'+(dOn?'<i class="dh" data-dh="'+esc(r.p)+'" title="拖曳調整順序（只在同一層之間）" aria-label="拖曳調整「'+esc(r.p.split('/').pop())+'」的順序">⠿</i>':'')+'<span'+(r.kids&&!f?' data-o="'+esc(r.p)+'"':'')+'>'+(r.kids?(r.open?'▾':'▸'):'')+'</span><button class="chip '+(sel.c===r.p?'on':'')+'" data-c="'+esc(r.p)+'" title="'+esc(r.p.replace(/\//g,' → '))+'">📁 '+r.label+' <small style="opacity:.65">'+cnt(r.p)+'</small></button><button class="ed" data-n="'+esc(r.p)+'" title="改名" aria-label="改名">✎</button><button class="ed fdl" data-fd="'+esc(r.p)+'" title="刪除資料夾" aria-label="刪除資料夾">'+TRASH+'</button></div>').join('')}
-const drawSb=()=>{$('#tl').innerHTML=sbTree(fOrd(fp()));srtDraw()};
+ return FS.rows(paths,f,p=>open.has(p)).map(r=>{const nmx=esc(r.p.split('/').pop());return '<div class="tn'+(r.anc?' anc':'')+(dOn?' dz':'')+'" data-fp="'+esc(r.p)+'" style="padding-left:'+r.depth*16+'px"><span'+(r.kids&&!f?' data-o="'+esc(r.p)+'" role="button" aria-expanded="'+r.open+'" aria-label="'+(r.open?'收合':'展開')+'「'+nmx+'」"':'')+'>'+(r.kids?(r.open?'▾':'▸'):'')+'</span><button class="chip '+(sel.c===r.p?'on':'')+'" data-c="'+esc(r.p)+'" title="'+esc(r.p.replace(/\//g,' → '))+'">📁 '+r.label+' <small style="opacity:.65">'+cnt(r.p)+'</small></button><button type="button" class="ed fmn" data-fm="'+esc(r.p)+'" aria-haspopup="menu" aria-expanded="false" title="編輯／刪除" aria-label="「'+nmx+'」的更多操作">⋮</button></div>'}).join('')}
+const drawSb=()=>{window.snsFpop&&snsFpop.close();$('#tl').innerHTML=sbTree(fOrd(fp()));srtDraw()};
 $('#fq').oninput=()=>{fq=$('#fq').value;drawSb()};
 $('#fqx').onclick=()=>{$('#fq').value='';fq='';drawSb();$('#fq').focus()};
 $('#fq').onkeydown=e=>{if(e.key==='Escape'&&$('#fq').value){e.stopPropagation();$('#fqx').click()}};
@@ -1489,30 +1585,126 @@ window.snsImg=IMGF;
  const cr=(a,b)=>{const x=lum(a),y=lum(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
  const col=v=>{pr.style.color=v;return rgb(getComputedStyle(pr).color)};
  const best=(bg,cands)=>{let b=null,bc=0;for(const c of cands){const k=cr(bg,col(c));if(k>bc+.01){bc=k;b=c}}return b};
- const tone=()=>{const main=col('var(--fab)'),mix=col('var(--fab2)');fab.style.setProperty('--fab-fg',cr(main,col('var(--on)'))>=4.5?'var(--on)':best(main,['var(--on)','var(--fg)','var(--acc-ink)','#ffffff','#1d1d1f']));fab.style.setProperty('--fab2-fg',best(mix,['var(--fg)','var(--on)','var(--acc-ink)','#ffffff','#1d1d1f']))};
+ const tone=()=>{const main=col('var(--fab)'),mix=col('var(--fab2)');fab.style.setProperty('--fab-fg',cr(main,col('var(--on)'))>=4.5?'var(--on)':best(main,['var(--on)','var(--fg)','var(--acc-ink)','#ffffff','#1d1d1f']));fab.style.setProperty('--fab2-fg',best(mix,['var(--fg)','var(--on)','var(--acc-ink)','#ffffff','#1d1d1f']));const ao=fab.style.getPropertyValue('--fab-fg'),R=document.documentElement;if(R.style.getPropertyValue('--acc-on')!==ao)R.style.setProperty('--acc-on',ao)};
  tone();new MutationObserver(()=>requestAnimationFrame(tone)).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','style','data-ui']});window.snsFabTone=tone})();
 /* V2.10.0：資料夾／分組排序切換與拖曳。拖曳只在「同一層的資料夾」或「分組清單」之間調整順序；放開後只寫入 settings 的 sort 欄位。 */
-(()=>{const sb=$('#sb');
- sb.addEventListener('click',e=>{const b=e.target.closest('[data-srt]');if(!b)return;e.preventDefault();const k=b.dataset.srt,m=b.dataset.m;if(sortS[k].m===m)return;sortS[k].m=m;saveS();drawSb();render()});
- let st=null,raf=0,swallow=false;
- const rowsOf=st=>st.k==='f'?[...$('#tl').querySelectorAll('.tn[data-fp]')].filter(r=>fpar(r.dataset.fp)===fpar(st.key)):[...$('#sgll').querySelectorAll('.sgr[data-gr]')];
- const keyOf=(k,r)=>k==='f'?r.dataset.fp:r.dataset.gr;
- const scroller=st=>{const l=st.k==='f'?$('#tl'):$('#sgll');return l.scrollHeight>l.clientHeight+1&&/(auto|scroll)/.test(getComputedStyle(l).overflowY)?l:sb};
- const clr=()=>sb.querySelectorAll('.drop-b,.drop-a').forEach(x=>x.classList.remove('drop-b','drop-a'));
- const mark=()=>{clr();const sib=rowsOf(st).filter(r=>r!==st.row);let i=sib.findIndex(r=>{const q=r.getBoundingClientRect();return st.y<q.top+q.height/2});if(i<0)i=sib.length;st.idx=i;st.sib=sib;if(!sib.length)return;if(i<sib.length)sib[i].classList.add('drop-b');else sib[sib.length-1].classList.add('drop-a')};
- const loop=()=>{if(!st||!st.on){raf=0;return}const sc=scroller(st),r=sc.getBoundingClientRect(),E=40;let v=0;if(st.y<r.top+E)v=-Math.ceil((r.top+E-st.y)/4);else if(st.y>r.bottom-E)v=Math.ceil((st.y-(r.bottom-E))/4);if(v){const t=sc.scrollTop;sc.scrollTop+=v;if(sc.scrollTop!==t)mark()}raf=requestAnimationFrame(loop)};
- const start=()=>{if(!st)return;st.on=true;st.row.classList.add('dragging');document.body.classList.add('sorting');try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}mark();if(!raf)raf=requestAnimationFrame(loop)};
+/* ---- V2.10.1 同步狀態提示：只顯示 ⟳ 同步的「同步中／已同步最新資料／同步失敗」。電腦放在頂部「📢 公告」旁邊，手機放在圓形 ⟳ 同步按鈕旁邊；
+   文字、觸發時機、顯示時間（成功 4 秒後消失、同步中與失敗保留到下一次結果）都和原本相同，只是不再寫在收藏列表上方 ---- */
+window.snsSyn=(()=>{const el=document.createElement('span');el.id='syn';el.className='syn';el.setAttribute('role','status');el.setAttribute('aria-live','polite');el.hidden=true;
+ const mq=matchMedia('(max-width:900px)');const place=()=>{const a=mq.matches?$('#rf'):$('#ann');if(a&&a.nextElementSibling!==el)a.after(el)};place();mq.addEventListener?mq.addEventListener('change',place):mq.addListener(place);
+ /* 手機上 ⟳ 後面放不下時，提示換到下一行，並對齊在 ⟳ 正下方（不會跑到最左邊離按鈕很遠） */
+ const fit=()=>{el.style.marginLeft='';if(el.hidden||!mq.matches)return;const rf=$('#rf'),row=el.parentElement;if(!rf||!row)return;const a=rf.getBoundingClientRect(),e=el.getBoundingClientRect();if(e.top<a.bottom-2)return;const r=row.getBoundingClientRect(),pl=parseFloat(getComputedStyle(row).paddingLeft)||0;el.style.marginLeft=Math.max(0,Math.min(a.left-r.left-pl,r.width-pl-e.width))+'px'};
+ addEventListener('resize',()=>requestAnimationFrame(fit));
+ let tm=0;const set=(t,kind,ms)=>{clearTimeout(tm);el.textContent=t||'';el.className='syn'+(kind?' '+kind:'');el.hidden=!t;el.title=t||'';fit();if(t&&ms)tm=setTimeout(()=>{if(el.textContent===t){el.textContent='';el.hidden=true;fit()}},ms)};
+ const place2=()=>{place();fit()};mq.addEventListener?mq.addEventListener('change',fit):mq.addListener(fit);
+ return{set,el,place:place2,fit}})();
+/* ===== V2.10.1：資料夾／分組排序（共用元件） =====
+   ① SortDrag：拖曳引擎（側邊欄一般清單與排序彈窗共用）。電腦：按住列後移動就開始；手機：長按約 0.3 秒才開始，
+      期間手指移動超過 10px 視為一般捲動。拖曳中才在該列顯示 ⠿，不佔列表寬度；只在「同一層」之間調整。
+   ② SortDlg：排序彈窗（資料夾、分組共用，只傳入不同資料與標題）。拖曳／指定位置都只改暫存順序，按「保存」才寫入
+      既有的 settings.sort（沿用 saveS 與原本的跨裝置同步）；X／Esc 有未保存變動時先確認；點外部、手機返回鍵不關閉。
+   ③ 資料夾 ⋮ 浮動選單（編輯＝原本的改名、刪除＝原本的刪除確認）。 */
+const SortDrag=cfg=>{let st=null,raf=0,swallow=false;const root=cfg.root;
+ const clr=()=>root.querySelectorAll('.drop-b,.drop-a').forEach(x=>x.classList.remove('drop-b','drop-a'));
+ const mark=()=>{clr();const sib=st.sib0.filter(r=>r!==st.row);let i=sib.findIndex(r=>{const q=r.getBoundingClientRect();return st.y<q.top+q.height/2});if(i<0)i=sib.length;st.idx=i;st.sib=sib;if(!sib.length)return;if(i<sib.length)sib[i].classList.add('drop-b');else sib[sib.length-1].classList.add('drop-a')};
+ const loop=()=>{if(!st||!st.on){raf=0;return}const sc=cfg.scroller(st.row),r=sc.getBoundingClientRect(),E=40;let v=0;if(st.y<r.top+E)v=-Math.ceil((r.top+E-st.y)/4);else if(st.y>r.bottom-E)v=Math.ceil((st.y-(r.bottom-E))/4);if(v){const t=sc.scrollTop;sc.scrollTop+=v;if(sc.scrollTop!==t)mark()}raf=requestAnimationFrame(loop)};
+ const start=()=>{if(!st||st.on)return;st.on=true;st.sib0=cfg.sibs(st.row);st.row.classList.add('dragging');document.body.classList.add('sorting');try{st.row.setPointerCapture(st.id)}catch(x){}try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}mark();if(!raf)raf=requestAnimationFrame(loop)};
  const stop=commit=>{if(!st)return;clearTimeout(st.tm);const s0=st;st=null;cancelAnimationFrame(raf);raf=0;document.body.classList.remove('sorting');s0.row.classList.remove('dragging');clr();if(!s0.on)return;swallow=true;setTimeout(()=>swallow=false,0);if(!commit)return;
-  const keys=s0.sib.map(r=>keyOf(s0.k,r));keys.splice(s0.idx,0,s0.key);const before=rowsOf({k:s0.k,key:s0.key}).map(r=>keyOf(s0.k,r));if(keys.join('\n')===before.join('\n'))return;
-  if(s0.k==='f'){const set=new Set(keys);sortS.f.o=sortS.f.o.filter(x=>!set.has(x)).concat(keys)}else sortS.g.o=keys;saveS();drawSb();render()};
- sb.addEventListener('pointerdown',e=>{const h=e.target.closest('.dh[data-dh],.dh[data-gh]');if(!h||st||(e.button&&e.button!==0))return;e.preventDefault();const k=h.dataset.dh!=null?'f':'g',row=h.closest(k==='f'?'.tn':'.sgr');st={k,key:k==='f'?h.dataset.dh:h.dataset.gh,row,h,id:e.pointerId,x0:e.clientX,y0:e.clientY,y:e.clientY,on:false,mouse:e.pointerType==='mouse'};try{h.setPointerCapture(e.pointerId)}catch(x){}if(!st.mouse)st.tm=setTimeout(start,300)});
- sb.addEventListener('pointermove',e=>{if(!st||e.pointerId!==st.id)return;st.y=e.clientY;const d=Math.hypot(e.clientX-st.x0,e.clientY-st.y0);if(!st.on){if(st.mouse&&d>4)start();else if(!st.mouse&&d>10)stop(false);return}e.preventDefault();mark()});
- sb.addEventListener('pointerup',e=>{if(st&&e.pointerId===st.id)stop(true)});
- sb.addEventListener('pointercancel',e=>{if(st&&e.pointerId===st.id)stop(false)});
- sb.addEventListener('click',e=>{if(swallow||e.target.closest('.dh')){e.stopPropagation();e.preventDefault()}},true);
- sb.addEventListener('contextmenu',e=>{if(e.target.closest('.dh'))e.preventDefault()});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&st&&st.on){e.stopPropagation();stop(false)}},true);
+  const keys=s0.sib.map(cfg.keyOf);keys.splice(s0.idx,0,s0.key);const before=s0.sib0.map(cfg.keyOf);if(keys.join('\n')===before.join('\n'))return;cfg.drop(s0.key,keys,s0.row)};
+ root.addEventListener('pointerdown',e=>{if(st||(e.button&&e.button!==0)||(cfg.skip&&e.target.closest(cfg.skip)))return;const row=cfg.rowOf(e.target);if(!row)return;st={row,key:cfg.keyOf(row),id:e.pointerId,x0:e.clientX,y0:e.clientY,y:e.clientY,on:false,mouse:e.pointerType==='mouse'};if(!st.mouse)st.tm=setTimeout(start,300)});
+ root.addEventListener('pointermove',e=>{if(!st||e.pointerId!==st.id)return;st.y=e.clientY;const d=Math.hypot(e.clientX-st.x0,e.clientY-st.y0);if(!st.on){if(st.mouse&&d>4)start();else if(!st.mouse&&d>10)stop(false);return}e.preventDefault();mark()});
+ root.addEventListener('pointerup',e=>{if(st&&e.pointerId===st.id)stop(true)});
+ root.addEventListener('pointercancel',e=>{if(st&&e.pointerId===st.id)stop(false)});
+ root.addEventListener('touchmove',e=>{if(st&&st.on&&e.cancelable)e.preventDefault()},{passive:false});
+ root.addEventListener('click',e=>{if(swallow){e.stopPropagation();e.preventDefault()}},true);
+ root.addEventListener('contextmenu',e=>{if(st)e.preventDefault()});
+ window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!e.defaultPrevented&&st&&st.on){e.stopImmediatePropagation();e.preventDefault();stop(false)}},true);
+ return{busy:()=>!!(st&&st.on),cancel:()=>stop(false)}};
+const sortCommitF=keys=>{const set=new Set(keys);sortS.f.o=sortS.f.o.filter(x=>!set.has(x)).concat(keys)};
+(()=>{const sb=$('#sb');
+ sb.addEventListener('click',e=>{const b=e.target.closest('[data-srt]');if(!b)return;e.preventDefault();const k=b.dataset.srt;sortS[k].m=sortS[k].m==='custom'?'az':'custom';saveS();drawSb();render()});
+ sb.addEventListener('click',e=>{const b=e.target.closest('[data-sdo]');if(!b)return;e.preventDefault();SortDlg.open(b.dataset.sdo,b)});
+ const isF=r=>r.matches('.tn');
+ window.snsSideDrag=SortDrag({root:sb,skip:'[data-o],.fmn,[data-srt],[data-sdo]',
+  rowOf:t=>t.closest('#tl .tn.dz[data-fp],#sgll .sgr.dz[data-gr]'),
+  keyOf:r=>isF(r)?r.dataset.fp:r.dataset.gr,
+  sibs:r=>isF(r)?[...$('#tl').querySelectorAll('.tn[data-fp]')].filter(x=>fpar(x.dataset.fp)===fpar(r.dataset.fp)):[...$('#sgll').querySelectorAll('.sgr[data-gr]')],
+  scroller:r=>{const l=isF(r)?$('#tl'):$('#sgll');return l.scrollHeight>l.clientHeight+1&&/(auto|scroll)/.test(getComputedStyle(l).overflowY)?l:sb},
+  drop:(key,keys,row)=>{if(isF(row))sortCommitF(keys);else sortS.g.o=keys;saveS();drawSb();render()}});
  window.snsSort={state:()=>JSON.parse(JSON.stringify(sortS))}})();
+/* ---- 排序彈窗（資料夾、分組共用） ---- */
+const SortDlg=(()=>{const T={f:{title:'📁 調整資料夾順序',hint:'按住資料夾列可拖曳排序，或點擊右側圖示，選擇要移至哪個資料夾下方。',unit:'資料夾',icon:'📁'},g:{title:'📚 調整分組順序',hint:'按住分組列可拖曳排序，或點擊右側圖示，選擇要移至哪個分組下方。',unit:'分組',icon:''}};
+ const el=document.createElement('div');el.id='srtm';el.className='ov';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-labelledby','srtt');
+ el.innerHTML='<div class="box srtb" tabindex="-1"><div class="row mh"><b id="srtt"></b><button type="button" id="srtx" title="關閉" aria-label="關閉">✕</button></div><p class="srtd" id="srtd"></p><div class="mb" id="srtl" role="list"></div><div class="mf"><span class="srts" id="srts" role="status" aria-live="polite"></span><button type="button" id="srtv" class="pri">保存</button></div></div>';
+ const pk=document.createElement('div');pk.id='srpm';pk.className='ov';pk.setAttribute('role','dialog');pk.setAttribute('aria-modal','true');pk.setAttribute('aria-labelledby','srpt');
+ pk.innerHTML='<div class="box srpb"><div class="row mh"><b id="srpt"></b><button type="button" id="srpx" title="取消" aria-label="取消">✕</button></div><div class="mb" id="srpl" role="list"></div></div>';
+ document.body.append(el,pk);
+ let D=null,popIgnore=0;const L=$('#srtl');
+ const isOpen=()=>el.classList.contains('o'),pkOpen=()=>pk.classList.contains('o');
+ const dirty=()=>!!D&&D.cur.join('\n')!==D.base.join('\n');
+ const name=k=>D.k==='f'?k.split('/').pop():((grps.find(g=>g.id===k)||{}).name||'');
+ const par=k=>D.k==='f'?fpar(k):'';
+ const status=(t,err)=>{const x=$('#srts');x.textContent=t||'';x.classList.toggle('err',!!err)};
+ const draw=hl=>{if(!D.cur.length){L.innerHTML='<div class="sge">還沒有'+T[D.k].unit+'。</div>';return}
+  L.innerHTML=D.cur.map(k=>{const d=D.k==='f'?k.split('/').length-1:0,g=D.k==='g'?grps.find(x=>x.id===k):null;
+   return '<div class="srr'+(k===hl?' moved':'')+'" role="listitem" data-k="'+esc(k)+'" data-p="'+esc(par(k))+'" style="--d:'+d+'">'+(g?'<span class="gd" style="background:'+esc(g.color)+'"></span>':'<span class="sri" aria-hidden="true">📁</span>')+'<span class="srn">'+esc(name(k))+'</span><button type="button" class="smv" data-smv="'+esc(k)+'" title="移至…下方" aria-label="選擇「'+esc(name(k))+'」要移到哪個'+T[D.k].unit+'下方">'+SVG_DTL+'</button></div>'}).join('');
+  if(hl){const r=L.querySelector('.srr.moved');if(r)try{r.scrollIntoView({block:'nearest'})}catch(x){}}};
+ /* 把同一層（siblings）換成新順序 keys，只動暫存 */
+ const reorder=(key,keys)=>{if(D.k==='f'){const set=new Set(keys),o=D.cur.filter(x=>!set.has(x)).concat(keys);D.cur=fOrdO(D.cur.slice(),o)}else D.cur=keys.slice();draw(key);status(dirty()?'有尚未保存的變動':'')};
+ const drag=SortDrag({root:L,skip:'.smv',rowOf:t=>t.closest('.srr[data-k]'),keyOf:r=>r.dataset.k,sibs:r=>[...L.querySelectorAll('.srr[data-k]')].filter(x=>x.dataset.p===r.dataset.p),scroller:()=>L,drop:reorder});
+ /* 指定位置：選擇要移到哪一個同層項目的正下方（或最上面） */
+ const pick=key=>{const sibs=D.cur.filter(x=>par(x)===par(key)),i=sibs.indexOf(key),above=i>0?sibs[i-1]:null;
+  $('#srpt').textContent='將『'+name(key)+'』移至哪個'+T[D.k].unit+'下方？';
+  const opts=sibs.filter(x=>x!==key);
+  $('#srpl').innerHTML=(opts.length?'<button type="button" class="srpo" data-to=""'+(i===0?' disabled':'')+'>⤒ 移到最上面'+(i===0?'<small>（目前已在最上面）</small>':'')+'</button>'+opts.map(x=>'<button type="button" class="srpo" data-to="'+esc(x)+'"'+(x===above?' disabled':'')+'>'+(D.k==='f'?'📁 ':'')+esc(name(x))+(x===above?'<small>（目前就在它下方）</small>':'')+'</button>').join(''):'<div class="sge">同一層沒有其他'+T[D.k].unit+'可以調整。</div>');
+  pk.dataset.key=key;pk.classList.add('o');setTimeout(()=>{try{($('#srpl .srpo:not([disabled])')||$('#srpx')).focus({preventScroll:true})}catch(x){}},0)};
+ const pkClose=()=>{pk.classList.remove('o');const k=pk.dataset.key;delete pk.dataset.key;const b=k&&L.querySelector('.smv[data-smv="'+CSS.escape(k)+'"]');try{b&&b.focus({preventScroll:true})}catch(x){}};
+ $('#srpl').addEventListener('click',e=>{const b=e.target.closest('.srpo[data-to]');if(!b||b.disabled)return;const key=pk.dataset.key,to=b.dataset.to,sibs=D.cur.filter(x=>par(x)===par(key)).filter(x=>x!==key);const j=to?sibs.indexOf(to)+1:0;sibs.splice(j,0,key);pkClose();reorder(key,sibs)});
+ $('#srpx').onclick=pkClose;pk.addEventListener('mousedown',e=>{if(e.target===pk)pkClose()});
+ L.addEventListener('click',e=>{const b=e.target.closest('.smv[data-smv]');if(b){e.stopPropagation();pick(b.dataset.smv)}});
+ const open=(k,from)=>{if(!T[k]||sortS[k].m!=='custom')return;const cur=k==='f'?fOrdO(fp(),sortS.f.o):gOrd().map(g=>g.id);D={k,base:cur.slice(),cur:cur.slice(),from};
+  $('#srtt').textContent=T[k].title;$('#srtd').textContent=T[k].hint;status('');$('#srtv').disabled=false;draw();L.scrollTop=0;el.classList.add('o');
+  try{history.pushState({snsSrt:1},'')}catch(x){}setTimeout(()=>{try{el.querySelector('.srtb').focus({preventScroll:true})}catch(x){}},0)};
+ const close=()=>{if(!isOpen())return;drag.cancel();if(pkOpen())pkClose();el.classList.remove('o');const f=D&&D.from;D=null;
+  try{if(history.state&&history.state.snsSrt){popIgnore++;history.back()}}catch(x){}try{f&&document.contains(f)&&f.focus({preventScroll:true})}catch(x){}};
+ /* X 與 Esc 同一套規則 */
+ const tryClose=async()=>{if(!isOpen()||$('#askm').classList.contains('o'))return;if(!dirty())return close();const ok=await snsAsk({title:'離開調整順序',main:'此次有做排序變動，是否確定離開？',cancel:'繼續編輯',ok:'確定離開'});if(ok)close();else try{el.querySelector('.srtb').focus({preventScroll:true})}catch(x){}};
+ $('#srtx').onclick=tryClose;
+ $('#srtv').onclick=async()=>{if(!D)return;if(!dirty())return close();const k=D.k,prev=JSON.parse(JSON.stringify(sortS[k].o)),btn=$('#srtv');
+  if(k==='f'){const have=new Set(fp());sortS.f.o=D.cur.filter(x=>have.has(x))}else{const have=new Set(grps.map(g=>g.id));sortS.g.o=D.cur.filter(x=>have.has(x))}
+  btn.disabled=true;status('保存中…');
+  try{await saveS(true);status('');close();drawSb();render();try{note2('已保存排序')}catch(x){}}
+  catch(x){sortS[k].o=prev;btn.disabled=false;status('保存失敗：'+(x&&x.message||x&&x.code||'請稍後再試')+'。目前的排序還在這裡，可以再按一次「保存」。',true)}};
+ window.addEventListener('keydown',e=>{if(e.key!=='Escape'||e.defaultPrevented||!isOpen())return;if($('#askm').classList.contains('o'))return;if(drag.busy())return;e.stopImmediatePropagation();e.preventDefault();if(pkOpen())pkClose();else tryClose()},true);
+ /* 手機返回鍵／瀏覽器上一頁：不直接關閉彈窗 */
+ window.addEventListener('popstate',()=>{if(popIgnore){popIgnore--;return}if(isOpen()){try{history.pushState({snsSrt:1},'')}catch(x){}if(pkOpen())pkClose();status('請按右上角 ✕ 或右下角「保存」離開。')}});
+ return{open,close,tryClose,isOpen,dirty,state:()=>D&&{k:D.k,base:D.base.slice(),cur:D.cur.slice()},pick}})();
+window.snsSortDlg=SortDlg;
+/* ---- 資料夾 ⋮ 浮動選單 ---- */
+window.snsFpop=(()=>{const pop=document.createElement('div');pop.id='fpop';pop.className='fpop';pop.setAttribute('role','menu');pop.hidden=true;
+ pop.innerHTML='<button type="button" role="menuitem" id="fpe">✎ 編輯</button><button type="button" role="menuitem" id="fpd" class="fpd">'+TRASH+'<span>刪除</span></button>';document.body.appendChild(pop);
+ let cur='',btn=null,eat=false;
+ const close=()=>{if(pop.hidden)return;pop.hidden=true;if(btn)btn.setAttribute('aria-expanded','false');btn=null;cur=''};
+ const place=()=>{if(!btn)return;const r=btn.getBoundingClientRect(),W=document.documentElement.clientWidth,H=innerHeight;pop.style.left='0px';pop.style.top='0px';const pw=pop.offsetWidth,ph=pop.offsetHeight;
+  let x=r.right-pw;x=Math.max(8,Math.min(x,W-pw-8));let y=r.bottom+4,side='down';if(y+ph>H-8){y=r.top-ph-4;side='up'}if(y<8){y=Math.max(8,Math.min(H-ph-8,r.top));side='side'}pop.style.left=Math.round(x)+'px';pop.style.top=Math.round(y)+'px';pop.dataset.side=side};
+ const openAt=b=>{close();btn=b;cur=b.dataset.fm;$('#fpe').dataset.n=cur;pop.hidden=false;b.setAttribute('aria-expanded','true');place();try{$('#fpe').focus({preventScroll:true})}catch(x){}};
+ $('#tl').addEventListener('click',e=>{const b=e.target.closest('.fmn[data-fm]');if(!b)return;e.stopPropagation();if(!pop.hidden&&btn===b){close();return}openAt(b)});
+ pop.addEventListener('click',e=>{const d=e.target.closest('#fpd');if(e.target.closest('#fpe')){setTimeout(close,0);return}if(d){const p=cur;close();askDelFolder(p)}});
+ /* 點選單外部：只關閉選單（這一下不會同時觸發底下的按鈕或關掉抽屜） */
+ document.addEventListener('pointerdown',e=>{if(pop.hidden||pop.contains(e.target)||(btn&&btn.contains(e.target)))return;const other=e.target.closest&&e.target.closest('#tl .fmn');close();if(other)return;eat=true;setTimeout(()=>eat=false,600)},true);
+ document.addEventListener('click',e=>{if(eat){eat=false;e.stopPropagation();e.preventDefault()}},true);
+ window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!e.defaultPrevented&&!pop.hidden){e.stopImmediatePropagation();e.preventDefault();const b=btn;close();try{b&&b.focus()}catch(x){}}},true);
+ document.addEventListener('scroll',e=>{const t=e.target;if(!pop.hidden&&btn&&(t===document||t===document.documentElement||(t.contains&&t.contains(btn))))close()},true);
+ window.addEventListener('resize',()=>close());
+ return{close,openAt,isOpen:()=>!pop.hidden,el:pop}})();
+/* ---- V2.10.1 手機「大」「特大」：主畫面只固定最上方品牌列（☰、Logo、使用說明、公告、頭像），
+   設定列、搜尋工具列、排序列、設計面板、日期面板移到卡片區最上面，跟著卡片一起捲動。小／中與電腦版不變。 */
+(()=>{const mq=matchMedia('(max-width:900px)'),R=document.documentElement,tp=$('#tp'),mn=$('#mn');if(!tp||!mn)return;const hd=tp.querySelector('header');
+ const row=hd.querySelector(':scope>.row'),tb=tp.querySelector('.bar.tb'),ctl=$('#sd1').closest('.ctl'),cp=$('#cp'),dr=$('#dr');if(!row||!tb)return;
+ const box=document.createElement('div');box.id='tpx';const h2=document.createElement('header');h2.className='hdx';h2.innerHTML='<i hidden></i>';box.appendChild(h2);
+ let on=false;const want=()=>mq.matches&&(R.dataset.ui==='l'||R.dataset.ui==='xl');
+ const apply=()=>{const w=want();if(w===on)return;const st=mn.scrollTop;on=w;if(w){h2.appendChild(row);box.append(tb,ctl,cp,dr);mn.insertBefore(box,mn.firstChild)}else{hd.appendChild(row);tp.append(tb,ctl,cp,dr);box.remove()}R.classList.toggle('tpflow',w);mn.scrollTop=st};
+ apply();mq.addEventListener?mq.addEventListener('change',apply):mq.addListener(apply);new MutationObserver(apply).observe(R,{attributes:true,attributeFilter:['data-ui']});window.snsTpFlow={on:()=>on,apply}})();
 /* V2.9.0：介面大小（小 85%／中 100%／大 135%／特大 150%）。設定存在這台裝置的 localStorage「uisz」，不寫入 Google 雲端；
    實際尺寸由 CSS 變數 --ui 控制（所有 CSS 尺寸都乘上 --ui），不是用 zoom 放大整頁，所以響應式斷點與版面照常運作。 */
 (()=>{const R=document.documentElement,el=$('#uim'),K='uisz',ok=['s','m','l','xl'];
@@ -1773,7 +1965,7 @@ const CID='840119973043-eo9lkljcu3bduvu9gae1ggri6i0hr4c7.apps.googleusercontent.
 const SCOPE='openid profile email https://www.googleapis.com/auth/drive.file';
 const D='https://www.googleapis.com/drive/v3/',U='https://www.googleapis.com/upload/drive/v3/',SH='https://sheets.googleapis.com/v4/spreadsheets/';
 const FOLDER='application/vnd.google-apps.folder',SHEET='application/vnd.google-apps.spreadsheet';
-const GG=window.snsGoogle;window.SNS_VERSION='2.10.0';
+const GG=window.snsGoogle;window.SNS_VERSION='2.10.1';
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
@@ -2066,7 +2258,7 @@ window.gSync=()=>store?store.flush():Promise.resolve();
 window.gStore=()=>store;
 
 /* ---- 同步（合併重新整理）---- */
-$('#rf').onclick=async()=>{if(!store){$('#st').textContent='請先登入 Google';return}const b=$('#rf');b.disabled=true;$('#st').textContent='從 Google 試算表同步中…';try{const sq=imgs.stat();if(sq.total){await imgs.retryAll()}await store.refresh();lastSync=Date.now();await quota();if(store.hasBad())$('#st').textContent=store.badMsg();else{note('已同步最新資料');if(sq.total)imgs.process({force:true,ignoreWait:true,retryStuck:true}).then(imgs.report).catch(()=>{})}}catch(e){$('#st').textContent='同步失敗：'+(e.message||'')}finally{b.disabled=false}};
+$('#rf').onclick=async()=>{if(!store){$('#st').textContent='請先登入 Google';return}const b=$('#rf');b.disabled=true;snsSyn.set('從 Google 試算表同步中…','ing');try{const sq=imgs.stat();if(sq.total){await imgs.retryAll()}await store.refresh();lastSync=Date.now();await quota();if(store.hasBad()){snsSyn.set('');$('#st').textContent=store.badMsg()}else{snsSyn.set('已同步最新資料','ok',4000);if(sq.total)imgs.process({force:true,ignoreWait:true,retryStuck:true}).then(imgs.report).catch(()=>{})}}catch(e){snsSyn.set('同步失敗：'+(e.message||''),'err')}finally{b.disabled=false}};
 document.addEventListener('visibilitychange',()=>{if(!store)return;if(document.hidden){store.flush().catch(()=>{})}else if(Date.now()-lastSync>120000&&!store.dirty()){store.refresh().then(()=>{lastSync=Date.now();imgs.kick(2000)}).catch(()=>{})}});
 setInterval(()=>{if(store&&!document.hidden&&!store.dirty()&&Date.now()-lastSync>60000)store.refresh().then(()=>{lastSync=Date.now();imgs.kick(2000)}).catch(()=>{})},30000);
 addEventListener('beforeunload',e=>{if(store&&store.dirty()){e.preventDefault();e.returnValue=''}});
