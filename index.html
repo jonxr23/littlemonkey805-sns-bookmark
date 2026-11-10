@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="app-version" content="2.10.4">
-<meta name="app-build" content="2026-11-11 04:43">
+<meta name="app-build" content="2026-11-11 04:57">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1213,7 +1213,7 @@ const nuU=u=>{try{const x=new URL(String(u||'').trim());let h=x.hostname.toLower
  return h+p+(q.length?'?'+q.map(a=>a.join('=')).join('&'):'')}catch(e){return String(u||'').trim().toLowerCase()}};
 let dupShown=false;
 function dupFind(){const v=$('#u').value.trim();if(!/^https?:\/\//.test(v))return[];const k=nuU(v);if(cur&&cur.url&&nuU(cur.url)===k)return[];return posts.filter(p=>p&&p.url&&(!cur||p.id!==cur.id)&&nuU(p.url)===k).sort((a,b)=>(b.t||0)-(a.t||0))}
-function dupChk(){const el=$('#udup');if(!el)return;const L=dupFind();dupShown=L.length>0;el.textContent='';if(!L.length){el.hidden=true;return}const p=L[0],d=new Date(p.t||0),s=document.createElement('span'),b=document.createElement('button');
+function dupChk(){const el=$('#udup');if(!el)return;const L=dupFind();dupShown=L.length>0;el.textContent='';if(!L.length){/* V2.10.4：Threads 手機分享的短網址（threads.com/share/…）沒有貼文代碼，無法比對，改提示無法檢查 */const v=$('#u').value.trim();if(/^https?:\/\//.test(v)&&/^threads\.net\/share\//.test(nuU(v))){const t=document.createElement('span');t.textContent='⚠️ 溫馨提醒：這是 Threads 手機分享的短網址，無法檢查是否已收藏過。';el.append(t);el.hidden=false;return}el.hidden=true;return}const p=L[0],d=new Date(p.t||0),s=document.createElement('span'),b=document.createElement('button');
  const tt=String(p.note||'').trim();s.textContent='⚠️ 溫馨提醒：這個網址已於 '+d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' 收藏過囉'+(tt?'，原收藏標題為「'+(tt.length>30?tt.slice(0,30)+'…':tt)+'」':'')+'。仍可再次收藏。';
  b.type='button';b.textContent='查看';b.setAttribute('aria-label','查看已收藏的那筆');b.onclick=()=>{window.pvOpen&&pvOpen(p.id)};el.append(s,b);el.hidden=false}
 $('#cx').onclick=()=>{$('#dlg').classList.remove('o');IMGF.cancel();if(window.gImgs&&sessUp.length)gImgs.abandon(sessUp.splice(0))};
