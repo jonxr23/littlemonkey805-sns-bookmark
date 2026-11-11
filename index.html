@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="app-version" content="3.0.0">
-<meta name="app-build" content="2026-11-12 02:13">
+<meta name="app-build" content="2026-11-12 02:27">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1010,6 +1010,12 @@ input.phfit::placeholder{font-size:var(--phf)}
 @media(max-width:380px){html[data-ui=l] h1.brand #ann .ant,html[data-ui=xl] h1.brand #ann .ant{display:none}}
 /* 電腦版大／特大：頂部右側按鈕跟著放大，按鈕之間的間距收小一點，避免寬度不足時換行 */
 @media(min-width:901px){html[data-ui=l] header .row,html[data-ui=xl] header .row{gap:calc(5px*var(--ui))}html[data-ui=l] header,html[data-ui=xl] header{column-gap:calc(6px*var(--ui))}}
+/* V3.0.0 追加：電腦版表格的水平捲動條固定在表格可視區域底部（sticky），垂直捲動時不會跑掉 */
+.tblw.tblw2{scrollbar-width:none}
+.tblw.tblw2::-webkit-scrollbar{display:none}
+.thb{position:sticky;bottom:0;z-index:4;overflow-x:auto;overflow-y:hidden;height:calc(16px*var(--ui));background:color-mix(in srgb,var(--bg) 92%,transparent);border-top:1px solid var(--bd);scrollbar-width:auto}
+.thb[hidden]{display:none}
+.thbi{height:1px}
 </style>
 </head>
 <body>
@@ -2945,7 +2951,15 @@ function tblAfter(){if(view!=='table'||MQ.matches)return;const L=$('#ls'),wrap=L
  const cg=document.createElement('colgroup');cg.innerHTML=w.map(x=>'<col style="width:'+x+'px">').join('');t.insertBefore(cg,t.firstChild);t.style.width=w.reduce((a,c)=>a+c,0)+'px';
  ths.forEach((th,i)=>{th.classList.add('crh');th.insertAdjacentHTML('beforeend','<span class="crz" data-ci="'+i+'" role="separator" aria-orientation="vertical" aria-label="拖曳調整欄寬" title="拖曳調整欄寬"></span>')});
  const bar=mk('div',{class:'tblbar'},'<button type="button" class="chip" id="tblrst" title="把所有欄寬恢復成預設">恢復預設欄寬</button>');L.insertBefore(bar,wrap);
- $('#tblrst').onclick=()=>{try{localStorage.removeItem(TW)}catch(e){}render()}}
+ $('#tblrst').onclick=()=>{try{localStorage.removeItem(TW)}catch(e){}render()};hbar(wrap,t)}
+/* 表格水平捲動條固定在可視區域底部：在表格下方放一條「黏在畫面底部」的捲動條（sticky），和表格雙向同步；表格本身的捲動條隱藏，滑鼠滾輪／觸控板左右捲動照常。
+   沒有水平溢出時不顯示；批次操作列出現時自動墊高，不重疊 */
+let hbRO=null;
+function hbar(wrap,t){const bar=mk('div',{class:'thb','aria-hidden':'true'},'<div class="thbi"></div>'),inner=bar.firstChild;wrap.after(bar);wrap.classList.add('tblw2');
+ let lock=0;const upd=()=>{const ov=wrap.scrollWidth>wrap.clientWidth+1;bar.hidden=!ov;wrap.classList.toggle('tblw2',ov);inner.style.width=wrap.scrollWidth+'px';bar.style.bottom=bmode&&$('#bb').offsetHeight?$('#bb').offsetHeight+'px':'0px';if(ov)bar.scrollLeft=wrap.scrollLeft};
+ bar.addEventListener('scroll',()=>{if(lock===2){lock=0;return}lock=1;wrap.scrollLeft=bar.scrollLeft});
+ wrap.addEventListener('scroll',()=>{if(lock===1){lock=0;return}lock=2;bar.scrollLeft=wrap.scrollLeft});
+ if(hbRO)hbRO.disconnect();hbRO=new ResizeObserver(upd);hbRO.observe(wrap);hbRO.observe(t);upd()}
 let cz=null;
 $('#ls').addEventListener('pointerdown',e=>{const h=e.target.closest('.crz');if(!h||!tws)return;e.preventDefault();e.stopPropagation();const i=+h.dataset.ci,t=h.closest('table');cz={i,x:e.clientX,w0:tws.w[i],t,id:e.pointerId};document.body.classList.add('colrz');try{h.setPointerCapture(e.pointerId)}catch(x){}},true);
 $('#ls').addEventListener('pointermove',e=>{if(!cz||e.pointerId!==cz.id)return;const w=Math.max(tws.mins[cz.i],Math.round(cz.w0+e.clientX-cz.x));if(w===tws.w[cz.i])return;tws.w[cz.i]=w;const c=cz.t.querySelectorAll('col')[cz.i];if(c)c.style.width=w+'px';cz.t.style.width=tws.w.reduce((a,b)=>a+b,0)+'px'});
