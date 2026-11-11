@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="app-version" content="3.0.0">
-<meta name="app-build" content="2026-11-12 01:47">
+<meta name="app-build" content="2026-11-12 02:13">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -530,7 +530,8 @@ body.sorting,body.sorting *{cursor:grabbing!important;user-select:none!important
 }
 /* 電腦版「大」「特大」（V2.10.1 起「大」與「特大」相同）：第一排（品牌、使用說明、公告、頭像、主題、檢視、設定、🎨、備份、⟳）維持 100%；側邊欄改成單一捲動區 */
 @media(min-width:901px){
- html[data-ui=l] header,html[data-ui=xl] header{--ui:1;font-size:15px}
+ html[data-ui=l] #logo,html[data-ui=xl] #logo,html[data-ui=l] #gbox,html[data-ui=xl] #gbox,html[data-ui=l] #syn,html[data-ui=xl] #syn{--ui:1} /* V3.0.0：電腦版大／特大頂部列跟著縮放，只有 Logo、頭像、同步狀態固定原尺寸（原本整列固定） */
+ html[data-ui=l] #gbox,html[data-ui=xl] #gbox{font-size:15px}
  html[data-ui=l] #sb,html[data-ui=xl] #sb{overflow-y:auto;overscroll-behavior:contain}
  html[data-ui=l] #sb>#sbp,html[data-ui=xl] #sb>#sbp{flex:none;min-height:0}
  html[data-ui=l] #sbp>#tree,html[data-ui=xl] #sbp>#tree,html[data-ui=l] #sbp>#sgl,html[data-ui=xl] #sbp>#sgl{flex:none}
@@ -995,6 +996,20 @@ body.colrz,body.colrz *{cursor:col-resize!important;user-select:none!important;-
 input.phfit::placeholder{font-size:var(--phf)}
 /* 搜尋欄空白時右邊的 ✕ 本來就隱藏，右側不用再預留 ✕ 的空間，提示文字可以用滿整格 */
 .fqw>input:placeholder-shown{padding-right:calc(12px*var(--ui))}
+/* V3.0.0 追加（猴猴 2026-11-12）：手機「大」「特大」的使用說明、公告放大到參考圖的尺寸（字 16px、圖示 22px），大與特大相同；☰、Logo、頭像維持原尺寸。
+   放不下一排時（例如 390px 寬），由程式把這兩個入口的字逐步縮小（最小回到「中」的 12.5px），讓頂部維持單排、不換行。 */
+@media(max-width:900px){
+ html[data-ui=l] h1.brand #hlp,html[data-ui=xl] h1.brand #hlp,html[data-ui=l] h1.brand #ann,html[data-ui=xl] h1.brand #ann{font-size:var(--hlf,16px)!important;height:40px!important;gap:2px!important;padding:0 2px!important}
+ html[data-ui=l] h1.brand #hlp svg,html[data-ui=xl] h1.brand #hlp svg,html[data-ui=l] h1.brand #ann svg,html[data-ui=xl] h1.brand #ann svg{width:var(--hli,22px)!important;height:var(--hli,22px)!important}
+ html[data-ui=l] h1.brand #hlp,html[data-ui=xl] h1.brand #hlp,html[data-ui=l] h1.brand #ann,html[data-ui=xl] h1.brand #ann{margin:-8px 0 -8px 4px!important}
+ html[data-ui=l] h1.brand #ann .ant,html[data-ui=xl] h1.brand #ann .ant{display:inline}
+ html[data-ui=l] header,html[data-ui=xl] header{column-gap:6px}
+ /* 品牌列本身不縮放，左右留白也維持「中」的 14px（頁面左右留白會跟著大／特大變寬，這裡抵掉多出來的部分） */
+ html[data-ui=l] #tp>header,html[data-ui=xl] #tp>header{margin-left:calc(14px - 14px*var(--ui));margin-right:calc(14px - 14px*var(--ui))}
+}
+@media(max-width:380px){html[data-ui=l] h1.brand #ann .ant,html[data-ui=xl] h1.brand #ann .ant{display:none}}
+/* 電腦版大／特大：頂部右側按鈕跟著放大，按鈕之間的間距收小一點，避免寬度不足時換行 */
+@media(min-width:901px){html[data-ui=l] header .row,html[data-ui=xl] header .row{gap:calc(5px*var(--ui))}html[data-ui=l] header,html[data-ui=xl] header{column-gap:calc(6px*var(--ui))}}
 </style>
 </head>
 <body>
@@ -2999,6 +3014,15 @@ window.snsRes=(()=>{const K='surl3',M=new Map(),P=new Map(),DAY=864e5;
  const ro=new ResizeObserver(es=>es.forEach(e=>fit(e.target)));ids.forEach(id=>{const el=document.getElementById(id);if(el)ro.observe(el)});all();
  try{document.fonts&&document.fonts.ready.then(all)}catch(e){}addEventListener('load',all);
  window.snsPhFit=all}
+
+/* ---------- 手機大／特大：使用說明、公告放不下一排時逐步縮小字（最小 12.5px），頂部維持單排 ---------- */
+{const R2=document.documentElement,hd=document.querySelector('header');
+ const fit=()=>{const S=R2.style;S.removeProperty('--hlf');S.removeProperty('--hli');if(!MQ.matches||!(R2.dataset.ui==='l'||R2.dataset.ui==='xl'))return;
+  const hb=$('#hb'),h=$('#hlp'),a=$('#ann'),g=$('#gbox');if(!hb||!h||!a||!g||!hb.offsetParent)return;
+  const one=()=>{const c=e=>{const r=e.getBoundingClientRect();return r.top+r.height/2},y=c(hb);return [h,a,g].every(e=>!e.offsetParent||Math.abs(c(e)-y)<10)};
+  let f=16;while(!one()&&f>12.5){f-=.5;S.setProperty('--hlf',f+'px');S.setProperty('--hli',Math.round(f*22/16*2)/2+'px')}};
+ let tm=0;const later=()=>{clearTimeout(tm);tm=setTimeout(fit,60)};addEventListener('resize',later);MQ.addEventListener?MQ.addEventListener('change',later):MQ.addListener(later);
+ new MutationObserver(later).observe(R2,{attributes:true,attributeFilter:['data-ui']});try{document.fonts&&document.fonts.ready.then(fit)}catch(e){}addEventListener('load',fit);/* 登入前是較寬的「登入 Google」按鈕、登入後才是頭像：頭像區大小改變時重新計算 */try{new ResizeObserver(later).observe($('#gbox'))}catch(e){}fit();window.snsHlFit=fit}
 
 /* ---------- 啟動 ---------- */
 apply();
