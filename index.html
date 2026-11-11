@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="app-version" content="3.0.0">
-<meta name="app-build" content="2026-11-12 01:39">
+<meta name="app-build" content="2026-11-12 01:47">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -991,8 +991,10 @@ body.colrz,body.colrz *{cursor:col-resize!important;user-select:none!important;-
  html[data-ui=l] #tbrow>#sdp,html[data-ui=xl] #tbrow>#sdp{max-width:none;flex:0 0 auto}
  html[data-ui=l] #ctl0 #tbt,html[data-ui=xl] #ctl0 #tbt{margin-left:auto}
 }
-/* V3.0.0 追加：資料夾搜尋欄的提示文字放不下時，只把提示文字縮小（最小 10px×介面大小），輸入的字不變 */
+/* V3.0.0 追加：資料夾搜尋欄的提示文字放不下時，只把提示文字縮小（最小 12px×介面大小），輸入的字不變 */
 input.phfit::placeholder{font-size:var(--phf)}
+/* 搜尋欄空白時右邊的 ✕ 本來就隱藏，右側不用再預留 ✕ 的空間，提示文字可以用滿整格 */
+.fqw>input:placeholder-shown{padding-right:calc(12px*var(--ui))}
 </style>
 </head>
 <body>
@@ -2987,12 +2989,16 @@ window.snsRes=(()=>{const K='surl3',M=new Map(),P=new Map(),DAY=864e5;
 {const u0=$('#u').oninput;$('#u').oninput=()=>{u0();snsRes.post()}}
 
 /* ---------- 資料夾搜尋欄：提示文字放不下時縮小提示字（不影響輸入的文字） ---------- */
-{const ids=['fq','csq','mkq','bfq'],cv=document.createElement('canvas').getContext('2d');
- const fit=el=>{const w=el.clientWidth;if(!w)return;const cs=getComputedStyle(el),pad=(parseFloat(cs.paddingLeft)||0)+(parseFloat(cs.paddingRight)||0),avail=w-pad-2,base=parseFloat(cs.fontSize),u=parseFloat(cs.getPropertyValue('--ui'))||1,min=10*u;
-  let f=base;cv.font=cs.fontWeight+' '+f+'px '+cs.fontFamily;const tw=cv.measureText(el.placeholder).width;if(tw>avail)f=Math.max(min,Math.floor(base*avail/tw*4)/4);
+{const ids=['fq','csq','mkq','bfq'],ms=document.createElement('span');ms.setAttribute('aria-hidden','true');ms.style.cssText='position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;pointer-events:none';document.body.appendChild(ms);
+ /* 用畫面實際字型量提示文字寬度（不用估算）；最小 12px×介面大小，避免縮得太小看不清楚 */
+ const fit=el=>{const w=el.clientWidth;if(!w)return;const cs=getComputedStyle(el),pad=(parseFloat(cs.paddingLeft)||0)+(parseFloat(cs.paddingRight)||0),avail=w-pad-1,base=parseFloat(cs.fontSize),u=parseFloat(cs.getPropertyValue('--ui'))||1,min=Math.min(base,12*u);
+  ms.style.font=cs.font;ms.style.fontSize=base+'px';ms.style.letterSpacing=cs.letterSpacing;ms.textContent=el.placeholder;let f=base;const tw=ms.getBoundingClientRect().width;
+  if(tw>avail){f=Math.max(min,Math.floor(base*avail/tw*4)/4);ms.style.fontSize=f+'px';while(f>min&&ms.getBoundingClientRect().width>avail){f-=.25;ms.style.fontSize=f+'px'}}
   if(f<base){el.style.setProperty('--phf',f+'px');el.classList.add('phfit')}else{el.style.removeProperty('--phf');el.classList.remove('phfit')}};
- const ro=new ResizeObserver(es=>es.forEach(e=>fit(e.target)));ids.forEach(id=>{const el=document.getElementById(id);if(el){ro.observe(el);fit(el)}});
- window.snsPhFit=()=>ids.forEach(id=>{const el=document.getElementById(id);if(el)fit(el)})}
+ const all=()=>ids.forEach(id=>{const el=document.getElementById(id);if(el)fit(el)});
+ const ro=new ResizeObserver(es=>es.forEach(e=>fit(e.target)));ids.forEach(id=>{const el=document.getElementById(id);if(el)ro.observe(el)});all();
+ try{document.fonts&&document.fonts.ready.then(all)}catch(e){}addEventListener('load',all);
+ window.snsPhFit=all}
 
 /* ---------- 啟動 ---------- */
 apply();
