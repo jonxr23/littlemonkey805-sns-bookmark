@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="app-version" content="3.0.0">
-<meta name="app-build" content="2026-11-12 00:48">
+<meta name="app-build" content="2026-11-12 01:08">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -796,7 +796,7 @@ html[data-tbd=m][data-tbm=simple]:not(.tbcol) #cib{display:flex}
 .v3ti{width:calc(18px*var(--ui));height:calc(18px*var(--ui));flex:none}
 .v3d .mh b{display:inline-flex;align-items:center;gap:calc(6px*var(--ui))}
 .tbxb{width:min(100%,calc(420px*var(--ui)))}
-#tbxm[data-c="5"] .tbxb{width:min(100%,calc(640px*var(--ui)))}
+#tbxm[data-cols="5"] .tbxb{width:min(100%,calc(640px*var(--ui)))}
 .tbxg{--g:calc(8px*var(--ui));display:flex;flex-wrap:wrap;justify-content:center;gap:var(--g);padding:calc(2px*var(--ui))}
 .tbxg>.tbi{flex:0 0 calc((100% - (var(--c) - 1)*var(--g))/var(--c));min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(6px*var(--ui));min-height:calc(78px*var(--ui));padding:calc(10px*var(--ui)) calc(4px*var(--ui));border:1px solid var(--bd);border-radius:calc(12px*var(--ui));background:color-mix(in srgb,var(--acc) 6%,var(--card));color:var(--fg);font-size:calc(13px*var(--ui));text-align:center;line-height:1.25}
 .tbxg>.tbi.on{border-color:var(--sel);background:var(--sel-bg)}
@@ -851,7 +851,9 @@ html[data-tbd=m][data-tbm=simple]:not(.tbcol) #cib{display:flex}
 .tbsep{display:flex;align-items:center;gap:calc(8px*var(--ui));margin:calc(10px*var(--ui)) 0 calc(2px*var(--ui));color:var(--mut);font-size:calc(12.5px*var(--ui));font-weight:600}
 .tbsep::before,.tbsep::after{content:"";flex:1 1 auto;height:1px;background:var(--bd)}
 #tbmm .mf{align-items:center;justify-content:space-between}
-#tbmm .mf .srts{flex:1 1 auto;text-align:center}
+#tbmm .mf{flex-wrap:nowrap;gap:calc(8px*var(--ui))}
+#tbmm .mf>button{flex:none;white-space:nowrap}
+#tbmm .mf .srts{flex:1 1 0;min-width:0;text-align:center;font-size:calc(12px*var(--ui));line-height:1.4;overflow-wrap:anywhere}
 #tbpk>.srpb{display:flex;flex-direction:column;width:min(100%,calc(420px*var(--ui)))}
 #tbpkl{gap:calc(6px*var(--ui))}
 /* ---- 電腦版（>900px）：第一行固定、第二行單排（可自訂）、第三行固定 ---- */
@@ -961,7 +963,9 @@ body.colrz,body.colrz *{cursor:col-resize!important;user-select:none!important;-
  #tbrow>*:not(.tbrk){margin-top:calc(3px*var(--ui));margin-bottom:calc(3px*var(--ui))}
  #tbrow>.tbrk{margin:0!important}
  #ctl0{margin-top:calc(5px*var(--ui))}
- .cib{margin-top:calc(6px*var(--ui));margin-bottom:calc(8px*var(--ui))}
+ .cib{margin-top:calc(6px*var(--ui));margin-bottom:0}
+ /* 收藏控制區（或資訊條）和收藏清單之間固定留 8px：簡易、詳細、自訂、收合都一樣 */
+ #ctl0{padding-bottom:calc(8px*var(--ui))}
 }
 .sgmt{display:inline-flex;align-items:center;gap:calc(6px*var(--ui))}
 .sgmt .v3i{width:calc(16px*var(--ui));height:calc(16px*var(--ui));color:var(--acc-ink)}
@@ -2763,12 +2767,12 @@ const simple=o=>{o.querySelector('.v3x').onclick=()=>cls(o);o.addEventListener('
 const BXM=dlg('tbxm',ic(PI.box,'v3ti')+'<span>工具箱</span>','tbxb');simple(BXM);const BXB=BXM.querySelector('.mb');
 const isOn=k=>{const e=T[k].el;if(k==='plat')return !!e.value;if(k==='date'||k==='tag'||k==='batch')return e.classList.contains('on');return false};
 function boxDot(){const d=tbb.querySelector('.tbdot');if(d)d.hidden=!BOX.some(isOn)}
-function boxDraw(){const n=dev()==='m'?3:5;BXM.dataset.c=n;
- BXB.innerHTML=BOX.length?'<div class="tbxg" style="--c:'+n+'">'+BOX.map(k=>'<button type="button" class="tbi'+(isOn(k)?' on':'')+'" data-k="'+k+'"><span class="tbic">'+T[k].icon+'</span><span class="tbin">'+H(T[k].name)+'</span></button>').join('')+'</div>':'<div class="tbxe">暫無其他隱藏工具</div>'}
+function boxDraw(){const n=dev()==='m'?3:5;/* 欄數用 data-cols（不能用 data-c：data-c 是既有的「資料夾篩選」屬性，會被全域點擊判斷誤認） */BXM.dataset.cols=n;
+ BXB.innerHTML=BOX.length?'<div class="tbxg" style="--c:'+n+'">'+BOX.map(k=>'<button type="button" class="tbi'+(isOn(k)?' on':'')+'" data-tk="'+k+'"><span class="tbic">'+T[k].icon+'</span><span class="tbin">'+H(T[k].name)+'</span></button>').join('')+'</div>':'<div class="tbxe">暫無其他隱藏工具</div>'}
 const pick=k=>{const s=T[k].el;BXB.innerHTML='<div class="tbxp"><button type="button" class="tbxk">‹ 返回</button><b>'+H(T[k].name)+'</b></div><div class="tbxo">'+[...s.options].map(o=>'<button type="button" class="tbo'+(o.value===s.value?' on':'')+'" data-v="'+H(o.value)+'">'+H(o.textContent)+'</button>').join('')+'</div>'};
-BXB.addEventListener('click',e=>{const it=e.target.closest('.tbi[data-k]');if(it){const k=it.dataset.k;if(T[k].sel){pick(k);BXB.dataset.k=k;return}cls(BXM);if(k==='cloud')CQ.open();else T[k].el.click();return}
+BXB.addEventListener('click',e=>{const it=e.target.closest('.tbi[data-tk]');if(it){const k=it.dataset.tk;if(T[k].sel){pick(k);BXB.dataset.tk=k;return}cls(BXM);if(k==='cloud')CQ.open();else T[k].el.click();return}
  if(e.target.closest('.tbxk')){boxDraw();return}
- const o=e.target.closest('.tbo[data-v]');if(o){const s=T[BXB.dataset.k].el;s.value=o.dataset.v;s.dispatchEvent(new Event('change',{bubbles:true}));cls(BXM)}});
+ const o=e.target.closest('.tbo[data-v]');if(o){const s=T[BXB.dataset.tk].el;s.value=o.dataset.v;s.dispatchEvent(new Event('change',{bubbles:true}));cls(BXM)}});
 tbb.onclick=()=>{boxDraw();opn(BXM)};
 
 /* ---------- ③ 雲端同步狀態（只用同步程式實際回報的狀態） ---------- */
@@ -2849,29 +2853,29 @@ const MG=(()=>{const o=dlg('tbmm',ic(PI.box,'v3ti')+'<span>自訂工具列</span
  const visOf=()=>D.cur.order.filter(k=>!D.cur.hid.includes(k));
  const status=t=>{$('#tbms').textContent=t||''};
  const draw=hl=>{const req=LAY[D.d].req,v=visOf(),h=D.cur.order.filter(k=>D.cur.hid.includes(k));
-  const row=(k,hid)=>{const r=req.includes(k);return '<div class="srr tbr'+(hid?' hid':'')+(k===hl?' moved':'')+'" role="listitem" data-k="'+k+'"><span class="tbic">'+T[k].icon+'</span><span class="srn tbn">'+H(T[k].name)+(r?'<small>必要工具</small>':'')+'</span><button type="button" class="tbsw" role="switch" aria-checked="'+(!hid)+'" aria-label="顯示「'+H(T[k].name)+'」"'+(r?' disabled title="必要工具不能隱藏"':' title="'+(hid?'顯示':'隱藏')+'這個工具"')+'><i></i></button>'+(hid?'<span class="tbph" aria-hidden="true"></span>':'<button type="button" class="smv" data-smv="'+k+'" aria-haspopup="menu" aria-expanded="false" title="調整位置" aria-label="調整「'+H(T[k].name)+'」的位置">'+SVG_DTL+'</button>')+'</div>'};
+  const row=(k,hid)=>{const r=req.includes(k);return '<div class="srr tbr'+(hid?' hid':'')+(k===hl?' moved':'')+'" role="listitem" data-tk="'+k+'"><span class="tbic">'+T[k].icon+'</span><span class="srn tbn">'+H(T[k].name)+(r?'<small>必要工具</small>':'')+'</span><button type="button" class="tbsw" role="switch" aria-checked="'+(!hid)+'" aria-label="顯示「'+H(T[k].name)+'」"'+(r?' disabled title="必要工具不能隱藏"':' title="'+(hid?'顯示':'隱藏')+'這個工具"')+'><i></i></button>'+(hid?'<span class="tbph" aria-hidden="true"></span>':'<button type="button" class="smv" data-smv="'+k+'" aria-haspopup="menu" aria-expanded="false" title="調整位置" aria-label="調整「'+H(T[k].name)+'」的位置">'+SVG_DTL+'</button>')+'</div>'};
   mb.innerHTML=v.map(k=>row(k,false)).join('')+(h.length?'<div class="tbsep" role="presentation"><span>已隱藏的工具</span></div>'+h.map(k=>row(k,true)).join(''):'');
   if(hl){const r=mb.querySelector('.tbr.moved');if(r)try{r.scrollIntoView({block:'nearest'})}catch(x){}}};
  /* 只重排「顯示中」的工具；隱藏工具留在原本的位置（格子不動） */
  const setVis=(keys,hl)=>{const hid=new Set(D.cur.hid),anc=new Map();let prev=null;D.cur.order.forEach(k=>{if(hid.has(k)){if(!anc.has(prev))anc.set(prev,[]);anc.get(prev).push(k)}else prev=k});
   /* 隱藏的工具跟著它原本前面那個工具（錨點）走，重新顯示時回到原本的相對位置 */
   const out=[...(anc.get(null)||[])];keys.forEach(k=>{out.push(k);(anc.get(k)||[]).forEach(h=>out.push(h))});D.cur.order=out;draw(hl);status(dirty()?'有尚未保存的變更':'')};
- const drag=SortDrag({root:mb,skip:'.smv,.tbsw',rowOf:t=>t.closest('.tbr[data-k]:not(.hid)'),keyOf:r=>r.dataset.k,sibs:()=>[...mb.querySelectorAll('.tbr[data-k]:not(.hid)')],scroller:()=>mb,drop:(key,keys)=>setVis(keys,key)});
+ const drag=SortDrag({root:mb,skip:'.smv,.tbsw',rowOf:t=>t.closest('.tbr[data-tk]:not(.hid)'),keyOf:r=>r.dataset.tk,sibs:()=>[...mb.querySelectorAll('.tbr[data-tk]:not(.hid)')],scroller:()=>mb,drop:(key,keys)=>setVis(keys,key)});
  const mClose=f=>{if(menu.hidden)return;menu.hidden=true;if(mbtn){mbtn.setAttribute('aria-expanded','false');if(f)try{mbtn.focus({preventScroll:true})}catch(x){}}mbtn=null};
  const mOpen=(k,b)=>{mClose();mk2=k;mbtn=b;const v=visOf(),first=v[0]===k;$('#tbmt').disabled=first;$('#tbmts').textContent=first?'目前已在最上方':'排到第一個';$('#tbmb2').disabled=v.length<2;
   menu.hidden=false;b.setAttribute('aria-expanded','true');const r=b.getBoundingClientRect(),W=document.documentElement.clientWidth,Hh=innerHeight;menu.style.left='0px';menu.style.top='0px';const pw=menu.offsetWidth,ph=menu.offsetHeight;let x=Math.max(8,Math.min(r.right-pw,W-pw-8)),y=r.bottom+4;if(y+ph>Hh-8)y=Math.max(8,r.top-ph-4);menu.style.left=Math.round(x)+'px';menu.style.top=Math.round(y)+'px';
   setTimeout(()=>{try{(menu.querySelector('button:not([disabled])')||b).focus({preventScroll:true})}catch(x){}},0)};
  $('#tbmt').onclick=()=>{const k=mk2;mClose();const v=visOf().filter(x=>x!==k);v.unshift(k);setVis(v,k)};
  $('#tbmb2').onclick=()=>{const k=mk2;mClose();const v=visOf(),i=v.indexOf(k),above=i>0?v[i-1]:null;$('#tbpkt').textContent='將「'+T[k].name+'」移至哪個工具下方？';
-  $('#tbpkl').innerHTML=v.filter(x=>x!==k).map(x=>'<button type="button" class="srpo" data-to="'+x+'"'+(x===above?' disabled':'')+'>'+H(T[x].name)+(x===above?'<small>（目前就在它下方）</small>':'')+'</button>').join('');pk.dataset.k=k;pk.classList.add('o');
+  $('#tbpkl').innerHTML=v.filter(x=>x!==k).map(x=>'<button type="button" class="srpo" data-to="'+x+'"'+(x===above?' disabled':'')+'>'+H(T[x].name)+(x===above?'<small>（目前就在它下方）</small>':'')+'</button>').join('');pk.dataset.tk=k;pk.classList.add('o');
   setTimeout(()=>{try{($('#tbpkl .srpo:not([disabled])')||$('#tbpkx')).focus({preventScroll:true})}catch(x){}},0)};
  const pkClose=()=>{pk.classList.remove('o')};
  $('#tbpkx').onclick=pkClose;pk.addEventListener('mousedown',e=>{if(e.target===pk)pkClose()});
- $('#tbpkl').addEventListener('click',e=>{const b=e.target.closest('.srpo[data-to]');if(!b||b.disabled)return;const k=pk.dataset.k,v=visOf().filter(x=>x!==k);v.splice(v.indexOf(b.dataset.to)+1,0,k);pkClose();setVis(v,k)});
+ $('#tbpkl').addEventListener('click',e=>{const b=e.target.closest('.srpo[data-to]');if(!b||b.disabled)return;const k=pk.dataset.tk,v=visOf().filter(x=>x!==k);v.splice(v.indexOf(b.dataset.to)+1,0,k);pkClose();setVis(v,k)});
  document.addEventListener('pointerdown',e=>{if(!menu.hidden&&!menu.contains(e.target)&&!(mbtn&&mbtn.contains(e.target)))mClose()},true);
  mb.addEventListener('scroll',()=>mClose());addEventListener('resize',()=>mClose());
  mb.addEventListener('click',e=>{const b=e.target.closest('.smv[data-smv]');if(b){e.stopPropagation();if(!menu.hidden&&mbtn===b){mClose(true);return}mOpen(b.dataset.smv,b);return}
-  const sw=e.target.closest('.tbsw');if(sw&&!sw.disabled){const k=sw.closest('.tbr').dataset.k,h=new Set(D.cur.hid);h.has(k)?h.delete(k):h.add(k);D.cur.hid=D.cur.order.filter(x=>h.has(x));draw(k);status(dirty()?'有尚未保存的變更':'')}});
+  const sw=e.target.closest('.tbsw');if(sw&&!sw.disabled){const k=sw.closest('.tbr').dataset.tk,h=new Set(D.cur.hid);h.has(k)?h.delete(k):h.add(k);D.cur.hid=D.cur.order.filter(x=>h.has(x));draw(k);status(dirty()?'有尚未保存的變更':'')}});
  const open=()=>{const d=dev(),s=st(d),c=custNorm(d,s.mode==='custom'||s.cust?s.cust:null);D={d,base:JSON.parse(JSON.stringify(c)),cur:JSON.parse(JSON.stringify(c))};
   $('#tbmd').textContent='按住工具列可拖曳排序，或點右側圖示選擇位置；關閉開關的工具會收進工具箱。必要工具不能隱藏，但可以調整順序。'+(d==='d'?'這裡調整的是電腦版第二行；第一行與第三行固定不變。':'這裡調整的是手機版的工具列。');
   status('');draw();mb.scrollTop=0;opn(o)};
