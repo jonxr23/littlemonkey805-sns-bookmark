@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="app-version" content="3.0.0">
-<meta name="app-build" content="2026-11-12 00:32">
+<meta name="app-build" content="2026-11-12 00:48">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -772,7 +772,6 @@ html[data-tbd=m][data-tbm=simple]:not(.tbcol) #cib{display:flex}
 .cib .cibq.low{color:var(--err);font-weight:600}
 /* 電腦版公告旁：只顯示異常（紅字、不自動消失），點擊查看實際異常資訊 */
 .syn{pointer-events:auto;cursor:pointer}
-@media(min-width:901px){#syn:not(.err){display:none!important}}
 @media(max-width:900px){#syn{display:none!important}}
 /* ---- 所有彈窗：依既有顏色設定套色 ---- */
 .box{--bxp:calc(14px*var(--ui));background:var(--card);color:var(--dlg-tx,var(--fg));border-color:color-mix(in srgb,var(--acc) 35%,var(--bd))}
@@ -956,6 +955,16 @@ body.colrz,body.colrz *{cursor:col-resize!important;user-select:none!important;-
 .tg2>.tri2.o{transform:rotate(90deg)}
 @media(max-width:900px){.tg2{width:calc(38px*var(--ui))}}
 @media (prefers-reduced-motion:reduce){.tg2>.tri2{transition:none}}
+/* V3.0.0 追加：手機工具列各排間距 6px（原本約 17px）、資訊條與收藏清單之間留 8px */
+@media(max-width:900px){
+ #tbrow{row-gap:0!important}
+ #tbrow>*:not(.tbrk){margin-top:calc(3px*var(--ui));margin-bottom:calc(3px*var(--ui))}
+ #tbrow>.tbrk{margin:0!important}
+ #ctl0{margin-top:calc(5px*var(--ui))}
+ .cib{margin-top:calc(6px*var(--ui));margin-bottom:calc(8px*var(--ui))}
+}
+.sgmt{display:inline-flex;align-items:center;gap:calc(6px*var(--ui))}
+.sgmt .v3i{width:calc(16px*var(--ui));height:calc(16px*var(--ui));color:var(--acc-ink)}
 </style>
 </head>
 <body>
@@ -2736,7 +2745,7 @@ function tbtUpd(){const c=!!st().col;tbt.querySelector('.tbtl').textContent=c?'�
 tbt.onclick=()=>{const s=st();s.col=!s.col;save();R.classList.toggle('tbcol',s.col);tbtUpd()};
 /* ---- 設定選單：第一項「工具列模式」＋固定入口「自訂工具列」 ---- */
 {const m=$('#sgm'),blk=mk('div',{class:'sgmd',role:'group','aria-label':'工具列模式'},'<div class="sgml">工具列模式</div><div class="sgms">'+[['simple','簡易'],['detail','詳細'],['custom','自訂']].map(([k,l])=>'<button type="button" data-tbm="'+k+'" role="radio">'+l+'</button>').join('')+'</div>');
- const cu=mk('button',{type:'button','data-tbx':'mgr',class:'sgmc'},'🧰 自訂工具列<small>調整工具顯示狀態及排列順序</small>');
+ const cu=mk('button',{type:'button','data-tbx':'mgr',class:'sgmc'},'<span class="sgmt">'+ic(PI.box)+'自訂工具列</span><small>調整工具顯示狀態及排列順序</small>');
  m.insertBefore(cu,m.firstChild);m.insertBefore(blk,cu);
  const mark=()=>blk.querySelectorAll('[data-tbm]').forEach(b=>{const on=b.dataset.tbm===st().mode;b.classList.toggle('on',on);b.setAttribute('aria-checked',String(on))});
  $('#sgb').addEventListener('click',mark);mark();
@@ -2784,7 +2793,7 @@ const SS=(()=>{let phase='none',since=0,lastOk=null,err=null,ingTxt='',inj='';
   const y=$('#syn');if(y&&window.snsSyn){const want=(phase==='reauth'||!navigator.onLine)?L.t:'';
    if(want&&!y.classList.contains('err')){inj=want;rawSet(want,'err')}else if(!want&&inj&&y.textContent===inj){inj='';rawSet('')}}
   if(SM.classList.contains('o'))SM.draw()};
- const ok=how=>{lastOk={t:Date.now(),how};phase='ok';paint()};
+ const ok=how=>{lastOk={t:Date.now(),how};phase='ok';paint();/* 電腦版公告旁：開網站／登入後的同步完成也先顯示，3 秒後消失 */if((how==='boot'||how==='auth')&&!MQ.matches)rawSet('已同步最新資料','ok',3000)};
  return{lab,paint,ok,
   reauth(){phase='reauth';paint()},reset(){phase='none';lastOk=null;err=null;paint()},
   syn(t,k){if(inj&&t!==inj)inj='';if(k==='ing'){phase=/同步雲端資料中/.test(t)&&!lastOk?'init':/儲存/.test(t)?'save':'ing';since=Date.now();ingTxt=t}
@@ -2794,7 +2803,7 @@ const SS=(()=>{let phase='none',since=0,lastOk=null,err=null,ingTxt='',inj='';
   info:()=>({phase,since,lastOk,err,ingTxt,store:store()})}})();
 window.snsSS=SS;
 let rawSet=()=>{};
-if(window.snsSyn){const o=snsSyn.set;rawSet=(t,k,ms)=>o(t,k,ms);snsSyn.set=(t,k,ms)=>{o(t,k,ms);SS.syn(t||'',k||'')};const y=$('#syn');if(y){y.setAttribute('role','button');y.tabIndex=0;y.addEventListener('click',()=>SM.open());y.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();SM.open()}})}}
+if(window.snsSyn){const o=snsSyn.set;rawSet=(t,k,ms)=>o(t,k,ms);snsSyn.set=(t,k,ms)=>{o(t,k,k==='ok'?3000:ms);SS.syn(t||'',k||'')};const y=$('#syn');if(y){y.setAttribute('role','button');y.tabIndex=0;y.addEventListener('click',()=>SM.open());y.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();SM.open()}})}}
 addEventListener('online',()=>SS.paint());addEventListener('offline',()=>SS.paint());
 const SM=dlg('ssm',ic(PI.ok,'v3ti')+'<span>雲端同步狀態</span>','ssb');simple(SM);
 SM.draw=()=>{const I=SS.info(),L=SS.lab(),rows=[],s=I.store,add=(k,v,c)=>rows.push('<dt>'+H(k)+'</dt><dd'+(c?' class="'+c+'"':'')+'>'+H(v)+'</dd>');
@@ -2828,7 +2837,7 @@ window.snsQuotaUpd=cibQ;
 setInterval(()=>SS.paint(),30000);
 
 /* ---------- ⑤ 自訂工具列管理器 ---------- */
-const MG=(()=>{const o=dlg('tbmm','<span>🧰 自訂工具列</span>','tbmb');const mb=o.querySelector('.mb');
+const MG=(()=>{const o=dlg('tbmm',ic(PI.box,'v3ti')+'<span>自訂工具列</span>','tbmb');const mb=o.querySelector('.mb');
  o.querySelector('.box').insertBefore(mk('p',{class:'srtd',id:'tbmd'}),mb);mb.id='tbml';mb.setAttribute('role','list');
  o.querySelector('.box').appendChild(mk('div',{class:'mf'},'<button type="button" id="tbmr">恢復預設</button><span class="srts" id="tbms" role="status" aria-live="polite"></span><button type="button" class="pri" id="tbmv">保存</button>'));
  const menu=mk('div',{id:'tbmn',class:'fpop srmn',role:'menu',hidden:''},'<button type="button" role="menuitem" id="tbmt"><span class="smi">⤒</span><span><b>移至最上方</b><small id="tbmts"></small></span></button><button type="button" role="menuitem" id="tbmb2"><span class="smi">↳</span><span><b>移至指定項目下方…</b><small>選擇要放在哪個工具下方</small></span></button>');

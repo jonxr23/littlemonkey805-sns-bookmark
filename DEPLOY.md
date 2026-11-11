@@ -30,7 +30,7 @@
    - 說明文件：`CHANGELOG.md`、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V2.10.2.md`、`TEST_REPORT-V2.10.3.md`、`TEST_REPORT-V2.10.4.md`（舊報告改名，**新檔要一起上傳**）、`admin-setup/ADMIN_SETUP.md`、`brand-assets/素材清單.md`。
 3. commit 到 `main`（建議訊息：`Release SNS Bookmark V3.0.0`），Vercel 會自動部署。
 4. Vercel 最新一筆 **Ready**＋**Production** 後，Deployments → 該筆 → Functions 應看到 `api/resolve`。
-5. 正式網址側邊欄最底部應顯示 `版本：v3.0.0 / 更新：2026-11-12 00:32`。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
+5. 正式網址側邊欄最底部應顯示 `版本：v3.0.0 / 更新：2026-11-12 00:48`。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
 6. 實機驗收清單見 `TEST_REPORT.md` 第六節（特別是短網址解析，必須在正式網址實測）。
 
 ## 四、回復
@@ -40,7 +40,7 @@
 
 ## 五、更新時間的來源（沒有改）
 
-畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-12 00:32）。
+畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-12 00:48）。
 
 ---
 
