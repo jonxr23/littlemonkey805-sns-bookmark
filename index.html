@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2.10.4">
-<meta name="app-build" content="2026-11-11 05:34">
+<meta name="app-version" content="3.0.0">
+<meta name="app-build" content="2026-11-12 00:32">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -16,7 +16,9 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="color-scheme" content="light dark">
 <meta name="supported-color-schemes" content="light dark">
-<script>try{var t=localStorage.getItem("thv")==="2"?localStorage.getItem("th"):"";if(t==="warm"&&localStorage.getItem("thm281")!=="1")t="cute";if(["warm","cute","dark","clean","custom"].indexOf(t)<0)t="cute";document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme="cute"}</script>
+<script>try{var t=localStorage.getItem("thv")==="2"?localStorage.getItem("th"):"";if(t==="warm"&&localStorage.getItem("thm281")!=="1")t="cute";if(["warm","cute","dark","clean","mint","custom"].indexOf(t)<0)t="cute";document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme="cute"}</script>
+<script>/* V3.0.0：首次進入的預設值（只在這台裝置還沒有任何個人設定時套用）。判斷依據：「thv」是 V2.7.0 起每台裝置第一次開啟就會寫入的主題版本記號；沒有它＝全新裝置。
+   全新裝置：手機＝列表＋簡易工具列，電腦＝圖片牆＋詳細工具列（都展開，主題品牌桃）。已經用過的裝置：沿用原本的顯示方式（沒存過就是原本預設的「卡片」）與原本的工具列排列（＝詳細），不重置。 */try{(function(){var L=localStorage,N=L.getItem("thv")===null,M=matchMedia("(max-width:900px)").matches;if(L.getItem("vw")===null)L.setItem("vw",N?(M?"list":"wall"):"cards");if(L.getItem("tbx3")===null)L.setItem("tbx3",JSON.stringify({v:1,m:{mode:N?"simple":"detail",col:false},d:{mode:"detail",col:false}}))})()}catch(e){}</script>
 <script>/* V2.9.0：介面大小（只存在這台裝置的 localStorage「uisz」） */try{var u=localStorage.getItem("uisz");if(["s","l","xl"].indexOf(u)>=0)document.documentElement.dataset.ui=u}catch(e){}</script>
 <style>
 html{color-scheme:light}html[data-theme=dark]{color-scheme:dark}
@@ -726,16 +728,245 @@ h1.brand #ann svg path{stroke-width:.96}
 .udup span{flex:1 1 calc(180px*var(--ui));min-width:0;overflow-wrap:anywhere}
 .udup button{flex:none;padding:calc(4px*var(--ui)) calc(10px*var(--ui));font-size:calc(12.5px*var(--ui));border-radius:calc(999px*var(--ui))}
 </style>
+<style id="v300">
+/* ===== V3.0.0（V6｜手機版＋電腦版整合）===== */
+/* 主題預先上色（JS 執行前避免閃爍）：薰衣紫（原簡約）、奶霜綠 */
+:root[data-theme=clean]{--bg:#F3EDF8;--fg:#4A3B5C;--card:#FFFFFF;--mut:#76678A;--acc:#BDAAD2;--on:#3B2A52;--bd:#EDE4F4;--lnk:#7A5C9E;--acc-ink:#7D619C;--sel:#9A7FB8;--sel-bg:#EDE4F4;--focus:#9A7FB8}
+:root[data-theme=mint]{--bg:#F3FAF7;--fg:#2E4A42;--card:#FFFFFF;--mut:#5D766E;--acc:#B7D9CB;--on:#21403A;--bd:#E6F5EF;--r:calc(12px*var(--ui));--lnk:#2E7A66;--acc-ink:#3B8670;--sel:#7FC7B2;--sel-bg:#E6F5EF;--focus:#5FAF98}
+/* V2.10.3 的「簡約主題浮鈕白字」只適用舊的黑白簡約；薰衣紫改回依浮鈕底色自動選字色 */
+:root[data-theme=clean] #qfab .qf{color:var(--fab2-fg,var(--fg))}
+#tbhold,#tbhold[hidden]{display:none!important}
+.v3i{width:calc(17px*var(--ui));height:calc(17px*var(--ui));display:block;flex:none}
+.tbe{font-style:normal;line-height:1}
+/* ---- 工具列共用 ---- */
+#tbb,#cqb{display:inline-flex;align-items:center;justify-content:center;position:relative;line-height:1}
+#tbb{padding-left:calc(10px*var(--ui));padding-right:calc(10px*var(--ui))}
+#tbb .tbdot{position:absolute;top:calc(4px*var(--ui));right:calc(4px*var(--ui));width:calc(7px*var(--ui));height:calc(7px*var(--ui));border-radius:50%;background:var(--sel);box-shadow:0 0 0 1.5px var(--card)}
+#tbb .tbdot[hidden]{display:none}
+.sgw{position:relative;display:inline-flex}
+.bar.tb>.tbbr{display:none!important}
+.bar.tb>*{order:0!important}
+html.tbcol #tbrow{display:none!important}
+html.tbcol #dr{display:none!important}
+html.tbcol[data-tbd=m] #cp{display:none!important}
+/* 收藏控制區：收藏日／發布日／依收藏日／新→舊／工具列（收合） */
+#ctl0{display:block}
+#ctl0 .ctlr{display:flex;align-items:center;gap:calc(14px*var(--ui));flex-wrap:wrap}
+#ctl0 .ctlr label{display:flex;gap:calc(4px*var(--ui));align-items:center;white-space:nowrap}
+#tbt{display:inline-flex;align-items:center;justify-content:center;gap:calc(3px*var(--ui));padding:calc(3px*var(--ui)) calc(10px*var(--ui));font-size:calc(13px*var(--ui));line-height:1.2;white-space:nowrap;color:var(--fg);border-radius:calc(999px*var(--ui))}
+#tbt .tbtc{width:calc(15px*var(--ui));height:calc(15px*var(--ui));flex:none}
+/* ---- 雲端同步狀態（工具）與資訊條：正常狀態低干擾、異常紅色 ---- */
+.syc{display:inline-flex;align-items:center;gap:calc(4px*var(--ui));white-space:nowrap;font-size:calc(12.5px*var(--ui));font-weight:500;color:var(--mut);border-color:transparent;background:transparent;padding:calc(6px*var(--ui)) calc(6px*var(--ui));max-width:100%}
+.syc .syi,.cib .syi,.ssh .syi{width:calc(14px*var(--ui));height:calc(14px*var(--ui));flex:none}
+.syc.ing .syi,.cibs.ing .syi,.ssh.ing .syi{animation:synSpin 1.1s linear infinite}
+@media (prefers-reduced-motion:reduce){.syc.ing .syi,.cibs.ing .syi,.ssh.ing .syi{animation:none}}
+.syc.err,.cibs.err,.ssh.err{color:var(--err)}
+.syc.err{border-color:color-mix(in srgb,var(--err) 50%,transparent);background:color-mix(in srgb,var(--err) 7%,var(--card));font-weight:600}
+#cib{display:none}
+html[data-tbd=m][data-tbm=simple]:not(.tbcol) #cib{display:flex}
+.cib{align-items:stretch;height:calc(30px*var(--ui));margin-top:calc(8px*var(--ui));border:1px solid color-mix(in srgb,var(--acc) 40%,var(--bd));border-radius:calc(999px*var(--ui));background:color-mix(in srgb,var(--acc) 10%,var(--card));overflow:hidden;font-size:calc(12px*var(--ui))}
+.cib>button{flex:1 1 0;min-width:0;height:100%;border:0;border-radius:0;background:transparent;padding:0 calc(10px*var(--ui));display:flex;align-items:center;justify-content:center;gap:calc(5px*var(--ui));white-space:nowrap;color:var(--fg);font-size:inherit;font-weight:500;line-height:1}
+.cib>button>span{overflow:hidden;text-overflow:ellipsis}
+.cib .cibd{flex:none;width:1px;margin:calc(6px*var(--ui)) 0;background:color-mix(in srgb,var(--acc) 45%,var(--bd))}
+.cib .cibs.err{background:color-mix(in srgb,var(--err) 8%,transparent);font-weight:600}
+.cib .cibq.low{color:var(--err);font-weight:600}
+/* 電腦版公告旁：只顯示異常（紅字、不自動消失），點擊查看實際異常資訊 */
+.syn{pointer-events:auto;cursor:pointer}
+@media(min-width:901px){#syn:not(.err){display:none!important}}
+@media(max-width:900px){#syn{display:none!important}}
+/* ---- 所有彈窗：依既有顏色設定套色 ---- */
+.box{--bxp:calc(14px*var(--ui));background:var(--card);color:var(--dlg-tx,var(--fg));border-color:color-mix(in srgb,var(--acc) 35%,var(--bd))}
+.box>.mh{align-self:stretch;flex:none;display:flex;align-items:center;justify-content:space-between;gap:calc(8px*var(--ui));margin:calc(-1*var(--bxp)) calc(-1*var(--bxp)) calc(2px*var(--ui));padding:calc(10px*var(--ui)) var(--bxp);background:var(--acc);color:var(--dlg-htx,var(--fg));border-radius:calc(var(--r) - 1px) calc(var(--r) - 1px) 0 0}
+.box>.mh b,.box>.mh b *{color:inherit}
+.box>.mh svg{color:inherit}
+.box>.mh button{flex:none;background:var(--card);color:var(--fg);border:1px solid color-mix(in srgb,var(--fg) 12%,transparent);box-shadow:none}
+@media(hover:hover){.box>.mh button:hover{background:color-mix(in srgb,var(--fg) 8%,var(--card))}}
+.box>.mh.fbh{align-items:flex-start}
+#annm .box>.mh #annt .ats{color:inherit;opacity:.85}
+#dlg .box>.mh{position:sticky;top:calc(-20px*var(--ui));z-index:2}
+.box .box{box-shadow:none}
+/* 固定白底內容區（明細、確認視窗）改用主題的卡片色與文字（深色主題也一致） */
+.whitebox{--fg:var(--dlc-fg,#1f1f1f);--mut:var(--dlc-mut,#6b6b6b);--card:var(--dlc-card,#fff);--bd:var(--dlc-bd,#e5e5e5);--lnk:var(--dlc-lnk,#1a5fb4);background:var(--card);color:var(--dlg-tx,var(--fg));border-color:var(--bd)}
+#pvc .kv{border-color:var(--bd)}
+#pvc .pvt{background:color-mix(in srgb,var(--fg) 4%,var(--card))}
+#pvc .pve{color:var(--mut)}
+#askc .askd{color:var(--err)}
+#askc ul.askl{border-color:var(--bd);color:var(--mut)}
+.mf{border-top-color:var(--bd)}
+/* 新彈窗（工具箱、雲端空間、同步資訊、自訂工具列） */
+.v3ti{width:calc(18px*var(--ui));height:calc(18px*var(--ui));flex:none}
+.v3d .mh b{display:inline-flex;align-items:center;gap:calc(6px*var(--ui))}
+.tbxb{width:min(100%,calc(420px*var(--ui)))}
+#tbxm[data-c="5"] .tbxb{width:min(100%,calc(640px*var(--ui)))}
+.tbxg{--g:calc(8px*var(--ui));display:flex;flex-wrap:wrap;justify-content:center;gap:var(--g);padding:calc(2px*var(--ui))}
+.tbxg>.tbi{flex:0 0 calc((100% - (var(--c) - 1)*var(--g))/var(--c));min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(6px*var(--ui));min-height:calc(78px*var(--ui));padding:calc(10px*var(--ui)) calc(4px*var(--ui));border:1px solid var(--bd);border-radius:calc(12px*var(--ui));background:color-mix(in srgb,var(--acc) 6%,var(--card));color:var(--fg);font-size:calc(13px*var(--ui));text-align:center;line-height:1.25}
+.tbxg>.tbi.on{border-color:var(--sel);background:var(--sel-bg)}
+.tbic{display:inline-flex;align-items:center;justify-content:center;font-size:calc(22px*var(--ui));line-height:1;min-width:calc(26px*var(--ui));color:var(--acc-ink)}
+.tbic .tbsv{width:calc(22px*var(--ui));height:calc(22px*var(--ui))}
+.tbin{overflow-wrap:anywhere}
+.tbxe{padding:calc(22px*var(--ui)) calc(8px*var(--ui));text-align:center;color:var(--mut);font-size:calc(14px*var(--ui))}
+.tbxp{display:flex;align-items:center;gap:calc(10px*var(--ui));margin-bottom:calc(6px*var(--ui))}
+.tbxk{padding:calc(4px*var(--ui)) calc(10px*var(--ui));font-size:calc(13px*var(--ui))}
+.tbxo{display:flex;flex-direction:column;gap:calc(6px*var(--ui))}
+.tbo{text-align:left;padding:calc(10px*var(--ui)) calc(12px*var(--ui));border-radius:calc(10px*var(--ui))}
+.tbo.on{background:var(--sel-bg);border-color:var(--sel);font-weight:600}
+.ssb,.cqb{width:min(100%,calc(440px*var(--ui)))}
+.ssh{display:flex;align-items:center;gap:calc(8px*var(--ui));font-size:calc(16px*var(--ui))}
+.ssh.ok .syi,.ssh.none .syi,.ssh.wait .syi{color:var(--acc-ink)}
+.ssk{padding-top:calc(8px*var(--ui));border-top:1px solid var(--bd)}
+.ssk dd.err{color:var(--err);font-weight:600}
+.ssn{margin:0;color:var(--mut);font-size:calc(13px*var(--ui));line-height:1.6}
+.cqr{display:flex;flex-direction:column;gap:calc(2px*var(--ui))}
+.cqr small{color:var(--mut);font-size:calc(12.5px*var(--ui))}
+.cqr b{font-size:calc(26px*var(--ui));line-height:1.2;color:var(--fg)}
+.cqr.low b{color:var(--err)}
+.cqbar{height:calc(10px*var(--ui));border-radius:999px;background:color-mix(in srgb,var(--fg) 10%,var(--card));overflow:hidden;margin:calc(4px*var(--ui)) 0 calc(6px*var(--ui))}
+.cqbar>i{display:block;height:100%;border-radius:inherit;background:var(--acc-ink)}
+/* 設定選單：工具列模式（第一項）＋自訂工具列入口 */
+.sgmd{padding:calc(6px*var(--ui)) calc(6px*var(--ui)) calc(8px*var(--ui));border-bottom:1px solid var(--bd);margin-bottom:calc(2px*var(--ui))}
+.sgml{font-size:calc(12px*var(--ui));color:var(--mut);font-weight:600;margin:0 0 calc(6px*var(--ui)) calc(4px*var(--ui))}
+.sgms{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:2px;border:1px solid var(--bd);border-radius:999px;background:color-mix(in srgb,var(--fg) 5%,var(--card))}
+#sgm .sgms button{text-align:center;border-radius:999px;padding:calc(6px*var(--ui)) calc(10px*var(--ui));font-size:calc(13px*var(--ui));color:var(--mut);white-space:nowrap}
+#sgm .sgms button.on{background:var(--acc);color:var(--acc-on,var(--on));font-weight:700}
+#sgm .sgmc{display:flex;flex-direction:column;gap:1px;border-bottom:1px solid var(--bd);border-radius:calc(8px*var(--ui)) calc(8px*var(--ui)) 0 0;margin-bottom:calc(2px*var(--ui))}
+#sgm .sgmc small{font-size:calc(11.5px*var(--ui));color:var(--mut)}
+#sgm{min-width:calc(220px*var(--ui))}
+/* 自訂工具列管理器（沿用排序彈窗的列樣式、拖曳與位置選擇器） */
+#tbmm{z-index:30}#tbpk{z-index:31}#tbmn{z-index:33}
+#tbmm>.tbmb{display:flex;flex-direction:column;width:min(100%,calc(520px*var(--ui)));max-height:calc(100vh - calc(24px*var(--ui)))}
+@supports(height:100dvh){#tbmm>.tbmb{max-height:calc(100dvh - calc(24px*var(--ui)))}}
+#tbml{gap:calc(4px*var(--ui));padding:calc(2px*var(--ui)) calc(2px*var(--ui)) calc(8px*var(--ui))}
+.tbr{gap:calc(10px*var(--ui));padding-left:calc(12px*var(--ui))}
+.tbr .tbic{font-size:calc(19px*var(--ui));min-width:calc(24px*var(--ui))}
+.tbr .tbic .tbsv{width:calc(19px*var(--ui));height:calc(19px*var(--ui))}
+.tbr .tbn small{display:block;font-size:calc(11.5px*var(--ui));color:var(--mut)}
+.tbr.hid{cursor:default;opacity:.55;background:transparent;border-style:dashed}
+.tbr.hid .tbic{filter:grayscale(1)}
+.tbph{flex:none;width:calc(36px*var(--ui))}
+.tbsw{position:relative;flex:none;width:calc(44px*var(--ui));height:calc(26px*var(--ui));padding:0;border-radius:999px;border:1px solid var(--bd);background:color-mix(in srgb,var(--fg) 14%,var(--card));cursor:pointer;min-height:0}
+.tbsw>i{position:absolute;top:calc(3px*var(--ui));left:calc(3px*var(--ui));width:calc(18px*var(--ui));height:calc(18px*var(--ui));border-radius:50%;background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .2s ease}
+.tbsw[aria-checked=true]{background:var(--acc-ink);border-color:var(--acc-ink)}
+.tbsw[aria-checked=true]>i{transform:translateX(calc(18px*var(--ui)))}
+.tbsw:disabled{opacity:.42;filter:saturate(.25);cursor:not-allowed}
+@media (prefers-reduced-motion:reduce){.tbsw>i{transition:none}}
+.tbsep{display:flex;align-items:center;gap:calc(8px*var(--ui));margin:calc(10px*var(--ui)) 0 calc(2px*var(--ui));color:var(--mut);font-size:calc(12.5px*var(--ui));font-weight:600}
+.tbsep::before,.tbsep::after{content:"";flex:1 1 auto;height:1px;background:var(--bd)}
+#tbmm .mf{align-items:center;justify-content:space-between}
+#tbmm .mf .srts{flex:1 1 auto;text-align:center}
+#tbpk>.srpb{display:flex;flex-direction:column;width:min(100%,calc(420px*var(--ui)))}
+#tbpkl{gap:calc(6px*var(--ui))}
+/* ---- 電腦版（>900px）：第一行固定、第二行單排（可自訂）、第三行固定 ---- */
+@media(min-width:901px){
+ #tbrow{flex-wrap:nowrap;align-items:center;overflow-x:auto;overflow-y:hidden;padding:2px;margin:-2px;scrollbar-width:thin}
+ #tbrow>*{flex:none;white-space:nowrap}
+ #tbrow>#q{flex:1 1 calc(180px*var(--ui));min-width:calc(8em + calc(22px*var(--ui)));max-width:calc(340px*var(--ui))}
+ #tbrow>#sdp{max-width:calc(180px*var(--ui))}
+ #tbrow>#tgb{max-width:calc(220px*var(--ui));overflow:hidden;text-overflow:ellipsis}
+ #ctl0 .ctlr{flex-wrap:nowrap}
+ html.tbcol #tp>.ctl,html.tbcol #ctl0{margin-top:calc(8px*var(--ui))}
+ #cqb{padding-left:calc(10px*var(--ui));padding-right:calc(10px*var(--ui))}
+}
+/* 電腦版表格：欄寬可拖曳調整（像 Excel），標題與資料列同寬；操作欄三個按鈕同一列 */
+.tblbar{display:flex;justify-content:flex-end;margin:0 0 calc(6px*var(--ui))}
+.tblbar .chip{font-size:calc(12px*var(--ui));padding:calc(4px*var(--ui)) calc(12px*var(--ui))}
+.tblw{overflow-x:auto}
+table.tblx{table-layout:fixed;min-width:0;max-width:none}
+table.tblx th{position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+table.tblx td{overflow:hidden}
+table.tblx td:nth-child(3){min-width:0}
+table.tblx td:last-child{white-space:nowrap}
+table.tblx .tops{display:inline-flex;align-items:center;gap:calc(6px*var(--ui));white-space:nowrap}
+table.tblx .tops button{padding:calc(3px*var(--ui)) calc(9px*var(--ui))}
+.crz{position:absolute;top:0;right:0;bottom:0;width:calc(9px*var(--ui));cursor:col-resize;touch-action:none;z-index:1}
+.crz::after{content:"";position:absolute;top:22%;bottom:22%;right:calc(3px*var(--ui));width:2px;border-radius:2px;background:var(--bd)}
+.crz:hover::after,body.colrz .crz::after{background:var(--acc-ink)}
+body.colrz,body.colrz *{cursor:col-resize!important;user-select:none!important;-webkit-user-select:none!important}
+/* ---- 手機版（≤900px） ---- */
+@media(max-width:900px){
+ #tp header>.row.tbm0{display:none!important}
+ html[data-tbd=m] #tpx>header.hdx{display:none}
+ #tbrow{flex-wrap:wrap;align-items:center;column-gap:calc(6px*var(--ui));row-gap:calc(8px*var(--ui))}
+ #tbrow>*{flex:none;white-space:nowrap}
+ #tbrow>.tbrk{flex:0 0 100%;height:0;margin-top:calc(-8px*var(--ui))}
+ #tbrow>#th,#tbrow>#vw{flex:1 1 calc(50% - calc(3px*var(--ui)));min-width:0;max-width:none}
+ #tbrow>#q{flex:1 1 calc(120px*var(--ui));min-width:calc(8em + calc(20px*var(--ui)));max-width:none}
+ #tbrow>#sdp{flex:0 1 auto;min-width:0;max-width:40%}
+ #tbrow>#tgb{max-width:44%;overflow:hidden;text-overflow:ellipsis}
+ #tbrow>button,#tbrow>.sgw>button{padding-left:calc(8px*var(--ui));padding-right:calc(8px*var(--ui))}
+ #tbrow>#sdp{max-width:34%;padding-left:calc(8px*var(--ui))}
+ #tbrow>.syc{padding-left:calc(2px*var(--ui));padding-right:calc(2px*var(--ui))}
+ #tbrow>.syc{flex:0 1 auto;min-width:0;overflow:hidden}
+ #tbrow>.syc>span{overflow:hidden;text-overflow:ellipsis}
+ /* 簡易模式：固定兩排，第一排 主題／列表／設定／顏色／重新整理，第二排 搜尋／清除篩選／新增／工具箱 */
+ html[data-tbm=simple] #tbrow{flex-wrap:wrap}
+ html[data-tbm=simple] #tbrow>#th,html[data-tbm=simple] #tbrow>#vw{flex:1 1 0;min-width:calc(60px*var(--ui))}
+ html[data-tbm=simple] #tbrow>#q{flex:1 1 0}
+ html[data-tbm=simple] #tbrow>button,html[data-tbm=simple] #tbrow>.sgw>button{padding-left:calc(9px*var(--ui));padding-right:calc(9px*var(--ui))}
+ /* 收藏控制區：五項固定同一行（不換行、不重疊） */
+ #ctl0{margin-top:calc(8px*var(--ui))}
+ #ctl0 .ctlr{flex-wrap:nowrap;gap:calc(8px*var(--ui));justify-content:space-between;font-size:calc(13px*var(--ui))}
+ #ctl0 .ctlr>*{flex:none;min-width:0}
+ #ctl0 .ctlr label{gap:calc(4px*var(--ui));min-height:calc(32px*var(--ui))}
+ #ctl0 .ctlr select{min-height:calc(32px*var(--ui));padding:calc(3px*var(--ui)) calc(6px*var(--ui));font-size:calc(13px*var(--ui))}
+ #tbt{min-height:calc(32px*var(--ui));padding:calc(3px*var(--ui)) calc(9px*var(--ui))}
+ #ctl0 .ctlr input[type=checkbox]{margin:0}
+ #ctl0 .ctlr select{-webkit-appearance:none;appearance:none;padding-right:calc(17px*var(--ui))!important;background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);background-position:calc(100% - calc(10px*var(--ui))) 55%,calc(100% - calc(6px*var(--ui))) 55%;background-size:calc(4px*var(--ui)) calc(4px*var(--ui));background-repeat:no-repeat}
+ html:not([data-tbm=simple]) #tbrow>#sdp{max-width:30%}
+ html:not([data-tbm=simple]) #tbrow>button,html:not([data-tbm=simple]) #tbrow>.sgw>button,html:not([data-tbm=simple]) #tbrow>select{font-size:calc(14px*var(--ui))}
+ /* 手機「大」「特大」：工具列與收藏控制區維持「中」的尺寸（和品牌列一樣），才能維持固定的排數與同一行 */
+ html[data-ui=l] #tbrow,html[data-ui=xl] #tbrow,html[data-ui=l] #ctl0,html[data-ui=xl] #ctl0{--ui:1;font-size:15px}
+}
+@media(max-width:400px){
+ #tbrow{column-gap:calc(5px*var(--ui))}
+ #tbrow>button,#tbrow>.sgw>button,#tbrow>select{font-size:calc(14px*var(--ui))}
+ html[data-tbm=simple] #tbrow>button,html[data-tbm=simple] #tbrow>.sgw>button{padding-left:calc(8px*var(--ui));padding-right:calc(8px*var(--ui))}
+ #ctl0 .ctlr{gap:calc(6px*var(--ui));font-size:calc(12.5px*var(--ui))}
+ #ctl0 .ctlr select{font-size:calc(12.5px*var(--ui));padding-left:calc(5px*var(--ui));padding-right:calc(3px*var(--ui))}
+ #tbt{padding-left:calc(7px*var(--ui));padding-right:calc(7px*var(--ui));font-size:calc(12.5px*var(--ui))}
+}
+@media(max-width:370px){
+ #tbrow{column-gap:calc(4px*var(--ui))}
+ #tbrow>#q{font-size:calc(14px*var(--ui))}
+ #tbrow>button,#tbrow>.sgw>button,#tbrow>select{font-size:calc(13px*var(--ui))}
+ html[data-tbm=simple] #tbrow>button,html[data-tbm=simple] #tbrow>.sgw>button{padding-left:calc(6px*var(--ui));padding-right:calc(6px*var(--ui))}
+ #ctl0 .ctlr{gap:calc(4px*var(--ui));font-size:calc(12px*var(--ui))}
+ #ctl0 .ctlr label{gap:calc(3px*var(--ui))}
+ #ctl0 .ctlr input[type=checkbox]{width:calc(15px*var(--ui));height:calc(15px*var(--ui))}
+ #ctl0 .ctlr select{font-size:calc(12px*var(--ui));padding-left:calc(3px*var(--ui));padding-right:0}
+ #tbt{padding-left:calc(6px*var(--ui));padding-right:calc(6px*var(--ui));font-size:calc(12px*var(--ui))}
+}
+@media(max-width:400px){
+ html:not([data-tbm=simple]) #tbrow>button,html:not([data-tbm=simple]) #tbrow>.sgw>button{padding-left:calc(6px*var(--ui));padding-right:calc(6px*var(--ui))}
+ html:not([data-tbm=simple]) #tbrow>#sdp{padding-left:calc(6px*var(--ui));padding-right:calc(2px*var(--ui))}
+}
+@media(max-width:340px){
+ #ctl0 .ctlr{gap:calc(3px*var(--ui))}
+ html[data-ui=l] #ctl0 .ctlr,html[data-ui=xl] #ctl0 .ctlr,html[data-ui=l] #ctl0 .ctlr select,html[data-ui=xl] #ctl0 .ctlr select,html[data-ui=l] #tbt,html[data-ui=xl] #tbt{font-size:11px}
+ #ctl0 .ctlr label{gap:calc(2px*var(--ui))}
+ #tbrow>#q{font-size:calc(13px*var(--ui));padding-left:calc(7px*var(--ui));padding-right:calc(7px*var(--ui));min-width:calc(8em + calc(14px*var(--ui)))}
+ #tbrow>button,#tbrow>.sgw>button,#tbrow>select{font-size:calc(12px*var(--ui))}
+ html[data-tbm=simple] #tbrow>button,html[data-tbm=simple] #tbrow>.sgw>button{padding-left:calc(5px*var(--ui));padding-right:calc(5px*var(--ui))}
+ #ctl0 .ctlr{font-size:calc(11.5px*var(--ui))}
+ #ctl0 .ctlr select{font-size:calc(11.5px*var(--ui))}
+ #tbt{font-size:calc(11.5px*var(--ui));padding-left:calc(5px*var(--ui));padding-right:calc(5px*var(--ui))}
+}
+/* V3.0.0 追加：「選擇資料夾」「新增資料夾」清單的展開三角形，改成和側邊欄同一個 SVG 三角形，比側邊欄（20px）小一點（18px），點擊範圍加大 */
+.tg2{width:calc(30px*var(--ui))}
+.tg2>.tri2{width:calc(18px*var(--ui));height:calc(18px*var(--ui));flex:none;fill:currentColor;transition:transform .15s ease}
+.tg2>.tri2.o{transform:rotate(90deg)}
+@media(max-width:900px){.tg2{width:calc(38px*var(--ui))}}
+@media (prefers-reduced-motion:reduce){.tg2>.tri2{transition:none}}
+</style>
 </head>
 <body>
 <div id="iqw" style="display:none;position:sticky;top:0;z-index:29;background:#ffe9c7;color:#8a4b00;font-weight:600;font-size:calc(13px*var(--ui));text-align:center;padding:calc(6px*var(--ui)) calc(12px*var(--ui));border-bottom:1px solid #e6c27a"></div>
 <div id="qw" style="display:none;position:sticky;top:0;z-index:30;background:#fff3b0;color:#c0392b;font-weight:700;text-align:center;padding:calc(8px*var(--ui)) calc(12px*var(--ui));border-bottom:1px solid #e6d27a">⚠️ 請留意，Google 空間已不足 100M ⚠️</div>
 <div class="w">
 <header><h1 class="brand"><img id="logo" width="1141" height="346" alt="SNS文章收藏夾 SNS Bookmark by littlemonkey805" decoding="async" draggable="false" data-light="assets/logo-light.png" data-dark="assets/logo-dark.png" data-custom="assets/logo-custom.png"><script>(function(){try{var R=document.documentElement,t=R.dataset.theme,k="light";if(t!=="custom"&&(function(){var p=JSON.parse(localStorage.getItem("pbg")||"{}");return p.img&&+(p.op==null?50:p.op)>0})())k="custom";else if(t==="dark")k="dark";if(t==="custom"){var c=JSON.parse(localStorage.getItem("cust")||"{}");if(c.img&&+(c.op==null?50:c.op)>0)k="custom";else{var h=String(c.bg||"#fafafa").replace("#","");if(h.length===3)h=h.replace(/./g,"$&$&");var n=parseInt(h,16);if((0.2126*(n>>16&255)+0.7152*(n>>8&255)+0.0722*(n&255))/255<0.45)k="dark"}}var i=document.getElementById("logo");i.src=i.getAttribute("data-"+k);i.setAttribute("data-k",k)}catch(e){}})()</script><button type="button" id="hlp" aria-label="使用說明與常見問題" title="使用說明與常見問題"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.7" fill="none" stroke="currentColor" stroke-width="1.15"/><path d="M8 7.1v4.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="4.8" r=".85" fill="currentColor"/></svg><span class="hlt">使用說明</span></button><button type="button" id="ann" aria-label="公告" title="公告"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.6 6.1h2.1l4.4-3v9.8l-4.4-3H2.6z" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round"/><path d="M11.2 5.7a3.1 3.1 0 0 1 0 4.6M12.8 4.1a5.3 5.3 0 0 1 0 7.8" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><span class="ant">公告</span></button></h1><div class="row">
-<select id="th" aria-label="主題"><option value="cute">品牌桃</option><option value="warm">暖米綠</option><option value="dark">深色</option><option value="clean">簡約</option><option value="custom">自訂</option></select>
+<select id="th" aria-label="主題"><option value="cute">品牌桃</option><option value="warm">暖米綠</option><option value="dark">深色</option><option value="clean">薰衣紫</option><option value="mint">奶霜綠</option><option value="custom">自訂</option></select>
 <select id="vw" aria-label="顯示方式"><option value="cards">卡片</option><option value="list">列表</option><option value="wall">圖片牆</option><option value="album">相簿</option><option value="time">時間軸</option><option value="table">表格</option><option value="board">看板</option></select><button id="pfb" title="平台管理">🌐</button><button id="nb" title="回顧通知設定">🔔</button><span style="position:relative"><button id="sgb">設定 ▾</button><div id="sgm"><button data-sg="pfb">🌐 平台管理</button><button data-sg="nb">🔔 回顧通知設定</button><button data-sg="uib">🔍 介面大小</button><button data-sg="fbo">💬 意見回饋</button></div></span><button id="cb" title="自訂外觀">🎨</button><button id="bk">備份</button><button id="rf" title="重新整理">⟳</button></div></header>
 <div class="bar tb"><input id="q" type="search" placeholder="搜尋備註、文字、標籤、連結"><button id="qb" title="清除所有篩選">✕ 清除篩選</button><button id="tgb" class="chip">🏷️ 標籤</button><select id="sdp"><option value="">全部平台</option><option>IG</option><option>Threads</option><option>X</option><option>YouTube</option><option>網頁</option></select><button id="dtb" class="chip">📅 日期</button><button id="bmb" class="chip">☑ 批次</button><button class="pri" id="add">＋新增</button><i class="tbbr" aria-hidden="true"></i></div>
-<div class="ctl"><label><input type="checkbox" id="sd1">顯示收藏日</label><label><input type="checkbox" id="sd2">顯示發布日</label><select id="sdo"><option value="t">依收藏日排序</option><option value="pub">依發布日排序</option></select><select id="sdd"><option value="d">新 → 舊</option><option value="a">舊 → 新</option></select></div><div id="np" style="display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:calc(12px*var(--ui))"><div class="box ctl" style="align-items:flex-start;flex-wrap:nowrap"><div class="row" style="justify-content:space-between;align-items:center;width:100%"><b>🔔 回顧通知設定</b><button id="nq" title="關閉">✕</button></div><label><input type="checkbox" id="n1">自訂的待回顧日期（到期那天）</label><label><input type="checkbox" id="n2">每年的收藏日（沒填待回顧日期的收藏）</label><label><input type="checkbox" id="n3">每年的發布日（沒填待回顧日期的收藏）</label><span style="font-size:calc(12px*var(--ui));flex-basis:100%">全部取消＝不回顧。提醒會顯示在首頁最上面（打開頁面時），不是手機推播通知。這個設定只存在目前這個裝置。</span></div></div><div id="cp" class="ctl" style="display:none"><label>背景<input type="color" id="c1"></label><label>卡片<input type="color" id="c2"></label><label>標題顏色<input type="color" id="c6"></label><label>頁面文字<input type="color" id="c5"></label><label>卡片／按鈕文字<input type="color" id="c3"></label><label class="c7w">浮鈕文字<input type="color" id="c7"></label><label>重點色<input type="color" id="c4"></label><button id="bgb">上傳背景圖</button><input id="bgf" type="file" accept="image/*" style="display:none"><label>背景濃度<input type="range" id="bgo" min="10" max="100" step="5"></label><button id="bgx">移除背景</button><button id="cr">重設</button><span style="font-size:calc(12px*var(--ui));flex-basis:100%">背景圖建議（兩種裝置的設定各自獨立、不會同步）：<br>💻 電腦：橫式，1920×1080 以上，主體放中間偏上。<br>📱 手機：直式，1080×1920 左右，主體放畫面中間。<br>上傳後會自動壓縮到最長邊 1920 px。</span></div><div id="dr" class="ctl" style="display:none"><span>依</span><select id="dk"><option value="t">收藏日</option><option value="pub">發布日</option></select><input id="df" type="date"><span>～</span><input id="dt" type="date"><select id="dpre"><option value="">快速選擇</option><option value="0">今天</option><option value="7">近 7 天</option><option value="30">近 30 天</option><option value="y">今年</option></select><button id="dc">清除</button><span style="font-size:calc(12px*var(--ui))">只選左邊那格＝指定那一天；兩格都選＝區間</span></div><div id="chips"></div><div id="tagp"></div><div id="tree"><div class="th2"><b>📁 資料夾</b><span class="thr"><span class="srtc" id="fsrt"></span><button id="fa" class="chip" title="新增資料夾" aria-label="新增資料夾">＋</button></span></div><div class="xw fqw"><input id="fq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋資料夾（例如 Be）" aria-label="搜尋資料夾"><button type="button" class="xc" id="fqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="fdm" class="fdm" aria-live="polite"></div><div id="fadd" style="display:none"><input id="fp" type="hidden"><div id="fpw" class="cas"></div><div class="bar"><input id="fn" placeholder="資料夾名稱"><button id="fb" class="pri">建立</button></div><div id="fh" style="font-size:calc(12px*var(--ui));color:var(--mut);margin-top:calc(4px*var(--ui))"></div></div><div id="rn" style="display:none"><div class="bar"><input id="rv" placeholder="新名稱"><button id="rs" class="pri">儲存</button><button id="rx">取消</button></div><div id="rh" style="font-size:calc(12px*var(--ui));color:var(--mut);margin:calc(4px*var(--ui)) 0 calc(8px*var(--ui))"></div></div><div id="tl"></div></div><div id="st">載入中…</div><div id="due"></div><main id="ls" class="cards"></main>
+<div class="ctl" id="ctl0"><div class="ctlr"><label title="顯示收藏日"><input type="checkbox" id="sd1">收藏日</label><label title="顯示發布日"><input type="checkbox" id="sd2">發布日</label><select id="sdo" aria-label="排序依據"><option value="t">依收藏日</option><option value="pub">依發布日</option></select><select id="sdd" aria-label="排序方向"><option value="d">新→舊</option><option value="a">舊→新</option></select><button type="button" id="tbt" aria-expanded="true" aria-controls="tbrow"><span class="tbtl">收合</span><svg class="tbtc" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg></button></div></div><div id="np" style="display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:calc(12px*var(--ui))"><div class="box ctl" style="align-items:flex-start;flex-wrap:nowrap"><div class="row" style="justify-content:space-between;align-items:center;width:100%"><b>🔔 回顧通知設定</b><button id="nq" title="關閉">✕</button></div><label><input type="checkbox" id="n1">自訂的待回顧日期（到期那天）</label><label><input type="checkbox" id="n2">每年的收藏日（沒填待回顧日期的收藏）</label><label><input type="checkbox" id="n3">每年的發布日（沒填待回顧日期的收藏）</label><span style="font-size:calc(12px*var(--ui));flex-basis:100%">全部取消＝不回顧。提醒會顯示在首頁最上面（打開頁面時），不是手機推播通知。這個設定只存在目前這個裝置。</span></div></div><div id="cp" class="ctl" style="display:none"><label>背景<input type="color" id="c1"></label><label>卡片<input type="color" id="c2"></label><label>標題顏色<input type="color" id="c6"></label><label>頁面文字<input type="color" id="c5"></label><label>卡片／按鈕文字<input type="color" id="c3"></label><label class="c7w">浮鈕文字<input type="color" id="c7"></label><label>重點色<input type="color" id="c4"></label><button id="bgb">上傳背景圖</button><input id="bgf" type="file" accept="image/*" style="display:none"><label>背景濃度<input type="range" id="bgo" min="10" max="100" step="5"></label><button id="bgx">移除背景</button><button id="cr">重設</button><span style="font-size:calc(12px*var(--ui));flex-basis:100%">背景圖建議（兩種裝置的設定各自獨立、不會同步）：<br>💻 電腦：橫式，1920×1080 以上，主體放中間偏上。<br>📱 手機：直式，1080×1920 左右，主體放畫面中間。<br>上傳後會自動壓縮到最長邊 1920 px。</span></div><div id="dr" class="ctl" style="display:none"><span>依</span><select id="dk"><option value="t">收藏日</option><option value="pub">發布日</option></select><input id="df" type="date"><span>～</span><input id="dt" type="date"><select id="dpre"><option value="">快速選擇</option><option value="0">今天</option><option value="7">近 7 天</option><option value="30">近 30 天</option><option value="y">今年</option></select><button id="dc">清除</button><span style="font-size:calc(12px*var(--ui))">只選左邊那格＝指定那一天；兩格都選＝區間</span></div><div id="chips"></div><div id="tagp"></div><div id="tree"><div class="th2"><b>📁 資料夾</b><span class="thr"><span class="srtc" id="fsrt"></span><button id="fa" class="chip" title="新增資料夾" aria-label="新增資料夾">＋</button></span></div><div class="xw fqw"><input id="fq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋資料夾（例如 Be）" aria-label="搜尋資料夾"><button type="button" class="xc" id="fqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="fdm" class="fdm" aria-live="polite"></div><div id="fadd" style="display:none"><input id="fp" type="hidden"><div id="fpw" class="cas"></div><div class="bar"><input id="fn" placeholder="資料夾名稱"><button id="fb" class="pri">建立</button></div><div id="fh" style="font-size:calc(12px*var(--ui));color:var(--mut);margin-top:calc(4px*var(--ui))"></div></div><div id="rn" style="display:none"><div class="bar"><input id="rv" placeholder="新名稱"><button id="rs" class="pri">儲存</button><button id="rx">取消</button></div><div id="rh" style="font-size:calc(12px*var(--ui));color:var(--mut);margin:calc(4px*var(--ui)) 0 calc(8px*var(--ui))"></div></div><div id="tl"></div></div><div id="st">載入中…</div><div id="due"></div><main id="ls" class="cards"></main>
 </div>
 <div id="dlg"><div class="box"><div class="row" style="justify-content:space-between;align-items:center"><b>收藏</b><button type="button" id="dx" title="關閉">✕</button></div>
 <label>連結 <span id="pl"></span></label>
@@ -1095,7 +1326,7 @@ let cplats=[],pren={},grps=[];
 const plat=u=>{try{const h=new URL(u).hostname;for(const c of cplats)if(c.hosts.some(x=>h===x||h.endsWith('.'+x)))return c.name;for(const[r,n]of PF)if(r.test(h))return pren[n]||n}catch(e){}return '網頁'};
 const list=s=>String(s||'').split(/[,，、]/).map(x=>x.trim()).filter(Boolean);
 let dueOpen=false,noFolder=false,sortAsc=ls('soa')==='1',gTarget='',gSel='',gArm='',bArm='',bmode=false,bsel=new Set(),lastShown=[],acAuto=false,delArm='',dueOnly=false,starOnly=false,gotOnly=false,sbMode='f',nset={c:ls('nc')!=='0',t:ls('nt2')!=='0',p:ls('np2')!=='0'},noteAuto=false,plSel='',tagsOn=false,pdAuto=false,show={s:ls('shs')!=='0',p:ls('shp')!=='0'},sortBy=ls('sob')||'t',open=new Set(),treeOn=true,folders=[],armed=false,posts=[],col=null,assets=null,dl=null,view=ls('vw')||'cards',sel={c:'',t:'',u:false},cur=null,shots=[];
-document.documentElement.dataset.theme=(()=>{const OK=['warm','cute','dark','clean','custom'];if(ls('thv')!=='2'){ls('thv','2');try{localStorage.removeItem('th')}catch(e){}}if(ls('thm281')!=='1'){if(ls('th')==='warm')ls('th','cute');ls('thm281','1')}const t=ls('th');return OK.includes(t)?t:'cute'})();
+document.documentElement.dataset.theme=(()=>{const OK=['warm','cute','dark','clean','mint','custom'];if(ls('thv')!=='2'){ls('thv','2');try{localStorage.removeItem('th')}catch(e){}}if(ls('thm281')!=='1'){if(ls('th')==='warm')ls('th','cute');ls('thm281','1')}const t=ls('th');return OK.includes(t)?t:'cute'})();
 $('#th').value=document.documentElement.dataset.theme;
 $('#th').onchange=e=>{document.documentElement.dataset.theme=e.target.value;ls('th',e.target.value);applyCust()};
 $('#vw').value=view;$('#vw').onchange=e=>{view=e.target.value;ls('vw',view);render()};
@@ -1208,17 +1439,28 @@ function openDlg(id){
 }
 $('#add').onclick=()=>openDlg();
 /* V2.10.4：重複網址偵測。比對前把網址整理成同一種寫法（去掉分享追蹤參數、www./m.、結尾斜線；twitter.com＝x.com、threads.com＝threads.net；X／IG／Threads／YouTube 依貼文代碼比對）。只讀已載入的收藏，不改資料 */
+/* V3.0.0：微博貼文英數代碼（bid）→ 數字 ID（mid）：從右邊每 4 碼一組，62 進位轉 10 進位，非第一組補足 7 位 */
+const wbMid=b=>{const A='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';let out='';for(let i=b.length;i>0;i-=4){const seg=b.slice(Math.max(0,i-4),i);let n=0n;for(const c of seg){const k=A.indexOf(c);if(k<0)return '';n=n*62n+BigInt(k)}let t=n.toString();if(i-4>0)t=t.padStart(7,'0');out=t+out}return out.replace(/^0+/,'')};
 const nuU=u=>{try{const x=new URL(String(u||'').trim());let h=x.hostname.toLowerCase().replace(/^(www|m|mobile)\./,''),m;if(h==='twitter.com')h='x.com';if(h==='threads.com')h='threads.net';const p=x.pathname.replace(/\/+$/,'');
  if(h==='x.com'&&(m=p.match(/\/status(?:es)?\/(\d+)/)))return 'x:'+m[1];
  if(h==='instagram.com'&&(m=p.match(/\/(?:p|reels?|tv)\/([\w-]+)/)))return 'ig:'+m[1];
  if(h==='threads.net'&&(m=p.match(/\/post\/([\w-]+)/)))return 'th:'+m[1];
  if(h==='youtu.be'&&p.length>1)return 'yt:'+p.slice(1).split('/')[0];
+ /* V3.0.0：TikTok／抖音依影片 ID、微博依貼文 ID 比對（微博網址的英數代碼會換算成數字 ID，兩種寫法視為同一篇） */
+ if(/(^|\.)tiktok\.com$/.test(h)&&(m=p.match(/^\/@[^/]+\/(?:video|photo)\/(\d+)/)))return 'tt:'+m[1];
+ if(/(^|\.)(douyin|iesdouyin)\.com$/.test(h)&&(m=p.match(/\/(?:share\/)?(?:video|note)\/(\d+)/)))return 'dy:'+m[1];
+ if(/(^|\.)weibo\.com$/.test(h)&&(m=p.match(/^\/\d{4,12}\/([A-Za-z0-9]{8,10})$/))){const w=wbMid(m[1]);if(w)return 'wb:'+w}
+ if(/(^|\.)weibo\.com$/.test(h)&&(m=p.match(/^\/detail\/(\d{10,20})$/)))return 'wb:'+m[1];
+ if(/(^|\.)weibo\.cn$/.test(h)&&(m=p.match(/^\/(?:status|detail)\/([A-Za-z0-9]{8,20})$/))){const w=/^\d+$/.test(m[1])?m[1]:wbMid(m[1]);if(w)return 'wb:'+w}
  if(h==='youtube.com'){const v=x.searchParams.get('v');if(v)return 'yt:'+v;if(m=p.match(/\/(?:shorts|live|embed)\/([\w-]+)/))return 'yt:'+m[1]}
  const q=[...x.searchParams].filter(([k])=>!/^(utm_\w*|igsh|igshid|xmt|fbclid|gclid|mibextid|rdid|share_id|ref_src|ref_url)$/i.test(k)).sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:0);
  return h+p+(q.length?'?'+q.map(a=>a.join('=')).join('&'):'')}catch(e){return String(u||'').trim().toLowerCase()}};
 let dupShown=false;
-function dupFind(){const v=$('#u').value.trim();if(!/^https?:\/\//.test(v))return[];const k=nuU(v);if(cur&&cur.url&&nuU(cur.url)===k)return[];return posts.filter(p=>p&&p.url&&(!cur||p.id!==cur.id)&&nuU(p.url)===k).sort((a,b)=>(b.t||0)-(a.t||0))}
-function dupChk(){const el=$('#udup');if(!el)return;const L=dupFind();dupShown=L.length>0;el.textContent='';if(!L.length){/* V2.10.4：Threads 手機分享的短網址（threads.com/share/…）沒有貼文代碼，無法比對，改提示無法檢查 */const v=$('#u').value.trim();if(/^https?:\/\//.test(v)&&/^threads\.net\/share\//.test(nuU(v))){const t=document.createElement('span');t.textContent='⚠️ 溫馨提醒：這是 Threads 手機分享的短網址，無法檢查是否已收藏過。';el.append(t);el.hidden=false;return}el.hidden=true;return}const p=L[0],d=new Date(p.t||0),s=document.createElement('span'),b=document.createElement('button');
+function dupFind(){const v=$('#u').value.trim();if(!/^https?:\/\//.test(v))return[];const k=nuU(v);if(cur&&cur.url&&nuU(cur.url)===k)return[];
+ /* V3.0.0：手機分享短網址解析成功時，也用解析後的正式網址比對（原始網址不變）；已收藏的短網址只用這台裝置已解析過的結果比對，不另外連線 */
+ const R=window.snsRes,ks=new Set([k]),rk=R&&R.key(v);if(rk)ks.add(rk);if(cur&&cur.url&&R&&R.key(cur.url)&&ks.has(R.key(cur.url)))return[];
+ return posts.filter(p=>p&&p.url&&(!cur||p.id!==cur.id)&&(ks.has(nuU(p.url))||(R&&R.key(p.url)&&ks.has(R.key(p.url))))).sort((a,b)=>(b.t||0)-(a.t||0))}
+function dupChk(){const el=$('#udup');if(!el)return;const L=dupFind();dupShown=L.length>0;el.textContent='';if(!L.length){/* V2.10.4：Threads 手機分享的短網址沒有貼文代碼，無法比對，改提示無法檢查。V3.0.0：TikTok／Threads／抖音／微博 t.cn 的手機分享短網址先交給 /api/resolve 解析；解析成功就用正式網址比對，解析失敗（或還沒有結果時按儲存後仍失敗）才顯示這段共用提醒 */const v=$('#u').value.trim(),R=window.snsRes;if(/^https?:\/\//.test(v)&&R&&R.isShort(v)&&R.state(v)!=='ok'){if(R.state(v)==='fail'){const t=document.createElement('span');t.textContent='⚠️ 溫馨提醒：這是該平台手機分享的短網址，無法檢查是否已收藏過。';el.append(t);el.hidden=false;return}R.start(v)}el.hidden=true;return}const p=L[0],d=new Date(p.t||0),s=document.createElement('span'),b=document.createElement('button');
  const tt=String(p.note||'').trim();s.textContent='⚠️ 溫馨提醒：這個網址已於 '+d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' 收藏過囉'+(tt?'，原收藏標題為「'+(tt.length>30?tt.slice(0,30)+'…':tt)+'」':'')+'。仍可再次收藏。';
  b.type='button';b.textContent='查看';b.setAttribute('aria-label','查看已收藏的那筆');b.onclick=()=>{window.pvOpen&&pvOpen(p.id)};el.append(s,b);el.hidden=false}
 $('#cx').onclick=()=>{$('#dlg').classList.remove('o');IMGF.cancel();if(window.gImgs&&sessUp.length)gImgs.abandon(sessUp.splice(0))};
@@ -1231,6 +1473,8 @@ $('#f').onchange=async e=>{
 $('#sv').onclick=async()=>{
  const url=$('#u').value.trim();if(!/^https?:\/\//.test(url)){$('#msg').textContent='請貼上 http 或 https 開頭的連結';return}
  /* V2.10.4：只要網址重複，按儲存時一律跳出確認彈窗（不管上方提醒有沒有出現）；按「確定」才新增，按「取消」回到表單、內容保留 */
+ /* V3.0.0：短網址還在解析中時，先等結果（最多約 8 秒；失敗或逾時都照常儲存，不會擋住收藏） */
+ if(window.snsRes&&snsRes.pending(url)){$('#msg').textContent='正在檢查這個短網址是否收藏過…';await snsRes.wait(url);$('#msg').textContent='';if($('#u').value.trim()!==url)return}
  if(dupFind().length){dupChk();const pr=snsAsk({title:'網址重複',main:'⚠️ 這個網址已經收藏過囉；確定要再存一筆嗎？',cancel:'取消',ok:'確定'});const am=document.querySelector('#askc .askm');if(am)am.classList.add('dupw');if(!(await pr))return}
  const id=cur?cur.id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
  const o={...(cur&&window.gStore&&gStore()?(gStore().get(cur.id)||{}):{}),url,platform:plat(url),note:$('#n').value.trim(),text:$('#t').value.trim(),cats:list($('#c').value).map(c=>c.replace(/\s*(→|＞|>|\/)\s*/g,'/')),tags:(addTg(),[...tgs]),due:$('#d').value,pub:$('#pd').value,noRev:$('#nr').checked,acct:$('#ac').value.trim(),shots,read:cur?!!cur.read:false,t:cur?cur.t:Date.now()};if(xims.length)o.ximgs=[...xims];else delete o.ximgs;
@@ -1288,7 +1532,7 @@ if(ls('pbg')===null){try{const t0=document.documentElement.dataset.theme;if(t0&&
 const svP=()=>ls('pbg',JSON.stringify(PB)),bgS=()=>document.documentElement.dataset.theme==='custom'?cu:PB,bgOk=o=>!!(o&&o.img&&/^\/_blob\/[\w-]+$/.test(o.img));let bgBusy=false;
 const bgUI=()=>{const B=bgS(),o=$('#bgo'),b=$('#bgb');if(o&&document.activeElement!==o)o.value=B.op;if(b&&!bgBusy)b.textContent=bgOk(B)?'更換背景圖':'上傳背景圖'};
 const lum=h=>{const n=parseInt(h.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255};
-const TH={warm:{'--bg':'#F4F1EA','--fg':'#23211D','--card':'#ffffff','--mut':'#77716A','--acc':'#2F6F62','--on':'#ffffff','--bd':'#E6E1D8','--r':'12px','--lnk':'#1F5A4E','--err':'#B3261E'},dark:{'--bg':'#14161a','--fg':'#e8e8ea','--card':'#1e2128','--mut':'#9aa0aa','--acc':'#7aa2ff','--on':'#10131a','--bd':'#2c313b','--r':'10px','--lnk':'#a9d0f9','--err':'#ff8a80'},clean:{'--bg':'#fafafa','--fg':'#1d1d1f','--card':'#ffffff','--mut':'#6e6e73','--acc':'#1d1d1f','--on':'#ffffff','--bd':'#e3e3e6','--r':'10px','--lnk':'#0000ee','--err':'#c62828'},cute:{'--bg':'#FFF0E9','--fg':'#8B5E4A','--card':'#FFFFFF','--mut':'#8F6654','--acc':'#FFB6C1','--on':'#754633','--bd':'#FFDEE3','--r':'18px','--lnk':'#8B5E4A','--err':'#c2185b'}};
+const TH={warm:{'--bg':'#F4F1EA','--fg':'#23211D','--card':'#ffffff','--mut':'#77716A','--acc':'#2F6F62','--on':'#ffffff','--bd':'#E6E1D8','--r':'12px','--lnk':'#1F5A4E','--err':'#B3261E'},dark:{'--bg':'#14161a','--fg':'#e8e8ea','--card':'#1e2128','--mut':'#9aa0aa','--acc':'#7aa2ff','--on':'#10131a','--bd':'#2c313b','--r':'10px','--lnk':'#a9d0f9','--err':'#ff8a80'},clean:{'--bg':'#F3EDF8','--fg':'#4A3B5C','--card':'#FFFFFF','--mut':'#76678A','--acc':'#BDAAD2','--on':'#3B2A52','--bd':'#EDE4F4','--r':'10px','--lnk':'#7A5C9E','--err':'#c62828'},mint:{'--bg':'#F3FAF7','--fg':'#2E4A42','--card':'#FFFFFF','--mut':'#5D766E','--acc':'#B7D9CB','--on':'#21403A','--bd':'#E6F5EF','--r':'12px','--lnk':'#2E7A66','--err':'#c62828'},cute:{'--bg':'#FFF0E9','--fg':'#8B5E4A','--card':'#FFFFFF','--mut':'#8F6654','--acc':'#FFB6C1','--on':'#754633','--bd':'#FFDEE3','--r':'18px','--lnk':'#8B5E4A','--err':'#c2185b'}};
 const applyCust=()=>{const R=document.documentElement,s=R.style,mx=(a,b,p)=>`color-mix(in srgb,${a} ${p}%,${b})`;if(R.dataset.theme==='custom'){autoTxt();s.setProperty('--pfg',cu.pf);s.setProperty('--tfg',cu.tc);s.setProperty('--lnk',lum(cu.card)<.5?'#a9d0f9':'#0000ee');s.setProperty('--bg',cu.bg);s.setProperty('--card',cu.card);s.setProperty('--fg',cu.fg);if(cu.ff)s.setProperty('--fab-tx',cu.ff);else s.removeProperty('--fab-tx');s.setProperty('--acc',cu.acc);s.setProperty('--on',lum(cu.acc)>.6?'#111':'#fff');s.setProperty('--mut',mx(cu.fg,cu.bg,60));s.setProperty('--bd',mx(cu.fg,cu.bg,16));s.setProperty('--err',lum(cu.bg)<.5?'#ff8a80':'#c62828')}else{['--pfg','--tfg','--fab-tx'].forEach(k=>s.removeProperty(k));const T=TH[R.dataset.theme]||TH.cute;for(const k in T)s.setProperty(k,T[k]);s.setProperty('color-scheme',R.dataset.theme==='dark'?'dark':'light')}if(R.dataset.theme==='custom')s.setProperty('color-scheme',lum(cu.bg)<.5?'dark':'light');{const B=bgS(),u=bgOk(B)&&window.gUrl&&gUrl(B.img.slice(7));s.setProperty('--bgimg',u?`url(${u})`:'none');s.setProperty('--bgop',(+B.op||0)/100)}try{bgUI()}catch(e){}window.snsTok&&snsTok()};
 const mixH=(a,b,t)=>{const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),A=p(a),B=p(b);return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('')};
 const autoTxt=()=>{const eff=cu.img&&cu.avg?mixH(cu.bg,cu.avg,cu.op/100):cu.bg,d=lum(eff)<.5;if(cu.aC){cu.card=d?mixH(eff,'#ffffff',.09):'#ffffff';$('#c2').value=cu.card}if(cu.aP){cu.pf=d?'#f2f2f2':'#1d1d1f';$('#c5').value=cu.pf}if(cu.aT){cu.tc=cu.pf;$('#c6').value=cu.tc}if(cu.aF){cu.fg=lum(cu.card)<.5?'#f2f2f2':'#1d1d1f';$('#c3').value=cu.fg}};
@@ -1380,7 +1624,7 @@ $('#sgm').onclick=e=>{const t=e.target.dataset.sg;if(!t)return;$('#sgm').style.d
 document.addEventListener('click',e=>{if(!e.target.closest('#sgm,#sgb'))$('#sgm').style.display='none'});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#sgm').style.display='none'});
 (()=>{const h=document.querySelector('header'),b=document.createElement('button'),s=document.createElement('div'),k=document.createElement('div'),sb=$('#sb'),cl=()=>{sb.classList.remove('open');k.classList.remove('open')};b.id='hb';b.textContent='☰';b.title='選單';s.style.cssText='display:flex;align-items:center;gap:8px';h.insertBefore(s,h.firstChild);s.append(b,h.querySelector('h1'));k.id='sbk';document.body.appendChild(k);b.onclick=()=>{sb.classList.toggle('open');k.classList.toggle('open')};k.onclick=cl;sb.addEventListener('click',e=>{if(e.target.closest('[data-c],[data-a],[data-u],[data-nf],[data-sf],[data-gf],[data-gm],[data-ndl],#fa'))cl()});document.addEventListener('keydown',e=>{if(e.key==='Escape')cl()})})();
-(()=>{const hd=document.querySelector('header'),rw=hd.querySelector('.row'),gb=document.createElement('div');gb.id='gbox';gb.innerHTML='<button id="gin" class="bt"><b style="color:#4285F4">G</b> 登入 Google</button><button id="gav" style="display:none" aria-label="帳號選單"></button><div id="gmn"><div id="gnm"></div><button id="gsw">🔀 切換帳號</button><button id="gout">🚪 登出</button></div>';const mq=matchMedia('(max-width:900px)'),place=()=>{if(mq.matches){if(rw.parentNode===hd)hd.insertBefore(gb,rw);else hd.appendChild(gb)}else rw.insertBefore(gb,$('#th'))};place();mq.addEventListener('change',place);
+(()=>{const hd=document.querySelector('header'),rw=hd.querySelector('.row'),gb=document.createElement('div');gb.id='gbox';gb.innerHTML='<button id="gin" class="bt"><b style="color:#4285F4">G</b> 登入 Google</button><button id="gav" style="display:none" aria-label="帳號選單"></button><div id="gmn"><div id="gnm"></div><button id="gsw">🔀 切換帳號</button><button id="gout">🚪 登出</button></div>';const mq=matchMedia('(max-width:900px)'),place=()=>{if(mq.matches){if(rw.parentNode===hd)hd.insertBefore(gb,rw);else hd.appendChild(gb)}else rw.insertBefore(gb,rw.firstChild)};place();mq.addEventListener('change',place);
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},4000)};
 const G=window.snsGoogle={user:null,onLogin:null,onSwitch:null,onLogout:null,setUser(u){G.user=u||null;const a=$('#gav');$('#gin').style.display=u?'none':'';a.style.display=u?'':'none';$('#gmn').style.display='none';if(u){a.innerHTML=u.photo?'<img alt="" referrerpolicy="no-referrer" src="'+esc(u.photo)+'">':esc((u.name||'?').slice(0,1));$('#gnm').textContent=(u.name||'')+(u.email?' · '+u.email:'')}}};
 $('#gin').onclick=()=>{if(G.onLogin)G.onLogin();else{G.setUser({name:'示範使用者',email:'demo@example.com',photo:''});note('目前是示範模式：還沒有串接真正的 Google 登入')}};
@@ -1558,7 +1802,7 @@ function pkDraw(){const a=pkSel(),all=fp(),f=FS.filter(all,csq);
  $('#csel2').innerHTML=$('#csel').innerHTML;$('#rcf').innerHTML=rs.length?'<span>🕘 最近使用：</span>'+rs.map(k=>'<button type="button" class="chip'+(a.includes(k)?' on':'')+'" data-rk="'+esc(k)+'" title="'+(a.includes(k)?'已選取':'加入分類')+'">'+(a.includes(k)?'✓ ':'+ ')+esc(k.replace(/\//g,' → '))+'</button>').join(''):'';
  if(!all.length)$('#cs').innerHTML='<span style="color:var(--mut);font-size:calc(13px*var(--ui));padding:4px">還沒有資料夾，在下面輸入名稱建立第一個</span>';
  else if(f&&!f.hit.size)$('#cs').innerHTML='<span class="fqe">找不到名稱包含「'+esc(csq.trim())+'」的資料夾</span>';
- else $('#cs').innerHTML=FS.rows(all,f,p=>open2.has(p)).map(r=>{const on=a.includes(r.p);return '<div class="pr'+(r.anc?' anc':'')+'" style="padding-left:'+r.depth*16+'px"><span class="tg2"'+(r.kids&&!f?' data-o2="'+esc(r.p)+'" role="button" aria-label="'+(r.open?'收合':'展開')+'"':'')+'>'+(r.kids?(r.open?'▾':'▸'):'')+'</span><button type="button" class="pk '+(on?'on':'')+'" data-k="'+esc(r.p)+'" aria-pressed="'+on+'"><span>'+(on?'☑':'☐')+'</span><span>'+r.label+'</span></button><button type="button" class="ed" data-dn="'+esc(r.p)+'" title="改名">✎</button></div>'}).join('');
+ else $('#cs').innerHTML=FS.rows(all,f,p=>open2.has(p)).map(r=>{const on=a.includes(r.p);return '<div class="pr'+(r.anc?' anc':'')+'" style="padding-left:'+r.depth*16+'px"><span class="tg2"'+(r.kids&&!f?' data-o2="'+esc(r.p)+'" role="button" aria-label="'+(r.open?'收合':'展開')+'"':'')+'>'+(r.kids?'<svg class="tri2'+(r.open?' o':'')+'" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M5.5 4 16 10 5.5 16z"/></svg>':'')+'</span><button type="button" class="pk '+(on?'on':'')+'" data-k="'+esc(r.p)+'" aria-pressed="'+on+'"><span>'+(on?'☑':'☐')+'</span><span>'+r.label+'</span></button><button type="button" class="ed" data-dn="'+esc(r.p)+'" title="改名">✎</button></div>'}).join('');
  ps($('#dp'))}
 $('#csq').oninput=()=>{csq=$('#csq').value;pkDraw()};
 $('#csqx').onclick=()=>{$('#csq').value='';csq='';pkDraw();$('#csq').focus()};
@@ -1921,7 +2165,7 @@ const MKF=(()=>{const el=$('#mkf');let par='',q='',open3=new Set(),done=null,fb=
  const draw=()=>{const all=fp(),f=FS.filter(all,q);$('#mkp').innerHTML='放在：<b>'+(par?esc(par.replace(/\//g,' → ')):'最上層')+'</b>';
   const top='<div class="pr"><span class="tg2"></span><button type="button" class="pk'+(par===''?' on':'')+'" data-mp="" role="option" aria-selected="'+(par==='')+'"><span>'+(par===''?'◉':'○')+'</span><span>🏠 最上層（不放在任何資料夾裡）</span></button></div>';
   if(f&&!f.hit.size){$('#mkt').innerHTML=top+'<span class="fqe">找不到名稱包含「'+esc(q.trim())+'」的資料夾</span>';return}
-  $('#mkt').innerHTML=top+FS.rows(all,f,p=>open3.has(p)).map(r=>{const on=par===r.p;return '<div class="pr'+(r.anc?' anc':'')+'" style="padding-left:'+r.depth*16+'px"><span class="tg2"'+(r.kids&&!f?' data-o3="'+esc(r.p)+'" role="button"':'')+'>'+(r.kids?(r.open?'▾':'▸'):'')+'</span><button type="button" class="pk'+(on?' on':'')+'" data-mp="'+esc(r.p)+'" role="option" aria-selected="'+on+'"><span>'+(on?'◉':'○')+'</span><span>📁 '+FS.label(r.p,f,!!f)+'</span></button></div>'}).join('')};
+  $('#mkt').innerHTML=top+FS.rows(all,f,p=>open3.has(p)).map(r=>{const on=par===r.p;return '<div class="pr'+(r.anc?' anc':'')+'" style="padding-left:'+r.depth*16+'px"><span class="tg2"'+(r.kids&&!f?' data-o3="'+esc(r.p)+'" role="button"':'')+'>'+(r.kids?'<svg class="tri2'+(r.open?' o':'')+'" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M5.5 4 16 10 5.5 16z"/></svg>':'')+'</span><button type="button" class="pk'+(on?' on':'')+'" data-mp="'+esc(r.p)+'" role="option" aria-selected="'+on+'"><span>'+(on?'◉':'○')+'</span><span>📁 '+FS.label(r.p,f,!!f)+'</span></button></div>'}).join('')};
  const close=ok=>{el.classList.remove('o');$('#mkn').value='';$('#mkq').value='';q='';$('#mkm').textContent='';par='';done=null;try{fb&&document.contains(fb)&&fb.focus()}catch(e){}fb=null};
  const openF=o=>{o=o||{};fb=document.activeElement;par=o.parent&&fp().includes(o.parent)?o.parent:'';q='';done=o.onDone||null;$('#mkq').value='';$('#mkn').value='';$('#mkm').textContent='';const all=fp();open3=new Set();if(all.length<=15)all.forEach(p=>open3.add(p));else{const s=par.split('/');for(let i=1;i<=s.length;i++)open3.add(s.slice(0,i).join('/'))}draw();el.classList.add('o');if(snsAutoFocusOK())setTimeout(()=>{try{$('#mkn').focus()}catch(e){}},0)};
  $('#mkt').addEventListener('click',e=>{const t=e.target.closest('[data-o3]');if(t){const p=t.dataset.o3;open3.has(p)?open3.delete(p):open3.add(p);draw();return}const b=e.target.closest('[data-mp]');if(b){par=b.dataset.mp;$('#mkm').textContent='';draw()}});
@@ -1958,7 +2202,9 @@ $('#catslot').append($('#rcf'),$('#csq').parentNode,$('#cs'),$('#rn2'));
  const derive=(T,o)=>{const card=T['--card'],fg=T['--fg'],acc=T['--acc'],dk=L(card)<.35,ink=CR(acc,card)>=3?acc:fg,soft=mix(acc,card,dk?.32:.24);
   return Object.assign({'--acc-ink':ink,'--sel':acc,'--sel-bg':mix(acc,card,dk?.32:.22),'--focus':ink,'--hover':mix(acc,card,dk?.16:.10),'--acc-soft':soft,'--acc-soft-fg':CR(ink,soft)>=4.5?ink:(CR(fg,soft)>=CR('#111111',soft)?fg:'#111111'),'--qa-bg':dk?'rgba(255,255,255,.10)':'rgba(255,255,255,.82)','--qa-fg':fg,'--star-bg':card,'--star-fg':'#f5b301','--star-bd':'#f5b301','--got-bg':mix(fg,card,.14),'--got-fg':h2r(T['--mut'])?T['--mut']:mix(fg,card,.6)},o||{})};
  const PEACH={'--acc-ink':'#8B5E4A','--sel':'#FFD46B','--sel-bg':'#FFF4D6','--focus':'#8B5E4A','--hover':'#FFEDEF','--acc-soft':'#FFDAE0','--acc-soft-fg':'#754633','--star-bg':'#FFD46B','--star-fg':'#8B5E4A','--star-bd':'#FFD46B'};
- for(const k in TH)Object.assign(TH[k],derive(TH[k],k==='cute'?PEACH:null));
+ /* V3.0.0：薰衣紫（原簡約）、奶霜綠：依 V6 色票。強調色用在選取外框、焦點、選取底色；文字用的強調色另取同色系較深的顏色，確保小字對比足夠 */
+ const LAV={'--acc-ink':'#7D619C','--sel':'#9A7FB8','--sel-bg':'#EDE4F4','--focus':'#9A7FB8','--hover':'#F3EDF8','--acc-soft':'#E3D8EE','--acc-soft-fg':'#3B2A52'},MINT={'--acc-ink':'#3B8670','--sel':'#7FC7B2','--sel-bg':'#E6F5EF','--focus':'#5FAF98','--hover':'#EEF8F4','--acc-soft':'#D6ECE3','--acc-soft-fg':'#21403A'};
+ for(const k in TH)Object.assign(TH[k],derive(TH[k],k==='cute'?PEACH:k==='clean'?LAV:k==='mint'?MINT:null));
  const TOK=Object.keys(TH.warm).filter(k=>!['--bg','--fg','--card','--mut','--acc','--on','--bd','--r','--lnk','--err'].includes(k));
  /* 實際背景類型 → Logo 素材（淺色／深色／自訂上傳背景） */
  const rgb=s=>{const m=/rgba?\(\s*([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)/.exec(s||'');if(m)return[+m[1],+m[2],+m[3]];const c=/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)/.exec(s||'');return c?[c[1]*255,c[2]*255,c[3]*255]:null};
@@ -2089,7 +2335,7 @@ const CID='840119973043-eo9lkljcu3bduvu9gae1ggri6i0hr4c7.apps.googleusercontent.
 const SCOPE='openid profile email https://www.googleapis.com/auth/drive.file';
 const D='https://www.googleapis.com/drive/v3/',U='https://www.googleapis.com/upload/drive/v3/',SH='https://sheets.googleapis.com/v4/spreadsheets/';
 const FOLDER='application/vnd.google-apps.folder',SHEET='application/vnd.google-apps.spreadsheet';
-const GG=window.snsGoogle;window.SNS_VERSION='2.10.4';
+const GG=window.snsGoogle;window.SNS_VERSION='3.0.0';
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
@@ -2098,7 +2344,7 @@ let tokP=null;
 const fetchTok=()=>tokP||(tokP=(async()=>{let r;try{r=await fetch('/api/auth/token',{method:'POST',credentials:'same-origin',headers:{'X-Requested-With':'sns'}})}catch(e){throw new Error('連不上登入服務，請檢查網路')}if(r.status===401){const e=new Error('reauth');e.reauth=true;throw e}if(!r.ok)throw new Error('登入服務暫時有問題（'+r.status+'）');const j=await r.json();if(!j.sub)throw new Error('登入服務沒有回傳帳號資訊，請重新登入');if(A.sub&&A.sub!==j.sub){A.locked=true;A.tok='';A.exp=0;$('#st').textContent='偵測到 Google 帳號在別處已切換，為避免資料混用已暫停同步，請重新整理頁面';throw new Error('帳號已切換，請重新整理頁面')}A.tsub=j.sub;A.tok=j.access_token;A.exp=Date.now()+Math.max(60,(+j.expires_in||3600)-120)*1000;return A.tok})().finally(()=>{tokP=null}));
 const tok=async()=>{if(A.locked)throw new Error('帳號已切換，請重新整理頁面');if(A.tok&&Date.now()<A.exp)return A.tok;try{return await fetchTok()}catch(e){if(e.reauth){expired();throw new Error('登入已過期，請重新登入 Google')}throw e}};
 let expiredShown=false;
-const expired=()=>{if(expiredShown)return;expiredShown=true;A.tok='';A.exp=0;GG.setUser(null);$('#st').textContent='登入已過期，請按「登入 Google」重新登入（尚未同步的修改會保留）'};
+const expired=()=>{window.snsSS&&snsSS.reauth();if(expiredShown)return;expiredShown=true;A.tok='';A.exp=0;GG.setUser(null);$('#st').textContent='登入已過期，請按「登入 Google」重新登入（尚未同步的修改會保留）'};
 const api=async(url,o,retry)=>{o=o||{};const t=await tok();const r=await fetch(url,{...o,headers:{...(o.headers||{}),Authorization:'Bearer '+t}});if(r.status===401&&retry!==0){A.tok='';return api(url,o,0)}if(!r.ok){let m='';try{m=(await r.json()).error.message}catch(e){}const e=new Error('Google '+r.status+(m?'：'+m:''));e.status=r.status;e.retryAfter=+r.headers.get('Retry-After')||0;e.reason=m;throw e}return r};
 const J=async(u,o)=>(await api(u,o)).json();
 const JP=(u,b)=>J(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});
@@ -2333,15 +2579,15 @@ assets={upload:async (blob,o)=>{if(!ids)throw new Error('請先登入 Google');c
 dl={save:async({filename,data})=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=filename;document.body.appendChild(a);a.click();a.remove()}};
 
 /* ---- 容量警告 ---- */
-const quota=async()=>{try{const r=await J(D+'about?fields=storageQuota');const q=r.storageQuota||{},lim=+q.limit,used=+q.usage;$('#qw').style.display=(lim>0&&lim-used<100*1048576)?'block':'none'}catch(e){}};
+const quota=async()=>{try{const r=await J(D+'about?fields=storageQuota');const q=r.storageQuota||{},lim=+q.limit,used=+q.usage;$('#qw').style.display=(lim>0&&lim-used<100*1048576)?'block':'none';/* V3.0.0：把同一份容量資料提供給「雲端空間」視窗與資訊條（不另外查詢、計算方式相同） */window.snsQuota={lim,used,t:Date.now()};window.snsQuotaUpd&&snsQuotaUpd()}catch(e){}};
 
 /* ---- 套用資料 ---- */
 const onSnap=s=>{$('#st').textContent='';try{imgs.warn()}catch(e){}folders=((s.docs.find(d=>d.id==='folders')||{data:()=>({})}).data()||{}).list||[];const sd=s.docs.find(d=>d.id==='settings'),S=sd&&sd.data()||{};if(!sav){cplats=JSON.parse(JSON.stringify(S.plats||[]));pren={...(S.pren||{})};grps=JSON.parse(JSON.stringify(S.grps||[]));sortS=sortNorm(S.sort)}posts=s.docs.filter(d=>d.id!=='folders'&&d.id!=='settings'&&d.id!=='imgq').map(d=>({id:d.id,...d.data()})).concat([...delHold.values()].filter(h=>!s.docs.some(d=>d.id===h.id))).sort((a,b)=>(b.t||0)-(a.t||0));render()};
 /* 刪除收藏時，先記下這筆收藏的圖片；等 Sheets 真的刪除成功後，統一檢查引用再清理 */
 const wrapCol=c=>({...c,doc:id=>{const d=c.doc(id);return{...d,set:async(...a)=>{actDirty=true;return d.set(...a)},update:async(...a)=>{actDirty=true;return d.update(...a)},delete:async()=>{actDirty=true;const p=store&&store.get(id),sh=(p&&Array.isArray(p.shots)?p.shots:[]).filter(x=>typeof x==='string');await d.delete();if(sh.length)imgs.collect(sh)}}}});
-const wipe=()=>{imgs.reset();$('#iqw').style.display='none';DEAD.clear();store=null;col=null;ids=null;posts=[];folders=[];cplats=[];pren={};grps=[];IMG.clear();$('#qw').style.display='none';render()};
-const boot=async()=>{snsSyn.set('同步雲端資料中…','ing');try{await setup();store=makeStore(io,e=>{},(a,e)=>{const t=$('#st');if(a==='saving')snsSyn.set('儲存到雲端中…','ing');else if(a==='saved'||a==='merged'){if(actDirty){actDirty=false;ACT(actType||'edit',true);actType=''}}if(a==='saving');else if(a==='saved'){snsSyn.set('已儲存到雲端 ✓','ok',2500)}else if(a==='merged'){setTimeout(()=>{snsSyn.set('已自動合併另一台裝置的修改 ✓','ok',4000)},40)}else if(a==='conflict')setTimeout(()=>{t.textContent='偵測到跨裝置衝突，請選擇要保留哪一邊'},40);else if(a==='shrunk'){setTimeout(()=>{t.textContent='貼文文字太長，雲端版已縮短到上限內（其他欄位沒有變動）'},40)}else if(a==='toobig'){const m=(e&&e.message)||'這筆資料太大，沒有寫入雲端';t.textContent=m;setTimeout(()=>{t.textContent=m},40)}else if(a==='error'){snsSyn.set('雲端儲存失敗，稍後會自動重試：'+((e&&e.message)||''),'err')}},confUI,{auto:[IQ]});col=wrapCol(store.col);col.onSnapshot(onSnap);await store.load();lastSync=Date.now();try{await imgs.ensure()}catch(e){}imgs.warn();imgs.kick(3000);$('#st').textContent='';snsSyn.set('');quota()}catch(e){snsSyn.set('雲端連線失敗：'+(e.message||''),'err')}};
-const afterAuth=async()=>{const ui=await J('https://www.googleapis.com/oauth2/v3/userinfo');const nu={name:ui.name||'',email:ui.email||'',photo:ui.picture||'',sub:ui.sub||''};if(!nu.sub||(A.tsub&&nu.sub!==A.tsub))throw new Error('帳號驗證不一致，請重新登入');if(A.sub&&A.sub!==nu.sub)wipe();A.sub=nu.sub;expiredShown=false;GG.setUser(nu);ls('gem',nu.email);if(store){await store.refresh();lastSync=Date.now();quota();$('#st').textContent='';imgs.kick(3000)}else await boot();ACT('open')};
+const wipe=()=>{window.snsQuota=null;window.snsSS&&snsSS.reset();imgs.reset();$('#iqw').style.display='none';DEAD.clear();store=null;col=null;ids=null;posts=[];folders=[];cplats=[];pren={};grps=[];IMG.clear();$('#qw').style.display='none';render()};
+const boot=async()=>{snsSyn.set('同步雲端資料中…','ing');try{await setup();store=makeStore(io,e=>{},(a,e)=>{const t=$('#st');if(a==='saving')snsSyn.set('儲存到雲端中…','ing');else if(a==='saved'||a==='merged'){if(actDirty){actDirty=false;ACT(actType||'edit',true);actType=''}}if(a==='saving');else if(a==='saved'){snsSyn.set('已儲存到雲端 ✓','ok',2500)}else if(a==='merged'){setTimeout(()=>{snsSyn.set('已自動合併另一台裝置的修改 ✓','ok',4000)},40)}else if(a==='conflict')setTimeout(()=>{t.textContent='偵測到跨裝置衝突，請選擇要保留哪一邊'},40);else if(a==='shrunk'){setTimeout(()=>{t.textContent='貼文文字太長，雲端版已縮短到上限內（其他欄位沒有變動）'},40)}else if(a==='toobig'){const m=(e&&e.message)||'這筆資料太大，沒有寫入雲端';t.textContent=m;setTimeout(()=>{t.textContent=m},40)}else if(a==='error'){snsSyn.set('雲端儲存失敗，稍後會自動重試：'+((e&&e.message)||''),'err')}},confUI,{auto:[IQ]});col=wrapCol(store.col);col.onSnapshot(onSnap);await store.load();lastSync=Date.now();try{await imgs.ensure()}catch(e){}imgs.warn();imgs.kick(3000);$('#st').textContent='';snsSyn.set('');quota();window.snsSS&&snsSS.ok('boot')}catch(e){snsSyn.set('雲端連線失敗：'+(e.message||''),'err')}};
+const afterAuth=async()=>{const ui=await J('https://www.googleapis.com/oauth2/v3/userinfo');const nu={name:ui.name||'',email:ui.email||'',photo:ui.picture||'',sub:ui.sub||''};if(!nu.sub||(A.tsub&&nu.sub!==A.tsub))throw new Error('帳號驗證不一致，請重新登入');if(A.sub&&A.sub!==nu.sub)wipe();A.sub=nu.sub;expiredShown=false;GG.setUser(nu);ls('gem',nu.email);if(store){await store.refresh();lastSync=Date.now();window.snsSS&&snsSS.ok('auth');quota();$('#st').textContent='';imgs.kick(3000)}else await boot();ACT('open')};
 /* 切換帳號前：一定要等雲端寫入成功；失敗就留在原帳號，不清除任何登入狀態 */
 const guardSwitch=async()=>{if(!store)return true;if(store.dirty()){$('#st').textContent='先把修改存到雲端…';try{await store.flush()}catch(e){$('#st').textContent='雲端儲存失敗，已取消切換，仍停留在目前帳號：'+(e.message||'');return false}}if(store.hasConflict()){$('#st').textContent='有跨裝置衝突還沒處理，請先處理再切換帳號';confShow();return false}return true};
 const login=async sel=>{if(!await guardSwitch())return;try{await gisReady()}catch(e){$('#st').textContent=e.message;return}
@@ -2375,16 +2621,16 @@ let confList=[];
 const confShow=()=>confUI(confList);
 const doRes=async mode=>{if(!store)return;store.resolve(mode);$('#cfs').textContent='處理中…';try{await store.flush();$('#cfs').textContent=''}catch(e){$('#cfs').textContent='儲存失敗：'+(e.message||'')}};
 function confUI(list){confList=list||[];let m=$('#cfm');
- if(!m){m=document.createElement('div');m.id='cfm';m.style.cssText='display:none;position:fixed;inset:0;background:#0008;z-index:14;align-items:center;justify-content:center;padding:12px';m.innerHTML='<div class="box" style="max-height:85vh;overflow:auto"><b>⚠️ 另一台裝置也改了同一筆資料</b><div style="font-size:calc(13px*var(--ui));color:var(--mut)">為了不讓任何一邊被蓋掉，已先暫停寫入這些項目。請選擇要保留哪一邊：</div><div id="cfl" style="display:flex;flex-direction:column;gap:6px;font-size:calc(13px*var(--ui))"></div><div class="row" style="justify-content:flex-start;flex-wrap:wrap"><button class="pri" id="cfm1">全部保留我的修改</button><button id="cfm2">全部採用雲端版本</button></div><div id="cfs" style="font-size:calc(12px*var(--ui));color:var(--mut)"></div></div>';document.body.appendChild(m);$('#cfm1').onclick=()=>doRes('mine');$('#cfm2').onclick=()=>doRes('remote')}
+ if(!m){m=document.createElement('div');m.id='cfm';m.style.cssText='display:none;position:fixed;inset:0;background:#0008;z-index:14;align-items:center;justify-content:center;padding:12px';m.innerHTML='<div class="box" style="max-height:85vh;overflow:auto"><div class="row mh"><b>⚠️ 另一台裝置也改了同一筆資料</b></div><div style="font-size:calc(13px*var(--ui));color:var(--mut)">為了不讓任何一邊被蓋掉，已先暫停寫入這些項目。請選擇要保留哪一邊：</div><div id="cfl" style="display:flex;flex-direction:column;gap:6px;font-size:calc(13px*var(--ui))"></div><div class="row" style="justify-content:flex-start;flex-wrap:wrap"><button class="pri" id="cfm1">全部保留我的修改</button><button id="cfm2">全部採用雲端版本</button></div><div id="cfs" style="font-size:calc(12px*var(--ui));color:var(--mut)"></div></div>';document.body.appendChild(m);$('#cfm1').onclick=()=>doRes('mine');$('#cfm2').onclick=()=>doRes('remote')}
  if(!confList.length){m.style.display='none';return}
  $('#cfl').innerHTML=confList.map(c=>{const d=c.mine||c.remote||{};const t=c.id==='settings'?'設定':c.id==='folders'?'資料夾':((d.platform||'')+' '+(d.note||d.url||c.id)).trim().slice(0,50);const fs=[...new Set(c.fields.map(f=>{const k=String(f).replace(/^\./,'').split(/[.\[]/)[0];return FL[k]||k}))].filter(Boolean).join('、');return '<div style="border:1px solid var(--bd);border-radius:8px;padding:6px 8px"><b>'+esc(t)+'</b><br>衝突內容：'+esc(fs||'-')+'</div>'}).join('');m.style.display='flex'}
 window.gSync=()=>store?store.flush():Promise.resolve();
 window.gStore=()=>store;
 
 /* ---- 同步（合併重新整理）---- */
-$('#rf').onclick=async()=>{if(!store){$('#st').textContent='請先登入 Google';return}const b=$('#rf');b.disabled=true;snsSyn.set('從 Google 試算表同步中…','ing');try{const sq=imgs.stat();if(sq.total){await imgs.retryAll()}await store.refresh();lastSync=Date.now();await quota();if(store.hasBad()){snsSyn.set('');$('#st').textContent=store.badMsg()}else{snsSyn.set('已同步最新資料','ok',4000);if(sq.total)imgs.process({force:true,ignoreWait:true,retryStuck:true}).then(imgs.report).catch(()=>{})}}catch(e){snsSyn.set('同步失敗：'+(e.message||''),'err')}finally{b.disabled=false}};
-document.addEventListener('visibilitychange',()=>{if(!store)return;if(document.hidden){store.flush().catch(()=>{})}else if(Date.now()-lastSync>120000&&!store.dirty()){store.refresh().then(()=>{lastSync=Date.now();imgs.kick(2000)}).catch(()=>{})}});
-setInterval(()=>{if(store&&!document.hidden&&!store.dirty()&&Date.now()-lastSync>60000)store.refresh().then(()=>{lastSync=Date.now();imgs.kick(2000)}).catch(()=>{})},30000);
+$('#rf').onclick=async()=>{if(!store){$('#st').textContent='請先登入 Google';return}const b=$('#rf');b.disabled=true;snsSyn.set('從 Google 試算表同步中…','ing');try{const sq=imgs.stat();if(sq.total){await imgs.retryAll()}await store.refresh();lastSync=Date.now();window.snsSS&&snsSS.ok('manual');await quota();if(store.hasBad()){snsSyn.set('');$('#st').textContent=store.badMsg()}else{snsSyn.set('已同步最新資料','ok',4000);if(sq.total)imgs.process({force:true,ignoreWait:true,retryStuck:true}).then(imgs.report).catch(()=>{})}}catch(e){snsSyn.set('同步失敗：'+(e.message||''),'err')}finally{b.disabled=false}};
+document.addEventListener('visibilitychange',()=>{if(!store)return;if(document.hidden){store.flush().catch(()=>{})}else if(Date.now()-lastSync>120000&&!store.dirty()){store.refresh().then(()=>{lastSync=Date.now();window.snsSS&&snsSS.ok('auto');imgs.kick(2000)}).catch(()=>{})}});
+setInterval(()=>{if(store&&!document.hidden&&!store.dirty()&&Date.now()-lastSync>60000)store.refresh().then(()=>{lastSync=Date.now();window.snsSS&&snsSS.ok('auto');imgs.kick(2000)}).catch(()=>{})},30000);
 addEventListener('beforeunload',e=>{if(store&&store.dirty()){e.preventDefault();e.returnValue=''}});
 
 /* ---- 啟動：向自己的伺服器要 Access Token；沒有登入就顯示登入按鈕 ---- */
@@ -2396,11 +2642,319 @@ const ERR={access_denied:'你取消了授權',state_mismatch:'登入驗證碼不
  if(lr&&lr.startsWith('error:')){const k=lr.slice(6);$('#st').textContent='登入沒有完成：'+(ERR[k]||k);return}
  $('#st').textContent=(ls('gem')||lr==='ok')?'載入中…':'請先登入 Google，你的收藏會存在自己的 Google 雲端硬碟';
  try{await fetchTok();await afterAuth()}
- catch(e){if(e.reauth)$('#st').textContent=ls('gem')?'請按「登入 Google」登入':'請先登入 Google，你的收藏會存在自己的 Google 雲端硬碟';else $('#st').textContent=e.message||'載入失敗'}
+ catch(e){if(e.reauth&&ls('gem')&&window.snsSS)snsSS.reauth();if(e.reauth)$('#st').textContent=ls('gem')?'請按「登入 Google」登入':'請先登入 Google，你的收藏會存在自己的 Google 雲端硬碟';else $('#st').textContent=e.message||'載入失敗'}
 })();
 
 })();
 
+</script>
+<script>
+/* ===== V3.0.0（V6｜手機版＋電腦版整合）=====
+   ① 工具列三種模式（簡易／詳細／自訂）＋工具箱＋自訂工具列管理器：只搬移既有按鈕的位置，按鈕本身的功能與事件完全沿用。
+      設定只存在這台裝置的 localStorage「tbx3」（手機 m、電腦 d 各自獨立），不寫入雲端、不碰任何收藏資料。
+   ② 雲端同步狀態（只顯示同步程式實際回報的狀態，不虛構）與雲端空間（沿用原本 storageQuota 的資料與計算）。
+   ③ 電腦版表格欄寬拖曳（localStorage「tblw3」）、圖片牆的「收藏日／發布日」顯示設定與其他檢視分開保存。
+   ④ 所有彈窗依既有顏色設定套色（標題列＝重點色、標題字＝標題顏色、內容＝卡片＋頁面文字、關閉鈕＝卡片＋卡片／按鈕文字）。
+   ⑤ 社群短網址解析（呼叫 /api/resolve；只用於重複網址比對與帶入發文帳號，原始網址不變）。 */
+(()=>{
+const R=document.documentElement,MQ=matchMedia('(max-width:900px)'),dev=()=>MQ.matches?'m':'d';
+const ic=(p,c)=>'<svg class="'+(c||'v3i')+'" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';
+const PI={
+ box:'<rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/><path d="M10 12v3h4v-3"/>',
+ cloud:'<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>',
+ up:'<path d="m6 15 6-6 6 6"/>',dn:'<path d="m6 9 6 6 6-6"/>',
+ ok:'<path d="m17 15-5.5 5.5L9 18"/><path d="M5 17.743A7 7 0 1 1 15.71 10h1.79a4.5 4.5 0 0 1 1.5 8.742"/>',
+ ing:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+ err:'<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+ off:'<path d="M12 20h.01"/><path d="M8.5 16.43a5 5 0 0 1 7 0"/><path d="M5 12.86a10 10 0 0 1 5.17-2.69"/><path d="M19 12.86a10 10 0 0 0-2-1.48"/><path d="M2 8.82a15 15 0 0 1 4.18-2.65"/><path d="M22 8.82a15 15 0 0 0-11.29-3.76"/><path d="m2 2 20 20"/>',
+ wait:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+ none:'<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>'};
+const H=s=>esc(s);
+
+/* ---------- ① 工具列 ---------- */
+const row1=$('#th').parentElement,tb=document.querySelector('.bar.tb');tb.id='tbrow';
+const sgw=$('#sgb').parentElement;sgw.id='sgw';sgw.classList.add('sgw');
+const mk=(tag,attrs,html)=>{const e=document.createElement(tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(html!=null)e.innerHTML=html;return e};
+const cqb=mk('button',{type:'button',id:'cqb',title:'雲端空間','aria-label':'雲端空間'},ic(PI.cloud));
+const syc=mk('button',{type:'button',id:'syc',class:'syc','aria-label':'雲端同步狀態'},'');
+const tbb=mk('button',{type:'button',id:'tbb',class:'tbb',title:'工具箱','aria-label':'工具箱','aria-haspopup':'dialog'},ic(PI.box)+'<i class="tbdot" hidden></i>');
+const hold=mk('div',{id:'tbhold',hidden:''});document.body.appendChild(hold);
+row1.insertBefore(cqb,$('#rf'));
+const em=e=>'<span class="tbe" aria-hidden="true">'+e+'</span>';
+const T={
+ theme:{el:$('#th'),name:'主題選擇',icon:em('🌈'),sel:1},
+ view:{el:$('#vw'),name:'列表模式',icon:em('🗂️'),sel:1},
+ settings:{el:sgw,name:'設定',icon:em('⚙️')},
+ color:{el:$('#cb'),name:'顏色設定',icon:em('🎨')},
+ backup:{el:$('#bk'),name:'備份',icon:em('💾')},
+ cloud:{el:cqb,name:'雲端空間',icon:em('☁️')},
+ refresh:{el:$('#rf'),name:'重新整理',icon:em('⟳')},
+ sync:{el:syc,name:'雲端同步狀態',icon:ic(PI.ok,'tbsv')},
+ search:{el:$('#q'),name:'搜尋',icon:em('🔍')},
+ date:{el:$('#dtb'),name:'日期篩選',icon:em('📅')},
+ tag:{el:$('#tgb'),name:'標籤篩選',icon:em('🏷️')},
+ plat:{el:$('#sdp'),name:'平台篩選',icon:em('🌐'),sel:1},
+ batch:{el:$('#bmb'),name:'批次操作',icon:em('☑️')},
+ toolbox:{el:tbb,name:'工具箱',icon:ic(PI.box,'tbsv')},
+ clear:{el:$('#qb'),name:'清除篩選',icon:em('✕')},
+ add:{el:$('#add'),name:'新增收藏',icon:em('＋')}};
+/* 已定案的排列（V6）：m＝手機、d＝電腦第二行 */
+const LAY={
+ m:{simple:{rows:[['theme','view','settings','color','refresh'],['search','clear','add','toolbox']],box:['date','tag','plat','backup','batch']},
+    detail:['theme','view','settings','color','backup','cloud','refresh','sync','search','date','tag','plat','batch','toolbox','clear','add'],
+    req:['search','view','settings','refresh','clear','sync','toolbox']},
+ d:{simple:{rows:[['search','clear','toolbox','add']],box:['tag','plat','date','batch']},
+    detail:['search','clear','tag','plat','date','batch','toolbox','add'],
+    req:['search','clear','toolbox']}};
+const ROW1=['th','vw','pfb','nb','sgw','cb','bk','cqb','rf'];
+const LSK='tbx3';let ST={};try{const o=JSON.parse(ls(LSK)||'{}');if(o&&typeof o==='object')ST=o}catch(e){}
+const st=d=>{d=d||dev();if(!ST[d]||typeof ST[d]!=='object')ST[d]={};const o=ST[d];if(!['simple','detail','custom'].includes(o.mode))o.mode='detail';return o};
+const save=()=>{ST.v=1;ls(LSK,JSON.stringify(ST))};
+/* 自訂模式資料：order＝全部工具（含隱藏）的順序；hid＝隱藏的選用工具。隱藏時保留原位置，重新顯示就回到原位置 */
+const custNorm=(d,c)=>{const def=LAY[d].detail,all=new Set(def),req=LAY[d].req;let order=[...new Set((c&&Array.isArray(c.order)?c.order:[]).filter(k=>all.has(k)))];
+ def.forEach((k,i)=>{if(!order.includes(k)){const prev=def.slice(0,i).reverse().find(x=>order.includes(x));order.splice(prev?order.indexOf(prev)+1:0,0,k)}});
+ const hid=[...new Set((c&&Array.isArray(c.hid)?c.hid:[]).filter(k=>all.has(k)&&!req.includes(k)))];return{order,hid}};
+let BOX=[];
+const layout=d=>{const s=st(d),L=LAY[d];let vis,box,brk=[];
+ if(s.mode==='simple'){vis=L.simple.rows.flat();box=L.simple.box.slice();if(L.simple.rows[1])brk.push(L.simple.rows[1][0])}
+ else if(s.mode==='detail'){vis=L.detail.slice();box=[]}
+ else{const c=custNorm(d,s.cust);vis=c.order.filter(k=>!c.hid.includes(k));box=c.order.filter(k=>c.hid.includes(k))}
+ if(d==='m'&&s.mode!=='simple'&&vis.indexOf('search')>0)brk.push('search');return{vis,box,brk}};
+function apply(){const d=dev(),s=st(d),Y=layout(d);
+ if(d==='d')ROW1.forEach(id=>{const e=document.getElementById(id);if(e)row1.appendChild(e)});
+ else ['pfb','nb'].forEach(id=>{const e=document.getElementById(id);if(e)row1.appendChild(e)});
+ tb.querySelectorAll(':scope>.tbrk').forEach(x=>x.remove());
+ Y.vis.forEach(k=>{if(Y.brk.includes(k))tb.appendChild(mk('i',{class:'tbrk','aria-hidden':'true'}));tb.appendChild(T[k].el)});
+ const on=new Set(Y.vis);(d==='m'?LAY.m.detail:LAY.d.detail).forEach(k=>{if(!on.has(k))hold.appendChild(T[k].el)});
+ if(d==='d')hold.appendChild(syc);
+ const tbr=tb.querySelector('.tbbr');if(tbr)tb.appendChild(tbr);
+ BOX=Y.box;R.dataset.tbd=d;R.dataset.tbm=s.mode;R.classList.toggle('tbcol',!!s.col);row1.classList.toggle('tbm0',d==='m');
+ tbtUpd();boxDot();SS.paint();cibQ();try{window.snsSyn&&snsSyn.place&&snsSyn.place()}catch(e){}}
+/* ---- 收合／展開（只隱藏工具列；頂部固定區、收藏控制區、收藏清單不受影響） ---- */
+const tbt=$('#tbt');
+function tbtUpd(){const c=!!st().col;tbt.querySelector('.tbtl').textContent=c?'工具列':'收合';tbt.querySelector('.tbtc').innerHTML=c?PI.dn:PI.up;tbt.setAttribute('aria-expanded',String(!c));tbt.title=c?'展開工具列':'收合工具列'}
+tbt.onclick=()=>{const s=st();s.col=!s.col;save();R.classList.toggle('tbcol',s.col);tbtUpd()};
+/* ---- 設定選單：第一項「工具列模式」＋固定入口「自訂工具列」 ---- */
+{const m=$('#sgm'),blk=mk('div',{class:'sgmd',role:'group','aria-label':'工具列模式'},'<div class="sgml">工具列模式</div><div class="sgms">'+[['simple','簡易'],['detail','詳細'],['custom','自訂']].map(([k,l])=>'<button type="button" data-tbm="'+k+'" role="radio">'+l+'</button>').join('')+'</div>');
+ const cu=mk('button',{type:'button','data-tbx':'mgr',class:'sgmc'},'🧰 自訂工具列<small>調整工具顯示狀態及排列順序</small>');
+ m.insertBefore(cu,m.firstChild);m.insertBefore(blk,cu);
+ const mark=()=>blk.querySelectorAll('[data-tbm]').forEach(b=>{const on=b.dataset.tbm===st().mode;b.classList.toggle('on',on);b.setAttribute('aria-checked',String(on))});
+ $('#sgb').addEventListener('click',mark);mark();
+ blk.addEventListener('click',e=>{const b=e.target.closest('[data-tbm]');if(!b)return;st().mode=b.dataset.tbm;save();mark();apply();m.style.display='none'});
+ cu.addEventListener('click',()=>{m.style.display='none';MG.open()});
+ window.snsTbMark=mark}
+
+/* ---------- 共用：彈窗 ---------- */
+const dlg=(id,title,cls)=>{const o=mk('div',{id,class:'ov v3d',role:'dialog','aria-modal':'true','aria-labelledby':id+'t'});o.innerHTML='<div class="box '+(cls||'')+'"><div class="row mh"><b id="'+id+'t">'+title+'</b><button type="button" class="v3x" title="關閉" aria-label="關閉">✕</button></div><div class="mb"></div></div>';document.body.appendChild(o);return o};
+const opn=o=>{o._fb=document.activeElement;o.classList.add('o');setTimeout(()=>{try{o.querySelector('.v3x').focus({preventScroll:true})}catch(e){}},0)};
+const cls=o=>{if(!o.classList.contains('o'))return;o.classList.remove('o');try{o._fb&&document.contains(o._fb)&&o._fb.focus({preventScroll:true})}catch(e){}};
+const simple=o=>{o.querySelector('.v3x').onclick=()=>cls(o);o.addEventListener('mousedown',e=>{if(e.target===o)cls(o)})};
+
+/* ---------- ② 工具箱 ---------- */
+const BXM=dlg('tbxm',ic(PI.box,'v3ti')+'<span>工具箱</span>','tbxb');simple(BXM);const BXB=BXM.querySelector('.mb');
+const isOn=k=>{const e=T[k].el;if(k==='plat')return !!e.value;if(k==='date'||k==='tag'||k==='batch')return e.classList.contains('on');return false};
+function boxDot(){const d=tbb.querySelector('.tbdot');if(d)d.hidden=!BOX.some(isOn)}
+function boxDraw(){const n=dev()==='m'?3:5;BXM.dataset.c=n;
+ BXB.innerHTML=BOX.length?'<div class="tbxg" style="--c:'+n+'">'+BOX.map(k=>'<button type="button" class="tbi'+(isOn(k)?' on':'')+'" data-k="'+k+'"><span class="tbic">'+T[k].icon+'</span><span class="tbin">'+H(T[k].name)+'</span></button>').join('')+'</div>':'<div class="tbxe">暫無其他隱藏工具</div>'}
+const pick=k=>{const s=T[k].el;BXB.innerHTML='<div class="tbxp"><button type="button" class="tbxk">‹ 返回</button><b>'+H(T[k].name)+'</b></div><div class="tbxo">'+[...s.options].map(o=>'<button type="button" class="tbo'+(o.value===s.value?' on':'')+'" data-v="'+H(o.value)+'">'+H(o.textContent)+'</button>').join('')+'</div>'};
+BXB.addEventListener('click',e=>{const it=e.target.closest('.tbi[data-k]');if(it){const k=it.dataset.k;if(T[k].sel){pick(k);BXB.dataset.k=k;return}cls(BXM);if(k==='cloud')CQ.open();else T[k].el.click();return}
+ if(e.target.closest('.tbxk')){boxDraw();return}
+ const o=e.target.closest('.tbo[data-v]');if(o){const s=T[BXB.dataset.k].el;s.value=o.dataset.v;s.dispatchEvent(new Event('change',{bubbles:true}));cls(BXM)}});
+tbb.onclick=()=>{boxDraw();opn(BXM)};
+
+/* ---------- ③ 雲端同步狀態（只用同步程式實際回報的狀態） ---------- */
+const fmtT=t=>new Date(t).toLocaleString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+const rel=t=>{const s=(Date.now()-t)/1000;if(s<60)return'剛剛';if(s<3600)return Math.floor(s/60)+' 分鐘前';if(s<86400)return Math.floor(s/3600)+' 小時前';const d=new Date(t);return(d.getMonth()+1)+'/'+d.getDate()};
+const HOW={boot:'開啟網站時自動載入',auth:'登入後自動載入',manual:'按「⟳ 重新整理」',auto:'背景自動同步',save:'儲存修改到雲端',merge:'自動合併另一台裝置的修改'};
+const SS=(()=>{let phase='none',since=0,lastOk=null,err=null,ingTxt='',inj='';
+ const store=()=>window.gStore&&gStore();
+ const lab=()=>{const s=store();
+  if(phase==='reauth')return{k:'err',t:'需重新登入',i:'err'};
+  if(!navigator.onLine)return{k:'err',t:'連線中斷',i:'off'};
+  if(phase==='err')return{k:'err',t:'同步失敗',i:'err'};
+  if(phase==='init')return{k:'ing',t:'初次同步中...',i:'ing'};
+  if(phase==='ing'||phase==='save')return{k:'ing',t:'同步中...',i:'ing'};
+  if(s&&s.hasConflict&&s.hasConflict())return{k:'wait',t:'等待同步',i:'wait'};
+  if(lastOk)return{k:'ok',t:'已同步 ('+rel(lastOk.t)+')',i:'ok'};
+  return{k:'none',t:'尚未同步',i:'none'}};
+ const paint=()=>{const L=lab(),h=ic(PI[L.i],'syi')+'<span>'+H(L.t)+'</span>';
+  syc.className='syc '+L.k;syc.innerHTML=h;syc.title='雲端同步狀態：'+L.t;
+  const c=$('#cibs');if(c){c.className='cibs '+L.k;c.innerHTML=h;c.setAttribute('aria-label','雲端同步狀態：'+L.t+'（點一下查看詳細資訊）')}
+  /* 電腦版：公告旁只顯示異常（紅字、不自動消失）。「需重新登入」「連線中斷」也屬於異常，用同一個位置顯示 */
+  const y=$('#syn');if(y&&window.snsSyn){const want=(phase==='reauth'||!navigator.onLine)?L.t:'';
+   if(want&&!y.classList.contains('err')){inj=want;rawSet(want,'err')}else if(!want&&inj&&y.textContent===inj){inj='';rawSet('')}}
+  if(SM.classList.contains('o'))SM.draw()};
+ const ok=how=>{lastOk={t:Date.now(),how};phase='ok';paint()};
+ return{lab,paint,ok,
+  reauth(){phase='reauth';paint()},reset(){phase='none';lastOk=null;err=null;paint()},
+  syn(t,k){if(inj&&t!==inj)inj='';if(k==='ing'){phase=/同步雲端資料中/.test(t)&&!lastOk?'init':/儲存/.test(t)?'save':'ing';since=Date.now();ingTxt=t}
+   else if(k==='err'){if(t!==inj){phase='err';err={t:Date.now(),msg:t}}}
+   else if(k==='ok'){if(/儲存/.test(t))return ok('save');if(/合併/.test(t))return ok('merge');if(/已同步最新資料/.test(t)&&!(lastOk&&Date.now()-lastOk.t<3000))return ok('manual')}
+   paint()},
+  info:()=>({phase,since,lastOk,err,ingTxt,store:store()})}})();
+window.snsSS=SS;
+let rawSet=()=>{};
+if(window.snsSyn){const o=snsSyn.set;rawSet=(t,k,ms)=>o(t,k,ms);snsSyn.set=(t,k,ms)=>{o(t,k,ms);SS.syn(t||'',k||'')};const y=$('#syn');if(y){y.setAttribute('role','button');y.tabIndex=0;y.addEventListener('click',()=>SM.open());y.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();SM.open()}})}}
+addEventListener('online',()=>SS.paint());addEventListener('offline',()=>SS.paint());
+const SM=dlg('ssm',ic(PI.ok,'v3ti')+'<span>雲端同步狀態</span>','ssb');simple(SM);
+SM.draw=()=>{const I=SS.info(),L=SS.lab(),rows=[],s=I.store,add=(k,v,c)=>rows.push('<dt>'+H(k)+'</dt><dd'+(c?' class="'+c+'"':'')+'>'+H(v)+'</dd>');
+ if(I.lastOk)add('上次成功同步',fmtT(I.lastOk.t)+'（'+(HOW[I.lastOk.how]||'')+'）');
+ if(I.phase==='ing'||I.phase==='save'||I.phase==='init'){add('開始時間',fmtT(I.since));if(I.ingTxt)add('目前狀態',I.ingTxt.replace(/…$/,''))}
+ if(I.phase==='err'&&I.err){add('失敗時間',fmtT(I.err.t));add('錯誤資訊',I.err.msg,'err');if(/自動重試/.test(I.err.msg))add('重試','系統會依原本的機制自動重試，不需要手動操作')}
+ if(!navigator.onLine)add('連線','這台裝置目前沒有網路連線（瀏覽器回報離線）','err');
+ if(I.phase==='reauth')add('登入','登入已過期，請按「登入 Google」重新登入（尚未同步的修改會保留在這台裝置）','err');
+ if(s&&s.dirty&&s.dirty()&&(I.phase==='err'||!navigator.onLine))add('等待同步','有修改尚未寫入雲端'+(!navigator.onLine?'（原因：目前沒有網路連線）':I.phase==='err'?'（原因：上一次寫入失敗）':''));
+ if(s&&s.hasConflict&&s.hasConflict())add('等待同步的原因','另一台裝置也修改了同一筆資料，需要在跳出的視窗選擇保留哪一邊');
+ const body='<div class="ssh '+L.k+'">'+ic(PI[L.i],'syi')+'<b>'+H(L.t)+'</b></div>'+(rows.length?'<dl class="kv ssk">'+rows.join('')+'</dl>':'<p class="ssn">'+(I.phase==='none'?'目前還沒有同步紀錄。登入 Google 後會自動同步。':'目前沒有更多同步資訊。')+'</p>');
+ SM.querySelector('.mb').innerHTML=body};
+SM.open=()=>{SM.draw();opn(SM)};
+syc.onclick=()=>SM.open();
+
+/* ---------- ④ 雲端空間（沿用原本 storageQuota 的資料） ---------- */
+const fmtB=b=>{const G=1024**3,M=1024**2;return b>=G?(b/G).toFixed(2)+' GB':b>=M?(b/M).toFixed(1)+' MB':Math.max(0,Math.round(b/1024))+' KB'};
+const CQ=dlg('cqm',ic(PI.cloud,'v3ti')+'<span>雲端空間</span>','cqb');simple(CQ);
+CQ.draw=()=>{const q=window.snsQuota,b=CQ.querySelector('.mb');
+ if(!q||!(q.used>=0)){b.innerHTML='<p class="ssn">還沒有取得雲端容量資料。登入 Google 並完成同步後就會顯示。</p>';return}
+ const lim=q.lim>0?q.lim:0,rem=lim?lim-q.used:0,pct=lim?Math.min(100,Math.max(0,q.used/lim*100)):0,low=lim&&rem<100*1048576;
+ b.innerHTML=(lim?'<div class="cqr'+(low?' low':'')+'"><small>剩餘容量</small><b>'+fmtB(rem)+'</b></div><div class="cqbar" role="progressbar" aria-label="已使用容量" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct.toFixed(1)+'"><i style="width:'+pct.toFixed(2)+'%"></i></div>':'')+
+  '<dl class="kv ssk"><dt>已使用容量</dt><dd>'+fmtB(q.used)+(lim?'（'+pct.toFixed(1)+'%）':'')+'</dd><dt>總容量</dt><dd>'+(lim?fmtB(lim):'Google 沒有提供容量上限')+'</dd><dt>資料時間</dt><dd>'+fmtT(q.t)+'</dd></dl><p class="ssn">容量是整個 Google 帳號（雲端硬碟、Gmail、相簿）共用的空間。</p>'};
+CQ.open=()=>{CQ.draw();opn(CQ)};
+cqb.onclick=()=>CQ.open();
+/* ---- 手機簡易模式：雲端資訊條（同步狀態｜剩餘容量），放在收藏控制區下方 ---- */
+const cib=mk('div',{id:'cib',class:'cib',role:'group','aria-label':'雲端資訊'},'<button type="button" id="cibs" class="cibs"></button><i class="cibd" aria-hidden="true"></i><button type="button" id="cibq" class="cibq"></button>');
+$('#ctl0').appendChild(cib);$('#cibs').onclick=()=>SM.open();$('#cibq').onclick=()=>CQ.open();
+function cibQ(){const q=window.snsQuota,b=$('#cibq');let t='雲端空間',low=false;if(q&&q.used>=0){if(q.lim>0){t='剩餘 '+fmtB(q.lim-q.used);low=q.lim-q.used<100*1048576}else t='已使用 '+fmtB(q.used)}b.innerHTML=ic(PI.cloud,'syi')+'<span>'+H(t)+'</span>';b.classList.toggle('low',low);b.setAttribute('aria-label',t+'（點一下查看雲端空間）');if(CQ.classList.contains('o'))CQ.draw()}
+window.snsQuotaUpd=cibQ;
+setInterval(()=>SS.paint(),30000);
+
+/* ---------- ⑤ 自訂工具列管理器 ---------- */
+const MG=(()=>{const o=dlg('tbmm','<span>🧰 自訂工具列</span>','tbmb');const mb=o.querySelector('.mb');
+ o.querySelector('.box').insertBefore(mk('p',{class:'srtd',id:'tbmd'}),mb);mb.id='tbml';mb.setAttribute('role','list');
+ o.querySelector('.box').appendChild(mk('div',{class:'mf'},'<button type="button" id="tbmr">恢復預設</button><span class="srts" id="tbms" role="status" aria-live="polite"></span><button type="button" class="pri" id="tbmv">保存</button>'));
+ const menu=mk('div',{id:'tbmn',class:'fpop srmn',role:'menu',hidden:''},'<button type="button" role="menuitem" id="tbmt"><span class="smi">⤒</span><span><b>移至最上方</b><small id="tbmts"></small></span></button><button type="button" role="menuitem" id="tbmb2"><span class="smi">↳</span><span><b>移至指定項目下方…</b><small>選擇要放在哪個工具下方</small></span></button>');
+ const pk=mk('div',{id:'tbpk',class:'ov v3d',role:'dialog','aria-modal':'true','aria-labelledby':'tbpkt'},'<div class="box srpb"><div class="row mh"><b id="tbpkt"></b><button type="button" id="tbpkx" class="v3x" title="取消" aria-label="取消">✕</button></div><div class="mb" id="tbpkl" role="list"></div></div>');
+ document.body.append(menu,pk);
+ let D=null,mk2='',mbtn=null;
+ const isOpen=()=>o.classList.contains('o');
+ const dirty=()=>!!D&&JSON.stringify(D.cur)!==JSON.stringify(D.base);
+ const visOf=()=>D.cur.order.filter(k=>!D.cur.hid.includes(k));
+ const status=t=>{$('#tbms').textContent=t||''};
+ const draw=hl=>{const req=LAY[D.d].req,v=visOf(),h=D.cur.order.filter(k=>D.cur.hid.includes(k));
+  const row=(k,hid)=>{const r=req.includes(k);return '<div class="srr tbr'+(hid?' hid':'')+(k===hl?' moved':'')+'" role="listitem" data-k="'+k+'"><span class="tbic">'+T[k].icon+'</span><span class="srn tbn">'+H(T[k].name)+(r?'<small>必要工具</small>':'')+'</span><button type="button" class="tbsw" role="switch" aria-checked="'+(!hid)+'" aria-label="顯示「'+H(T[k].name)+'」"'+(r?' disabled title="必要工具不能隱藏"':' title="'+(hid?'顯示':'隱藏')+'這個工具"')+'><i></i></button>'+(hid?'<span class="tbph" aria-hidden="true"></span>':'<button type="button" class="smv" data-smv="'+k+'" aria-haspopup="menu" aria-expanded="false" title="調整位置" aria-label="調整「'+H(T[k].name)+'」的位置">'+SVG_DTL+'</button>')+'</div>'};
+  mb.innerHTML=v.map(k=>row(k,false)).join('')+(h.length?'<div class="tbsep" role="presentation"><span>已隱藏的工具</span></div>'+h.map(k=>row(k,true)).join(''):'');
+  if(hl){const r=mb.querySelector('.tbr.moved');if(r)try{r.scrollIntoView({block:'nearest'})}catch(x){}}};
+ /* 只重排「顯示中」的工具；隱藏工具留在原本的位置（格子不動） */
+ const setVis=(keys,hl)=>{const hid=new Set(D.cur.hid),anc=new Map();let prev=null;D.cur.order.forEach(k=>{if(hid.has(k)){if(!anc.has(prev))anc.set(prev,[]);anc.get(prev).push(k)}else prev=k});
+  /* 隱藏的工具跟著它原本前面那個工具（錨點）走，重新顯示時回到原本的相對位置 */
+  const out=[...(anc.get(null)||[])];keys.forEach(k=>{out.push(k);(anc.get(k)||[]).forEach(h=>out.push(h))});D.cur.order=out;draw(hl);status(dirty()?'有尚未保存的變更':'')};
+ const drag=SortDrag({root:mb,skip:'.smv,.tbsw',rowOf:t=>t.closest('.tbr[data-k]:not(.hid)'),keyOf:r=>r.dataset.k,sibs:()=>[...mb.querySelectorAll('.tbr[data-k]:not(.hid)')],scroller:()=>mb,drop:(key,keys)=>setVis(keys,key)});
+ const mClose=f=>{if(menu.hidden)return;menu.hidden=true;if(mbtn){mbtn.setAttribute('aria-expanded','false');if(f)try{mbtn.focus({preventScroll:true})}catch(x){}}mbtn=null};
+ const mOpen=(k,b)=>{mClose();mk2=k;mbtn=b;const v=visOf(),first=v[0]===k;$('#tbmt').disabled=first;$('#tbmts').textContent=first?'目前已在最上方':'排到第一個';$('#tbmb2').disabled=v.length<2;
+  menu.hidden=false;b.setAttribute('aria-expanded','true');const r=b.getBoundingClientRect(),W=document.documentElement.clientWidth,Hh=innerHeight;menu.style.left='0px';menu.style.top='0px';const pw=menu.offsetWidth,ph=menu.offsetHeight;let x=Math.max(8,Math.min(r.right-pw,W-pw-8)),y=r.bottom+4;if(y+ph>Hh-8)y=Math.max(8,r.top-ph-4);menu.style.left=Math.round(x)+'px';menu.style.top=Math.round(y)+'px';
+  setTimeout(()=>{try{(menu.querySelector('button:not([disabled])')||b).focus({preventScroll:true})}catch(x){}},0)};
+ $('#tbmt').onclick=()=>{const k=mk2;mClose();const v=visOf().filter(x=>x!==k);v.unshift(k);setVis(v,k)};
+ $('#tbmb2').onclick=()=>{const k=mk2;mClose();const v=visOf(),i=v.indexOf(k),above=i>0?v[i-1]:null;$('#tbpkt').textContent='將「'+T[k].name+'」移至哪個工具下方？';
+  $('#tbpkl').innerHTML=v.filter(x=>x!==k).map(x=>'<button type="button" class="srpo" data-to="'+x+'"'+(x===above?' disabled':'')+'>'+H(T[x].name)+(x===above?'<small>（目前就在它下方）</small>':'')+'</button>').join('');pk.dataset.k=k;pk.classList.add('o');
+  setTimeout(()=>{try{($('#tbpkl .srpo:not([disabled])')||$('#tbpkx')).focus({preventScroll:true})}catch(x){}},0)};
+ const pkClose=()=>{pk.classList.remove('o')};
+ $('#tbpkx').onclick=pkClose;pk.addEventListener('mousedown',e=>{if(e.target===pk)pkClose()});
+ $('#tbpkl').addEventListener('click',e=>{const b=e.target.closest('.srpo[data-to]');if(!b||b.disabled)return;const k=pk.dataset.k,v=visOf().filter(x=>x!==k);v.splice(v.indexOf(b.dataset.to)+1,0,k);pkClose();setVis(v,k)});
+ document.addEventListener('pointerdown',e=>{if(!menu.hidden&&!menu.contains(e.target)&&!(mbtn&&mbtn.contains(e.target)))mClose()},true);
+ mb.addEventListener('scroll',()=>mClose());addEventListener('resize',()=>mClose());
+ mb.addEventListener('click',e=>{const b=e.target.closest('.smv[data-smv]');if(b){e.stopPropagation();if(!menu.hidden&&mbtn===b){mClose(true);return}mOpen(b.dataset.smv,b);return}
+  const sw=e.target.closest('.tbsw');if(sw&&!sw.disabled){const k=sw.closest('.tbr').dataset.k,h=new Set(D.cur.hid);h.has(k)?h.delete(k):h.add(k);D.cur.hid=D.cur.order.filter(x=>h.has(x));draw(k);status(dirty()?'有尚未保存的變更':'')}});
+ const open=()=>{const d=dev(),s=st(d),c=custNorm(d,s.mode==='custom'||s.cust?s.cust:null);D={d,base:JSON.parse(JSON.stringify(c)),cur:JSON.parse(JSON.stringify(c))};
+  $('#tbmd').textContent='按住工具列可拖曳排序，或點右側圖示選擇位置；關閉開關的工具會收進工具箱。必要工具不能隱藏，但可以調整順序。'+(d==='d'?'這裡調整的是電腦版第二行；第一行與第三行固定不變。':'這裡調整的是手機版的工具列。');
+  status('');draw();mb.scrollTop=0;opn(o)};
+ const close=()=>{drag.cancel();mClose();pkClose();cls(o);D=null};
+ const tryClose=async()=>{if(!isOpen()||$('#askm').classList.contains('o'))return;if(!dirty())return close();const ok=await snsAsk({title:'尚有未保存的變更',main:'確定要放棄尚未保存的設定嗎？',cancel:'繼續編輯',ok:'放棄變更'});if(ok)close()};
+ o.querySelector('.v3x').onclick=tryClose;
+ $('#tbmr').onclick=async()=>{if(!D)return;const ok=await snsAsk({title:'恢復預設排列？',main:'確定要將工具顯示狀態及排列順序恢復為預設設定嗎？',cancel:'取消',ok:'確認恢復'});if(!ok||!D)return;D.cur=custNorm(D.d,null);draw();status(dirty()?'已恢復為預設排列（按「保存」才會套用）':'')};
+ $('#tbmv').onclick=()=>{if(!D)return;const s=st(D.d);s.cust=JSON.parse(JSON.stringify(D.cur));s.mode='custom';save();close();apply();try{window.snsTbMark&&snsTbMark()}catch(x){}try{note2('已保存自訂工具列，已切換為「自訂」模式')}catch(x){}};
+ addEventListener('keydown',e=>{if(e.key!=='Escape'||e.defaultPrevented)return;if($('#askm').classList.contains('o'))return;
+  if(isOpen()){if(drag.busy())return;e.stopImmediatePropagation();e.preventDefault();if(!menu.hidden)mClose(true);else if(pk.classList.contains('o'))pkClose();else tryClose();return}
+  for(const x of [BXM,SM,CQ])if(x.classList.contains('o')){e.stopImmediatePropagation();e.preventDefault();cls(x);return}},true);
+ return{open,close,tryClose,isOpen,dirty,state:()=>D&&JSON.parse(JSON.stringify(D))}})();
+window.snsTb={apply,state:()=>JSON.parse(JSON.stringify(ST)),layout:d=>layout(d||dev()),box:()=>BOX.slice(),mgr:MG,ss:SS,cq:CQ,sm:SM,bx:BXM};
+
+/* ---------- ⑥ 表格欄寬（電腦版）與圖片牆顯示設定 ---------- */
+const TW='tblw3',MINW=[48,56,120,80,80,90,90,0];
+const twGet=()=>{try{const o=JSON.parse(ls(TW)||'null');return o&&Array.isArray(o.w)&&o.w.length===8&&o.w.every(n=>typeof n==='number'&&n>0)?o.w:null}catch(e){return null}};
+let tws=null;
+function tblAfter(){if(view!=='table'||MQ.matches)return;const L=$('#ls'),wrap=L.querySelector(':scope>div'),t=wrap&&wrap.querySelector('table');if(!t)return;const ths=t.querySelectorAll('tr:first-child>th');if(ths.length!==8)return;
+ wrap.classList.add('tblw');t.classList.add('tblx');ths[7].textContent='操作';
+ t.querySelectorAll('tr[data-cid]>td:last-child').forEach(td=>{const s=document.createElement('span');s.className='tops';while(td.firstChild)s.appendChild(td.firstChild);td.appendChild(s)});
+ const u=parseFloat(getComputedStyle(R).getPropertyValue('--ui'))||1,pad=16*u+2;let opMin=0;t.querySelectorAll('.tops').forEach((s,i)=>{if(i<40)opMin=Math.max(opMin,s.scrollWidth)});opMin=Math.ceil(Math.max(opMin,ths[7].scrollWidth)+pad);
+ const mins=MINW.map((m,i)=>i===7?opMin:Math.round(m*u)),saved=twGet(),W=wrap.clientWidth||1000;
+ let w=saved?saved.slice():(()=>{const b=[64,84,0,150,150,104,104,0].map(x=>Math.round(x*u));b[7]=opMin+Math.round(8*u);b[2]=Math.max(mins[2],W-b.reduce((a,c)=>a+c,0)-2);return b})();
+ w=w.map((x,i)=>Math.max(mins[i],Math.round(x)));tws={w,mins};
+ const cg=document.createElement('colgroup');cg.innerHTML=w.map(x=>'<col style="width:'+x+'px">').join('');t.insertBefore(cg,t.firstChild);t.style.width=w.reduce((a,c)=>a+c,0)+'px';
+ ths.forEach((th,i)=>{th.classList.add('crh');th.insertAdjacentHTML('beforeend','<span class="crz" data-ci="'+i+'" role="separator" aria-orientation="vertical" aria-label="拖曳調整欄寬" title="拖曳調整欄寬"></span>')});
+ const bar=mk('div',{class:'tblbar'},'<button type="button" class="chip" id="tblrst" title="把所有欄寬恢復成預設">恢復預設欄寬</button>');L.insertBefore(bar,wrap);
+ $('#tblrst').onclick=()=>{try{localStorage.removeItem(TW)}catch(e){}render()}}
+let cz=null;
+$('#ls').addEventListener('pointerdown',e=>{const h=e.target.closest('.crz');if(!h||!tws)return;e.preventDefault();e.stopPropagation();const i=+h.dataset.ci,t=h.closest('table');cz={i,x:e.clientX,w0:tws.w[i],t,id:e.pointerId};document.body.classList.add('colrz');try{h.setPointerCapture(e.pointerId)}catch(x){}},true);
+$('#ls').addEventListener('pointermove',e=>{if(!cz||e.pointerId!==cz.id)return;const w=Math.max(tws.mins[cz.i],Math.round(cz.w0+e.clientX-cz.x));if(w===tws.w[cz.i])return;tws.w[cz.i]=w;const c=cz.t.querySelectorAll('col')[cz.i];if(c)c.style.width=w+'px';cz.t.style.width=tws.w.reduce((a,b)=>a+b,0)+'px'});
+const czEnd=e=>{if(!cz||(e&&e.pointerId!==cz.id))return;cz=null;document.body.classList.remove('colrz');ls(TW,JSON.stringify({v:1,w:tws.w}))};
+$('#ls').addEventListener('pointerup',czEnd);$('#ls').addEventListener('pointercancel',czEnd);
+$('#ls').addEventListener('click',e=>{if(e.target.closest('.crz')){e.stopPropagation();e.preventDefault()}},true);
+/* 圖片牆的「收藏日／發布日」顯示設定獨立保存（shs.wall／shp.wall；第一次沿用原本的設定）；其他檢視維持原本的 shs／shp */
+const shk=b=>view==='wall'?b+'.wall':b;
+const loadShow=()=>{const g=k=>{const v=ls(shk(k));return v===null?ls(k)!=='0':v!=='0'};show.s=g('shs');show.p=g('shp');$('#sd1').checked=show.s;$('#sd2').checked=show.p};
+$('#sd1').onchange=e=>{show.s=e.target.checked;ls(shk('shs'),show.s?'1':'0');render()};
+$('#sd2').onchange=e=>{show.p=e.target.checked;ls(shk('shp'),show.p?'1':'0');render()};
+let lastV=view;
+const _render=render;
+render=function(){if(view!==lastV){const w=lastV==='wall'||view==='wall';lastV=view;if(w)loadShow()}_render.apply(this,arguments);try{tblAfter()}catch(e){console.error(e)}try{boxDot()}catch(e){}};
+loadShow();
+
+/* ---------- ⑦ 彈窗顏色（依既有顏色設定） ---------- */
+{const pr=document.createElement('i');pr.style.cssText='position:absolute;width:0;height:0;overflow:hidden;visibility:hidden';document.body.appendChild(pr);
+ const rgb=c=>{const m=String(c).match(/[\d.]+/g);if(!m)return[0,0,0];const v=m.slice(0,3).map(Number);return /^color\(/.test(c)?v.map(x=>x*255):v};
+ const col=v=>{pr.style.color='';pr.style.color=v;return rgb(getComputedStyle(pr).color)};
+ const lum=a=>{const f=v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4};return .2126*f(a[0])+.7152*f(a[1])+.0722*f(a[2])};
+ const cr=(a,b)=>{const x=lum(a),y=lum(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+ const sv=getComputedStyle(R);
+ const tok=()=>{const s=R.style,cus=R.dataset.theme==='custom',hb=col('var(--acc)'),cd=col('var(--card)');
+  /* 標題文字＝「標題顏色」；在重點色底上對比不足 3:1 時改用主題配給重點色的文字色（--on），避免看不清楚 */
+  const tv=cus?'var(--tfg)':'var(--fg)';s.setProperty('--dlg-htx',cr(col(tv),hb)>=3?tv:'var(--on)');
+  /* 內容文字＝「頁面文字」；在卡片底上對比不足 4.5:1 時改用「卡片／按鈕文字」 */
+  const pv=cus?'var(--pfg)':'var(--fg)';s.setProperty('--dlg-tx',cr(col(pv),cd)>=4.5?pv:'var(--fg)');
+  /* 固定白底區（明細、確認視窗）改用目前主題的卡片色與文字色 */
+  ['--fg','--mut','--card','--bd','--lnk'].forEach(k=>s.setProperty('--dlc'+k.slice(1),sv.getPropertyValue(k).trim()||'initial'))};
+ const o=window.snsTok;window.snsTok=()=>{o&&o();try{tok()}catch(e){}};tok();window.snsDlgTok=tok}
+/* 既有彈窗的標題列加上共用 class（只加 class，不改內容與事件） */
+['#dlg','#np','#bkp','#pfm','#gpm','#bm'].forEach(s=>{const r=document.querySelector(s+' .box>.row');if(r)r.classList.add('mh')});
+{const b=document.querySelector('#fbm .box>div');if(b)b.classList.add('mh','fbh')}
+
+/* ---------- ⑧ 社群短網址解析（TikTok／Threads／抖音／微博 t.cn） ---------- */
+window.snsRes=(()=>{const K='surl3',M=new Map(),P=new Map(),DAY=864e5;
+ try{const o=JSON.parse(ls(K)||'{}');for(const k in o){const v=o[k];if(v&&v.u&&Date.now()-(v.t||0)<30*DAY)M.set(k,{st:'ok',url:v.u,acct:v.a||'',t:v.t})}}catch(e){}
+ const persist=()=>{const a=[...M].filter(([,v])=>v.st==='ok').sort((x,y)=>y[1].t-x[1].t).slice(0,300),o={};a.forEach(([k,v])=>o[k]={u:v.url,a:v.acct||'',t:v.t});ls(K,JSON.stringify(o))};
+ const norm=u=>{try{const x=new URL(String(u||'').trim());return x.protocol+'//'+x.hostname.toLowerCase()+x.pathname.replace(/\/+$/,'')}catch(e){return ''}};
+ const isShort=u=>{let x;try{x=new URL(String(u||'').trim())}catch(e){return false}const h=x.hostname.toLowerCase(),p=x.pathname;
+  return h==='vm.tiktok.com'||h==='vt.tiktok.com'||((h==='www.tiktok.com'||h==='tiktok.com'||h==='m.tiktok.com')&&/^\/t\/[\w-]+/.test(p))||(/^(www\.)?threads\.(com|net)$/.test(h)&&/^\/share\/[\w-]+/.test(p))||h==='v.douyin.com'||h==='t.cn'};
+ const state=u=>{const v=M.get(norm(u));return v?v.st:(P.has(norm(u))?'pending':'')};
+ const start=u=>{const k=norm(u);if(!k||M.has(k)||P.has(k)||!isShort(u))return P.get(k)||Promise.resolve();
+  const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),8000);
+  const pr=fetch('/api/resolve',{method:'POST',credentials:'same-origin',signal:ac.signal,headers:{'X-Requested-With':'sns','Content-Type':'application/json'},body:JSON.stringify({url:String(u).trim()})})
+   .then(r=>r.ok?r.json():{ok:false}).catch(()=>({ok:false})).then(j=>{clearTimeout(tm);P.delete(k);
+    if(j&&j.ok&&j.url&&/^https:\/\//.test(j.url)){M.set(k,{st:'ok',url:j.url,acct:typeof j.acct==='string'?j.acct:'',t:Date.now()});persist()}else M.set(k,{st:'fail',t:Date.now()});
+    if($('#dlg').classList.contains('o')&&norm($('#u').value)===k){dupChk();post()}});
+  P.set(k,pr);return pr};
+ const get=u=>M.get(norm(u));
+ const key=u=>{const v=get(u);return v&&v.st==='ok'?nuU(v.url):''};
+ /* 解析成功且有帳號時，帶入「發文帳號」；使用者自己填過的不覆蓋 */
+ const post=()=>{const v=get($('#u').value);if(!v||v.st!=='ok')return;if(v.acct&&(!$('#ac').value.trim()||acAuto)){$('#ac').value=v.acct;acAuto=true;$('#an').textContent='（自動偵測，可修改）'}else if(!v.acct&&acAuto&&isShort($('#u').value)){$('#an').textContent=''}};
+ return{isShort,state,start,key,get,post,pending:u=>isShort(u)&&(P.has(norm(u))||!M.has(norm(u))),wait:u=>{const k=norm(u);if(!M.has(k)&&!P.has(k))start(u);return P.get(k)||Promise.resolve()},_clear:()=>{M.clear();P.clear();ls(K,'{}')}}})();
+{const u0=$('#u').oninput;$('#u').oninput=()=>{u0();snsRes.post()}}
+
+/* ---------- 啟動 ---------- */
+apply();
+MQ.addEventListener?MQ.addEventListener('change',apply):MQ.addListener(apply);
+new MutationObserver(()=>apply()).observe(R,{attributes:true,attributeFilter:['data-ui']});
+render();
+})();
 </script>
 </body>
 </html>
