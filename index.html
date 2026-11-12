@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="app-version" content="3.1.0">
-<meta name="app-build" content="2026-11-12 15:13">
+<meta name="app-build" content="2026-11-12 15:23">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1058,10 +1058,17 @@ input.phfit::placeholder{font-size:var(--phf)}
 #bm .mdw{display:inline-flex}
 #bm .mdw select{flex:none;width:auto;min-width:calc(72px*var(--ui))}
 /* V3.1.0：待回顧區 */
-.due .dhd{display:flex;flex-wrap:wrap;align-items:center;gap:calc(4px*var(--ui)) calc(6px*var(--ui))}
+.due .dhd{display:flex;flex-wrap:wrap;align-items:center;gap:calc(6px*var(--ui)) calc(6px*var(--ui))}
 .due .dsum{color:var(--mut)}
-.due .dsel{display:flex;flex-wrap:wrap;gap:calc(6px*var(--ui));margin:calc(6px*var(--ui)) 0 calc(2px*var(--ui))}
-.due .dsel select{width:auto;flex:none;font-size:calc(13px*var(--ui))}
+.due .dsel{display:inline-flex;flex-wrap:wrap;gap:calc(6px*var(--ui))}
+.due .dsel select{width:auto;flex:none;font-size:calc(13px*var(--ui));height:calc(34px*var(--ui))}
+/* 待回顧區第一排：展開鈕、只看這些和兩個選單同高，比較好按 */
+.due .dhd>[data-do]{width:calc(34px*var(--ui));height:calc(34px*var(--ui));padding:0!important;display:inline-flex;align-items:center;justify-content:center;font-size:calc(14px*var(--ui));flex:none}
+.due .dhd>[data-dq]{height:calc(34px*var(--ui));padding:0 calc(14px*var(--ui));display:inline-flex;align-items:center;font-size:calc(13px*var(--ui));flex:none}
+.due .ddet{margin-top:calc(4px*var(--ui))}
+/* 今天 0 張、不能選的類別：淺灰色 */
+#duk option:disabled{color:#c4c4c4}
+[data-theme=dark] #duk option:disabled{color:#5f6570}
 .due .drow{margin:calc(5px*var(--ui)) 0;line-height:1.7}
 .due .drow>b{font-weight:700}
 .due{--due-ink:var(--acc-ink,var(--acc))}
@@ -1720,11 +1727,11 @@ const dueDev=()=>matchMedia('(max-width:900px)').matches?'m':'d';
 const dueHTML=due=>{const cnt={t:0,p:0,c:0};due.forEach(p=>cnt[p.dk||'c']++);
  let k=ls('duk.'+dueDev())||'t';if(!cnt[k])k=(DUEK.find(x=>cnt[x[0]])||['t'])[0];const asc=ls('duo.'+dueDev())==='1';if(k!==dueLastK){dueMore=new Set();dueLastK=k}
  const sum=DUEK.filter(x=>cnt[x[0]]).map(x=>x[2]+' '+cnt[x[0]]).join('・');
- let det='';if(dueOpen){const L=due.filter(p=>(p.dk||'c')===k),byT=(a,b)=>asc?(a.t||0)-(b.t||0):(b.t||0)-(a.t||0),rows=[];
+ let det='',sel='';if(dueOpen){const L=due.filter(p=>(p.dk||'c')===k),byT=(a,b)=>asc?(a.t||0)-(b.t||0):(b.t||0)-(a.t||0),rows=[];
   if(k==='c')rows.push(['c','指定日期',L.sort(byT)]);else{const ns=[...new Set(L.map(p=>p.dn))].sort((a,b)=>asc?b-a:a-b);ns.forEach(n=>rows.push([k+n,(k==='t'?'收藏 ':'發布 ')+n+' 週年',L.filter(p=>p.dn===n).sort(byT)]))}
-  det=`<div class="dsel"><select id="duk" aria-label="依分類看明細">${DUEK.map(x=>`<option value="${x[0]}"${x[0]===k?' selected':''}${cnt[x[0]]?'':' disabled'}>${x[1]}</option>`).join('')}</select><select id="duo" aria-label="排序"><option value="0"${asc?'':' selected'}>新→舊</option><option value="1"${asc?' selected':''}>舊→新</option></select></div>`
-   +rows.map(([rk,lb,a])=>{const op=dueMore.has(rk),sh=op?a:a.slice(0,5);return `<div class="drow${dueRow===rk?' on':''}"><b>${lb}（${a.length}）：</b>${sh.map(p=>`<a href="#" data-e="${p.id}">${esc(ttl(p))}</a>`).join('、')}<span class="dact">${a.length>5?`<button type="button" class="dmore" data-dm="${rk}" aria-expanded="${op}">${op?'<span class="dar" aria-hidden="true">⌃</span>收合':'…更多（'+(a.length-5)+'）'}</button>`:''}<button type="button" class="dmore donly${dueRow===rk?' on':''}" data-dr="${rk}" aria-pressed="${dueRow===rk}" title="${dueRow===rk?'恢復顯示全部收藏':'下方清單只顯示「'+lb+'」這 '+a.length+' 篇'}">${dueRow===rk?'顯示全部':'只看這些'}</button></span></div>`}).join('')}
- return `<div class="due"><div class="dhd"><button class="chip" data-do="1" style="padding:1px 8px" aria-expanded="${dueOpen}">${dueOpen?'▾':'▸'}</button> 待回顧 ${due.length} 張<span class="dsum">（${sum}）</span> <button class="chip ${dueOnly?'on':''}" data-dq="1">${dueOnly?'顯示全部':'只看這些'}</button>${dueRow?`<span class="dstat">目前只看：${esc(dueRow==='c'?'指定日期':(dueRow[0]==='t'?'收藏 ':'發布 ')+dueRow.slice(1)+' 週年')}</span>`:''}</div>${dueOpen?`<div class="ddet">${det}</div>`:''}</div>`};
+  sel=`<span class="dsel"><select id="duk" aria-label="依分類看明細">${DUEK.map(x=>`<option value="${x[0]}"${x[0]===k?' selected':''}${cnt[x[0]]?'':' disabled'}>${x[1]}</option>`).join('')}</select><select id="duo" aria-label="排序"><option value="0"${asc?'':' selected'}>新→舊</option><option value="1"${asc?' selected':''}>舊→新</option></select></span>`;
+  det=rows.map(([rk,lb,a])=>{const op=dueMore.has(rk),sh=op?a:a.slice(0,5);return `<div class="drow${dueRow===rk?' on':''}"><b>${lb}（${a.length}）：</b>${sh.map(p=>`<a href="#" data-e="${p.id}">${esc(ttl(p))}</a>`).join('、')}<span class="dact">${a.length>5?`<button type="button" class="dmore" data-dm="${rk}" aria-expanded="${op}">${op?'<span class="dar" aria-hidden="true">⌃</span>收合':'…更多（'+(a.length-5)+'）'}</button>`:''}<button type="button" class="dmore donly${dueRow===rk?' on':''}" data-dr="${rk}" aria-pressed="${dueRow===rk}" title="${dueRow===rk?'恢復顯示全部收藏':'下方清單只顯示「'+lb+'」這 '+a.length+' 篇'}">${dueRow===rk?'顯示全部':'只看這些'}</button></span></div>`}).join('')}
+ return `<div class="due"><div class="dhd"><button class="chip" data-do="1" style="padding:1px 8px" aria-expanded="${dueOpen}">${dueOpen?'▾':'▸'}</button> 待回顧 ${due.length} 張<span class="dsum">（${sum}）</span> <button class="chip ${dueOnly?'on':''}" data-dq="1">${dueOnly?'顯示全部':'只看這些'}</button>${sel}${dueRow?`<span class="dstat">目前只看：${esc(dueRow==='c'?'指定日期':(dueRow[0]==='t'?'收藏 ':'發布 ')+dueRow.slice(1)+' 週年')}</span>`:''}</div>${dueOpen?`<div class="ddet">${det}</div>`:''}</div>`};
 document.addEventListener('click',e=>{const r=e.target.closest('#due [data-dr]');if(r){e.preventDefault();const k=r.dataset.dr;dueRow=dueRow===k?'':k;if(dueRow)dueOnly=false;render();return}const b=e.target.closest('#due [data-dm]');if(!b)return;e.preventDefault();const k=b.dataset.dm;dueMore.has(k)?dueMore.delete(k):dueMore.add(k);render()});
 document.addEventListener('change',e=>{if(e.target.id==='duk'){ls('duk.'+dueDev(),e.target.value);render()}else if(e.target.id==='duo'){ls('duo.'+dueDev(),e.target.value);dueMore=new Set();render()}});
 const getDue=()=>{const today=new Date().toLocaleDateString('sv-SE'),y=today.slice(0,4),md=today.slice(5),r=[];posts.forEach(p=>{if(p.noRev)return;if(p.due){/* V3.1.0：待回顧日期只記月／日，每年同一天回顧（舊資料的年份不看）；2/29 在非閏年改在 2/28 */const d=dueMD(p.due),lp=(y%4===0&&y%100!==0)||y%400===0;if(nset.c&&d&&(d==='02-29'&&!lp?'02-28':d)===md)r.push({...p,dk:'c'});return}const t=new Date(p.t||0).toLocaleDateString('sv-SE'),ly=(y%4===0&&y%100!==0)||y%400===0;/* V3.1.0：2/29 收藏的，非閏年改在 2/28 回顧收藏週年 */if(nset.t&&(t.slice(5)===md||(t.slice(5)==='02-29'&&!ly&&md==='02-28'))&&t.slice(0,4)<y)r.push({...p,why:'收藏 '+(y-t.slice(0,4))+' 週年',dk:'t',dn:y-t.slice(0,4)});else if(nset.p&&p.pub&&p.pub.slice(5)===md&&p.pub.slice(0,4)<y)r.push({...p,why:'發布 '+(y-p.pub.slice(0,4))+' 週年',dk:'p',dn:y-p.pub.slice(0,4)})});return r};
