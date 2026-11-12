@@ -2,6 +2,49 @@
 
 ## V3.2.0（九平台自動帶入「發文帳號」「貼上的文字」；Facebook 分享網址提醒）
 
+### 手機 APP 優先開啟＋重新嘗試自動偵測（2026-11-13 03:10 build，仍為 V3.2.0；安裝包 `sns-bookmark-v3.2.0-complete-5.zip`）
+
+**基準**：`sns-bookmark-v3.2.0-complete-4.zip`（build 2026-11-12 18:10）＋猴猴的 V3.2.0 實測紀錄（TEST_REPORT 第八節 8-1）。
+**沒有部署**：沒有連接或修改 GitHub、Vercel、Production；沒有 Commit、Push、Deploy。**Code.gs 免更新、環境變數不用改、資料結構沒有變動**（收藏的 `url` 不會被改）。
+
+#### 任務一：十個平台手機 APP 優先開啟（電腦版不變）
+
+| 平台 | Android | iOS | 抵達原始內容的方式 |
+|---|---|---|---|
+| Bilibili | Chrome 官方 `intent://` ＋ `scheme=https` ＋ `package=tv.danmaku.bili`，App 不能接手 → 自動開原本網址 | 原本 https 連結，交給系統 Universal Links | 同一個 https 網址（短網址解析過就用正式網址） |
+| 抖音 | 同上，`com.ss.android.ugc.aweme` | 同上 | 同上 |
+| 微博 | 同上，`com.sina.weibo` | 同上 | 同上 |
+| Facebook | 同上，`com.facebook.katana` | 同上 | 同上 |
+| Threads | 同上，`com.instagram.barcelona` | 同上 | 同上 |
+| X | 同上，`com.twitter.android` | 同上 | 同上 |
+| Instagram | 同上，`com.instagram.android` | 同上 | 同上 |
+| YouTube | 同上，`com.google.android.youtube` | 同上 | 同上 |
+| TikTok | **不指定 App**：台灣版與國際版 Android App 的 package 不同，照原本 https 連結交給系統 App Links | 同上 | 原本網址 |
+| 小紅書 | **不變**（`xhsdiscover://item/{筆記ID}`＋「開啟原始網址」備援；已由猴猴實測可跳轉） | 不變 | 筆記 ID |
+
+- 不使用未確認的自訂 URL Scheme（小紅書是既有、已實測的例外）、不使用第三方跳轉服務、不偵測 App 是否安裝；App 與網頁不會同時開。
+- Firefox（Android）不支援上述方式，照原本 https 連結。
+- 只在點擊當下暫時換掉連結，點完立刻還原；收藏資料裡的 `url` 一律不改。
+
+#### 任務二：重新嘗試自動偵測（伺服器 `api/_lib/info.js`；前端兩處）
+
+| 項目 | 修改 | 不做的事 |
+|---|---|---|
+| X 正文 | oEmbed 改用官方文件的 `publish.x.com/oembed`（舊 `publish.twitter.com` 會轉址，而本程式不跟隨轉址——這很可能就是以前一直取不到的原因）；失敗再試舊網址一次 | 不用付費 API、不用 syndication |
+| TikTok 影片描述 | 官方 oEmbed 回應範例已經**沒有 title**；改讀公開影片頁內嵌資料（同一支影片 ID 的 `desc`），讀不到再試官方嵌入頁 `/embed/v2/{ID}`；oEmbed 只在網址沒有 @帳號時才呼叫 | 不帶 Cookie、不簽章（msToken 等） |
+| 微博 帳號＋文字 | `statuses/show` 沒資料時，改讀同網域公開手機頁 `m.weibo.cn/detail/{ID}` 的 `$render_data`；轉發仍是「轉發者文字在前、原文在後」 | `tv/show`、`video.weibo.com` 影片頁仍不連線（需要訪客 Cookie） |
+| Instagram @帳號 | 新增兩個來源（前面有了就不再請求）：公開嵌入頁內嵌資料裡**貼文 owner** 的 username；最後讀一次公開貼文頁 meta（og:url／canonical 的 `/{帳號}/reel/{代碼}/`、description「- 帳號 on 日期:」、title「(@帳號)」） | **不取貼文說明**（猴猴已決定停止 Instagram 搜尋文字擷取） |
+| 小紅書 作者＋文字 | 同一個筆記頁回應裡的標題＋正文作為搜尋文字（不另外請求）；短網址回 200 頁面時從頁面內找筆記網址；前端不再排除小紅書的文字帶入 | 不登入、不帶 Cookie、不跟隨登入頁 |
+| 抖音 描述 | 分享頁從 `/share/video/` 轉到同網域、同 ID 的 `/share/note/`（圖文作品）時跟隨一次；前端分享文字也認得「【XX的图文作品】」 | 不用電腦版簽章介面（a_bogus）、不帶 Cookie |
+| 前端 | `NOTXT` 清空（小紅書可帶入文字）；抖音分享文字解析；手機 APP 優先開啟 | 手動內容保護、`auto` 標記、失敗不提示：都不變 |
+
+| 檔案 | 修改 |
+|---|---|
+| `index.html` | 任務一（手機開啟）、`NOTXT`、抖音分享文字；build 2026-11-13 03:10 |
+| `api/_lib/info.js` | X、TikTok、抖音、微博、Instagram、小紅書；共用的 1MB 頁面讀取與內嵌資料搜尋（小紅書原本的同一段搬上來共用） |
+| `RESEARCH-V3.2.0.md`（第六節）、`TEST_REPORT.md`（第八節）、`CHANGELOG.md`、`README.md`、`USER_GUIDE.md`、`DEPLOY.md` | 說明 |
+| **沒有修改** | `api/resolve.js`、`admin-setup/Code.gs`、`package.json`、`vercel.json`、`manifest.webmanifest`、`assets/`、`brand-assets/`；Bilibili、YouTube、Facebook、Threads 的取得程式 |
+
 ### Facebook、Threads、Instagram 伺服器端：不為正文另外請求（2026-11-12 build 18:10，仍為 V3.2.0）
 
 猴猴決定（選 B）：保留三個平台的發文帳號偵測；**不再為了正文另外發請求**；為了取帳號而讀到的那一個回應裡剛好有正文時，一起回傳並帶入「貼上的文字」。

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="app-version" content="3.2.0">
-<meta name="app-build" content="2026-11-12 18:10">
+<meta name="app-build" content="2026-11-13 03:10">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -3169,7 +3169,8 @@ window.snsInfo=(()=>{const C=new Map(),P=new Map();let autoT=null,curK='',openin
   ['xhs',/(^|\.)xiaohongshu\.com$|^xhslink\.(com|cn)$/,'n']];
  /* 修正：小紅書不自動帶入「貼上的文字」（只帶發文帳號）。
     2026-11-12 18:10（猴猴選 B）：Facebook、Threads、Instagram 改回會帶入——伺服器只回傳「為了取帳號而讀到的回應」裡剛好有的正文，不另外請求 */
- const NOTXT=new Set(['xhs']);
+ /* 2026-11-13：小紅書改為嘗試帶入「同一個頁面回應」裡的筆記標題＋正文（猴猴要求重新嘗試），因此不再排除 */
+ const NOTXT=new Set([]);
  const famOf=u=>{try{const h=new URL(String(u||'').trim()).hostname.toLowerCase();return FAM.find(f=>f[1].test(h))||null}catch(e){return null}};
  const keyOf=u=>{const v=String(u||'').trim();return /^https?:\/\//i.test(v)&&famOf(v)?nuU(v)+'|'+v:''};
  const ac=()=>$('#ac'),tx=()=>$('#t');
@@ -3178,7 +3179,8 @@ window.snsInfo=(()=>{const C=new Map(),P=new Map();let autoT=null,curK='',openin
  /* 分享文字裡平台自己寫的資訊（伺服器取不到時才用） */
  const fromShare=(f,raw)=>{raw=String(raw||'');let m;
   if(f==='bl'&&(m=raw.match(/【([\s\S]+?)-(?:嗶哩嗶哩|哔哩哔哩)】/)))return{acct:'',texts:[m[1].trim()]};
-  if(f==='dy'&&(m=raw.match(/【([^【】]{1,40})的作品】([\s\S]*?)\s*https?:\/\//)))return{acct:m[1].trim(),texts:[m[2].trim()]};
+  /* 2026-11-13：也認得「的图文作品／的圖文作品」；描述去掉開頭的分享口令雜訊 */
+  if(f==='dy'&&(m=raw.match(/【([^【】]{1,40}?)的(?:图文|圖文)?作品】([\s\S]*?)\s*https?:\/\//)))return{acct:m[1].trim(),texts:[m[2].replace(/^[\s:：]+/,'').trim()]};
   return{acct:'',texts:[]}};
  const get=u=>{const k=keyOf(u);if(C.has(k))return Promise.resolve(C.get(k));if(P.has(k))return P.get(k);
   const a2=new AbortController(),tm=setTimeout(()=>a2.abort(),9000);
@@ -3234,14 +3236,33 @@ window.snsInfo=(()=>{const C=new Map(),P=new Map();let autoT=null,curK='',openin
   const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='開啟原始網址';a.dataset.xhsRaw='1';a.onclick=()=>{bar.hidden=true};
   const x=document.createElement('button');x.type='button';x.textContent='關閉';x.onclick=()=>{bar.hidden=true};
   r.append(a,x);bar.append(s,r);bar.hidden=false;clearTimeout(tm);tm=setTimeout(()=>{if(bar)bar.hidden=true},12000)};
+ /* ---------- 2026-11-13 任務一：其他九個平台的手機 APP 優先開啟（電腦版不攔截） ----------
+   ・Android（Chrome 系瀏覽器）：用 Chrome 官方的 intent:// 寫法，把「同一個 https 網址」交給指定的官方 App（package），
+     App 不能接手（沒安裝、或 App 不處理這個網址）時，由瀏覽器自動改開 S.browser_fallback_url（＝原本的網址）。
+     不用自訂 URL Scheme、不偵測 App 是否安裝、不會 App 和網頁同時開。
+   ・TikTok：台灣版與國際版 Android App 的 package 不同（無法確定使用者裝哪一個），不指定 package，照原本的 https 連結，交給系統 App Links 判斷。
+   ・iOS：照原本的 https 連結，交給系統 Universal Links 判斷（官方沒有其他不用自訂 Scheme 的方式）。
+   ・短網址（b23.tv、v.douyin.com、t.cn、fb 分享…）：這台裝置已解析過正式網址時，交給 App 的是正式網址（App 比較認得）；
+     備援網頁仍是原本的網址。收藏資料裡的 url 一律不改。 */
+ const PKG=[[/(^|\.)bilibili\.com$|^b23\.tv$/,'tv.danmaku.bili'],[/(^|\.)(douyin|iesdouyin)\.com$/,'com.ss.android.ugc.aweme'],
+  [/(^|\.)weibo\.(com|cn)$|^t\.cn$/,'com.sina.weibo'],[/(^|\.)facebook\.com$|^fb\.(watch|me)$/,'com.facebook.katana'],
+  [/(^|\.)threads\.(net|com)$/,'com.instagram.barcelona'],[/(^|\.)(x|twitter)\.com$/,'com.twitter.android'],
+  [/(^|\.)instagram\.com$/,'com.instagram.android'],[/(^|\.)youtube\.com$|^youtu\.be$/,'com.google.android.youtube']];
+ const isAndroidChrome=()=>/Android/i.test(navigator.userAgent)&&!/Firefox|FxiOS/i.test(navigator.userAgent);
+ const appUrl=href=>{let u;try{u=new URL(href)}catch(x){return ''}if(!/^https?:$/.test(u.protocol))return '';
+  const P=PKG.find(x=>x[0].test(u.hostname.toLowerCase()));if(!P)return '';
+  let t=u.href;const R=window.snsRes;try{if(R&&R.isShort&&R.isShort(href)){const v=R.get(href);if(v&&v.st==='ok'&&/^https:\/\//.test(v.url))t=v.url}}catch(x){}
+  const tu=new URL(t);return 'intent://'+tu.host+tu.pathname+tu.search+'#Intent;scheme=https;package='+P[1]+';S.browser_fallback_url='+encodeURIComponent(u.href)+';end'};
  document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href]');if(!a||a.dataset.xhsRaw||!isPhone())return;
-  let u;try{u=new URL(a.href)}catch(x){return}if(!XH.test(u.hostname))return;
+  let u;try{u=new URL(a.href)}catch(x){return}
+  if(!XH.test(u.hostname)){if(!isAndroidChrome())return;const orig=a.getAttribute('href'),it=appUrl(a.href);if(!it)return;
+   a.setAttribute('href',it);setTimeout(()=>{a.setAttribute('href',orig)},0);return}
   const c=a.closest('[data-cid]'),id=noteId(a.getAttribute('href'),c&&c.dataset.cid);if(!id)return;
   e.preventDefault();e.stopPropagation();let left=false;const lv=()=>{if(document.visibilityState==='hidden')left=true};
   document.addEventListener('visibilitychange',lv);window.addEventListener('pagehide',lv);
   try{location.href='xhsdiscover://item/'+id}catch(x){}
   setTimeout(()=>{document.removeEventListener('visibilitychange',lv);window.removeEventListener('pagehide',lv);if(!left&&document.visibilityState==='visible')tip(a.getAttribute('href'))},1600)},true);
- window.snsXhs={noteId,isPhone};
+ window.snsXhs={noteId,isPhone,appUrl,isAndroidChrome};
 })();
 /* ---------- ⑨ V3.1.0：新增／編輯視窗——分組（可複選）、待回顧日期（月／日）、分享文字擷取提示 ---------- */
 (()=>{

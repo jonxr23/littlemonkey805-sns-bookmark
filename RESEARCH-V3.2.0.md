@@ -1,4 +1,4 @@
-# SNS Bookmark V3.2.0｜九平台資料來源研究與比較（小克 × 小澄）＋第十平台小紅書可行性
+# SNS Bookmark V3.2.0｜九平台資料來源研究與比較（小克 × 小澄）＋第十平台小紅書可行性＋2026-11-13 重新研究
 
 日期：2026-11-12　依據：小克《八平台研究報告 第一版》、小澄《九平台技術研究補充報告 第一版》、猴猴《七項問題最終決定》
 
@@ -79,6 +79,43 @@
 - [dsh-reverie Issue #1（電腦版 UA 導去登入、手機 UA 可取得頁面資料）](https://github.com/Gniy7Ga/dsh-reverie/issues/1)
 - [XHS-Downloader Issue #495（短網址轉址、沒有 Cookie 會被導回首頁或登入頁）](https://github.com/JoeanAmier/XHS-Downloader/issues/495)
 - [小紅書 URL Scheme 社群整理（非官方）](https://gitcode.csdn.net/6aa0decf1a35784c84208c36.html)
+
+## 六、2026-11-13 重新研究：手機 APP 優先開啟、重新嘗試自動偵測
+
+> 小克的開發環境連不到任何社群平台，研究工具也不允許直接打這些 API，所以以下是**官方文件＋公開資料**的研究；所有「能不能真的拿到」都要在 Vercel 正式環境實測。
+
+### 6-1. 手機 APP 優先開啟
+
+| 方式 | 採用 | 理由 |
+|---|---|---|
+| Android：Chrome 官方 `intent://` 網址（`scheme=https`＋`package`＋`S.browser_fallback_url`） | ✅ 八個平台 | Chrome 官方文件寫明：找不到 App 時會開 `S.browser_fallback_url`；必須是使用者點擊才會啟動 App（我們只在點擊時使用）。交給 App 的是一般 https 網址，由 App 自己宣告的 https 連結處理，不是自訂 Scheme |
+| iOS：一般 https 連結＝Universal Links | ✅ 九個平台 | iOS 沒有不用自訂 Scheme、又能指定 App 的官方方式；由系統依各 App 的 Universal Links 設定決定 |
+| 各平台自訂 URL Scheme（`snssdk1128://`、`bilibili://`、`twitter://`…） | ⛔ | 多半沒有官方公開文件；猴猴規則：不可使用未經確認的 Scheme |
+| 用計時器偵測 App 是否安裝 | ⛔ | 規則：不用不可靠的偵測；Chrome 也會擋沒有使用者點擊的跳轉 |
+| TikTok 指定 package | ⛔ | 台灣常見的是 `com.ss.android.ugc.trill`，國際版是 `com.zhiliaoapp.musically`，無法確定使用者裝哪一個；指定錯了會直接開網頁，所以交給系統 App Links |
+| 小紅書 | 維持 | 猴猴已實測可跳轉，不動 |
+
+**沒能確認的部分**：小克無法讀取各平台的 `apple-app-site-association`／`assetlinks.json`，所以「哪些網址路徑會被 App 接手、短網址能不能被 App 接手」都要實機確認。短網址在這台裝置解析過的話，交給 App 的會是正式網址（App 通常比較認得），網頁備援仍是原本網址。
+
+### 6-2. 重新嘗試自動偵測
+
+| 平台／項目 | 研究結果 | 處理 |
+|---|---|---|
+| X 正文 | 官方 oEmbed 文件的位址是 `publish.x.com/oembed`、不需驗證、無頻率限制。舊的 `publish.twitter.com` 會轉址；本程式為了安全不跟隨轉址 → **以前很可能就是這樣一直取不到** | 改用 `publish.x.com`，失敗再試舊網址 🟡🚀 |
+| TikTok 描述 | 官方 Embed Videos 文件的 oEmbed 回應範例只有 iframe 嵌入碼，**沒有 title／author_name**，並註明即將淘汰 → oEmbed 永遠拿不到描述 | 改讀公開影片頁內嵌資料（`__UNIVERSAL_DATA_FOR_REHYDRATION__`，社群公開資料；未驗證）→ 官方嵌入頁 `/embed/v2/` 🔬🚀 |
+| 微博 帳號＋文字 | `m.weibo.cn` 手機端在 2024 年的公開文章仍不需 Cookie；但資料中心 IP 可能被導去訪客驗證。影片頁（tv/show、video.weibo.com）的公開介面需要訪客 Cookie | 加同網域公開手機頁 `/detail/{ID}` 的 `$render_data` 備援；影片頁維持不連線 🔬🚀 |
+| Instagram @帳號 | Meta 2026/6/15 免權杖公告：回應只有 html、type 等技術欄位（「不提供個人資料」）→ 嵌入碼裡不一定有 @帳號；公開嵌入頁、貼文頁對資料中心 IP 常要求登入 | 加兩個只取帳號的來源：嵌入頁裡貼文 owner、公開貼文頁 meta 🔬🚀；**不取說明** |
+| 小紅書 作者＋文字 | 同第五節：只有公開筆記頁一個免費來源，可能被登入牆／驗證擋下 | 同一頁回應取標題＋正文；短網址 200 頁面備援 🔬🚀 |
+| 抖音 描述 | 公開分享頁對資料中心 IP 常回驗證頁；官方開放平台要授權；電腦版介面要 a_bogus 簽章（屬繞過防護） | 只補「圖文作品轉址」與分享文字「图文作品」寫法；其餘無合規替代 🔬🚀 |
+
+### 2026-11-13 參考來源
+
+- [Chrome：Android Intents with Chrome](https://developer.chrome.com/docs/android/intents?hl=en)
+- [X：oEmbed API（publish.x.com）](https://docs.x.com/x-for-websites/oembed-api.md)
+- [TikTok：Embed Videos（oEmbed 回應範例、即將淘汰）](https://developers.tiktok.com/docs/en/embed-videos)
+- [Meta：Tokenless access to Meta oEmbed APIs](https://developers.facebook.com/blog/post/2026/06/15/tokenless-access-to-meta-oembed-apis/)
+- [cnblogs：微博手機端爬取不需 Cookie（2024-06）](https://cnblogs.com/mingkai2004/p/18244624)
+- [HasData：TikTok 公開頁面 rehydration 資料](https://hasdata.com/blog/tiktok-scraping-python)
 
 ## 參考來源
 
