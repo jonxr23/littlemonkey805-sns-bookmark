@@ -1,4 +1,5 @@
-// POST /api/resolve：社群「手機分享短網址」解析（V3.0.0 新增；V3.1.0 加入 Bilibili b23.tv、Facebook 分享網址、微博貼文↔影片關聯）。
+// POST /api/resolve：社群「手機分享短網址」解析（V3.0.0 新增；V3.1.0 加入 Bilibili b23.tv、Facebook 分享網址、微博貼文↔影片關聯；
+// V3.2.0 加入 info:1「自動帶入資料」查詢，九個平台的取得器在 api/_lib/info.js）。
 // 只做一件事：把 TikTok／Threads／抖音／微博 t.cn／Bilibili b23.tv／Facebook 的分享網址，依平台公開的轉址（HTTP 3xx Location）
 // 或頁面本身公開標示的正式網址（<link rel="canonical">、og:url），找出正式的貼文／影片網址，供前端「重複網址偵測」比對。
 // 安全限制：
@@ -199,6 +200,9 @@ async function resolve(input, fetchFn = fetch) {
   } finally { clearTimeout(tm); }
 }
 
+// V3.2.0：自動帶入資料（發文帳號／貼上的文字）
+const info = require('./_lib/info')({ resolve, safeUrl, readText, wbPostId });
+
 // 同一個執行個體內：成功結果快取 6 小時、每個來源 IP 每 5 分鐘最多 60 次（Serverless 可能有多個執行個體；前端另有快取與節流）
 const cache = new Map(), hits = new Map();
 const limited = (ip, now) => {
@@ -226,10 +230,11 @@ const handler = async (req, res, fetchFn = fetch) => {
     if (limited(ip, now)) return S.json(res, 429, { ok: false, reason: 'rate_limited' });
     const b = await readBody(req);
     const url = String((b && b.url) || '').slice(0, 600);
-    const key = url.trim();
+    const isInfo = !!(b && b.info);
+    const key = (isInfo ? 'i:' : '') + url.trim();
     const c = cache.get(key);
     if (c && now - c.t < 6 * 3600e3) return S.json(res, 200, c.v);
-    const v = await resolve(url, fetchFn);
+    const v = isInfo ? await info(url, fetchFn) : await resolve(url, fetchFn);
     if (v.ok) { cache.set(key, { t: now, v }); if (cache.size > 2000) cache.clear(); }
     return S.json(res, 200, v);
   } catch (e) {
@@ -243,4 +248,5 @@ module.exports._resolve = resolve;
 module.exports._metaUrl = metaUrl;
 module.exports._safeUrl = safeUrl;
 module.exports._wbPostId = wbPostId;
+module.exports._info = info;
 module.exports._reset = () => { cache.clear(); hits.clear(); };

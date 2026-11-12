@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.1.0">
-<meta name="app-build" content="2026-11-12 15:23">
+<meta name="app-version" content="3.2.0">
+<meta name="app-build" content="2026-11-12 17:15">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1631,6 +1631,7 @@ $('#sv').onclick=async()=>{
  const o={...(cur&&window.gStore&&gStore()?(gStore().get(cur.id)||{}):{}),url,platform:plat(url),note:$('#n').value.trim(),text:$('#t').value.trim(),cats:list($('#c').value).map(c=>c.replace(/\s*(→|＞|>|\/)\s*/g,'/')),tags:(addTg(),[...tgs]),due:$('#d').value,pub:$('#pd').value,noRev:$('#nr').checked,acct:$('#ac').value.trim(),shots,read:cur?!!cur.read:false,t:cur?cur.t:Date.now(),...gPatch(dgSel)};if(xims.length)o.ximgs=[...xims];else delete o.ximgs;
  /* V3.1.0：貼上的是整段分享文字時，原文完整保留在 share；url 是從中擷取出的網址（卡片「原文」開這個網址） */{const raw=$('#u').snsRaw().trim();if(raw&&raw!==url)o.share=raw;else delete o.share}
  /* V3.1.0：解析成功時記下內容識別（ck），換裝置也能比對；網址沒變又沒解析時保留原本的 */{const R=window.snsRes,v=R&&R.need(url)&&R.get(url);if(v&&v.st==='ok')o.ck=[...R.keys(url)];else if(!(cur&&cur.url===url))delete o.ck}
+ /* V3.2.0：記下哪些內容是系統自動帶入的（隱藏欄位 auto），重新開啟編輯時才分得出自動與手動 */{const A=window.snsInfo&&snsInfo.state();if(A&&(A.acct||A.text)){o.auto={};if(A.acct)o.auto.acct=A.acct;if(A.text)o.auto.text=A.text}else delete o.auto}
  if(!col){$('#msg').textContent=$('#st').textContent||'請先登入 Google，並等雲端同步完成';return}const isNew=!cur;try{await col.doc(id).set(o);await window.gSync();window.snsAct&&snsAct(isNew?'add':'edit',true)}catch(x){$('#msg').textContent='儲存失敗：'+(x.message||x.code||'')+'（圖片沒有被刪除，你的修改也還在，可再按一次儲存）';return}
  $('#dlg').classList.remove('o');{const removed=origShots.filter(x=>!shots.includes(x)),dropped=sessUp.filter(x=>!shots.includes(x)),kept=sessUp.filter(x=>shots.includes(x));sessUp=[];origShots=[];if(window.gImgs)gImgs.afterSave(removed.concat(dropped),kept)}
 };
@@ -2505,7 +2506,7 @@ const CID='840119973043-eo9lkljcu3bduvu9gae1ggri6i0hr4c7.apps.googleusercontent.
 const SCOPE='openid profile email https://www.googleapis.com/auth/drive.file';
 const D='https://www.googleapis.com/drive/v3/',U='https://www.googleapis.com/upload/drive/v3/',SH='https://sheets.googleapis.com/v4/spreadsheets/';
 const FOLDER='application/vnd.google-apps.folder',SHEET='application/vnd.google-apps.spreadsheet';
-const GG=window.snsGoogle;window.SNS_VERSION='3.1.0';
+const GG=window.snsGoogle;window.SNS_VERSION='3.2.0';
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
@@ -2786,7 +2787,7 @@ $('#gout').onclick=async()=>{$('#gmn').style.display='none';
  try{const r=await fetch('/api/auth/logout',{method:'POST',credentials:'same-origin',headers:{'X-Requested-With':'sns'}});if(!r.ok)throw new Error('http '+r.status)}catch(e){$('#st').textContent='登出失敗：連不上登入服務，請稍後再試';return}
  doOut()};
 /* ---- 跨裝置衝突視窗 ---- */
-const FL={note:'備註',cats:'資料夾',tags:'標籤',star:'星號',read:'已讀',got:'已下載',grp:'分組',gs:'分組',share:'分享原文',ck:'內容識別',due:'回顧日期',noRev:'不回顧',text:'貼文文字',acct:'發文帳號',pub:'發布日',platform:'平台',url:'連結',shots:'截圖',list:'資料夾清單',grps:'分組',plats:'平台',pren:'平台名稱'};
+const FL={note:'備註',cats:'資料夾',tags:'標籤',star:'星號',read:'已讀',got:'已下載',grp:'分組',gs:'分組',share:'分享原文',ck:'內容識別',auto:'自動帶入標記',due:'回顧日期',noRev:'不回顧',text:'貼文文字',acct:'發文帳號',pub:'發布日',platform:'平台',url:'連結',shots:'截圖',list:'資料夾清單',grps:'分組',plats:'平台',pren:'平台名稱'};
 let confList=[];
 const confShow=()=>confUI(confList);
 const doRes=async mode=>{if(!store)return;store.resolve(mode);$('#cfs').textContent='處理中…';try{await store.flush();$('#cfs').textContent=''}catch(e){$('#cfs').textContent='儲存失敗：'+(e.message||'')}};
@@ -3138,19 +3139,75 @@ window.snsRes=(()=>{const K='surl3',M=new Map(),P=new Map(),DAY=864e5,LZ=10;let 
   /* 微博貼文網址查不到影片關聯時，只有在已收藏過微博「影片」網址時才可能漏判，才需要提醒 */const hasVid=()=>others.some(p=>[...pkeys(p)].some(k=>/^wbv:/.test(k)));
   if(need(v)){const s=state(v);if(s===''){start(v);pend=true}else if(s==='pending')pend=true;else if(s==='fail'){if(isShort(v)||hasVid())fail=true}else if(relUnknown(v)&&hasVid())fail=true}
   if(f==='th')return pend?'pending':fail?'fail':''; /* Threads 維持 V3.0.0 的做法（只解析輸入的短網址） */
+  /* V3.2.0：Facebook 分享網址的貼文 ID（pfbid）同一篇也可能不同，解析成功但沒比對到時不能當成「確定沒重複」；已收藏的 Facebook 分享網址也一樣 */
+  if(f==='fb'&&!pend&&(isShort(v)||others.some(p=>isShort(p.url))))fail=true;
   const hasV=[...keys(v)].some(k=>/^wbv:/.test(k)),now=Date.now();lzT=lzT.filter(t=>now-t<3e5);
   const cand=others.filter(p=>!Array.isArray(p.ck)&&(isShort(p.url)||(isRel(p.url)&&hasV))).sort((a,b)=>(b.t||0)-(a.t||0));let n=0;
   for(const p of cand){const s=state(p.url);if(s==='ok'){if(hasV&&relUnknown(p.url))fail=true}else if(s==='fail')fail=true;else if(s==='pending')pend=true;else if(n<LZ&&lzT.length<30){n++;lzT.push(now);start(p.url);pend=true}else fail=true}
   return pend?'pending':fail?'fail':''};
- const MS='⚠️ 溫馨提醒：此網址為手機分享網址無法確認是否已收藏過，仍可繼續儲存。',MG='⚠️ 溫馨提醒：此網址目前無法確認是否已收藏過，仍可繼續儲存。',MT='⚠️ 溫馨提醒：這是該平台手機分享的短網址，無法檢查是否已收藏過。';
+ const MS='⚠️ 溫馨提醒：此網址為手機分享網址無法確認是否已收藏過，仍可繼續儲存。',MG='⚠️ 溫馨提醒：此網址目前無法確認是否已收藏過，仍可繼續儲存。',MF='⚠️目前無法偵測該連結是否重複，如需偵測是否重複請使用網頁連結，謝謝',MT='⚠️ 溫馨提醒：這是該平台手機分享的短網址，無法檢查是否已收藏過。';
  const mobile=u=>{if(isShort(u))return true;const x=url(u);if(!x)return false;const h=x.hostname.toLowerCase();return h==='video.weibo.com'||(/(^|\.)weibo\.com$/.test(h)&&/^\/\d{4,12}\/\d{12,20}\/?$/.test(x.pathname))};
- const msg=u=>{const f=fam(u);if(f==='fb')return MG;if(f==='th')return isShort(u)?MT:MG;return mobile(u)?MS:MG};
+ const msg=u=>{const f=fam(u);if(f==='fb')return MF;if(f==='th')return isShort(u)?MT:MG;return mobile(u)?MS:MG};
  /* 解析成功且有帳號時，帶入「發文帳號」；使用者自己填過的不覆蓋 */
  const post=()=>{const v=get($('#u').value);if(!v||v.st!=='ok')return;if(v.acct&&(!$('#ac').value.trim()||acAuto)){$('#ac').value=v.acct;acAuto=true;$('#an').textContent='（自動偵測，可修改）'}else if(!v.acct&&acAuto&&isShort($('#u').value)){$('#an').textContent=''}};
  const pending=u=>(need(u)&&!M.has(norm(u)))||P.size>0;
  const wait=u=>{if(need(u))start(u);return Promise.race([Promise.all([...P.values()]),new Promise(r=>setTimeout(r,8000))])};
  return{isShort,need,fam,state,start,key,keys,pkeys,get,post,unsure,msg,pending,wait,_clear:()=>{M.clear();P.clear();lzT=[];ls(K,'{}')}}})();
 {const u0=$('#u').oninput;$('#u').oninput=()=>{u0();snsRes.post()}}
+/* ---------- V3.2.0：九個平台統一自動帶入（發文帳號、貼上的文字） ----------
+   規則（猴猴 V3.2.0 決定）：
+   ・發文帳號：Threads／Instagram／TikTok／X 用 @帳號；Bilibili／YouTube／抖音／微博／Facebook 用顯示名稱。
+     欄位空白或是系統帶入的才填；取得失敗且欄位空白時，欄位下方顯示「⚠️無法偵測發文帳號，如有需求請手動輸入😣」。
+   ・貼上的文字：只有欄位空白時才帶入；取得失敗一律不填、不提示；欄位有使用者內容就完全不動（不附加）。
+   ・系統帶入、使用者沒改過的內容，換網址時可以更新；改過就當成手動內容保護。
+   ・隱藏欄位 auto 記錄系統帶入的帳號與文字，重新開啟編輯時沿用。 */
+window.snsInfo=(()=>{const C=new Map(),P=new Map();let autoT=null,curK='',opening=false,seq=0;
+ const FAM=[['bl',/(^|\.)bilibili\.com$|^b23\.tv$/,'n'],['yt',/(^|\.)youtube\.com$|^youtu\.be$/,'n'],['dy',/(^|\.)(douyin|iesdouyin)\.com$/,'n'],['wb',/(^|\.)weibo\.(com|cn)$|^t\.cn$/,'n'],['fb',/(^|\.)facebook\.com$|^fb\.watch$/,'n'],
+  ['tt',/(^|\.)tiktok\.com$/,'@'],['th',/^(www\.)?threads\.(com|net)$/,'@'],['x',/^(www\.|mobile\.)?(x|twitter)\.com$/,'@'],['ig',/^(www\.)?instagram\.com$/,'@']];
+ const famOf=u=>{try{const h=new URL(String(u||'').trim()).hostname.toLowerCase();return FAM.find(f=>f[1].test(h))||null}catch(e){return null}};
+ const keyOf=u=>{const v=String(u||'').trim();return /^https?:\/\//i.test(v)&&famOf(v)?nuU(v)+'|'+v:''};
+ const ac=()=>$('#ac'),tx=()=>$('#t');
+ const MSG='⚠️無法偵測發文帳號，如有需求請手動輸入😣';
+ const hintEl=document.createElement('div');hintEl.id='acw';hintEl.className='uex acw';hintEl.hidden=true;hintEl.textContent=MSG;
+ {const a=$('#ac'),w=a.closest('.xw')||a;w.after(hintEl)}
+ const hint=on=>{hintEl.hidden=!on};
+ /* 分享文字裡平台自己寫的資訊（伺服器取不到時才用） */
+ const fromShare=(f,raw)=>{raw=String(raw||'');let m;
+  if(f==='bl'&&(m=raw.match(/【([\s\S]+?)-(?:嗶哩嗶哩|哔哩哔哩)】/)))return{acct:'',texts:[m[1].trim()]};
+  if(f==='dy'&&(m=raw.match(/【([^【】]{1,40})的作品】([\s\S]*?)\s*https?:\/\//)))return{acct:m[1].trim(),texts:[m[2].trim()]};
+  return{acct:'',texts:[]}};
+ const get=u=>{const k=keyOf(u);if(C.has(k))return Promise.resolve(C.get(k));if(P.has(k))return P.get(k);
+  const a2=new AbortController(),tm=setTimeout(()=>a2.abort(),9000);
+  const pr=fetch('/api/resolve',{method:'POST',credentials:'same-origin',signal:a2.signal,headers:{'X-Requested-With':'sns','Content-Type':'application/json'},body:JSON.stringify({url:String(u).trim(),info:1})})
+   .then(r=>r.ok?r.json():null).catch(()=>null).then(j=>{clearTimeout(tm);P.delete(k);
+    const v={acct:j&&j.acctOk&&typeof j.acct==='string'?j.acct.trim().slice(0,80):'',texts:j&&Array.isArray(j.texts)?j.texts.filter(t=>typeof t==='string'&&t.trim()).map(t=>t.trim().slice(0,2000)).slice(0,4):[]};
+    if(j)C.set(k,v);return v});
+  P.set(k,pr);return pr};
+ const setT=v=>{const t=tx();t.value=v;t.dispatchEvent(new Event('input',{bubbles:true}));autoT=v};
+ const apply=(F,v)=>{const a=ac();
+  if(v.acct){if(!a.value.trim()||acAuto){if(a.value!==v.acct)a.value=v.acct;acAuto=true;$('#an').textContent='（自動偵測，可修改）'}hint(false)}
+  else hint(!a.value.trim());
+  const txt=v.texts.join('\n').trim();
+  if(txt&&(!tx().value.trim()||(autoT!==null&&tx().value===autoT)))setT(txt)};
+ const run=()=>{const u=$('#u').value.trim(),F=famOf(u),my=++seq;if(!F){hint(false);return}
+  const raw=$('#u').snsRaw?$('#u').snsRaw():u,k=keyOf(u);
+  get(u).then(v=>{if(my!==seq||!$('#dlg').classList.contains('o')||keyOf($('#u').value.trim())!==k)return;
+   const s=fromShare(F[0],raw);apply(F,{acct:v.acct||s.acct,texts:v.texts.length?v.texts:s.texts})})};
+ /* 換網址：先拿掉上一個網址系統帶入、且沒被改過的內容，再依新網址重新取得 */
+ const onUrl=()=>{if(opening)return;const u=$('#u').value.trim(),k=keyOf(u),F=famOf(u);if(k===curK)return;curK=k;seq++;hint(false);
+  const t=tx();if(autoT!==null&&t.value===autoT){t.value='';t.dispatchEvent(new Event('input',{bubbles:true}))}autoT=null;
+  /* 顯示名稱平台：網址裡的 @帳號不算取得成功，先拿掉，等真正的顯示名稱 */
+  if(F&&F[2]==='n'&&acAuto&&/^@/.test(ac().value)){ac().value='';acAuto=false;$('#an').textContent=''}
+  if(k)run()};
+ {const u0=$('#u').oninput;$('#u').oninput=()=>{u0();onUrl()}}
+ tx().addEventListener('input',()=>{if(autoT!==null&&tx().value!==autoT)autoT=null});
+ ac().addEventListener('input',()=>{if(ac().value.trim())hint(false)});
+ const od=openDlg;openDlg=function(id){opening=true;autoT=null;curK='';seq++;hint(false);let r;try{r=od.apply(this,arguments)}finally{opening=false}
+  const p=id?posts.find(x=>x.id===id):null,au=p&&p.auto&&typeof p.auto==='object'?p.auto:null;
+  if(au&&typeof au.acct==='string'&&au.acct&&ac().value===au.acct){acAuto=true;$('#an').textContent='（自動偵測，可修改）'}
+  if(au&&typeof au.text==='string'&&au.text&&tx().value===au.text)autoT=au.text;
+  const u=$('#u').value.trim();curK=keyOf(u);if(curK){const F=famOf(u);if(F&&F[2]==='n'&&acAuto&&/^@/.test(ac().value)&&!(au&&au.acct===ac().value)){ac().value='';acAuto=false;$('#an').textContent=''}run()}return r};
+ return{famOf,state:()=>({acct:acAuto&&ac().value.trim()?ac().value:'',text:autoT!==null&&tx().value===autoT&&autoT?autoT:''}),_dbg:()=>({autoT,curK,acAuto})}})();
 /* ---------- ⑨ V3.1.0：新增／編輯視窗——分組（可複選）、待回顧日期（月／日）、分享文字擷取提示 ---------- */
 (()=>{
  const dgsDraw=()=>{const w=$('#dgs');if(!w)return;const ok=new Set(grps.map(g=>g.id));dgSel=dgSel.filter(x=>ok.has(x));
