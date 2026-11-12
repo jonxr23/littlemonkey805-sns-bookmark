@@ -1,13 +1,13 @@
-# SNS文章收藏夾 V3.0.0 部署指南（**等你驗收安裝包後再安排正式部署**）
+# SNS文章收藏夾 V3.1.0 部署指南（**等你驗收安裝包後再安排正式部署**）
 
-> **部署紀錄**：小克只完成開發、測試與安裝包。**沒有** commit、**沒有** push、**沒有**開分支、**沒有** Preview、**沒有**觸發 Vercel。沒有修改環境變數、Google Console、Service Account、管理試算表或 Apps Script。
+> **部署紀錄**：小克只完成開發、測試與安裝包。**沒有** commit、**沒有** push、**沒有**開分支、**沒有** Preview、**沒有**觸發 Vercel。沒有修改環境變數、Google Console、Service Account、管理試算表。
 
 ## 一、基準與回復版本
 
 | 項目 | 內容 |
 |---|---|
 | GitHub Repository | `jonxr23/littlemonkey805-sns-bookmark` |
-| 開發基準 | 猴猴提供的 `sns-bookmark-v2.10.4-complete.zip`（app-version 2.10.4、build 2026-11-11 05:34；尚未上傳 `main`）。**V3.0.0 已包含 V2.10.3、V2.10.4 的全部修改**，可以直接上傳 V3.0.0 |
+| 開發基準 | V3.0.0 完整安裝包（build 2026-11-12 02:41；尚未上傳 `main`）。**V3.1.0 已包含 V2.10.3、V2.10.4、V3.0.0 的全部修改**，可以直接上傳 V3.1.0 |
 | GitHub `main` 目前 | `b29db6d8260baf080a2dda0962219c78f50ce6e2`（V2.10.2） |
 | 回復版本 | V2.10.2 ＝ `b29db6d`（再往前：V2.10.1 ＝ `cc14411`） |
 | 正式網址 | https://littlemonkey805-sns-bookmark.vercel.app/（不變） |
@@ -16,31 +16,31 @@
 
 | 項目 | 結果 |
 |---|---|
-| Apps Script `Code.gs`／管理試算表 | **免更新**（與 V2.10.4 逐位元相同） |
-| Vercel 環境變數 | **不用新增或修改**。新的 `api/resolve.js` 只用既有的 `APP_URL` 檢查請求來源 |
+| Apps Script `Code.gs`／管理試算表 | **免更新**（與 V3.0.0、V2.10.4 逐位元相同） |
+| Vercel 環境變數 | **不用新增或修改**。`api/resolve.js` 只用既有的 `APP_URL` 檢查請求來源 |
 | Vercel 專案設定 | **不用改**。`api/resolve.js` 放進 `api/` 就會自動成為 Serverless Function；`vercel.json` 原本對 `/api/(.*)` 的 `no-store` 同樣適用 |
 | Google Cloud Console／OAuth 範圍／Service Account | **不用動**（仍只有 `drive.file`） |
-| 使用者資料 | **不需要轉換**。收藏、資料夾、分組、設定、備份格式都沒有改 |
+| 使用者資料 | **不需要轉換**。收藏資料新增三個選填欄位 `gs`（多分組）、`share`（分享原文）、`ck`（內容識別），只有新存或修改的收藏才會寫入；舊資料照原樣讀取（見 `CHANGELOG.md` V3.1.0「資料結構」） |
 
 ## 三、上傳步驟（驗收後；GitHub main → Vercel Production）
 
 1. Vercel → Deployments：確認目前 Production 是 `b29db6d` / V2.10.2，出問題用它回復。
-2. 解壓縮 `sns-bookmark-v3.0.0-complete.zip`，把 `sns-bookmark-v3.0.0` 資料夾**裡面**所有檔案（含隱藏檔 `.vercelignore`）複製到 Git 專案根目錄覆蓋。
-   - 和 `main`（V2.10.2）比，網站檔案：`index.html`、`package.json` 有變，**新增 `api/resolve.js`（一定要一起上傳，不然短網址都會顯示「無法檢查」）**。
-   - 說明文件：`CHANGELOG.md`、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V2.10.2.md`、`TEST_REPORT-V2.10.3.md`、`TEST_REPORT-V2.10.4.md`（舊報告改名，**新檔要一起上傳**）、`admin-setup/ADMIN_SETUP.md`、`brand-assets/素材清單.md`。
-3. commit 到 `main`（建議訊息：`Release SNS Bookmark V3.0.0`），Vercel 會自動部署。
+2. 解壓縮 `sns-bookmark-v3.1.0-complete.zip`，把 `sns-bookmark-v3.1.0` 資料夾**裡面**所有檔案（含隱藏檔 `.vercelignore`）複製到 Git 專案根目錄覆蓋。
+   - 和 `main`（V2.10.2）比，網站檔案：`index.html`、`package.json` 有變，**新增 `api/resolve.js`（一定要一起上傳，不然分享網址都會顯示「無法確認」提醒）**。
+   - 說明文件：`CHANGELOG.md`、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V3.0.0.md`、`TEST_REPORT-V2.10.2.md`、`TEST_REPORT-V2.10.3.md`、`TEST_REPORT-V2.10.4.md`（舊報告改名，**新檔要一起上傳**）、`admin-setup/ADMIN_SETUP.md`、`brand-assets/素材清單.md`。
+3. commit 到 `main`（建議訊息：`Release SNS Bookmark V3.1.0`），Vercel 會自動部署。
 4. Vercel 最新一筆 **Ready**＋**Production** 後，Deployments → 該筆 → Functions 應看到 `api/resolve`。
-5. 正式網址側邊欄最底部應顯示 `版本：v3.0.0 / 更新：2026-11-12 02:41`。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
-6. 實機驗收清單見 `TEST_REPORT.md` 第六節（特別是短網址解析，必須在正式網址實測）。
+5. 正式網址側邊欄最底部應顯示 `版本：v3.1.0 / 更新：2026-11-12 04:41`。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
+6. 實機驗收清單見 `TEST_REPORT.md` 第五節（各平台網址，必須在正式網址實測）。
 
 ## 四、回復
 
-- Vercel → Deployments → `b29db6d` 那一筆 → **Promote to Production**（或 Instant Rollback），再在 GitHub Revert V3.0.0 的 commit。
-- **資料相容性**：V3.0.0 沒有改收藏資料格式，回到 V2.10.2 不影響收藏。V3.0.0 新增的 localStorage（`tbx3`、`tblw3`、`shs.wall`、`shp.wall`、`surl3`）舊版會忽略。回到舊版後：「薰衣紫」會變回舊的黑白「簡約」；選了「奶霜綠」的裝置會顯示品牌桃（舊版不認得 `mint`），可以手動再選。
+- Vercel → Deployments → `b29db6d` 那一筆 → **Promote to Production**（或 Instant Rollback），再在 GitHub Revert V3.1.0 的 commit。
+- **資料相容性**：回到 V3.0.0／V2.10.x 時收藏不會遺失。舊版看不懂的新欄位（`gs`、`share`、`ck`）會原封不動留著；多分組的收藏在舊版只看得到第一個分組（`grp` 一直有同步寫入）；整段分享文字存的收藏，舊版看到的連結是擷取出的網址。待回顧日期新格式「MM-DD」在舊版會被當成「已經到期」，一直出現在待回顧清單（直到標為已讀）；回到新版就恢復成每年那一天回顧。V3.0.0 時期的 localStorage 不受影響。
 
 ## 五、更新時間的來源（沒有改）
 
-畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-12 02:41）。
+畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-12 04:41）。
 
 ---
 
@@ -388,7 +388,7 @@ V2.7.0、V2.8.0 沒有單獨上線，這一次是 **V2.6.0 → V2.8.2** 一次�
 
 ### 3. 部署
 
-1. 把 `sns-bookmark-v3.0.0` 資料夾裡的所有檔案（含 `.vercelignore`）放進 Git 專案根目錄。
+1. 把 `sns-bookmark-v3.1.0` 資料夾裡的所有檔案（含 `.vercelignore`）放進 Git 專案根目錄。
 2. 在 Vercel 設好四個環境變數。
 3. Push 或 Redeploy。
 4. 打開網站 → 按「登入 Google」。
