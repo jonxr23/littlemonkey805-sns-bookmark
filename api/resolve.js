@@ -1,5 +1,5 @@
 // POST /api/resolve：社群「手機分享短網址」解析（V3.0.0 新增；V3.1.0 加入 Bilibili b23.tv、Facebook 分享網址、微博貼文↔影片關聯；
-// V3.2.0 加入 info:1「自動帶入資料」查詢，九個平台的取得器在 api/_lib/info.js）。
+// V3.2.0 加入 info:1「自動帶入資料」查詢，九個平台的取得器在 api/_lib/info.js；之後加入小紅書 xhslink 短網址）。
 // 只做一件事：把 TikTok／Threads／抖音／微博 t.cn／Bilibili b23.tv／Facebook 的分享網址，依平台公開的轉址（HTTP 3xx Location）
 // 或頁面本身公開標示的正式網址（<link rel="canonical">、og:url），找出正式的貼文／影片網址，供前端「重複網址偵測」比對。
 // 安全限制：
@@ -69,6 +69,18 @@ const PLAT = [
       const p = u.pathname, q = (k) => u.searchParams.get(k) || '';
       if (/^\/login(\.php)?\/?$/.test(p) && q('next')) { const n = safeUrl(q('next')); return n && /(^|\.)facebook\.com$/.test(n.hostname) && !/^\/login/.test(n.pathname) ? PLAT_FB_CANON(n) : null; }
       return PLAT_FB_CANON(u);
+    },
+  },
+  {
+    // 小紅書（第十個平台）：xhslink.com／xhslink.cn 分享短網址 → 公開轉址的 www.xiaohongshu.com/discovery/item/{筆記ID}。
+    // 只讀轉址的目的地網址取出筆記 ID，不讀小紅書筆記頁、不帶 Cookie、不登入；轉到登入頁或其他網域就回報失敗。
+    id: 'xiaohongshu',
+    isShort: (h) => h === 'xhslink.com' || h === 'xhslink.cn',
+    allow: (h) => h === 'xhslink.com' || h === 'xhslink.cn' || /^(www\.)?xiaohongshu\.com$/.test(h),
+    canon: (u) => {
+      if (!/^(www\.)?xiaohongshu\.com$/.test(u.hostname)) return null;
+      const m = /^\/(?:explore|discovery\/item|user\/profile\/[0-9a-f]{24})\/([0-9a-f]{24})\/?$/i.exec(u.pathname);
+      return m ? { url: 'https://www.xiaohongshu.com/explore/' + m[1].toLowerCase(), acct: null } : null;
     },
   },
 ];

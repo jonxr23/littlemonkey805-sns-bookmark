@@ -49,6 +49,7 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
     /^api\.bilibili\.com$/, /^www\.bilibili\.com$/, /^www\.youtube\.com$/, /^www\.tiktok\.com$/, /^www\.iesdouyin\.com$/,
     /^m\.weibo\.cn$/, /^weibo\.com$/, /^graph\.facebook\.com$/, /^graph\.threads\.com$/, /^www\.threads\.com$/,
     /^publish\.twitter\.com$/, /^www\.instagram\.com$/,
+    /^xhslink\.(com|cn)$/, /^www\.xiaohongshu\.com$/, // 小紅書（第十個平台）
   ];
   const get = async (ctx, url, accept, ua) => {
     const u = safeUrl(url);
@@ -139,7 +140,8 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
     const title = vt(d) || vt(d.retweeted_status);
     return out('weibo', d.user && d.user.screen_name, [title, own, rt]);
   }
-  // ---- 6. Facebook：發文者顯示名稱＋正文（Meta 官方 oEmbed，2026/6/15 起免權杖；只解析嵌入碼裡的文字） ----
+  // ---- 6. Facebook：發文者顯示名稱（Meta 官方 oEmbed，2026/6/15 起免權杖）＋同一個回應裡的正文 ----
+  // 2026-11-12 18:10 修正（猴猴選 B）：oEmbed 本來就是為了取顯示名稱而呼叫；回應裡剛好有的正文一起回傳，不為正文另外請求。
   async function facebook(ctx, u) {
     if (/^\/share\//.test(u.pathname) || u.hostname === 'fb.watch') { const r = await resolve(u.href, ctx.fetch); if (r.ok) u = safeUrl(r.url); }
     const isVideo = /\/videos\/|^\/watch|^\/reel\//.test(u.pathname);
@@ -152,24 +154,11 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
     const name = by ? strip(by[1]) : '';
     return out('facebook', /^\d+$/.test(name) ? '' : name, [p]);
   }
-  // ---- 7. Threads：@帳號（網址）＋正文（公開貼文頁 og:description → 官方 oEmbed 嵌入碼） ----
+  // ---- 7. Threads：只取 @帳號（網址；手機分享 /share/ 先解析成正式網址）----
+  // 2026-11-12 18:10 修正（猴猴選 B）：@帳號一律來自網址，不需要額外請求；原本讀貼文頁、呼叫 oEmbed 只是為了正文，已取消（所以不會有正文）。
   async function threads(ctx, u) {
     if (/^\/share\//.test(u.pathname)) { const r = await resolve(u.href, ctx.fetch); if (r.ok) u = safeUrl(r.url); }
-    const acct = handleOf(u, /^\/@([\w.]{1,40})\//);
-    const m = /^\/@([\w.]{1,40})\/post\/([\w-]{5,20})/.exec(u.pathname);
-    if (!m) return out('threads', acct, []);
-    const canon = 'https://www.threads.com/@' + m[1] + '/post/' + m[2];
-    let text = '';
-    const html = await safe(() => getHTML(ctx, canon));
-    if (html) text = metaOf(html, 'property', 'og:description') || metaOf(html, 'name', 'description');
-    if (!text) {
-      const j = await safe(() => getJSON(ctx, 'https://graph.threads.com/v1.0/oembed?url=' + encodeURIComponent(canon)));
-      const bq = j && typeof j.html === 'string' ? ((/<blockquote\b[^>]*>([\s\S]*?)<\/blockquote>/i.exec(j.html) || [])[1] || '') : '';
-      // 只取嵌入碼裡明確的文字段落；只有「在 Threads 查看」這類連結文字就當作沒取得
-      const ps = [...bq.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)].map((x) => strip(x[1])).filter((t) => t && !/^(View on Threads|在 Threads 查看|Post by @|查看更多)/i.test(t));
-      text = ps.join('\n');
-    }
-    return out('threads', acct, [text]);
+    return out('threads', u ? handleOf(u, /^\/@([\w.]{1,40})\//) : '', []);
   }
   // ---- 8. X：@帳號（網址）＋正文（官方 oEmbed 嵌入碼裡的 <p>） ----
   async function x(ctx, u) {
@@ -184,7 +173,8 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
     const text = strip(p).replace(/\s*pic\.twitter\.com\/\w+\s*$/i, '').trim();
     return out('x', a2, [text]);
   }
-  // ---- 9. Instagram：@帳號（網址→官方 oEmbed 嵌入碼→公開嵌入頁）＋貼文說明（公開嵌入頁） ----
+  // ---- 9. Instagram：@帳號（網址 → 官方 oEmbed 嵌入碼 → 公開嵌入頁，前一步有了就不再請求）----
+  // 2026-11-12 18:10 修正（猴猴選 B）：公開嵌入頁只在前兩步都沒取得帳號時才讀；有讀到時，同一頁裡的貼文說明一起回傳。網址或 oEmbed 已有帳號時不為說明另外請求。
   async function instagram(ctx, u) {
     const m = /^\/(?:([\w.]{1,30})\/)?(p|reel|reels|tv)\/([\w-]{5,40})/.exec(u.pathname);
     if (!m) return out('instagram', '', []);
@@ -196,17 +186,68 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
       if (mm) acct = '@' + mm[1];
     }
     let cap = '';
-    const html = await safe(() => getHTML(ctx, canon + 'embed/captioned/'));
-    if (html) {
-      const c = /<div\b[^>]*class="[^"]*\bCaption\b[^"]*"[^>]*>([\s\S]*?)<div\b[^>]*class="[^"]*\bCaptionComments\b/i.exec(html) || /<div\b[^>]*class="[^"]*\bCaption\b[^"]*"[^>]*>([\s\S]*?)<\/div>/i.exec(html);
-      if (c) {
-        const un = /<a\b[^>]*class="[^"]*\bCaptionUsername\b[^"]*"[^>]*>([\s\S]*?)<\/a>/i.exec(c[1]);
-        if (!acct && un && /^[\w.]{1,30}$/.test(strip(un[1]))) acct = '@' + strip(un[1]);
-        cap = strip(c[1].replace(/<a\b[^>]*class="[^"]*\bCaptionUsername\b[^"]*"[^>]*>[\s\S]*?<\/a>/i, ''));
+    if (!acct) {
+      const html = await safe(() => getHTML(ctx, canon + 'embed/captioned/'));
+      if (html) {
+        const c = /<div\b[^>]*class="[^"]*\bCaption\b[^"]*"[^>]*>([\s\S]*?)<div\b[^>]*class="[^"]*\bCaptionComments\b/i.exec(html) || /<div\b[^>]*class="[^"]*\bCaption\b[^"]*"[^>]*>([\s\S]*?)<\/div>/i.exec(html);
+        if (c) {
+          const un = /<a\b[^>]*class="[^"]*\bCaptionUsername\b[^"]*"[^>]*>([\s\S]*?)<\/a>/i.exec(c[1]);
+          if (un && /^[\w.]{1,30}$/.test(strip(un[1]))) acct = '@' + strip(un[1]);
+          cap = strip(c[1].replace(/<a\b[^>]*class="[^"]*\bCaptionUsername\b[^"]*"[^>]*>[\s\S]*?<\/a>/i, ''));
+        }
+        if (!acct) { const un2 = /<span\b[^>]*class="[^"]*\bUsernameText\b[^"]*"[^>]*>([\w.]{1,30})<\/span>/i.exec(html); if (un2) acct = '@' + un2[1]; }
       }
-      if (!acct) { const un2 = /<span\b[^>]*class="[^"]*\bUsernameText\b[^"]*"[^>]*>([\w.]{1,30})<\/span>/i.exec(html); if (un2) acct = '@' + un2[1]; }
     }
     return out('instagram', acct, [cap]);
+  }
+
+  // ---- 10. 小紅書：只取作者暱稱（不取標題、正文、描述）----
+  // xhslink 短網址只讀一次公開轉址（不跟隨到登入頁）；筆記頁用手機瀏覽器 UA、不帶 Cookie 讀一次公開頁面，
+  // 從頁面內嵌資料找「這則筆記（同一個筆記 ID）」的 user.nickname。被導去登入、驗證、或頁面沒有資料就放棄。
+  // XHS_FETCH=false 時完全不連線（直接回報沒取得，前端顯示發文帳號提示）。
+  const XHS_FETCH = true;
+  const XHS_MAX = 1024 * 1024;
+  const readBig = async (r) => {
+    if (!r.body || !r.body.getReader) { const t = await r.text(); return t.slice(0, XHS_MAX); }
+    const rd = r.body.getReader(); const chunks = []; let n = 0;
+    while (n < XHS_MAX) { const { done, value } = await rd.read(); if (done) break; chunks.push(value); n += value.length; }
+    try { rd.cancel(); } catch (e) { /* ignore */ }
+    return Buffer.concat(chunks.map((c) => Buffer.from(c))).toString('utf8');
+  };
+  async function xiaohongshu(ctx, u) {
+    const none = () => out('xiaohongshu', '', []);
+    if (!XHS_FETCH) return none();
+    let t = u;
+    if (/^xhslink\.(com|cn)$/.test(u.hostname)) {
+      const r = await safe(() => get(ctx, u.href, 'text/html,application/xhtml+xml', MOBILE_UA));
+      const loc = r && r.status >= 300 && r.status < 400 ? r.headers.get('location') : '';
+      let nx = null; try { nx = loc ? safeUrl(new URL(loc, u).href) : null; } catch (e) { nx = null; }
+      if (!nx) return none();
+      t = nx;
+    }
+    if (!/^(www\.)?xiaohongshu\.com$/.test(t.hostname)) return none();
+    const m = /^\/(?:explore|discovery\/item|user\/profile\/[0-9a-f]{24})\/([0-9a-f]{24})\/?$/i.exec(t.pathname);
+    if (!m) return none();
+    const id = m[1].toLowerCase();
+    const html = await safe(async () => {
+      const r = await get(ctx, 'https://www.xiaohongshu.com' + t.pathname + t.search, 'text/html,application/xhtml+xml', MOBILE_UA);
+      if (r.status !== 200 || !/html/i.test(r.headers.get('content-type') || '')) return '';
+      return await readBig(r);
+    });
+    if (!html) return none();
+    const s = /window\.__INITIAL_STATE__\s*=\s*(\{[\s\S]*?\})\s*<\/script>/.exec(html);
+    if (!s) return none();
+    let data = null; try { data = JSON.parse(s[1].replace(/:\s*undefined\b/g, ':null')); } catch (e) { data = null; }
+    // 只認「筆記 ID 相同」的那一則筆記的作者，避免抓到留言者或推薦筆記的作者
+    let nick = ''; const seen = new Set();
+    const walk = (o, d) => {
+      if (nick || !o || typeof o !== 'object' || d > 14 || seen.has(o)) return; seen.add(o);
+      const oid = String(o.noteId || o.note_id || o.id || '').toLowerCase();
+      if (oid === id && o.user && typeof o.user === 'object') { const n = o.user.nickname || o.user.nickName || o.user.nick_name; if (typeof n === 'string' && n.trim()) { nick = n; return; } }
+      for (const k of Object.keys(o)) walk(o[k], d + 1);
+    };
+    walk(data, 0);
+    return out('xiaohongshu', nick, []);
   }
 
   const PLATS = [
@@ -219,6 +260,7 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
     ['threads', (h) => /^(www\.)?threads\.(com|net)$/.test(h), threads],
     ['x', (h) => /^(www\.|mobile\.)?(x|twitter)\.com$/.test(h), x],
     ['instagram', (h) => /^(www\.)?instagram\.com$/.test(h), instagram],
+    ['xiaohongshu', (h) => /^xhslink\.(com|cn)$/.test(h) || /(^|\.)xiaohongshu\.com$/.test(h), xiaohongshu],
   ];
   async function info(input, fetchFn) {
     const u = safeUrl(input);

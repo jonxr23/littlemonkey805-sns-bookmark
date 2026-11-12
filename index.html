@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="app-version" content="3.2.0">
-<meta name="app-build" content="2026-11-12 17:15">
+<meta name="app-build" content="2026-11-12 18:10">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1093,7 +1093,7 @@ input.phfit::placeholder{font-size:var(--phf)}
 </div>
 <div id="dlg"><div class="box"><div class="row" style="justify-content:space-between;align-items:center"><b>收藏</b><button type="button" id="dx" title="關閉">✕</button></div>
 <label>連結 <span id="pl"></span></label>
-<div class="bar"><input id="u" type="url" placeholder="https://…"><button id="ps">貼上</button></div><div id="pm" style="font-size:calc(12px*var(--ui));color:var(--mut)"></div><div id="uex" class="uex" hidden></div><div id="udup" class="udup" role="status" hidden></div><div id="pqw" class="bar" style="display:none;flex-wrap:wrap;align-items:center"><span id="pqt" style="font-size:calc(12px*var(--ui));flex-basis:100%;overflow-wrap:anywhere"></span><select id="pq"></select><input id="pqn" placeholder="新平台名稱" style="display:none"><button type="button" id="pqb" style="display:none">建立</button></div><div class="g2 g2n"><div><label>備註（其實是標題😂）</label><input id="n"></div><div><label>發文帳號 <span id="an"></span></label><div class="ach">使用手機分享時，無法自動取得發文帳號，請自行填寫（選填）</div><input id="ac" placeholder="例如 @username"></div></div>
+<div class="bar"><input id="u" type="url" placeholder="https://…"><button id="ps">貼上</button></div><div id="pm" style="font-size:calc(12px*var(--ui));color:var(--mut)"></div><div id="uex" class="uex" hidden></div><div id="udup" class="udup" role="status" hidden></div><div id="pqw" class="bar" style="display:none;flex-wrap:wrap;align-items:center"><span id="pqt" style="font-size:calc(12px*var(--ui));flex-basis:100%;overflow-wrap:anywhere"></span><select id="pq"></select><input id="pqn" placeholder="新平台名稱" style="display:none"><button type="button" id="pqb" style="display:none">建立</button></div><div class="g2 g2n"><div><label>備註（其實是標題😂）</label><input id="n"></div><div><label>發文帳號 <span id="an"></span></label><div class="ach">系統會嘗試自動偵測發文帳號；若無法取得，請自行填寫（選填）</div><input id="ac" placeholder="例如 @username"></div></div>
 
 <label>分類（可多選）</label><input id="c" type="hidden"><div class="cbar"><div id="csel" class="csel"></div><button type="button" id="cmb">📁 選擇資料夾</button></div><div id="rcf" class="sg"></div><div class="xw fqw"><input id="csq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋資料夾（例如 Fre 或 cky）" aria-label="搜尋分類資料夾"><button type="button" class="xc" id="csqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="cs"></div><div id="rn2" style="display:none"><div class="bar"><input id="rv2" placeholder="新名稱"><button type="button" id="rs2" class="pri">儲存</button><button type="button" id="rx2">取消</button></div><div id="rh2" style="font-size:calc(12px*var(--ui));color:var(--mut);margin-top:calc(4px*var(--ui))"></div></div><div id="oldmk" hidden><input id="dp" type="hidden"><div id="dpw" class="cas"></div><div class="bar"><input id="dn" placeholder="新資料夾名稱"><button type="button" id="db">＋建立並選取</button></div></div>
 <label>標籤（打逗號或按 Enter 就會變成標籤塊，點 × 刪除）</label><input id="g" type="hidden"><div id="tgw" class="tw"><div id="tgc"></div><input id="gi" placeholder="輸入標籤…"></div><div id="tgs2"></div>
@@ -1448,7 +1448,7 @@ const ls=(k,v)=>{try{return v===undefined?localStorage.getItem(k):localStorage.s
 const PF=[[/instagram\.com/,'IG'],[/threads\.(net|com)/,'Threads'],[/(^|\.)(x|twitter)\.com$/,'X'],[/youtube\.com|youtu\.be/,'YouTube']];
 let cplats=[],pren={},grps=[];
 /* V3.1.0：同一個平台的電腦版網址與手機分享網址（不同網域）一律視為同一個平台。若使用者自己建過這個平台（自訂名稱），優先用含主網域的那一個名稱 */
-const PFAM=[['TikTok',/(^|\.)tiktok\.com$/,'tiktok.com'],['抖音',/(^|\.)(douyin|iesdouyin)\.com$/,'douyin.com'],['微博',/(^|\.)weibo\.(com|cn)$|^t\.cn$/,'weibo.com'],['Bilibili',/(^|\.)bilibili\.com$|^b23\.tv$/,'bilibili.com'],['Facebook',/(^|\.)facebook\.com$|^fb\.(watch|me)$/,'facebook.com']];
+const PFAM=[['TikTok',/(^|\.)tiktok\.com$/,'tiktok.com'],['抖音',/(^|\.)(douyin|iesdouyin)\.com$/,'douyin.com'],['微博',/(^|\.)weibo\.(com|cn)$|^t\.cn$/,'weibo.com'],['Bilibili',/(^|\.)bilibili\.com$|^b23\.tv$/,'bilibili.com'],['Facebook',/(^|\.)facebook\.com$|^fb\.(watch|me)$/,'facebook.com'],['小紅書',/(^|\.)xiaohongshu\.com$|^xhslink\.(com|cn)$/,'xiaohongshu.com']];
 const pfam=h=>PFAM.find(f=>f[1].test(String(h||'').toLowerCase()))||null;
 /* V3.1.0：一篇收藏可以加入多個分組。新欄位 gs（分組 ID 陣列）；舊欄位 grp 繼續寫入第一個分組，舊版網頁仍看得到。
    讀取規則：沒有 gs 的舊資料＝[grp]；grp 和 gs 第一個不一致時，代表舊版裝置改過分組，以舊版的修改為準 */
@@ -1596,6 +1596,8 @@ const nuU=u=>{try{const x=new URL(String(u||'').trim());let h=x.hostname.toLower
  if(/(^|\.)(douyin|iesdouyin)\.com$/.test(h)){const q=x.searchParams.get('modal_id');if(q&&/^\d{8,25}$/.test(q))return 'dy:'+q}
  if(/(^|\.)weibo\.com$/.test(h)&&h!=='video.weibo.com'&&(m=p.match(/^\/\d{4,12}\/(\d{12,20})$/)))return 'wb:'+m[1];
  if(/(^|\.)weibo\.com$/.test(h)){if(m=p.match(/^\/(?:tv\/)?show\/(\d{3,6}:\d{6,25})$/))return 'wbv:'+m[1];const f=x.searchParams.get('fid');if(p==='/show'&&f&&/^\d{3,6}:\d{6,25}$/.test(f))return 'wbv:'+f}
+ /* 小紅書：筆記 ID（24 位英數）；explore、discovery/item、user/profile/{作者}/{筆記} 三種網址視為同一篇 */
+ if(h==='xiaohongshu.com'&&(m=p.match(/^\/(?:explore|discovery\/item|user\/profile\/[0-9a-f]{24})\/([0-9a-f]{24})$/i)))return 'xhs:'+m[1].toLowerCase();
  if(/(^|\.)bilibili\.com$/.test(h)&&(m=p.match(/(?:^|\/)video\/(BV[0-9A-Za-z]{10}|av\d{1,12})(?:\/|$)/i)))return 'bv:'+(/^bv/i.test(m[1])?'BV'+m[1].slice(2):m[1].toLowerCase());
  if(/(^|\.)facebook\.com$/.test(h)){const fi=v=>/^(pfbid[0-9A-Za-z]{20,80}|\d{5,25})$/.test(v||'');const sf=x.searchParams.get('story_fbid');if(/^\/(permalink|story)\.php$/.test(p)&&fi(sf))return 'fb:'+sf;if((m=p.match(/^\/(?:groups\/[\w.-]+|[\w.-]+)\/(?:posts|permalink)\/(\w+)$/))&&fi(m[1]))return 'fb:'+m[1];if(m=p.match(/^\/[\w.-]+\/videos\/(?:[\w-]+\/)?(\d{5,25})$/))return 'fbv:'+m[1];if(m=p.match(/^\/reel\/(\d{5,25})$/))return 'fbv:'+m[1];const wv=x.searchParams.get('v');if(p==='/watch'&&/^\d{5,25}$/.test(wv||''))return 'fbv:'+wv}
  if(/(^|\.)weibo\.com$/.test(h)&&(m=p.match(/^\/\d{4,12}\/([A-Za-z0-9]{8,10})$/))){const w=wbMid(m[1]);if(w)return 'wb:'+w}
@@ -3114,11 +3116,11 @@ window.snsRes=(()=>{const K='surl3',M=new Map(),P=new Map(),DAY=864e5,LZ=10;let 
  const url=u=>{try{return new URL(String(u||'').trim())}catch(e){return null}};
  const isShort=u=>{const x=url(u);if(!x)return false;const h=x.hostname.toLowerCase(),p=x.pathname;
   return h==='vm.tiktok.com'||h==='vt.tiktok.com'||((h==='www.tiktok.com'||h==='tiktok.com'||h==='m.tiktok.com')&&/^\/t\/[\w-]+/.test(p))||(/^(www\.)?threads\.(com|net)$/.test(h)&&/^\/share\/[\w-]+/.test(p))||h==='v.douyin.com'||h==='t.cn'
-   ||h==='b23.tv'||(/^(www\.|m\.|web\.)?facebook\.com$/.test(h)&&/^\/share\/(?:[prv]\/)?[\w-]+/.test(p))||h==='fb.watch'};
+   ||h==='b23.tv'||(/^(www\.|m\.|web\.)?facebook\.com$/.test(h)&&/^\/share\/(?:[prv]\/)?[\w-]+/.test(p))||h==='fb.watch'||h==='xhslink.com'||h==='xhslink.cn'};
  /* 微博「貼文」網址：本身可以比對貼文，但和「影片頁」網址的關聯要另外查 */
  const isRel=u=>!isShort(u)&&/^wb:/.test(nuU(u));
  const need=u=>isShort(u)||isRel(u);
- const FAM=[['tt',/(^|\.)tiktok\.com$/],['dy',/(^|\.)(douyin|iesdouyin)\.com$/],['wb',/(^|\.)weibo\.(com|cn)$|^t\.cn$/],['bl',/(^|\.)bilibili\.com$|^b23\.tv$/],['fb',/(^|\.)facebook\.com$|^fb\.(watch|me)$/],['th',/(^|\.)threads\.(com|net)$/]];
+ const FAM=[['tt',/(^|\.)tiktok\.com$/],['dy',/(^|\.)(douyin|iesdouyin)\.com$/],['wb',/(^|\.)weibo\.(com|cn)$|^t\.cn$/],['bl',/(^|\.)bilibili\.com$|^b23\.tv$/],['fb',/(^|\.)facebook\.com$|^fb\.(watch|me)$/],['th',/(^|\.)threads\.(com|net)$/],['xhs',/(^|\.)xiaohongshu\.com$|^xhslink\.(com|cn)$/]];
  const fam=u=>{const x=url(u),h=x?x.hostname.toLowerCase():'',f=h&&FAM.find(f=>f[1].test(h));return f?f[0]:''};
  const state=u=>{const v=M.get(norm(u));return v?v.st:(P.has(norm(u))?'pending':'')};
  const start=u=>{const k=norm(u);if(!k||M.has(k)||P.has(k)||!need(u))return P.get(k)||Promise.resolve();
@@ -3157,20 +3159,22 @@ window.snsRes=(()=>{const K='surl3',M=new Map(),P=new Map(),DAY=864e5,LZ=10;let 
 /* ---------- V3.2.0：九個平台統一自動帶入（發文帳號、貼上的文字） ----------
    規則（猴猴 V3.2.0 決定）：
    ・發文帳號：Threads／Instagram／TikTok／X 用 @帳號；Bilibili／YouTube／抖音／微博／Facebook 用顯示名稱。
-     欄位空白或是系統帶入的才填；取得失敗且欄位空白時，欄位下方顯示「⚠️無法偵測發文帳號，如有需求請手動輸入😣」。
+     欄位空白或是系統帶入的才填；取得失敗時欄位保持空白，不顯示任何提醒（2026-11-12 修正：所有平台取消失敗提示）。
    ・貼上的文字：只有欄位空白時才帶入；取得失敗一律不填、不提示；欄位有使用者內容就完全不動（不附加）。
    ・系統帶入、使用者沒改過的內容，換網址時可以更新；改過就當成手動內容保護。
    ・隱藏欄位 auto 記錄系統帶入的帳號與文字，重新開啟編輯時沿用。 */
 window.snsInfo=(()=>{const C=new Map(),P=new Map();let autoT=null,curK='',opening=false,seq=0;
  const FAM=[['bl',/(^|\.)bilibili\.com$|^b23\.tv$/,'n'],['yt',/(^|\.)youtube\.com$|^youtu\.be$/,'n'],['dy',/(^|\.)(douyin|iesdouyin)\.com$/,'n'],['wb',/(^|\.)weibo\.(com|cn)$|^t\.cn$/,'n'],['fb',/(^|\.)facebook\.com$|^fb\.watch$/,'n'],
-  ['tt',/(^|\.)tiktok\.com$/,'@'],['th',/^(www\.)?threads\.(com|net)$/,'@'],['x',/^(www\.|mobile\.)?(x|twitter)\.com$/,'@'],['ig',/^(www\.)?instagram\.com$/,'@']];
+  ['tt',/(^|\.)tiktok\.com$/,'@'],['th',/^(www\.)?threads\.(com|net)$/,'@'],['x',/^(www\.|mobile\.)?(x|twitter)\.com$/,'@'],['ig',/^(www\.)?instagram\.com$/,'@'],
+  ['xhs',/(^|\.)xiaohongshu\.com$|^xhslink\.(com|cn)$/,'n']];
+ /* 修正：小紅書不自動帶入「貼上的文字」（只帶發文帳號）。
+    2026-11-12 18:10（猴猴選 B）：Facebook、Threads、Instagram 改回會帶入——伺服器只回傳「為了取帳號而讀到的回應」裡剛好有的正文，不另外請求 */
+ const NOTXT=new Set(['xhs']);
  const famOf=u=>{try{const h=new URL(String(u||'').trim()).hostname.toLowerCase();return FAM.find(f=>f[1].test(h))||null}catch(e){return null}};
  const keyOf=u=>{const v=String(u||'').trim();return /^https?:\/\//i.test(v)&&famOf(v)?nuU(v)+'|'+v:''};
  const ac=()=>$('#ac'),tx=()=>$('#t');
- const MSG='⚠️無法偵測發文帳號，如有需求請手動輸入😣';
- const hintEl=document.createElement('div');hintEl.id='acw';hintEl.className='uex acw';hintEl.hidden=true;hintEl.textContent=MSG;
- {const a=$('#ac'),w=a.closest('.xw')||a;w.after(hintEl)}
- const hint=on=>{hintEl.hidden=!on};
+ /* 2026-11-12 18:05 修正：所有平台一律取消「發文帳號偵測失敗」提示——取得失敗時欄位保持空白，不顯示任何提醒；一般說明文字固定顯示 */
+ const hint=()=>{};
  /* 分享文字裡平台自己寫的資訊（伺服器取不到時才用） */
  const fromShare=(f,raw)=>{raw=String(raw||'');let m;
   if(f==='bl'&&(m=raw.match(/【([\s\S]+?)-(?:嗶哩嗶哩|哔哩哔哩)】/)))return{acct:'',texts:[m[1].trim()]};
@@ -3187,6 +3191,7 @@ window.snsInfo=(()=>{const C=new Map(),P=new Map();let autoT=null,curK='',openin
  const apply=(F,v)=>{const a=ac();
   if(v.acct){if(!a.value.trim()||acAuto){if(a.value!==v.acct)a.value=v.acct;acAuto=true;$('#an').textContent='（自動偵測，可修改）'}hint(false)}
   else hint(!a.value.trim());
+  if(NOTXT.has(F[0]))return;
   const txt=v.texts.join('\n').trim();
   if(txt&&(!tx().value.trim()||(autoT!==null&&tx().value===autoT)))setT(txt)};
  const run=()=>{const u=$('#u').value.trim(),F=famOf(u),my=++seq;if(!F){hint(false);return}
@@ -3205,9 +3210,39 @@ window.snsInfo=(()=>{const C=new Map(),P=new Map();let autoT=null,curK='',openin
  const od=openDlg;openDlg=function(id){opening=true;autoT=null;curK='';seq++;hint(false);let r;try{r=od.apply(this,arguments)}finally{opening=false}
   const p=id?posts.find(x=>x.id===id):null,au=p&&p.auto&&typeof p.auto==='object'?p.auto:null;
   if(au&&typeof au.acct==='string'&&au.acct&&ac().value===au.acct){acAuto=true;$('#an').textContent='（自動偵測，可修改）'}
-  if(au&&typeof au.text==='string'&&au.text&&tx().value===au.text)autoT=au.text;
+  if(au&&typeof au.text==='string'&&au.text&&tx().value===au.text&&!(famOf($('#u').value.trim())&&NOTXT.has(famOf($('#u').value.trim())[0])))autoT=au.text;
   const u=$('#u').value.trim();curK=keyOf(u);if(curK){const F=famOf(u);if(F&&F[2]==='n'&&acAuto&&/^@/.test(ac().value)&&!(au&&au.acct===ac().value)){ac().value='';acAuto=false;$('#an').textContent=''}run()}return r};
  return{famOf,state:()=>({acct:acAuto&&ac().value.trim()?ac().value:'',text:autoT!==null&&tx().value===autoT&&autoT?autoT:''}),_dbg:()=>({autoT,curK,acAuto})}})();
+/* ---------- 小紅書（第十個平台）：手機點「開啟原文」時先嘗試喚起小紅書 App ----------
+   ・電腦版：不攔截，照原本開原始網址。
+   ・手機版：取得筆記 ID（網址本身、這台裝置的短網址解析結果、儲存時記下的 ck）後，嘗試 xhsdiscover://item/{筆記ID}。
+     取不到筆記 ID：不攔截，照原本開原始網址。
+   ・約 1.6 秒後頁面仍在前景（沒有切到 App）：顯示「開啟原始網址」備援連結，不自動跳走。
+   ・注意：頁面切到背景只代表「App 可能已開啟」，不代表 App 已成功載入筆記；程式無法得知 App 內是否載入成功。 */
+(()=>{
+ const XH=/(^|\.)xiaohongshu\.com$|^xhslink\.(com|cn)$/i;
+ const isPhone=()=>/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ const idOf=k=>/^xhs:[0-9a-f]{24}$/.test(k||'')?k.slice(4):'';
+ const noteId=(url,pid)=>{let id=idOf(nuU(url));if(id)return id;
+  const R=window.snsRes,v=R&&R.get(url);if(v&&v.st==='ok'&&(id=idOf(nuU(v.url))))return id;
+  const p=(pid&&posts.find(x=>x.id===pid))||posts.find(x=>x.url===url);
+  const c=p&&Array.isArray(p.ck)?p.ck.find(x=>typeof x==='string'&&idOf(x)):'';return c?idOf(c):''};
+ let bar=null,tm=null;
+ const tip=url=>{if(!bar){bar=document.createElement('div');bar.id='xhsb';bar.setAttribute('role','status');bar.style.cssText='position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:9999;background:var(--card,#fff);color:var(--fg,#333);border:1px solid var(--bd,#ddd);border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.18);padding:10px 12px;font-size:calc(13px*var(--ui,1));line-height:1.5';document.body.append(bar)}
+  bar.innerHTML='';const s=document.createElement('div');s.textContent='沒有開啟小紅書 App 嗎？可以改開原始網址。';
+  const r=document.createElement('div');r.style.cssText='display:flex;gap:8px;justify-content:flex-end;align-items:center;margin-top:6px';
+  const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='開啟原始網址';a.dataset.xhsRaw='1';a.onclick=()=>{bar.hidden=true};
+  const x=document.createElement('button');x.type='button';x.textContent='關閉';x.onclick=()=>{bar.hidden=true};
+  r.append(a,x);bar.append(s,r);bar.hidden=false;clearTimeout(tm);tm=setTimeout(()=>{if(bar)bar.hidden=true},12000)};
+ document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href]');if(!a||a.dataset.xhsRaw||!isPhone())return;
+  let u;try{u=new URL(a.href)}catch(x){return}if(!XH.test(u.hostname))return;
+  const c=a.closest('[data-cid]'),id=noteId(a.getAttribute('href'),c&&c.dataset.cid);if(!id)return;
+  e.preventDefault();e.stopPropagation();let left=false;const lv=()=>{if(document.visibilityState==='hidden')left=true};
+  document.addEventListener('visibilitychange',lv);window.addEventListener('pagehide',lv);
+  try{location.href='xhsdiscover://item/'+id}catch(x){}
+  setTimeout(()=>{document.removeEventListener('visibilitychange',lv);window.removeEventListener('pagehide',lv);if(!left&&document.visibilityState==='visible')tip(a.getAttribute('href'))},1600)},true);
+ window.snsXhs={noteId,isPhone};
+})();
 /* ---------- ⑨ V3.1.0：新增／編輯視窗——分組（可複選）、待回顧日期（月／日）、分享文字擷取提示 ---------- */
 (()=>{
  const dgsDraw=()=>{const w=$('#dgs');if(!w)return;const ok=new Set(grps.map(g=>g.id));dgSel=dgSel.filter(x=>ok.has(x));

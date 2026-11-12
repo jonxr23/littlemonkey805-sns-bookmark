@@ -1,4 +1,4 @@
-# SNS Bookmark V3.2.0｜九平台資料來源研究與比較（小克 × 小澄）
+# SNS Bookmark V3.2.0｜九平台資料來源研究與比較（小克 × 小澄）＋第十平台小紅書可行性
 
 日期：2026-11-12　依據：小克《八平台研究報告 第一版》、小澄《九平台技術研究補充報告 第一版》、猴猴《七項問題最終決定》
 
@@ -45,6 +45,40 @@
 5. X oEmbed 的實際回應。
 6. Instagram 公開嵌入頁是否要求登入。
 7. TikTok oEmbed 回應裡實際有沒有 `title`。
+
+## 五、第十個平台：小紅書可行性研究（2026-11-12 17:55 追加）
+
+> 小克的開發環境連不到小紅書（測試網址 `https://xhslink.com/o/9AeERipuNrv` 也無法讀取），以下全部是**文件可行性＋模擬測試**，沒有任何一項做過實際連線。
+
+| # | 問題 | 結論 | 分類 |
+|---|---|---|---|
+| 1 | 作者暱稱能否免費取得 | **有機會，但不穩定**。小紅書沒有免費、免授權的官方查詢 API（官方開放平台是商家／小程序用途，要申請與授權）。唯一免費且不用登入的來源是**公開筆記頁**內嵌的頁面資料（`window.__INITIAL_STATE__` 裡該筆記的 `user.nickname`）。社群回報：電腦版 UA 常被導去登入頁；手機 UA 有時能拿到頁面；資料中心 IP（Vercel 這類）會被週期性擋下；網址上的 `xsec_token` 是必要參數且會過期。拿不到就放棄，欄位保持空白（18:05 起所有平台都不顯示失敗提示） | 🔬🚀 |
+| 2 | xhslink.com 能否解析出筆記 ID | **可以（理論上）**。`xhslink.com/o/{代碼}` 以公開的 HTTP 302 轉址到 `www.xiaohongshu.com/discovery/item/{24 位筆記 ID}?xsec_token=…`。只要讀轉址的目的地網址就能取得筆記 ID，**不需要讀筆記頁、不需要 Cookie** | 🟡🚀 |
+| 3 | 能否用筆記 ID 判斷重複 | **可以**。筆記 ID 是 24 位英數，`/explore/{ID}`、`/discovery/item/{ID}`、`/user/profile/{作者}/{ID}` 都是同一篇。識別碼用 `xhs:{筆記ID}`（`xsec_token` 等參數不影響）。短網址解析失敗時不當成「確定沒重複」，顯示手機分享網址提醒 | ✅（格式）🚀（實際轉址） |
+| 4 | 官方 Deep Link 能否喚起 App | **找不到小紅書公開的官方 Deep Link 文件**。社群整理（非官方）最常見的是 `xhsdiscover://item/{筆記ID}`；另有 Android `xhsdiscovery://`、iOS `xhsdiscover://detail?noteId=` 等寫法，新版 App 可能改動。網頁版筆記網址是否已註冊 Universal Link／App Link，小克無法讀取 `apple-app-site-association`／`assetlinks.json` 確認。採用 `xhsdiscover://item/{筆記ID}`，並保留原始網址備援 | 🔬（非官方）📱 需實機 |
+| 5 | 台灣網路環境的限制 | 2025-12-04 內政部（打詐指揮中心）對小紅書發布「網際網路停止解析及限制接取」命令，**暫定 1 年**（約到 2026-12 初，之後是否延長要看當時公告）。影響：台灣網路下網頁版打不開（DNS 停止解析）、App 可能轉圈或連不上。所以 **「成功喚起 App」≠「App 成功載入筆記」**：喚起只代表手機切到 App，App 內能不能載入取決於 App 自己的連線，網站無法得知、也不會假設成功 | ✅ |
+
+### 實作採用
+
+| 項目 | 做法 | 不做的事 |
+|---|---|---|
+| 平台識別 | `xhslink.com`、`xhslink.cn`、`*.xiaohongshu.com` 都歸到「小紅書」（平台家族，可在平台管理改名） | — |
+| 發文帳號 | 伺服器（Vercel）：短網址只讀一次轉址 → 用手機 UA 讀一次公開筆記頁（保留分享網址自帶的 `xsec_token`）→ 只認**同一個筆記 ID** 那一則的作者暱稱 | 不帶 Cookie、不登入、不處理驗證碼、不跟隨登入頁、不重試、不用第三方解析服務（Apify、TikHub 等）、不取標題／正文／描述 |
+| 貼上的文字 | 一律不自動帶入 | — |
+| 重複收藏 | `/api/resolve` 只讀 xhslink 的轉址目的地取筆記 ID（**不讀筆記頁**）；成功後存進 `ck`（`xhs:{筆記ID}`），原始分享網址照原樣存在 `url` | — |
+| 開啟原文 | 電腦：原始網址（不變）。手機：有筆記 ID → `xhsdiscover://item/{ID}`；約 1.6 秒後頁面仍在前景 → 顯示「開啟原始網址」連結（不自動跳走）；沒有筆記 ID → 直接開原始網址 | 不使用 VPN、代理或任何繞過台灣網路限制的方式開啟 |
+
+### ⚠️ 需要猴猴確認的一點
+
+自動偵測發文帳號是由 **Vercel 伺服器**（預設在美國）去讀小紅書公開頁面，不是使用者的手機或電腦。技術上這不是在台灣網路上連小紅書，也不是讓使用者看內容（只回傳暱稱幾個字）；但如果猴猴認為「由海外伺服器代查」也屬於繞過台灣限制，可以把 `api/_lib/info.js` 的 `XHS_FETCH = true` 改成 `false`：小紅書就完全不連線、發文帳號一律留空（重複比對的短網址轉址解析是另一段，在 `api/resolve.js`，如也要停用請告訴小克）。
+
+### 小紅書參考來源
+
+- [中央社：小紅書涉1706件詐欺案 內政部命令暫行封鎖1年](https://cna.com.tw/news/asoc/202512040238.aspx)、[台灣英文新聞：停止解析與限制接取命令](https://www.taiwannews.com.tw/zh/news/6258557)
+- [festivities/fixXiaohongshu（xhslink 302 轉址、`__INITIAL_STATE__`、xsec_token 必要、資料中心 IP 會被擋）](https://github.com/festivities/fixXiaohongshu)
+- [dsh-reverie Issue #1（電腦版 UA 導去登入、手機 UA 可取得頁面資料）](https://github.com/Gniy7Ga/dsh-reverie/issues/1)
+- [XHS-Downloader Issue #495（短網址轉址、沒有 Cookie 會被導回首頁或登入頁）](https://github.com/JoeanAmier/XHS-Downloader/issues/495)
+- [小紅書 URL Scheme 社群整理（非官方）](https://gitcode.csdn.net/6aa0decf1a35784c84208c36.html)
 
 ## 參考來源
 
