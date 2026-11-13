@@ -247,7 +247,8 @@ const handler = async (req, res, fetchFn = fetch) => {
     const c = cache.get(key);
     if (c && now - c.t < 6 * 3600e3) return S.json(res, 200, c.v);
     const v = isInfo ? await info(url, fetchFn) : await resolve(url, fetchFn);
-    if (v.ok) { cache.set(key, { t: now, v }); if (cache.size > 2000) cache.clear(); }
+    // V3.2.1：逾時或出錯時回傳的是「部分結果」，不放進快取（下次還能再試完整的）
+    if (v.ok && !v.reason) { cache.set(key, { t: now, v }); if (cache.size > 2000) cache.clear(); }
     return S.json(res, 200, v);
   } catch (e) {
     return S.json(res, 200, { ok: false, reason: 'server_error' });

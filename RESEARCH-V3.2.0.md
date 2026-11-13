@@ -1,4 +1,4 @@
-# SNS Bookmark V3.2.0｜九平台資料來源研究與比較（小克 × 小澄）＋第十平台小紅書可行性＋2026-11-13 重新研究
+# SNS Bookmark V3.2.0｜九平台資料來源研究與比較（小克 × 小澄）＋第十平台小紅書可行性＋2026-11-13 重新研究＋V3.2.1
 
 日期：2026-11-12　依據：小克《八平台研究報告 第一版》、小澄《九平台技術研究補充報告 第一版》、猴猴《七項問題最終決定》
 
@@ -116,6 +116,49 @@
 - [Meta：Tokenless access to Meta oEmbed APIs](https://developers.facebook.com/blog/post/2026/06/15/tokenless-access-to-meta-oembed-apis/)
 - [cnblogs：微博手機端爬取不需 Cookie（2024-06）](https://cnblogs.com/mingkai2004/p/18244624)
 - [HasData：TikTok 公開頁面 rehydration 資料](https://hasdata.com/blog/tiktok-scraping-python)
+
+## 七、V3.2.1（2026-11-13）：十平台帳號優先、發布日期、歷史版本比對
+
+> 小克的開發環境連不到任何社群平台（網路被擋），研究工具也不允許直接呼叫這些 API。以下是**官方文件＋公開資料＋小克自己保存的歷史安裝包與文件**的研究；所有「真的拿不拿得到」都要在 Vercel 正式環境實測。為了讓實測時看得出卡在哪一步，API 回應多了 `trace`（只有網域＋狀態碼）。
+
+### 7-1. 歷史版本比對（指令第十三章）
+
+| 項目 | 比對範圍 | 結果 |
+|---|---|---|
+| Instagram @帳號 | V3.2.0 初版（complete-1）、complete-4（18:10）、complete-5 的 `instagram()`；V2.8.x～V3.1.0 的 CHANGELOG／TEST_REPORT | 三版伺服器端的帳號順序**相同**（網址 → oEmbed → 公開嵌入頁），差別只在 complete-4 起「有帳號就不再讀嵌入頁」，不影響帳號。**V3.2.0 以前，Instagram 帳號只有一個來源：前端 `inferAcct` 從網址 `instagram.com/{帳號}/p|reel/{代碼}/` 讀出**（V2.8.x 起）。猴猴這次的兩個測試網址是 `/reels/代碼`、`/reel/代碼`，網址裡沒有帳號——這最可能就是「以前可以、現在不行」的原因：以前測的網址帶有帳號路徑。這個方法仍然保留 |
+| Instagram oEmbed | 官方 Instagram oEmbed 文件 | 文件列出的網址格式只有 `/p/{shortcode}/`、`/tv/{shortcode}/`（Reel 也支援，但沒有列 `/reel/` 寫法）。complete-5 以前送 `/reel/{代碼}/` → **改送 `/p/{代碼}/`** |
+| Instagram 嵌入頁內嵌資料 | complete-5 的 owner 正規表示式 | 要求 `shortcode_media` 與 `owner` 之間不能有 `[`，真實資料常有陣列在前 → 幾乎不會命中；而且嵌入頁的資料通常放在跳脫過的 `contextJSON` 字串裡。**改成正式解析 JSON，只認 `shortcode` 等於這篇代碼的 `owner.username`** |
+| Threads 日期 | V2.x～V3.2.0 的 `inferDate` | 一直只有一種實作：正式貼文網址 `/@帳號/post/{shortcode}` 的 shortcode 推算（與 Instagram 同算法）。歷史紀錄裡**沒有** `/share/` 解析日期的實作或測試；complete-5 只能解析正式網址，是因為前端 `inferDate` 只看網址本身，不會先解析分享網址 |
+| 其他平台日期 | 同上 | 歷史上只有 X（Snowflake）、Instagram／Threads（shortcode）、PTT（文章網址時間）三種，沒有其他平台的日期解析可以恢復 |
+| Bilibili `pubdate` | V3.2.0 初版～complete-5 | 三版都呼叫同一個 `view` 介面，回應本來就有 `data.pubdate`，但 `out()` 只有帳號與文字兩個欄位，所以沒有傳回前端。帳號與標題在歷史上也從來沒有實測成功過（V3.2.0 以前沒有伺服器取得） |
+| 抖音 | V3.1.0 分享文字解析、V3.2.0 `_ROUTER_DATA` | 分享文字解析不變（實測可取得暱稱）。`_ROUTER_DATA` 的找法從 V3.2.0 初版起就要求「`desc` 和 `author.nickname` 同時存在」→ 改成只認作品 ID |
+| 微博 | V3.2.0 初版（只有 `statuses/show`）、complete-5（加 `/detail/` 的 `$render_data`） | 解析的欄位相同；`/detail/` 只接受數字 ID，電腦網址的 9 碼 bid 應改用 `/status/{bid}` → 已改 |
+| 自動帶入流程 | V3.2.0 初版～complete-5 | 手動保護、`auto` 規則一致；complete-5 發現的「同一個網址再收到輸入事件會清掉帳號」這次一併修好（見 CHANGELOG 五） |
+
+### 7-2. 各平台資料來源（V3.2.1 採用）
+
+| 平台 | 帳號來源 | 文字來源 | 發布日期來源 | 已知會失敗的原因 |
+|---|---|---|---|---|
+| TikTok | 網址 @帳號 | 公開影片頁 `__UNIVERSAL_DATA_FOR_REHYDRATION__` 的 `desc`（實測已通過） | 同一物件 `createTime`（秒；官方 Video Object 的 `create_time` 同義）→ 沒有才用影片 ID 前 32 位元（學術論文確認是建立時間，排程發布可能與實際公開時間不同） | 公開頁偶爾回驗證頁 |
+| 抖音 | `www.iesdouyin.com`／`m.douyin.com` 公開分享頁 `_ROUTER_DATA` 裡同一個作品 ID 的 `author.nickname`；伺服器拿不到時用手機完整分享文字 | 同一物件 `desc`；分享文字 | 同一物件 `create_time` | 公開分享頁對資料中心 IP 常回驗證頁（實測網頁版、短網址都沒取得）；抖音作品 ID 的時間推算沒有公開文件確認，**不使用** |
+| 微博 | `m.weibo.cn/statuses/show` → `/detail/`、`/status/` 公開頁 `$render_data` 的 `user.screen_name` | `page_info.media_info.video_title` → 這則（轉發者）`text_raw`／`text` → `retweeted_status`；長文 `statuses/extend` | 這則微博 `created_at`（「Tue Nov 11 20:15:03 +0800 2025」格式） | 資料中心 IP 可能被導去訪客驗證；**影片網址兩種**：唯一已知的介面是 `weibo.com/tv/api/component`（POST），公開範例都帶 Cookie → 依規則不做，三欄留空 |
+| Bilibili | `api.bilibili.com/x/web-interface/view` 的 `owner.name` → 公開影片頁 `__INITIAL_STATE__.videoData.owner.name` → `meta[name=author]` | `title` → `videoData.title` → `og:title` | `pubdate`（秒）→ `videoData.pubdate` | 介面對資料中心 IP 常回 `-412` 風控 |
+| Facebook | 官方 oEmbed（免權杖）嵌入碼「Posted by」→ 公開貼文頁 JSON-LD `author.name`、`article:author` | 停用 | 公開貼文頁 `article:published_time`、JSON-LD `datePublished` | 個人／非公開貼文、公開頁要求登入；Meta 2025/11 起 oEmbed 不再回傳 `author_name` |
+| 小紅書 | 筆記頁 `__INITIAL_STATE__` 同一筆記 ID 的 `user.nickname` | 同一筆記 `title`、`desc` | 同一筆記 `time`（毫秒） | 登入牆、驗證、`xsec_token` 過期、資料中心 IP；筆記 ID 的時間推算沒有公開文件確認，**不使用** |
+| Threads | 網址 @帳號 | 停用 | 正式 shortcode 推算（`/share/` 先解析） | `/share/` 解析失敗就留空 |
+| YouTube | 官方 oEmbed `author_name` | 官方 oEmbed `title` | 公開影片頁 `playerMicroformatRenderer.publishDate`、`itemprop=datePublished`（不用 `uploadDate`；官方 Data API 的 `snippet.publishedAt` 需要金鑰） | 頁面太大或要求同意 Cookie 時取不到日期（帳號、標題不受影響） |
+| Instagram | 網址帳號 → 官方 oEmbed（`/p/`）→ 公開嵌入頁（CaptionUsername、UsernameText、`contextJSON` owner）→ 公開貼文頁 meta | 停用 | shortcode 推算（前端，不變） | 公開頁對資料中心 IP 常要求登入；免權杖 oEmbed 不保證含帳號 |
+| X | 網址 @帳號 | `publish.x.com` oEmbed | status ID（Snowflake，前端，不變） | — |
+
+### 2026-11-13（V3.2.1）參考來源
+
+- [TikTok：Video Object（create_time）](https://developers.tiktok.com/docs/en/tiktok-api-v2-video-object)
+- [Just Another Hour on TikTok（影片 ID 前 32 位元＝建立時間）](https://arxiv.org/html/2504.13279v5)、[Bellingcat：tiktok-timestamp](https://awesome.ecosyste.ms/projects/github.com%2Fbellingcat%2Ftiktok-timestamp)
+- [Meta：Instagram oEmbed（網址格式）](https://developers.facebook.com/docs/instagram-platform/oembed)
+- [YouTube Data API：videos（publishedAt）](https://developers.google.com/youtube/data/reference/rest/v3/videos)
+- [Open Graph protocol（article:published_time）](https://ogp.me/)
+- [Threads：Media（timestamp）](https://developers.facebook.com/docs/threads/threads-media)
+- [cnblogs：微博 tv/api/component](https://www.cnblogs.com/honlicc/articles/15761789.html)
 
 ## 參考來源
 
