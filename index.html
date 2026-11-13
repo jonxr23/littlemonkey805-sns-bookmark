@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="app-version" content="3.2.3">
-<meta name="app-build" content="2026-11-13 13:35">
+<meta name="app-build" content="2026-11-13 13:50">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1090,6 +1090,10 @@ input.phfit::placeholder{font-size:var(--phf)}
 .fsb .fsbl{flex:none}
 .fsb .fsbc{flex:none;display:inline-block;max-width:16em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;padding:0 calc(7px*var(--ui));border:1px solid color-mix(in srgb,var(--acc) 50%,transparent);border-radius:999px;background:color-mix(in srgb,var(--acc) 9%,transparent);color:var(--fg)}
 .fsb .fsbc[hidden]{display:none}
+.fsb .fsbc{display:inline-flex;align-items:center}
+.fsb .fsbc i{flex:none}
+.fsb .fsbc .fsbv{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fsb .fsbc .fsbx{flex:none}
 .fsb .fsbc i{font-style:normal;color:var(--mut);margin-right:.3em}
 .fsb .fsbm{flex:none;display:inline-flex;align-items:center;gap:.15em;margin:0;padding:0 calc(2px*var(--ui));min-height:0;height:auto;width:auto;border:0;background:none;box-shadow:none;color:var(--acc-ink,var(--acc));font:inherit;font-weight:700;cursor:pointer;line-height:inherit}
 .fsb .fsbm[hidden]{display:none}
@@ -1097,11 +1101,17 @@ input.phfit::placeholder{font-size:var(--phf)}
 #mn>.fsb{margin:0 0 calc(5px*var(--ui))}
 .fsbp{position:fixed;z-index:60;box-sizing:border-box;max-width:min(calc(100vw - 16px),420px);max-height:min(60vh,420px);overflow:auto;background:var(--card);color:var(--fg);border:1px solid color-mix(in srgb,var(--acc) 45%,transparent);border-radius:12px;box-shadow:0 6px 22px rgba(0,0,0,.16);padding:calc(8px*var(--ui)) calc(12px*var(--ui));font-size:calc(13px*var(--ui));line-height:1.65;white-space:normal;overflow-wrap:anywhere}
 .fsbp[hidden]{display:none}
+/* V3.2.3：單獨取消條件的 × */
+.fsb .fsbx,.fsbp .fsbx{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin:0 calc(-4px*var(--ui)) 0 calc(3px*var(--ui));padding:0 calc(4px*var(--ui));min-width:0;min-height:0;height:auto;width:auto;border:0;background:none;box-shadow:none;color:var(--mut);font:inherit;font-size:1.15em;line-height:1;cursor:pointer;border-radius:999px}
+.fsb .fsbx:hover,.fsbp .fsbx:hover,.fsb .fsbx:focus-visible,.fsbp .fsbx:focus-visible{color:var(--acc-ink,var(--acc));background:color-mix(in srgb,var(--acc) 18%,transparent)}
+.fsbp .fsbpv{white-space:nowrap}
+.fsbp .fsbx{margin-right:0}
 .fsbp .fsbpt{font-weight:700;margin-bottom:calc(2px*var(--ui))}
 .fsbp .fsbpr b{font-weight:700;margin-right:.2em}
 @media(max-width:900px){
  .fsb{font-size:calc(12px*var(--ui));gap:calc(5px*var(--ui));line-height:1.45}
  .fsb .fsbc{padding:0 calc(6px*var(--ui))}
+ .fsb .fsbx,.fsbp .fsbx{padding:calc(2px*var(--ui)) calc(6px*var(--ui));margin-top:calc(-2px*var(--ui));margin-bottom:calc(-2px*var(--ui))}
  .fsb .fsbm{padding:calc(2px*var(--ui)) calc(4px*var(--ui))}
  #pn.pdn{margin-bottom:calc(4px*var(--ui))}
  /* V3.2.2：手機待回顧區縮小垂直空間（電腦版不變）；按鈕仍保留 32px 觸控高度 */
@@ -3400,15 +3410,20 @@ render();
  const lab=bar.firstChild,more=bar.lastChild;
  const pop=document.createElement('div');pop.id='fsbp';pop.className='fsbp';pop.hidden=true;pop.setAttribute('role','dialog');pop.setAttribute('aria-label','目前篩選條件');document.body.append(pop);
  const fmtD=d=>String(d||'').replace(/-/g,'/');
- const items=()=>{const r=[];const add=(k,v)=>r.push({k,v});
-  const q=$('#q').value.trim();if(q)add('搜尋',q);
-  if(plSel)add('平台',plSel);
-  if(sel.c)add('資料夾',sel.c.split('/').join(' → '));if(noFolder)add('資料夾','無資料夾');
-  if(gSel){const g=gSel==='_'?null:grps.find(x=>x.id===gSel);add('分組',gSel==='_'?'未分組':(g&&g.name)||gSel)}
-  if(sel.t)add('標籤','#'+sel.t);
-  if(sel.u)add('狀態','未讀');if(gotOnly)add('狀態','未下載');if(starOnly)add('狀態','加星號');
-  const f=$('#df').value,t=$('#dt').value;if(f||t){const k=$('#dk').value==='pub'?'發布日期':'收藏日期';add(k,f&&!t?fmtD(f):(fmtD(f)||'…')+'～'+(fmtD(t)||'…'))}
+ const items=()=>{const r=[];const add=(k,v,id)=>r.push({k,v,id});
+  const q=$('#q').value.trim();if(q)add('搜尋',q,'q');
+  if(plSel)add('平台',plSel,'pl');
+  if(sel.c)add('資料夾',sel.c.split('/').join(' → '),'c');if(noFolder)add('資料夾','無資料夾','nf');
+  if(gSel){const g=gSel==='_'?null:grps.find(x=>x.id===gSel);add('分組',gSel==='_'?'未分組':(g&&g.name)||gSel,'g')}
+  if(sel.t)add('標籤','#'+sel.t,'t');
+  if(sel.u)add('狀態','未讀','u');if(gotOnly)add('狀態','未下載','got');if(starOnly)add('狀態','加星號','star');
+  const f=$('#df').value,t=$('#dt').value;if(f||t){const k=$('#dk').value==='pub'?'發布日期':'收藏日期';add(k,f&&!t?fmtD(f):(fmtD(f)||'…')+'～'+(fmtD(t)||'…'),'d')}
   return r};
+ /* V3.2.3：單獨取消一個條件（× 按鈕）——只清掉那一項，其他篩選保留，再依剩下的條件重新篩選 */
+ const clear1=id=>{if(id==='q')$('#q').value='';else if(id==='pl'){plSel='';$('#sdp').value=''}else if(id==='c')sel={...sel,c:''};else if(id==='nf')noFolder=false;
+  else if(id==='g')gSel='';else if(id==='t')sel={...sel,t:''};else if(id==='u')sel={...sel,u:false};else if(id==='got')gotOnly=false;else if(id==='star')starOnly=false;
+  else if(id==='d'){$('#df').value=$('#dt').value='';const p=$('#dpre');if(p)p.value=''}else return;render()};
+ const xBtn=x=>{const b=document.createElement('button');b.type='button';b.className='fsbx';b.dataset.fx=x.id;b.textContent='×';b.title='取消這個條件';b.setAttribute('aria-label','取消'+x.k+' '+x.v);return b};
  let last='',open=false;
  const place=()=>{const ctl=$('#ctl0'),tbt=$('#tbt'),due=$('#due');
   if(!MQ.matches&&ctl&&tbt&&ctl.offsetParent!==null&&tbt.parentElement){if(bar.previousElementSibling!==tbt)tbt.after(bar)}
@@ -3422,7 +3437,7 @@ render();
   chips.forEach(c=>{c.hidden=false});more.hidden=false;
   const gap=parseFloat(getComputedStyle(bar).columnGap)||0,W=bar.clientWidth;
   const mtxt=more.textContent;more.textContent='…更多';const mw1=more.offsetWidth;more.textContent='收合';const mw=Math.max(mw1,more.offsetWidth);more.textContent=mtxt;
-  const ws=chips.map(c=>c.offsetWidth),trunc=chips.some(c=>c.scrollWidth>c.clientWidth+1);
+  const ws=chips.map(c=>c.offsetWidth),trunc=chips.some(c=>{const v=c.querySelector('.fsbv');return v&&v.scrollWidth>v.clientWidth+1});
   const all=lab.offsetWidth+ws.reduce((s,w)=>s+gap+w,0);
   if(all<=W&&!trunc){more.hidden=!open;return}
   let k=0,acc=lab.offsetWidth+gap+mw;while(k<ws.length&&acc+gap+ws[k]<=W){acc+=gap+ws[k];k++}
@@ -3430,15 +3445,18 @@ render();
  const update=()=>{place();const it=items(),key=JSON.stringify(it);
   if(!it.length){bar.hidden=true;last='';open=false;pop.hidden=true;more.setAttribute('aria-expanded','false');more.textContent='…更多';return}
   if(key!==last){last=key;bar.querySelectorAll('.fsbc').forEach(e=>e.remove());
-   for(const x of it){const c=document.createElement('span');c.className='fsbc';const i=document.createElement('i');i.textContent=x.k;c.append(i,document.createTextNode(x.v));c.title=x.k+'：'+x.v;more.before(c)}
+   for(const x of it){const c=document.createElement('span');c.className='fsbc';const i=document.createElement('i');i.textContent=x.k;const v=document.createElement('span');v.className='fsbv';v.textContent=x.v;c.append(i,v,xBtn(x));c.title=x.k+'：'+x.v;more.before(c)}
    if(open)drawPop()}
   bar.hidden=false;fit()};
- const drawPop=()=>{const it=items(),by=new Map();it.forEach(x=>{by.has(x.k)||by.set(x.k,[]);by.get(x.k).push(x.v)});
+ const drawPop=()=>{const it=items(),by=new Map();it.forEach(x=>{by.has(x.k)||by.set(x.k,[]);by.get(x.k).push(x)});
   pop.textContent='';const h=document.createElement('div');h.className='fsbpt';h.textContent='目前篩選';pop.append(h);
-  for(const [k,vs] of by){const r=document.createElement('div');r.className='fsbpr';const b=document.createElement('b');b.textContent=k+'：';r.append(b,document.createTextNode(vs.join('、')));pop.append(r)}
+  for(const [k,xs] of by){const r=document.createElement('div');r.className='fsbpr';const b=document.createElement('b');b.textContent=k+'：';r.append(b);
+   xs.forEach((x,i)=>{if(i)r.append(document.createTextNode('、'));const v=document.createElement('span');v.className='fsbpv';v.textContent=x.v;v.append(xBtn(x));r.append(v)});pop.append(r)}
   const br=more.getBoundingClientRect(),vw=document.documentElement.clientWidth,vh=window.innerHeight;pop.style.left='0px';pop.style.top='0px';
   const pw=pop.offsetWidth,ph=pop.offsetHeight;let x=Math.min(Math.max(8,br.right-pw),vw-pw-8),y=br.bottom+6;if(y+ph>vh-8&&br.top-6-ph>8)y=br.top-6-ph;
   pop.style.left=Math.max(8,x)+'px';pop.style.top=Math.max(8,y)+'px'};
+ bar.addEventListener('click',e=>{const b=e.target.closest('.fsbx');if(!b)return;e.stopPropagation();clear1(b.dataset.fx)});
+ pop.addEventListener('click',e=>{const b=e.target.closest('.fsbx');if(!b)return;e.stopPropagation();clear1(b.dataset.fx)});
  more.addEventListener('click',e=>{e.stopPropagation();if(open){closePop();return}open=true;more.setAttribute('aria-expanded','true');more.textContent='收合';pop.hidden=false;drawPop();fit()});
  document.addEventListener('click',e=>{if(open&&!pop.contains(e.target)&&e.target!==more)closePop()});
  document.addEventListener('keydown',e=>{if(open&&e.key==='Escape'){e.stopPropagation();closePop();more.focus()}},true);

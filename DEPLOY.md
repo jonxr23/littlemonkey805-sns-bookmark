@@ -8,7 +8,7 @@
 | 項目 | 內容 |
 |---|---|
 | GitHub Repository | `jonxr23/littlemonkey805-sns-bookmark` |
-| 本次安裝包 | `sns-bookmark-v3.2.3-complete.zip`（解壓後唯一資料夾 `sns-bookmark-v3.2.3`；app-version 3.2.3、build 2026-11-13 13:35） |
+| 本次安裝包 | `sns-bookmark-v3.2.3-complete.zip`（解壓後唯一資料夾 `sns-bookmark-v3.2.3`；app-version 3.2.3、build 2026-11-13 13:50） |
 | 開發基準 | `sns-bookmark-v3.2.2-complete.zip`（V3.2.2，build 2026-11-13 13:20）。**V3.2.3 已包含 V3.2.2 以前的全部修改** |
 | 目前 GitHub `main`／Vercel Production | **請上傳前自己確認**（Vercel → Deployments 標示 Production 的那一筆；GitHub `main` 最新 commit），記下來作為回復點 |
 | 正式網址 | https://littlemonkey805-sns-bookmark.vercel.app/（不變） |
@@ -30,7 +30,7 @@
    - 說明文件：`CHANGELOG.md`、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`RESEARCH-V3.2.0.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V3.2.2.md`、`TEST_REPORT-V3.2.1.md`（舊報告改名，**新檔要一起上傳**）。
 3. commit 到 `main`（建議訊息：`Release SNS Bookmark V3.2.3`），Vercel 會自動部署。
 4. Vercel 最新一筆 **Ready**＋**Production** 後，Deployments → 該筆 → Functions 應看到 `api/resolve`。
-5. 正式網址側邊欄最底部應顯示 `版本：v3.2.3 / 更新：2026-11-13 13:35`。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
+5. 正式網址側邊欄最底部應顯示 `版本：v3.2.3 / 更新：2026-11-13 13:50`。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
 6. 實機驗收清單見 `TEST_REPORT.md` 第四節（V3.2.2 項目見 `TEST_REPORT-V3.2.2.md` 第八節）。
 7. **（選用）查看自動偵測卡在哪一步**：電腦 Chrome 開新增視窗、貼網址前按 F12 →「Network」→ 貼上網址 → 點名稱是 `resolve` 的那一筆 →「Response」，`trace` 會列出每一步的網域與狀態碼（例如 `api.bilibili.com/x/web-interface/view 412`＝被風控擋下；`… 302`＝被導去登入或驗證）。只有狀態碼，沒有貼文內容。
 
@@ -41,7 +41,7 @@
 
 ## 五、更新時間的來源（沒有改）
 
-畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-13 13:35）。
+畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-13 13:50）。
 
 ---
 
