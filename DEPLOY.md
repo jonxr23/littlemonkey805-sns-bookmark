@@ -1,4 +1,4 @@
-# SNS文章收藏夾 V3.2.1 部署指南（**等你驗收安裝包後再安排正式部署**）
+# SNS文章收藏夾 V3.2.2 部署指南（**等你驗收安裝包後再安排正式部署**）
 
 > **部署紀錄**：小克只完成開發、測試與安裝包。**沒有** commit、**沒有** push、**沒有**開分支、**沒有** Preview、**沒有**觸發 Vercel。沒有修改環境變數、Google Console、Service Account、管理試算表。
 > **正式環境版本由你確認**：小克看不到 GitHub／Vercel，不知道目前 `main` 與 Production 是哪一版、哪一個 commit，所以本文件**不寫死**任何正式版本號或 commit。
@@ -8,8 +8,8 @@
 | 項目 | 內容 |
 |---|---|
 | GitHub Repository | `jonxr23/littlemonkey805-sns-bookmark` |
-| 本次安裝包 | `sns-bookmark-v3.2.1-complete-6.zip`（解壓後唯一資料夾 `sns-bookmark-v3.2.1`；app-version 3.2.1、build 2026-11-13 05:10） |
-| 開發基準 | `sns-bookmark-v3.2.0-complete-5.zip`（V3.2.0，build 2026-11-13 03:10）。**V3.2.1 已包含 V3.2.0 以前的全部修改** |
+| 本次安裝包 | `sns-bookmark-v3.2.2-complete.zip`（解壓後唯一資料夾 `sns-bookmark-v3.2.2`；app-version 3.2.2、build 2026-11-13 13:00） |
+| 開發基準 | `sns-bookmark-v3.2.1-complete-6.zip`（V3.2.1，build 2026-11-13 05:10）。**V3.2.2 已包含 V3.2.1 以前的全部修改** |
 | 目前 GitHub `main`／Vercel Production | **請上傳前自己確認**（Vercel → Deployments 標示 Production 的那一筆；GitHub `main` 最新 commit），記下來作為回復點 |
 | 正式網址 | https://littlemonkey805-sns-bookmark.vercel.app/（不變） |
 
@@ -17,31 +17,31 @@
 
 | 項目 | 結果 |
 |---|---|
-| Apps Script `Code.gs`／管理試算表 | **免更新**（與 V3.2.0、V3.1.0 逐位元相同） |
+| Apps Script `Code.gs`／管理試算表 | **免更新**（與 V3.2.1、V3.2.0、V3.1.0 逐位元相同） |
 | Vercel 環境變數 | **不用新增或修改** |
 | Vercel 專案設定、Google Cloud Console／OAuth／Service Account | **不用動** |
-| 使用者資料 | **不需要轉換**。V3.2.1 只在既有的隱藏欄位 `auto` 裡多一個子欄位 `pub`（系統自動帶入的發布日期）；發布日期仍存在原本的 `pub` 欄位；沒有新增試算表欄位。舊資料沒有 `auto.pub` 時，原本的發布日一律當手動資料 |
+| 使用者資料 | **不需要轉換**。V3.2.2 沒有改任何資料格式（「分類」改「資料夾」只是畫面文字，`cats` 欄位不變）。V3.2.1 起的 `auto.pub` 照舊 |
 
 ## 三、上傳步驟（驗收後；GitHub main → Vercel Production）
 
 1. **先確認並記下目前正式版**：Vercel → Deployments 標示 **Production** 的那一筆（時間／網址／commit），GitHub `main` 最新 commit 也記下；目前的專案檔案先備份一份。出問題時用它回復。
-2. 解壓縮 `sns-bookmark-v3.2.1-complete-6.zip`，把 `sns-bookmark-v3.2.1` 資料夾**裡面**所有檔案（含隱藏檔 `.vercelignore`）複製到 Git 專案根目錄覆蓋。
-   - 網站檔案（和 V3.2.0 complete-5 比）：`index.html`、`api/_lib/info.js`、`api/resolve.js`、`package.json`。
-   - 說明文件：`CHANGELOG.md`、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`RESEARCH-V3.2.0.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V3.2.0.md`（由 V3.2.0 的 `TEST_REPORT.md` 改名，**新檔要一起上傳**）。
-3. commit 到 `main`（建議訊息：`Release SNS Bookmark V3.2.1`），Vercel 會自動部署。
+2. 解壓縮 `sns-bookmark-v3.2.2-complete.zip`，把 `sns-bookmark-v3.2.2` 資料夾**裡面**所有檔案（含隱藏檔 `.vercelignore`）複製到 Git 專案根目錄覆蓋。
+   - 網站檔案（和 V3.2.1 complete-6 比）：`index.html`、`api/_lib/info.js`、`package.json`。
+   - 說明文件：`CHANGELOG.md`、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`RESEARCH-V3.2.0.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V3.2.1.md`（由 V3.2.1 的 `TEST_REPORT.md` 改名，**新檔要一起上傳**）。
+3. commit 到 `main`（建議訊息：`Release SNS Bookmark V3.2.2`），Vercel 會自動部署。
 4. Vercel 最新一筆 **Ready**＋**Production** 後，Deployments → 該筆 → Functions 應看到 `api/resolve`。
-5. 正式網址側邊欄最底部應顯示 `版本：v3.2.1 / 更新：2026-11-13 05:10`。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
-6. 實機驗收清單見 `TEST_REPORT.md` 第六節。
+5. 正式網址側邊欄最底部應顯示 `版本：v3.2.2 / 更新：2026-11-13 13:00`。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
+6. 實機驗收清單見 `TEST_REPORT.md` 第八節。
 7. **（選用）查看自動偵測卡在哪一步**：電腦 Chrome 開新增視窗、貼網址前按 F12 →「Network」→ 貼上網址 → 點名稱是 `resolve` 的那一筆 →「Response」，`trace` 會列出每一步的網域與狀態碼（例如 `api.bilibili.com/x/web-interface/view 412`＝被風控擋下；`… 302`＝被導去登入或驗證）。只有狀態碼，沒有貼文內容。
 
 ## 四、回復
 
-- Vercel → Deployments → 第三節第 1 步記下的那一筆 → **Promote to Production**（或 Instant Rollback），再在 GitHub Revert V3.2.1 的 commit。
-- **資料相容性**：回到 V3.2.0 時收藏不會遺失；`auto.pub` 會被舊版忽略（舊版不知道發布日期是系統帶入的，會把它當手動資料，不影響顯示）。
+- Vercel → Deployments → 第三節第 1 步記下的那一筆 → **Promote to Production**（或 Instant Rollback），再在 GitHub Revert V3.2.2 的 commit。
+- **資料相容性**：V3.2.2 沒有改資料格式，回到 V3.2.1 不影響資料；回到 V3.2.0 時 `auto.pub` 會被舊版忽略（當成手動資料，不影響顯示）。
 
 ## 五、更新時間的來源（沒有改）
 
-畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-13 05:10）。
+畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-13 13:00）。
 
 ---
 
@@ -391,7 +391,7 @@ V2.7.0、V2.8.0 沒有單獨上線，這一次是 **V2.6.0 → V2.8.2** 一次�
 
 ### 3. 部署
 
-1. 把 `sns-bookmark-v3.2.1` 資料夾裡的所有檔案（含 `.vercelignore`）放進 Git 專案根目錄。
+1. 把 `sns-bookmark-v3.2.2` 資料夾裡的所有檔案（含 `.vercelignore`）放進 Git 專案根目錄。
 2. 在 Vercel 設好四個環境變數。
 3. Push 或 Redeploy。
 4. 打開網站 → 按「登入 Google」。

@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.2.1">
-<meta name="app-build" content="2026-11-13 05:10">
+<meta name="app-version" content="3.2.2">
+<meta name="app-build" content="2026-11-13 13:00">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -214,7 +214,7 @@ mark{background:color-mix(in srgb,var(--acc) 24%,transparent);color:inherit;bord
 #bdbar .hbt{position:absolute;top:0;height:calc(8px*var(--ui));border-radius:calc(999px*var(--ui));background:color-mix(in srgb,var(--acc) 70%,var(--card));cursor:grab;min-width:calc(40px*var(--ui))}
 #bdbar .hbt:hover,#bdbar.drag .hbt{background:var(--acc)}
 #bdbar.drag .hbt{cursor:grabbing}
-/* 分類：表單內精簡入口 */
+/* 資料夾：表單內精簡入口 */
 .cbar{display:flex;gap:calc(8px*var(--ui));align-items:flex-start;flex-wrap:wrap}
 .cbar .csel{flex:1 1 calc(200px*var(--ui))}
 #cmb{flex:none;white-space:nowrap}
@@ -392,9 +392,12 @@ body.bsdrag,body.bsdrag *{cursor:crosshair!important}
 <style id="v281">
 /* V2.8.1：品牌桃主要按鈕／選取標籤的 Hover 改為變亮，按鈕深棕字對比維持 ≥ 4.5 */
 @media(hover:hover){:root[data-theme=cute] .pri:hover{background:#FFC5CD;border-color:#FFC5CD}:root[data-theme=cute] .chip.on:hover,:root[data-theme=cute] .tn .chip.on:hover,:root[data-theme=cute] .pk.on:hover,:root[data-theme=cute] .chip.clr:hover{background:#FFC5CD}}
+/* V3.2.2：原貼文發布日的提示放在日期輸入框正下方；沒有提示時不佔高度；長提示自然換行，不溢出到旁邊欄位 */
+#pn.pdn{font-size:calc(12px*var(--ui));color:var(--mut);line-height:1.45;margin-top:calc(-4px*var(--ui));min-width:0;overflow-wrap:anywhere;word-break:break-word}
+#pn.pdn:empty{display:none}
 </style>
 <style id="v283">
-/* V2.8.3：新增收藏「發文帳號」提示（沿用分類提示的字級與顏色）；兩欄時輸入框底部對齊 */
+/* V2.8.3：新增收藏「發文帳號」提示（沿用資料夾提示的字級與顏色）；兩欄時輸入框底部對齊 */
 .ach{font-size:calc(12px*var(--ui));color:var(--mut);line-height:1.45;margin-top:calc(-4px*var(--ui))}
 .g2n>div>:last-child{margin-top:auto;flex:0 0 auto}
 /* V2.8.3：分組選擇視窗底部兩顆按鈕同一排 */
@@ -1080,6 +1083,37 @@ input.phfit::placeholder{font-size:var(--phf)}
 .due .drow.on>b{color:var(--due-ink)}
 .due .dstat{color:var(--due-ink);font-weight:700;font-size:calc(13px*var(--ui))}
 </style>
+<style id="v322">
+/* V3.2.2：目前篩選狀態列——固定一行；放不下的條件收進「…更多」（浮層，不推擠下方內容）；沒有篩選時整列隱藏 */
+.fsb{display:flex;align-items:center;flex-wrap:nowrap;gap:calc(6px*var(--ui));min-width:0;overflow:hidden;white-space:nowrap;font-size:calc(12.5px*var(--ui));line-height:1.5;color:var(--mut)}
+.fsb[hidden]{display:none!important}
+.fsb .fsbl{flex:none}
+.fsb .fsbc{flex:none;display:inline-block;max-width:16em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;padding:0 calc(7px*var(--ui));border:1px solid color-mix(in srgb,var(--acc) 50%,transparent);border-radius:999px;background:color-mix(in srgb,var(--acc) 9%,transparent);color:var(--fg)}
+.fsb .fsbc[hidden]{display:none}
+.fsb .fsbc i{font-style:normal;color:var(--mut);margin-right:.3em}
+.fsb .fsbm{flex:none;display:inline-flex;align-items:center;gap:.15em;margin:0;padding:0 calc(2px*var(--ui));min-height:0;height:auto;width:auto;border:0;background:none;box-shadow:none;color:var(--acc-ink,var(--acc));font:inherit;font-weight:700;cursor:pointer;line-height:inherit}
+.fsb .fsbm[hidden]{display:none}
+#ctl0 .ctlr>.fsb{flex:1 1 0;min-width:0}
+#mn>.fsb{margin:0 0 calc(5px*var(--ui))}
+.fsbp{position:fixed;z-index:60;box-sizing:border-box;max-width:min(calc(100vw - 16px),420px);max-height:min(60vh,420px);overflow:auto;background:var(--card);color:var(--fg);border:1px solid color-mix(in srgb,var(--acc) 45%,transparent);border-radius:12px;box-shadow:0 6px 22px rgba(0,0,0,.16);padding:calc(8px*var(--ui)) calc(12px*var(--ui));font-size:calc(13px*var(--ui));line-height:1.65;white-space:normal;overflow-wrap:anywhere}
+.fsbp[hidden]{display:none}
+.fsbp .fsbpt{font-weight:700;margin-bottom:calc(2px*var(--ui))}
+.fsbp .fsbpr b{font-weight:700;margin-right:.2em}
+@media(max-width:900px){
+ .fsb{font-size:calc(12px*var(--ui));gap:calc(5px*var(--ui));line-height:1.45}
+ .fsb .fsbc{padding:0 calc(6px*var(--ui))}
+ .fsb .fsbm{padding:calc(2px*var(--ui)) calc(4px*var(--ui))}
+ #pn.pdn{margin-bottom:calc(4px*var(--ui))}
+ /* V3.2.2：手機待回顧區縮小垂直空間（電腦版不變）；按鈕仍保留 32px 觸控高度 */
+ .due{padding:calc(5px*var(--ui)) calc(10px*var(--ui));margin-bottom:calc(6px*var(--ui))}
+ .due .dhd{gap:calc(4px*var(--ui)) calc(5px*var(--ui))}
+ .due .dhd>[data-do]{width:calc(32px*var(--ui));height:calc(32px*var(--ui))}
+ .due .dhd>[data-dq]{height:calc(32px*var(--ui));padding:0 calc(12px*var(--ui))}
+ .due .dsel select{height:calc(32px*var(--ui))}
+ .due .ddet{margin-top:calc(2px*var(--ui))}
+ .due .drow{margin:calc(3px*var(--ui)) 0;line-height:1.55}
+}
+</style>
 </head>
 <body>
 <div id="iqw" style="display:none;position:sticky;top:0;z-index:29;background:#ffe9c7;color:#8a4b00;font-weight:600;font-size:calc(13px*var(--ui));text-align:center;padding:calc(6px*var(--ui)) calc(12px*var(--ui));border-bottom:1px solid #e6c27a"></div>
@@ -1095,11 +1129,11 @@ input.phfit::placeholder{font-size:var(--phf)}
 <label>連結 <span id="pl"></span></label>
 <div class="bar"><input id="u" type="url" placeholder="https://…"><button id="ps">貼上</button></div><div id="pm" style="font-size:calc(12px*var(--ui));color:var(--mut)"></div><div id="uex" class="uex" hidden></div><div id="udup" class="udup" role="status" hidden></div><div id="pqw" class="bar" style="display:none;flex-wrap:wrap;align-items:center"><span id="pqt" style="font-size:calc(12px*var(--ui));flex-basis:100%;overflow-wrap:anywhere"></span><select id="pq"></select><input id="pqn" placeholder="新平台名稱" style="display:none"><button type="button" id="pqb" style="display:none">建立</button></div><div class="g2 g2n"><div><label>備註（其實是標題😂）</label><input id="n"></div><div><label>發文帳號 <span id="an"></span></label><div class="ach">系統會嘗試自動偵測發文帳號；若無法取得，請自行填寫（選填）</div><input id="ac" placeholder="例如 @username"></div></div>
 
-<label>分類（可多選）</label><input id="c" type="hidden"><div class="cbar"><div id="csel" class="csel"></div><button type="button" id="cmb">📁 選擇資料夾</button></div><div id="rcf" class="sg"></div><div class="xw fqw"><input id="csq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋資料夾（例如 Fre 或 cky）" aria-label="搜尋分類資料夾"><button type="button" class="xc" id="csqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="cs"></div><div id="rn2" style="display:none"><div class="bar"><input id="rv2" placeholder="新名稱"><button type="button" id="rs2" class="pri">儲存</button><button type="button" id="rx2">取消</button></div><div id="rh2" style="font-size:calc(12px*var(--ui));color:var(--mut);margin-top:calc(4px*var(--ui))"></div></div><div id="oldmk" hidden><input id="dp" type="hidden"><div id="dpw" class="cas"></div><div class="bar"><input id="dn" placeholder="新資料夾名稱"><button type="button" id="db">＋建立並選取</button></div></div>
+<label>資料夾（可多選）</label><input id="c" type="hidden"><div class="cbar"><div id="csel" class="csel"></div><button type="button" id="cmb">📁 選擇資料夾</button></div><div id="rcf" class="sg"></div><div class="xw fqw"><input id="csq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋資料夾（例如 Fre 或 cky）" aria-label="搜尋資料夾"><button type="button" class="xc" id="csqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="cs"></div><div id="rn2" style="display:none"><div class="bar"><input id="rv2" placeholder="新名稱"><button type="button" id="rs2" class="pri">儲存</button><button type="button" id="rx2">取消</button></div><div id="rh2" style="font-size:calc(12px*var(--ui));color:var(--mut);margin-top:calc(4px*var(--ui))"></div></div><div id="oldmk" hidden><input id="dp" type="hidden"><div id="dpw" class="cas"></div><div class="bar"><input id="dn" placeholder="新資料夾名稱"><button type="button" id="db">＋建立並選取</button></div></div>
 <label>標籤（打逗號或按 Enter 就會變成標籤塊，點 × 刪除）</label><input id="g" type="hidden"><div id="tgw" class="tw"><div id="tgc"></div><input id="gi" placeholder="輸入標籤…"></div><div id="tgs2"></div>
 <label>分組（可複選，可以不選）</label><div id="dgs" class="dgs" role="group" aria-label="分組"></div><div id="dgnf" class="dgnf" hidden><input id="dgni" type="text" maxlength="30" placeholder="新分組名稱（30 字以內）" aria-label="新分組名稱" autocomplete="off"><button type="button" id="dgno">建立</button><button type="button" id="dgnc">取消</button></div><div id="dgnm" class="dgnm" role="status"></div>
 <label>貼上的文字（選填，搜尋用）</label><textarea id="t"></textarea>
-<div class="g2"><div><label>原貼文發布日 <span id="pn"></span></label><input id="pd" type="date"></div><div><label>待回顧日期（選填，每年）</label><div class="xw dt mdw"><select id="dm" aria-label="待回顧月份"><option value="">月</option><option value="01">1 月</option><option value="02">2 月</option><option value="03">3 月</option><option value="04">4 月</option><option value="05">5 月</option><option value="06">6 月</option><option value="07">7 月</option><option value="08">8 月</option><option value="09">9 月</option><option value="10">10 月</option><option value="11">11 月</option><option value="12">12 月</option></select><select id="ddy" aria-label="待回顧日期"><option value="">日</option><option value="01">1 日</option><option value="02">2 日</option><option value="03">3 日</option><option value="04">4 日</option><option value="05">5 日</option><option value="06">6 日</option><option value="07">7 日</option><option value="08">8 日</option><option value="09">9 日</option><option value="10">10 日</option><option value="11">11 日</option><option value="12">12 日</option><option value="13">13 日</option><option value="14">14 日</option><option value="15">15 日</option><option value="16">16 日</option><option value="17">17 日</option><option value="18">18 日</option><option value="19">19 日</option><option value="20">20 日</option><option value="21">21 日</option><option value="22">22 日</option><option value="23">23 日</option><option value="24">24 日</option><option value="25">25 日</option><option value="26">26 日</option><option value="27">27 日</option><option value="28">28 日</option><option value="29">29 日</option><option value="30">30 日</option><option value="31">31 日</option></select><input id="d" type="hidden"><button type="button" class="xc" id="dcl" title="清除待回顧日期" aria-label="清除待回顧日期">✕</button></div></div></div><div style="font-size:calc(12px*var(--ui));color:var(--mut)">待回顧日期只要選月／日，每年這一天都會回顧；不填，就會在每年的收藏日、發布日回顧</div><label style="display:flex;gap:calc(6px*var(--ui));align-items:center"><input id="nr" type="checkbox" style="width:calc(16px*var(--ui));height:calc(16px*var(--ui));padding:0"> 不回顧（這一篇不要跳回顧）</label>
+<div class="g2"><div><label>原貼文發布日</label><input id="pd" type="date"><div id="pn" class="pdn" aria-live="polite"></div></div><div><label>待回顧日期（選填，每年）</label><div class="xw dt mdw"><select id="dm" aria-label="待回顧月份"><option value="">月</option><option value="01">1 月</option><option value="02">2 月</option><option value="03">3 月</option><option value="04">4 月</option><option value="05">5 月</option><option value="06">6 月</option><option value="07">7 月</option><option value="08">8 月</option><option value="09">9 月</option><option value="10">10 月</option><option value="11">11 月</option><option value="12">12 月</option></select><select id="ddy" aria-label="待回顧日期"><option value="">日</option><option value="01">1 日</option><option value="02">2 日</option><option value="03">3 日</option><option value="04">4 日</option><option value="05">5 日</option><option value="06">6 日</option><option value="07">7 日</option><option value="08">8 日</option><option value="09">9 日</option><option value="10">10 日</option><option value="11">11 日</option><option value="12">12 日</option><option value="13">13 日</option><option value="14">14 日</option><option value="15">15 日</option><option value="16">16 日</option><option value="17">17 日</option><option value="18">18 日</option><option value="19">19 日</option><option value="20">20 日</option><option value="21">21 日</option><option value="22">22 日</option><option value="23">23 日</option><option value="24">24 日</option><option value="25">25 日</option><option value="26">26 日</option><option value="27">27 日</option><option value="28">28 日</option><option value="29">29 日</option><option value="30">30 日</option><option value="31">31 日</option></select><input id="d" type="hidden"><button type="button" class="xc" id="dcl" title="清除待回顧日期" aria-label="清除待回顧日期">✕</button></div></div></div><div style="font-size:calc(12px*var(--ui));color:var(--mut)">待回顧日期只要選月／日，每年這一天都會回顧；不填，就會在每年的收藏日、發布日回顧</div><label style="display:flex;gap:calc(6px*var(--ui));align-items:center"><input id="nr" type="checkbox" style="width:calc(16px*var(--ui));height:calc(16px*var(--ui));padding:0"> 不回顧（這一篇不要跳回顧）</label>
 <div id="shw"><label>截圖（可多張，會自動壓縮）</label><input id="f" class="vh" type="file" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif" multiple tabindex="-1" aria-hidden="true"><div class="upb"><button type="button" id="ufb">📁 選擇檔案</button><button type="button" id="uxb">🔗 外部圖片網址</button><button type="button" id="pb">📋 剪貼簿圖片</button></div><div id="ust" class="ust" role="button" tabindex="0">未選擇任何檔案 · 點這裡可以改貼外部圖片網址</div><div id="xuw" class="bar" style="display:none"><input id="xu" type="url" inputmode="url" autocomplete="off" placeholder="貼上圖片網址 https://…" aria-label="外部圖片網址"><button type="button" id="xua" class="pri">加入</button><button type="button" id="xuc">取消</button></div><div class="ufmt">支援格式：JPG、JPEG、PNG、GIF；也可以直接引用公開的外部圖片網址（http／https）</div><div id="ferr" class="uerr" role="alert" aria-live="assertive"></div><div class="sh" id="sh"></div><div id="sm" style="font-size:calc(12px*var(--ui));color:var(--mut)"></div><div id="ih" style="font-size:calc(12px*var(--ui));color:var(--mut)">移除圖片後，儲存收藏時，若該圖片沒有被其他收藏使用，就會同步移至 Google Drive 垃圾桶。若圖片顯示「已在雲端移除」，按 × 即可移除這個失效的引用。</div></div>
 <div id="msg" style="font-size:calc(13px*var(--ui));color:var(--mut)"></div>
 <div id="dh" style="font-size:calc(12px*var(--ui));color:var(--mut);display:none">刪除這筆收藏時，沒有被其他收藏使用的圖片也會一併移至 Google Drive 垃圾桶。</div>
@@ -1115,7 +1149,7 @@ input.phfit::placeholder{font-size:var(--phf)}
 <button id="fbo" style="display:none" aria-hidden="true"></button><button id="uib" style="display:none" aria-hidden="true"></button>
 <div id="uim" class="ov" role="dialog" aria-modal="true" aria-labelledby="uimt"><div class="box uisb"><div class="row mh"><b id="uimt">🔍 介面大小</b><button type="button" id="uix" title="關閉" aria-label="關閉">✕</button></div><div class="mb"><div class="uisg" role="radiogroup" aria-label="介面大小"><button type="button" class="chip" data-uisz="s" role="radio">小<small>85%</small></button><button type="button" class="chip" data-uisz="m" role="radio">中<small>100%（預設）</small></button><button type="button" class="chip" data-uisz="l" role="radio">大<small>135%</small></button><button type="button" class="chip" data-uisz="xl" role="radio">特大<small>150%</small></button></div><div class="uish">文字、按鈕、輸入框、卡片、圖示、彈出視窗與側邊欄會一起調整。只套用在這台裝置（電腦、手機各自設定，不會同步到雲端）。</div></div></div></div>
 <div id="fbm" style="display:none;position:fixed;inset:0;z-index:30;align-items:center;justify-content:center;padding:calc(14px*var(--ui));background:rgba(20,18,15,.45);backdrop-filter:blur(calc(6px*var(--ui)));-webkit-backdrop-filter:blur(calc(6px*var(--ui)))"><div class="box" style="width:min(92vw,calc(560px*var(--ui)));max-height:90vh;overflow:auto;gap:calc(12px*var(--ui))"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:calc(12px*var(--ui))"><div style="font-size:calc(15px*var(--ui));line-height:1.7"><b>💬 給小猴的意見回饋：</b><br>有什麼問題或想許願調整的都可以跟我說哦！雖然…我不見得會改哈哈哈哈🤣</div><button type="button" id="fbx" aria-label="關閉" title="關閉">✕</button></div><input id="fbn" maxlength="30" placeholder="尼素誰？不寫就是匿名喔～"><textarea id="fbt" style="min-height:calc(160px*var(--ui))" placeholder="在這裡輸入你想對小猴說的話..."></textarea><input id="fbr" type="hidden" name="systemRealName"><div id="fbs2" style="font-size:calc(13px*var(--ui));color:var(--mut)"></div><div class="row"><button class="pri" id="fbs">送出</button></div></div></div>
-<div id="catm" class="ov" role="dialog" aria-modal="true" aria-labelledby="catt" style="z-index:12"><div class="box catb"><div class="row mh"><b id="catt">📁 選擇資料夾</b><button type="button" id="catx" title="完成" aria-label="完成">✕</button></div><div class="mb" id="catc"><div><div style="font-size:calc(12px*var(--ui));color:var(--mut);margin-bottom:calc(4px*var(--ui))">已選分類（點 × 取消）</div><div id="csel2" class="csel"></div></div><div id="catslot"></div><div class="cmsg" id="catmsg" aria-live="polite"></div></div><div class="mf"><button type="button" id="catn">＋新增資料夾</button><button type="button" class="pri" id="catok">完成</button></div></div></div>
+<div id="catm" class="ov" role="dialog" aria-modal="true" aria-labelledby="catt" style="z-index:12"><div class="box catb"><div class="row mh"><b id="catt">📁 選擇資料夾</b><button type="button" id="catx" title="完成" aria-label="完成">✕</button></div><div class="mb" id="catc"><div><div style="font-size:calc(12px*var(--ui));color:var(--mut);margin-bottom:calc(4px*var(--ui))">已選資料夾（點 × 取消）</div><div id="csel2" class="csel"></div></div><div id="catslot"></div><div class="cmsg" id="catmsg" aria-live="polite"></div></div><div class="mf"><button type="button" id="catn">＋新增資料夾</button><button type="button" class="pri" id="catok">完成</button></div></div></div>
 <div id="mkf" class="ov" role="dialog" aria-modal="true" aria-labelledby="mkft" style="z-index:14"><div class="box mkfb"><div class="row mh"><b id="mkft">＋ 新增資料夾</b></div><div class="mb"><label style="margin:0">放在哪裡（點選一個位置）</label><div class="mkp" id="mkp"></div><div class="xw fqw"><input id="mkq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋資料夾（例如 Fre 或 cky）" aria-label="搜尋放置位置"><button type="button" class="xc" id="mkqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="mkt" role="listbox" aria-label="選擇放置位置"></div><label style="margin:0" for="mkn">新資料夾名稱</label><input id="mkn" autocomplete="off" placeholder="例如 FreenBecky"><div class="cmsg" id="mkm" aria-live="polite"></div></div><div class="mf"><button type="button" id="mkc">取消</button><button type="button" class="pri" id="mko">建立</button></div></div></div>
 <div id="qfab" aria-label="快捷操作"><button type="button" class="qf" id="qfa" tabindex="-1" aria-label="新增收藏">＋新增</button><button type="button" class="qf" id="qft" tabindex="-1" aria-label="回到頁面最上方">↑Top</button><button type="button" id="qfm" aria-label="快捷操作（可拖曳移動）" aria-expanded="false" title="快捷操作（可拖曳移動）">…</button></div>
 <div id="pvm" class="ov" role="dialog" aria-modal="true" aria-labelledby="pvt"><div class="box pvb"><div class="row mh"><b id="pvt">收藏明細</b><button type="button" id="pvx" title="關閉" aria-label="關閉">✕</button></div><div class="mb" id="pvc"></div><div class="mf"><button type="button" id="pvd">刪除</button><button type="button" id="pve">編輯</button><button type="button" id="pvn">取消</button></div></div></div>
@@ -1521,7 +1555,7 @@ function render(){isDue.c=0;posts.sort((a,b)=>{const pb=sortBy==='pub',ka=pb?a.p
  const today=new Date().toLocaleDateString('sv-SE'),cs=new Set(),ts=new Set();
  posts.forEach(p=>{(p.cats||[]).forEach(c=>{let a='';c.split('/').forEach(s=>{a+=(a?'/':'')+s;cs.add(a)})});(p.tags||[]).forEach(t=>ts.add(t))});
  const ch=(a,k,v,l)=>`<button class="chip ${a?'on':''}" data-${k}="${esc(v)}">${l}</button>`;
- const paths=fp(),vis=p=>{const a=p.split('/');return a.slice(0,-1).every((_,i)=>open.has(a.slice(0,i+1).join('/')))};const act=sel.c||sel.t||sel.u||plSel||dueOnly||dueRow||starOnly||gotOnly||gSel||noFolder||$('#q').value.trim()||$('#df').value||$('#dt').value;$('#chips').innerHTML=($('#qb').className=act?'clr':'','')+'<div class="sbq">'+ch(!act,'a','','<span class="ql">全部</span><span class="qn">'+posts.length+'</span>')+ch(sel.u,'u','1','<span class="ql">未讀</span><span class="qn">'+posts.filter(p=>!p.read).length+'</span>')+ch(gotOnly,'ndl','1','<span class="ql">未下載</span><span class="qn">'+posts.filter(p=>!p.got).length+'</span>')+'</div><div class="sbn">'+ch(sbMode==='f','f','1','📁 資料夾')+ch(noFolder,'nf','1','📂 未分類<span style="float:right;opacity:.6">'+posts.filter(p=>!(p.cats||[]).length).length+'</span>')+ch(starOnly,'sf','1','⭐ 加星號<span style="float:right;opacity:.6">'+posts.filter(p=>p.star).length+'</span>')+ch(sbMode==='g','gl','1','📚 分組'+(gSel?'<span class="gsn">'+(gSel==='_'?'未分組':esc((grps.find(g=>g.id===gSel)||{}).name||''))+'</span>':''))+ch(false,'gm','1','🔠 管理分組')+'</div>';srtDraw();if($('#sgll')){const gd=sortS.g.m==='custom'&&grps.length>1;$('#sgll').classList.toggle('gdr',gd);$('#sgll').innerHTML=grps.length?gOrd().map(g=>{const c=ch(gSel===g.id,'gf',g.id,'<span class="gd" style="background:'+esc(g.color)+'"></span>'+esc(g.name)+'<span style="float:right;opacity:.6">'+posts.filter(p=>gOf(p).includes(g.id)).length+'</span>');return gd?'<div class="sgr dz" data-gr="'+esc(g.id)+'">'+c+'</div>':c}).join('')+ch(gSel==='_','gf','_','未分組<span style="float:right;opacity:.6">'+posts.filter(p=>!gOf(p).length).length+'</span>'):'<div class="sge">還沒有分組。按上面的「🔠 管理分組」新增。</div>'}{const L=[...new Set([...['IG','Threads','X','YouTube'].map(n=>pren[n]||n),...cplats.map(c=>c.name),...posts.map(p=>p.platform).filter(Boolean),'網頁'])];$('#sdp').innerHTML='<option value="">全部平台</option>'+L.map(n=>`<option>${esc(n)}</option>`).join('');$('#sdp').value=plSel}$('#tgb').textContent='🏷️ 標籤 '+ts.size+(sel.t?' · #'+sel.t:'');$('#tgb').className='chip'+(tagsOn||sel.t?' on':'');$('#dtb').className='chip'+(($('#df').value||$('#dt').value)?' on':'');$('#tagp').style.display=tagsOn?'':'none';const tc={};posts.forEach(p=>(p.tags||[]).forEach(t=>tc[t]=(tc[t]||0)+1));$('#tagp').innerHTML=ts.size?[...ts].sort().map(t=>`<button class="chip ${sel.t===t?'on':''}" style="--h:${thue(t)}" data-t="${esc(t)}">#${esc(t)} <small>${tc[t]}</small></button>`).join(''):'<span style="color:var(--mut);font-size:calc(13px*var(--ui))">還沒有標籤。新增收藏時輸入標籤，就會出現在這裡。</span>';$('#tree').style.display=sbMode==='f'?'':'none';if($('#sgl'))$('#sgl').style.display=sbMode==='g'?'':'none';ps($('#fp'));drawSb();
+ const paths=fp(),vis=p=>{const a=p.split('/');return a.slice(0,-1).every((_,i)=>open.has(a.slice(0,i+1).join('/')))};const act=sel.c||sel.t||sel.u||plSel||dueOnly||dueRow||starOnly||gotOnly||gSel||noFolder||$('#q').value.trim()||$('#df').value||$('#dt').value;$('#chips').innerHTML=($('#qb').className=act?'clr':'','')+'<div class="sbq">'+ch(!act,'a','','<span class="ql">全部</span><span class="qn">'+posts.length+'</span>')+ch(sel.u,'u','1','<span class="ql">未讀</span><span class="qn">'+posts.filter(p=>!p.read).length+'</span>')+ch(gotOnly,'ndl','1','<span class="ql">未下載</span><span class="qn">'+posts.filter(p=>!p.got).length+'</span>')+'</div><div class="sbn">'+ch(sbMode==='f','f','1','📁 資料夾')+ch(noFolder,'nf','1','📂 無資料夾<span style="float:right;opacity:.6">'+posts.filter(p=>!(p.cats||[]).length).length+'</span>')+ch(starOnly,'sf','1','⭐ 加星號<span style="float:right;opacity:.6">'+posts.filter(p=>p.star).length+'</span>')+ch(sbMode==='g','gl','1','📚 分組'+(gSel?'<span class="gsn">'+(gSel==='_'?'未分組':esc((grps.find(g=>g.id===gSel)||{}).name||''))+'</span>':''))+ch(false,'gm','1','🔠 管理分組')+'</div>';srtDraw();if($('#sgll')){const gd=sortS.g.m==='custom'&&grps.length>1;$('#sgll').classList.toggle('gdr',gd);$('#sgll').innerHTML=grps.length?gOrd().map(g=>{const c=ch(gSel===g.id,'gf',g.id,'<span class="gd" style="background:'+esc(g.color)+'"></span>'+esc(g.name)+'<span style="float:right;opacity:.6">'+posts.filter(p=>gOf(p).includes(g.id)).length+'</span>');return gd?'<div class="sgr dz" data-gr="'+esc(g.id)+'">'+c+'</div>':c}).join('')+ch(gSel==='_','gf','_','未分組<span style="float:right;opacity:.6">'+posts.filter(p=>!gOf(p).length).length+'</span>'):'<div class="sge">還沒有分組。按上面的「🔠 管理分組」新增。</div>'}{const L=[...new Set([...['IG','Threads','X','YouTube'].map(n=>pren[n]||n),...cplats.map(c=>c.name),...posts.map(p=>p.platform).filter(Boolean),'網頁'])];$('#sdp').innerHTML='<option value="">全部平台</option>'+L.map(n=>`<option>${esc(n)}</option>`).join('');$('#sdp').value=plSel}$('#tgb').textContent='🏷️ 標籤 '+ts.size+(sel.t?' · #'+sel.t:'');$('#tgb').className='chip'+(tagsOn||sel.t?' on':'');$('#dtb').className='chip'+(($('#df').value||$('#dt').value)?' on':'');$('#tagp').style.display=tagsOn?'':'none';const tc={};posts.forEach(p=>(p.tags||[]).forEach(t=>tc[t]=(tc[t]||0)+1));$('#tagp').innerHTML=ts.size?[...ts].sort().map(t=>`<button class="chip ${sel.t===t?'on':''}" style="--h:${thue(t)}" data-t="${esc(t)}">#${esc(t)} <small>${tc[t]}</small></button>`).join(''):'<span style="color:var(--mut);font-size:calc(13px*var(--ui))">還沒有標籤。新增收藏時輸入標籤，就會出現在這裡。</span>';$('#tree').style.display=sbMode==='f'?'':'none';if($('#sgl'))$('#sgl').style.display=sbMode==='g'?'':'none';ps($('#fp'));drawSb();
  const q=$('#q').value.trim().toLowerCase();
  const _drs=dueRow?new Set(getDue().filter(x=>dueRK(x)===dueRow).map(x=>x.id)):null;const shown=posts.filter(p=>(!sel.c||(p.cats||[]).some(c=>c===sel.c||c.startsWith(sel.c+'/')))&&(!sel.t||(p.tags||[]).includes(sel.t))&&(!sel.u||!p.read)&&(!plSel||p.platform===plSel)&&dmatch(p)&&(!dueOnly||isDue(p))&&(!_drs||_drs.has(p.id))&&(!starOnly||p.star)&&(!gotOnly||!p.got)&&(!noFolder||!(p.cats||[]).length)&&(!gSel||(gSel==='_'?!gOf(p).length:gOf(p).includes(gSel)))&&(!q||[p.note,p.text,p.url,p.acct,...(p.cats||[]),...(p.tags||[])].join(' ').toLowerCase().includes(q)));
  const due=getDue();const _unused=(()=>{const y=today.slice(0,4),md=today.slice(5),r=[];posts.forEach(p=>{if(p.due){if(nset.c&&p.due<=today&&!p.read)r.push(p);return}const t=new Date(p.t||0).toLocaleDateString('sv-SE');if(nset.t&&t.slice(5)===md&&t.slice(0,4)<y)r.push({...p,why:'收藏 '+(y-t.slice(0,4))+' 週年'});else if(nset.p&&p.pub&&p.pub.slice(5)===md&&p.pub.slice(0,4)<y)r.push({...p,why:'發布 '+(y-p.pub.slice(0,4))+' 週年'})});return r})();
@@ -1533,7 +1567,7 @@ let out='<p style="color:var(--mut)">還沒有符合的收藏。</p>',cls='cards
 if(shown.length){
 if(view==='table'){cls='tbl';out=`<div style="overflow-x:auto"><table><tr><th></th><th>平台</th><th>備註</th><th>資料夾</th><th>標籤</th><th>收藏日</th><th>發布日</th><th></th></tr>${shown.map(p=>`<tr data-cid="${p.id}"${bmode&&bsel.has(p.id)?' class="sel"':''}><td>${hasImg(p)?thumbImg(p):''}</td><td>${esc(p.platform)}</td><td>${esc(p.note||p.url)}${p.url?'':BADP}</td><td>${(p.cats||[]).map(c=>esc(c.replace(/\//g,' → '))).join('<br>')}</td><td>${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</td><td>${new Date(p.t||0).toLocaleDateString('sv-SE')}</td><td>${esc(p.pub||'')}</td><td>${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">原文</a> `:''}<button data-r="${p.id}">${p.read?'未讀':'已讀'}</button> <button data-e="${p.id}">編輯</button></td></tr>`).join('')}</table></div>`}
 else if(view==='time'){cls='tl';const g={},ks=[];shown.forEach(p=>{const k=dkey(p)||'';if(!g[k]){g[k]=[];ks.push(k)}g[k].push(p)});out=ks.sort((x,y)=>!x?1:!y?-1:sortAsc?x.localeCompare(y):y.localeCompare(x)).map(k=>{const m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(k),dt=m?new Date(+m[1],m[2]-1,+m[3]):null;return `<section class="tdg" data-day="${esc(k)}"><h3 class="gh tdh"><span class="tdt">${!k?'未填日期':m?m[1]+' 年 '+(+m[2])+' 月 '+(+m[3])+' 日':esc(k)}</span>${dt&&!isNaN(dt)?'<span class="twd">週'+'日一二三四五六'[dt.getDay()]+'</span>':''}<small>${g[k].length} 篇</small></h3><div class="list">${g[k].map(cardH).join('')}</div></section>`}).join('')}
-else if(view==='board'){cls='board';const g={};shown.forEach(p=>{const cs=(p.cats||[]).length?p.cats.map(c=>c.split('/')[0]):['未分類'];[...new Set(cs)].forEach(k=>(g[k]=g[k]||[]).push(p))});out=Object.keys(g).sort().map(k=>`<div class="col"><h3 class="gh">📁 ${esc(k)} <small>${g[k].length}</small></h3>${g[k].map(cardH).join('')}</div>`).join('')}
+else if(view==='board'){cls='board';const g={};shown.forEach(p=>{const cs=(p.cats||[]).length?p.cats.map(c=>c.split('/')[0]):['無資料夾'];[...new Set(cs)].forEach(k=>(g[k]=g[k]||[]).push(p))});out=Object.keys(g).sort().map(k=>`<div class="col"><h3 class="gh">📁 ${esc(k)} <small>${g[k].length}</small></h3>${g[k].map(cardH).join('')}</div>`).join('')}
 else if(view==='album'&&window.snsAlbum){cls='alw';out=snsAlbum.html(shown)}
 else{cls=view==='list'?'list':view==='wall'?'wall':'cards';out=shown.map(cardH).join('')}
 }
@@ -1726,7 +1760,7 @@ $('#ns').onclick=async()=>{if(!col||!ntId)return;try{await col.doc(ntId).update(
 [['#n1','nc','c'],['#n2','nt2','t'],['#n3','np2','p']].forEach(([s,k,f])=>{$(s).checked=nset[f];$(s).onchange=e=>{nset[f]=e.target.checked;ls(k,e.target.checked?'1':'0');render()}});
 $('#nb').onclick=()=>{$('#np').style.display='flex'};
 $('#f').onchange=async e=>{await addShots([...e.target.files]);e.target.value=''};
-/* V3.1.0：待回顧區——收合時顯示各類張數；展開後可選分類（收藏週年／發布週年／指定日期）與新→舊／舊→新，每行最多 5 筆，其餘收在「…更多」 */
+/* V3.1.0：待回顧區——收合時顯示各類張數；展開後可選擇資料夾（收藏週年／發布週年／指定日期）與新→舊／舊→新，每行最多 5 筆，其餘收在「…更多」 */
 const DUEK=[['t','收藏週年','收藏'],['p','發布週年','發布'],['c','指定日期','指定']];let dueMore=new Set(),dueLastK='',dueRow='';
 const dueRK=x=>(x.dk||'c')==='c'?'c':x.dk+x.dn;
 const dueDev=()=>matchMedia('(max-width:900px)').matches?'m':'d';
@@ -1735,7 +1769,7 @@ const dueHTML=due=>{const cnt={t:0,p:0,c:0};due.forEach(p=>cnt[p.dk||'c']++);
  const sum=DUEK.filter(x=>cnt[x[0]]).map(x=>x[2]+' '+cnt[x[0]]).join('・');
  let det='',sel='';if(dueOpen){const L=due.filter(p=>(p.dk||'c')===k),byT=(a,b)=>asc?(a.t||0)-(b.t||0):(b.t||0)-(a.t||0),rows=[];
   if(k==='c')rows.push(['c','指定日期',L.sort(byT)]);else{const ns=[...new Set(L.map(p=>p.dn))].sort((a,b)=>asc?b-a:a-b);ns.forEach(n=>rows.push([k+n,(k==='t'?'收藏 ':'發布 ')+n+' 週年',L.filter(p=>p.dn===n).sort(byT)]))}
-  sel=`<span class="dsel"><select id="duk" aria-label="依分類看明細">${DUEK.map(x=>`<option value="${x[0]}"${x[0]===k?' selected':''}${cnt[x[0]]?'':' disabled'}>${x[1]}</option>`).join('')}</select><select id="duo" aria-label="排序"><option value="0"${asc?'':' selected'}>新→舊</option><option value="1"${asc?' selected':''}>舊→新</option></select></span>`;
+  sel=`<span class="dsel"><select id="duk" aria-label="回顧類型" title="回顧類型">${DUEK.map(x=>`<option value="${x[0]}"${x[0]===k?' selected':''}${cnt[x[0]]?'':' disabled'}>${x[1]}</option>`).join('')}</select><select id="duo" aria-label="排序"><option value="0"${asc?'':' selected'}>新→舊</option><option value="1"${asc?' selected':''}>舊→新</option></select></span>`;
   det=rows.map(([rk,lb,a])=>{const op=dueMore.has(rk),sh=op?a:a.slice(0,5);return `<div class="drow${dueRow===rk?' on':''}"><b>${lb}（${a.length}）：</b>${sh.map(p=>`<a href="#" data-e="${p.id}">${esc(ttl(p))}</a>${p.dyr?`<span class="dyr">（${esc(lb)} · ${esc(p.dyr)}）</span>`:''}`).join('、')}<span class="dact">${a.length>5?`<button type="button" class="dmore" data-dm="${rk}" aria-expanded="${op}">${op?'<span class="dar" aria-hidden="true">⌃</span>收合':'…更多（'+(a.length-5)+'）'}</button>`:''}<button type="button" class="dmore donly${dueRow===rk?' on':''}" data-dr="${rk}" aria-pressed="${dueRow===rk}" title="${dueRow===rk?'恢復顯示全部收藏':'下方清單只顯示「'+lb+'」這 '+a.length+' 篇'}">${dueRow===rk?'顯示全部':'只看這些'}</button></span></div>`}).join('')}
  return `<div class="due"><div class="dhd"><button class="chip" data-do="1" style="padding:1px 8px" aria-expanded="${dueOpen}">${dueOpen?'▾':'▸'}</button> 待回顧 ${due.length} 張<span class="dsum">（${sum}）</span> <button class="chip ${dueOnly?'on':''}" data-dq="1">${dueOnly?'顯示全部':'只看這些'}</button>${sel}${dueRow?`<span class="dstat">目前只看：${esc(dueRow==='c'?'指定日期':(dueRow[0]==='t'?'收藏 ':'發布 ')+dueRow.slice(1)+' 週年')}</span>`:''}</div>${dueOpen?`<div class="ddet">${det}</div>`:''}</div>`};
 document.addEventListener('click',e=>{const r=e.target.closest('#due [data-dr]');if(r){e.preventDefault();const k=r.dataset.dr;dueRow=dueRow===k?'':k;if(dueRow)dueOnly=false;render();return}const b=e.target.closest('#due [data-dm]');if(!b)return;e.preventDefault();const k=b.dataset.dm;dueMore.has(k)?dueMore.delete(k):dueMore.add(k);render()});
@@ -1882,7 +1916,7 @@ const pvHTML=p=>{const gL=gOf(p).map(id=>grps.find(x=>x.id===id)).filter(Boolean
  +row('發文帳號',p.acct?esc(p.acct):none)
  +(p.share?row('分享原文','<span class="pvsh">'+esc(p.share)+'</span>'):'')
  +row('原始網址',/^https?:\/\//.test(p.url||'')?'<a href="'+esc(p.url)+'" target="_blank" rel="noopener noreferrer">'+esc(p.url)+'</a>':(p.url?esc(p.url):none))
- +row('資料夾',(p.cats||[]).length?p.cats.map(c=>'<span class="fc">📁 '+esc(c.replace(/\//g,' → '))+'</span>').join(''):'<span class="pvn">📂 未分類</span>')
+ +row('資料夾',(p.cats||[]).length?p.cats.map(c=>'<span class="fc">📁 '+esc(c.replace(/\//g,' → '))+'</span>').join(''):'<span class="pvn">📂 無資料夾</span>')
  +row('標籤',(p.tags||[]).length?p.tags.map(x=>'<span class="tp" style="--h:'+thue(x)+'">'+esc(x)+'</span>').join(''):none)
  +row('分組',gL.length?gL.map(g=>'<span class="pvg"><span class="gd" style="background:'+esc(g.color)+'"></span>'+esc(g.name)+'</span>').join(''):'<span class="pvn">未分組</span>')
  +row('星號',p.star?'★ 已加星號':'<span class="pvn">☆ 沒有星號</span>')
@@ -1934,11 +1968,11 @@ const drawSb=()=>{window.snsFpop&&snsFpop.close();$('#tl').innerHTML=sbTree(fOrd
 $('#fq').oninput=()=>{fq=$('#fq').value;drawSb()};
 $('#fqx').onclick=()=>{$('#fq').value='';fq='';drawSb();$('#fq').focus()};
 $('#fq').onkeydown=e=>{if(e.key==='Escape'&&$('#fq').value){e.stopPropagation();$('#fqx').click()}};
-/* ---- 刪除資料夾：只移除資料夾結構與分類關係，收藏與圖片全部保留 ---- */
+/* ---- 刪除資料夾：只移除資料夾結構與資料夾關係，收藏與圖片全部保留 ---- */
 $('#tl').addEventListener('click',e=>{const b=e.target.closest('[data-fd]');if(b)askDelFolder(b.dataset.fd)});
 function askDelFolder(path){if(!col){note2('請先登入 Google，並等雲端同步完成');return}
  const subs=fp().filter(x=>x.startsWith(path+'/')).length,aff=posts.filter(p=>(p.cats||[]).some(c=>under(c,path))),un=aff.filter(p=>p.cats.every(c=>under(c,path))).length;
- snsAsk({title:'刪除資料夾',main:'確定要刪除資料夾「'+path.replace(/\//g,' → ')+'」嗎？',lines:['子資料夾：'+subs+' 個'+(subs?'（會一起刪除）':''),'會影響 '+aff.length+' 筆收藏的分類'+(un?'，其中 '+un+' 筆沒有其他分類，會變成「未分類」':''),'收藏卡片、圖片、網址、備註、標籤、日期等內容全部保留，只會移除收藏與這些資料夾之間的分類關係；Google Drive 的圖片不會被刪除。'],cancel:'取消',ok:'刪除資料夾',busy:'先把修改存到雲端…',
+ snsAsk({title:'刪除資料夾',main:'確定要刪除資料夾「'+path.replace(/\//g,' → ')+'」嗎？',lines:['子資料夾：'+subs+' 個'+(subs?'（會一起刪除）':''),'會影響 '+aff.length+' 筆收藏的資料夾'+(un?'，其中 '+un+' 筆沒有其他資料夾，會變成「無資料夾」':''),'收藏卡片、圖片、網址、備註、標籤、日期等內容全部保留，只會移除收藏與這些資料夾之間的資料夾關係；Google Drive 的圖片不會被刪除。'],cancel:'取消',ok:'刪除資料夾',busy:'先把修改存到雲端…',
  onOk:async say=>{const r=await delFolder(path,say);if(r.ok){if(sortS.f.o.some(c=>under(c,path))){sortS.f.o=sortS.f.o.filter(c=>!under(c,path));saveS()}note2(r.msg);return true}if(r.close){note2(r.msg,true);return{close:true}}return{msg:r.msg}}})}
 async function delFolder(path,say){const st=window.gStore&&gStore();if(!col||!st)return{msg:'請先登入 Google，並等雲端同步完成'};
  try{await window.gSync()}catch(e){return{msg:'目前無法寫入雲端，已取消刪除資料夾（沒有任何變更）：'+(e.message||'')}}
@@ -1953,14 +1987,14 @@ async function delFolder(path,say){const st=window.gStore&&gStore();if(!col||!st
  const aff=docs.filter(([,d])=>Array.isArray(d.cats)&&d.cats.some(c=>under(c,path)));
  const keepAnc=[];{const a=path.split('/');for(let i=1;i<a.length;i++)keepAnc.push(a.slice(0,i).join('/'))}
  const nl=[...new Set([...fl.filter(c=>!under(c,path)),...keepAnc])];
- say('更新 '+aff.length+' 筆收藏的分類並寫入雲端…');window.snsActIntent&&snsActIntent('batch');
+ say('更新 '+aff.length+' 筆收藏的資料夾並寫入雲端…');window.snsActIntent&&snsActIntent('batch');
  for(const [id,d] of aff)await col.doc(id).update({cats:d.cats.filter(c=>!under(c,path))});
  await col.doc('folders').set({list:nl});folders=nl;
  let err=null;try{await window.gSync()}catch(e){err=e}
  const mine=new Set([...aff.map(x=>x[0]),'folders']),pend=st.pendingIds().filter(id=>mine.has(id)),cf=st.confIds().filter(id=>mine.has(id));
  if(sel.c&&under(sel.c,path))sel.c='';[...open].forEach(o=>{if(under(o,path))open.delete(o)});[...open2].forEach(o=>{if(under(o,path))open2.delete(o)});render();
  const nm2=path.replace(/\//g,' → ');
- if(!pend.length&&!cf.length)return{ok:true,msg:'已刪除資料夾「'+nm2+'」，'+aff.length+' 筆收藏的分類已更新（收藏與圖片都保留）'};
+ if(!pend.length&&!cf.length)return{ok:true,msg:'已刪除資料夾「'+nm2+'」，'+aff.length+' 筆收藏的資料夾已更新（收藏與圖片都保留）'};
  if(cf.length)return{close:true,msg:'資料夾「'+nm2+'」已刪除，但有 '+cf.length+' 筆收藏另一台裝置剛好也改過，請在衝突視窗選擇要保留哪一邊'};
  const pm='資料夾「'+nm2+'」已在這台裝置刪除，但還有 '+pend.length+' 筆變更（共 '+(aff.length+1)+' 筆）尚未寫入雲端'+(err?'（'+(err.message||'')+'）':'')+'。系統會自動重試，請先不要關閉頁面；也可以按 ⟳ 重試';fdWatch(mine,pm);return{close:true,msg:pm}}
 let fdT=0;
@@ -1969,7 +2003,7 @@ function fdWatch(ids,msg){const el=$('#fdm'),done='資料夾刪除已全部寫�
  if(!left){clearInterval(fdT);el.textContent=done;note2(done);setTimeout(()=>{if(el.textContent===done)el.textContent=''},6000)}
  else el.textContent='資料夾已在這台裝置刪除，還有 '+left+' 筆變更尚未寫入雲端，系統會自動重試，請先不要關閉頁面；也可以按 ⟳ 重試'},1500)}
 
-/* ---- 新增／編輯收藏的分類選擇：搜尋、樹狀收合、已選、最近使用 ---- */
+/* ---- 新增／編輯收藏的資料夾選擇：搜尋、樹狀收合、已選、最近使用 ---- */
 let open2=new Set(),csq='';
 const pkSel=()=>list($('#c').value).map(nm);
 const rcfKey=()=>'rcf:'+((window.snsGoogle&&snsGoogle.user&&snsGoogle.user.email)||'-');
@@ -1977,9 +2011,9 @@ const rcfGet=()=>{try{const a=JSON.parse(ls(rcfKey())||'[]');return Array.isArra
 const rcfTouch=ks=>{try{let a=JSON.parse(ls(rcfKey())||'[]');if(!Array.isArray(a))a=[];const t=Date.now();ks.forEach(k=>{a=a.filter(x=>x&&x.k!==k);a.push({k,t})});a.sort((x,y)=>y.t-x.t);ls(rcfKey(),JSON.stringify(a.slice(0,30)))}catch(e){}};
 function pkReset(){csq='';$('#csq').value='';const a=pkSel(),all=fp();open2=new Set();if(all.length<=15)all.forEach(p=>open2.add(p));else a.forEach(c=>{const s=c.split('/');for(let i=1;i<s.length;i++)open2.add(s.slice(0,i).join('/'))})}
 function pkDraw(){const a=pkSel(),all=fp(),f=FS.filter(all,csq);
- $('#csel').innerHTML=a.length?'<span>已選 '+a.length+' 個：</span>'+a.map(c=>'<span class="tc">📁 '+esc(c.replace(/\//g,' → '))+'<b data-ck="'+esc(c)+'" title="取消選取" role="button" aria-label="取消選取">×</b></span>').join(''):'<span>還沒有選分類（不選就是「未分類」）</span>';
+ $('#csel').innerHTML=a.length?'<span>已選 '+a.length+' 個：</span>'+a.map(c=>'<span class="tc">📁 '+esc(c.replace(/\//g,' → '))+'<b data-ck="'+esc(c)+'" title="取消選取" role="button" aria-label="取消選取">×</b></span>').join(''):'<span>還沒有選資料夾（不選就是「無資料夾」）</span>';
  const rs=rcfGet().filter(k=>all.includes(k)).slice(0,8);
- $('#csel2').innerHTML=$('#csel').innerHTML;$('#rcf').innerHTML=rs.length?'<span>🕘 最近使用：</span>'+rs.map(k=>'<button type="button" class="chip'+(a.includes(k)?' on':'')+'" data-rk="'+esc(k)+'" title="'+(a.includes(k)?'已選取':'加入分類')+'">'+(a.includes(k)?'✓ ':'+ ')+esc(k.replace(/\//g,' → '))+'</button>').join(''):'';
+ $('#csel2').innerHTML=$('#csel').innerHTML;$('#rcf').innerHTML=rs.length?'<span>🕘 最近使用：</span>'+rs.map(k=>'<button type="button" class="chip'+(a.includes(k)?' on':'')+'" data-rk="'+esc(k)+'" title="'+(a.includes(k)?'已選取':'加入資料夾')+'">'+(a.includes(k)?'✓ ':'+ ')+esc(k.replace(/\//g,' → '))+'</button>').join(''):'';
  if(!all.length)$('#cs').innerHTML='<span style="color:var(--mut);font-size:calc(13px*var(--ui));padding:4px">還沒有資料夾，在下面輸入名稱建立第一個</span>';
  else if(f&&!f.hit.size)$('#cs').innerHTML='<span class="fqe">找不到名稱包含「'+esc(csq.trim())+'」的資料夾</span>';
  else $('#cs').innerHTML=FS.rows(all,f,p=>open2.has(p)).map(r=>{const on=a.includes(r.p);return '<div class="pr'+(r.anc?' anc':'')+'" style="padding-left:'+r.depth*16+'px"><span class="tg2"'+(r.kids&&!f?' data-o2="'+esc(r.p)+'" role="button" aria-label="'+(r.open?'收合':'展開')+'"':'')+'>'+(r.kids?'<svg class="tri2'+(r.open?' o':'')+'" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M5.5 4 16 10 5.5 16z"/></svg>':'')+'</span><button type="button" class="pk '+(on?'on':'')+'" data-k="'+esc(r.p)+'" aria-pressed="'+on+'"><span>'+(on?'☑':'☐')+'</span><span>'+r.label+'</span></button><button type="button" class="ed" data-dn="'+esc(r.p)+'" title="改名">✎</button></div>'}).join('');
@@ -2000,7 +2034,7 @@ $('#bfr').addEventListener('click',e=>{const b=e.target.closest('[data-bp]');if(
 {const _o=$('#bgo2').onclick;$('#bgo2').onclick=()=>{bfq='';$('#bfq').value='';bfDraw();_o()};const _w=$('#bfw').onchange;$('#bfw').onchange=e=>{_w(e);bfDraw()}}
 
 /* ---- 使用說明與常見問題（V2.3.0 為內建靜態內容；V2.5.0 起改由管理者試算表提供） ---- */
-const HELP=[{"id": "n1", "type": "notice", "order": 1, "title": "Google 帳號及登入", "body": "你的收藏存在你自己的 Google 雲端硬碟：「SNS_Bookmark」資料夾裡的「SNS_Bookmark_Data」試算表（收藏資料）和「SNS_Bookmark_Images」資料夾（圖片）。\nApp 只能存取它自己建立的檔案，看不到你雲端硬碟裡的其他檔案。\n目前 App 是測試階段，Google 大約每 7 天會要求重新登入一次，重新登入後資料都還在。\n切換帳號或登出前，App 會先把修改存到雲端；存不進去時會停在原本的帳號，不會把資料寫到別的帳號。"}, {"id": "n2", "type": "notice", "order": 2, "title": "雲端同步", "body": "新增、修改、刪除後會自動存到雲端，頁面上方會顯示「已儲存到雲端 ✓」。\n頁面開著時大約每 30～60 秒自動同步一次；想馬上看到另一台裝置的修改，按右上角的 ⟳。\n顯示「儲存到雲端中…」時，請先不要關閉頁面。\n兩台裝置同時改到同一筆收藏時，會跳出視窗讓你選擇保留哪一邊，不會默默蓋掉。"}, {"id": "n3", "type": "notice", "order": 3, "title": "圖片格式及容量", "body": "支援 JPG、JPEG、PNG、GIF 四種格式；HEIC、WEBP、BMP 等其他格式不會上傳。\nJPG：100 KB 以下保留原檔；超過 100 KB 會縮到最長邊 1440 px 並調整畫質，目標約 100～150 KB，但不會為了容量把圖片壓到明顯模糊。\nPNG：100 KB 以下保留原檔；超過時只做不失真的處理（縮到最長邊 1440 px、保留透明背景），不會轉成 JPG。\nGIF：原始檔最多 25 MB；會處理成最長邊約 480 px 的動態 GIF（保留動畫、透明背景、循環設定和播放速度），一般在 3 MB 以下，最多 5 MB；壓縮後仍超過 5 MB 就不會上傳。雲端只存處理後的 GIF。\n外部圖片網址：可以直接引用公開的 http／https 圖片網址，不會下載或上傳到你的雲端硬碟；原網站刪除圖片後，卡片會顯示「外部圖片失效」，收藏的其他內容都還在。\nGoogle 雲端硬碟剩不到 100 MB 時，頁面最上方會出現黃色提醒。"}, {"id": "n4", "type": "notice", "order": 4, "title": "收藏刪除後無法復原", "body": "刪除收藏前會跳出確認視窗；確認後，收藏資料就無法從 App 復原（App 沒有回收桶）。\n沒有被其他收藏使用的圖片會移到 Google 雲端硬碟的垃圾桶，約 30 天內可以從雲端硬碟垃圾桶還原圖片檔，但收藏卡片本身不會回來。\n刪除「資料夾」不一樣：只會移除資料夾和分類關係，收藏卡片與圖片都會保留；沒有其他分類的收藏會變成「未分類」。"}, {"id": "n5", "type": "notice", "order": 5, "title": "備份及還原", "body": "按右上角「備份」→「下載備份檔」，會下載一個 JSON 檔，內容包含收藏、資料夾、自訂平台和分組設定。\n備份檔只記錄圖片的雲端 ID，不包含圖片檔本身；還原到另一個 Google 帳號時，圖片不會顯示。\n還原時，相同的收藏會被備份檔覆蓋，不會刪掉現有的其他收藏。\n建議定期下載備份，存在自己的電腦或手機。"}, {"id": "q1", "type": "qa", "order": 1, "title": "為什麼手機與電腦的資料不同步？", "body": "1. 先確認兩台裝置登入的是同一個 Google 帳號（點右上角頭像就能看到 Email）。\n2. 按右上角的 ⟳ 立即同步；頁面開著時也會每 30～60 秒自動同步。\n3. 如果有一台顯示「雲端儲存失敗」或跳出衝突視窗，請先在那台處理。\n4. 手機若把網頁加到主畫面，請完全關掉再開，才會載入最新版本。"}, {"id": "q2", "type": "qa", "order": 2, "title": "為什麼圖片上傳失敗？", "body": "常見原因：\n・還沒登入 Google，或雲端同步還沒完成（等頁面上方的「同步雲端資料中…」消失）。\n・網路中斷，或登入已過期（依提示重新登入）。\n・Google 雲端硬碟空間不足（頁面最上方會出現黃色提醒）。\n・格式不是 JPG、JPEG、PNG、GIF（例如 iPhone 的 HEIC、WEBP），上傳區會出現紅字提示，請先轉成 JPG 或 PNG。\n・GIF 原始檔超過 25 MB，或壓縮後仍超過 5 MB，請換一張較小或較短的 GIF。"}, {"id": "q3", "type": "qa", "order": 3, "title": "如何更換 Google 帳號？", "body": "點右上角的頭像 →「🔀 切換帳號」，再選擇要使用的 Google 帳號。\n每個帳號的收藏都存在各自的雲端硬碟，不會混在一起。\n切換前 App 會先把修改存到雲端；如果存不進去，會停在原本的帳號並提示原因。"}, {"id": "q4", "type": "qa", "order": 4, "title": "如何搜尋及選擇資料夾？", "body": "左側「📁 資料夾」區上方有搜尋框，輸入資料夾名稱的一部分就能找到，不分大小寫，也不用從第一個字開始（例如輸入 Be 或 reen 都能找到 FreenBecky）。\n搜尋結果會顯示完整路徑，例如「泰百 → FreenBecky」和「KPOP → FreenBecky」，同名的資料夾也分得出來。\n新增／編輯收藏時，按「📁 選擇資料夾」會打開分類視窗：有同樣的搜尋框、可以多選、上方「最近使用」可一鍵加入，也可以在裡面「＋新增資料夾」；搜尋或清除搜尋都不會取消已選的分類，選好按「完成」。\n按 ▸／▾ 可以展開或收合子資料夾。"}, {"id": "q5", "type": "qa", "order": 5, "title": "刪除收藏後可以復原嗎？", "body": "不行，App 沒有回收桶，刪除前請在確認視窗再看一次。\n如果之前有下載備份檔，可以用「備份 → 從備份檔還原」把那一筆加回來；若圖片顯示「已在雲端移除」，可以先到 Google 雲端硬碟的垃圾桶還原那張圖片。"}, {"id": "q6", "type": "qa", "order": 6, "title": "點卡片會發生什麼事？", "body": "點卡片空白處或文字，會打開「收藏明細」，可以看到這筆收藏的完整內容（唯讀，不會不小心改到）。\n明細最下面有「刪除」「編輯」「取消」：按「編輯」才會進入修改畫面；按「刪除」會再跳出確認視窗。\n卡片上的按鈕（星號、已讀、開啟原文、編輯、刪除…）照原本的方式運作，不會打開明細。\n批次模式下，點卡片是「選取」，不會打開明細。"}, {"id": "q7", "type": "qa", "order": 7, "title": "怎麼刪除資料夾？會不會刪到收藏？", "body": "在左側資料夾區，按資料夾右邊的垃圾桶圖示，確認後就會刪除這個資料夾和它所有的子資料夾。\n收藏卡片、圖片、標籤、備註、日期全部保留；只有「收藏放在這個資料夾」的分類關係會被移除。\n如果收藏還有其他資料夾，就保留其他資料夾；沒有其他資料夾的收藏會變成「📂 未分類」。"}, {"id": "n6", "type": "notice", "order": 6, "title": "使用狀況紀錄（隱私說明）", "body": "App 會記錄你的 Google 帳號（Email）、首次使用時間、最後使用時間，以及必要的操作類型（例如開啟 App、查看收藏明細、搜尋／篩選、新增、編輯、刪除收藏、批次操作），用於產品管理與使用狀況統計。\n不記錄你的收藏網址、貼文內容、圖片、備註或標籤作為活動紀錄，也不記錄任何登入 Token。\n這些紀錄存在管理者自己的 Google 試算表，其他使用者看不到。"}, {"id": "q8", "type": "qa", "order": 8, "title": "App 會記錄我的什麼資料？", "body": "只記錄：Google 帳號（Email）、第一次和最後一次使用的時間、最後一次修改收藏的時間，以及最近一次的操作類型（例如「新增收藏」）。\n不記錄：收藏網址、貼文內容、圖片、備註、標籤、登入 Token。\n你的收藏本身仍然只存在你自己的 Google 雲端硬碟。"}];
+const HELP=[{"id": "n1", "type": "notice", "order": 1, "title": "Google 帳號及登入", "body": "你的收藏存在你自己的 Google 雲端硬碟：「SNS_Bookmark」資料夾裡的「SNS_Bookmark_Data」試算表（收藏資料）和「SNS_Bookmark_Images」資料夾（圖片）。\nApp 只能存取它自己建立的檔案，看不到你雲端硬碟裡的其他檔案。\n目前 App 是測試階段，Google 大約每 7 天會要求重新登入一次，重新登入後資料都還在。\n切換帳號或登出前，App 會先把修改存到雲端；存不進去時會停在原本的帳號，不會把資料寫到別的帳號。"}, {"id": "n2", "type": "notice", "order": 2, "title": "雲端同步", "body": "新增、修改、刪除後會自動存到雲端，頁面上方會顯示「已儲存到雲端 ✓」。\n頁面開著時大約每 30～60 秒自動同步一次；想馬上看到另一台裝置的修改，按右上角的 ⟳。\n顯示「儲存到雲端中…」時，請先不要關閉頁面。\n兩台裝置同時改到同一筆收藏時，會跳出視窗讓你選擇保留哪一邊，不會默默蓋掉。"}, {"id": "n3", "type": "notice", "order": 3, "title": "圖片格式及容量", "body": "支援 JPG、JPEG、PNG、GIF 四種格式；HEIC、WEBP、BMP 等其他格式不會上傳。\nJPG：100 KB 以下保留原檔；超過 100 KB 會縮到最長邊 1440 px 並調整畫質，目標約 100～150 KB，但不會為了容量把圖片壓到明顯模糊。\nPNG：100 KB 以下保留原檔；超過時只做不失真的處理（縮到最長邊 1440 px、保留透明背景），不會轉成 JPG。\nGIF：原始檔最多 25 MB；會處理成最長邊約 480 px 的動態 GIF（保留動畫、透明背景、循環設定和播放速度），一般在 3 MB 以下，最多 5 MB；壓縮後仍超過 5 MB 就不會上傳。雲端只存處理後的 GIF。\n外部圖片網址：可以直接引用公開的 http／https 圖片網址，不會下載或上傳到你的雲端硬碟；原網站刪除圖片後，卡片會顯示「外部圖片失效」，收藏的其他內容都還在。\nGoogle 雲端硬碟剩不到 100 MB 時，頁面最上方會出現黃色提醒。"}, {"id": "n4", "type": "notice", "order": 4, "title": "收藏刪除後無法復原", "body": "刪除收藏前會跳出確認視窗；確認後，收藏資料就無法從 App 復原（App 沒有回收桶）。\n沒有被其他收藏使用的圖片會移到 Google 雲端硬碟的垃圾桶，約 30 天內可以從雲端硬碟垃圾桶還原圖片檔，但收藏卡片本身不會回來。\n刪除「資料夾」不一樣：只會移除資料夾，以及收藏和資料夾之間的關係，收藏卡片與圖片都會保留；沒有其他資料夾的收藏會變成「無資料夾」。"}, {"id": "n5", "type": "notice", "order": 5, "title": "備份及還原", "body": "按右上角「備份」→「下載備份檔」，會下載一個 JSON 檔，內容包含收藏、資料夾、自訂平台和分組設定。\n備份檔只記錄圖片的雲端 ID，不包含圖片檔本身；還原到另一個 Google 帳號時，圖片不會顯示。\n還原時，相同的收藏會被備份檔覆蓋，不會刪掉現有的其他收藏。\n建議定期下載備份，存在自己的電腦或手機。"}, {"id": "q1", "type": "qa", "order": 1, "title": "為什麼手機與電腦的資料不同步？", "body": "1. 先確認兩台裝置登入的是同一個 Google 帳號（點右上角頭像就能看到 Email）。\n2. 按右上角的 ⟳ 立即同步；頁面開著時也會每 30～60 秒自動同步。\n3. 如果有一台顯示「雲端儲存失敗」或跳出衝突視窗，請先在那台處理。\n4. 手機若把網頁加到主畫面，請完全關掉再開，才會載入最新版本。"}, {"id": "q2", "type": "qa", "order": 2, "title": "為什麼圖片上傳失敗？", "body": "常見原因：\n・還沒登入 Google，或雲端同步還沒完成（等頁面上方的「同步雲端資料中…」消失）。\n・網路中斷，或登入已過期（依提示重新登入）。\n・Google 雲端硬碟空間不足（頁面最上方會出現黃色提醒）。\n・格式不是 JPG、JPEG、PNG、GIF（例如 iPhone 的 HEIC、WEBP），上傳區會出現紅字提示，請先轉成 JPG 或 PNG。\n・GIF 原始檔超過 25 MB，或壓縮後仍超過 5 MB，請換一張較小或較短的 GIF。"}, {"id": "q3", "type": "qa", "order": 3, "title": "如何更換 Google 帳號？", "body": "點右上角的頭像 →「🔀 切換帳號」，再選擇要使用的 Google 帳號。\n每個帳號的收藏都存在各自的雲端硬碟，不會混在一起。\n切換前 App 會先把修改存到雲端；如果存不進去，會停在原本的帳號並提示原因。"}, {"id": "q4", "type": "qa", "order": 4, "title": "如何搜尋及選擇資料夾？", "body": "左側「📁 資料夾」區上方有搜尋框，輸入資料夾名稱的一部分就能找到，不分大小寫，也不用從第一個字開始（例如輸入 Be 或 reen 都能找到 FreenBecky）。\n搜尋結果會顯示完整路徑，例如「泰百 → FreenBecky」和「KPOP → FreenBecky」，同名的資料夾也分得出來。\n新增／編輯收藏時，按「📁 選擇資料夾」會打開選擇資料夾視窗：有同樣的搜尋框、可以多選、上方「最近使用」可一鍵加入，也可以在裡面「＋新增資料夾」；搜尋或清除搜尋都不會取消已選的資料夾，選好按「完成」。\n按 ▸／▾ 可以展開或收合子資料夾。"}, {"id": "q5", "type": "qa", "order": 5, "title": "刪除收藏後可以復原嗎？", "body": "不行，App 沒有回收桶，刪除前請在確認視窗再看一次。\n如果之前有下載備份檔，可以用「備份 → 從備份檔還原」把那一筆加回來；若圖片顯示「已在雲端移除」，可以先到 Google 雲端硬碟的垃圾桶還原那張圖片。"}, {"id": "q6", "type": "qa", "order": 6, "title": "點卡片會發生什麼事？", "body": "點卡片空白處或文字，會打開「收藏明細」，可以看到這筆收藏的完整內容（唯讀，不會不小心改到）。\n明細最下面有「刪除」「編輯」「取消」：按「編輯」才會進入修改畫面；按「刪除」會再跳出確認視窗。\n卡片上的按鈕（星號、已讀、開啟原文、編輯、刪除…）照原本的方式運作，不會打開明細。\n批次模式下，點卡片是「選取」，不會打開明細。"}, {"id": "q7", "type": "qa", "order": 7, "title": "怎麼刪除資料夾？會不會刪到收藏？", "body": "在左側資料夾區，按資料夾右邊的垃圾桶圖示，確認後就會刪除這個資料夾和它所有的子資料夾。\n收藏卡片、圖片、標籤、備註、日期全部保留；只有「收藏放在這個資料夾」的資料夾關係會被移除。\n如果收藏還有其他資料夾，就保留其他資料夾；沒有其他資料夾的收藏會變成「📂 無資料夾」。"}, {"id": "n6", "type": "notice", "order": 6, "title": "使用狀況紀錄（隱私說明）", "body": "App 會記錄你的 Google 帳號（Email）、首次使用時間、最後使用時間，以及必要的操作類型（例如開啟 App、查看收藏明細、搜尋／篩選、新增、編輯、刪除收藏、批次操作），用於產品管理與使用狀況統計。\n不記錄你的收藏網址、貼文內容、圖片、備註或標籤作為活動紀錄，也不記錄任何登入 Token。\n這些紀錄存在管理者自己的 Google 試算表，其他使用者看不到。"}, {"id": "q8", "type": "qa", "order": 8, "title": "App 會記錄我的什麼資料？", "body": "只記錄：Google 帳號（Email）、第一次和最後一次使用的時間、最後一次修改收藏的時間，以及最近一次的操作類型（例如「新增收藏」）。\n不記錄：收藏網址、貼文內容、圖片、備註、標籤、登入 Token。\n你的收藏本身仍然只存在你自己的 Google 雲端硬碟。"}];
 const hlpEl=$('#hlpm');let hlpFb=null;
 function hlpDraw(items){const box=$('#hlpc');box.textContent='';const vis=(items||[]).filter(x=>x&&x.show!==false&&String(x.title||'').trim()).sort((a,b)=>(+a.order||0)-(+b.order||0));
  [['notice','注意事項'],['qa','常見問題 Q&A']].forEach(([ty,h])=>{const L=vis.filter(x=>x.type===ty);if(!L.length)return;const hd=document.createElement('div');hd.className='hs';hd.textContent=h;box.appendChild(hd);
@@ -2269,7 +2303,7 @@ const XIMG=(()=>{
   return{url:u.href}};
  const probe=(url,ms)=>new Promise(res=>{const im=new Image();let done=false;const fin=v=>{if(done)return;done=true;clearTimeout(t);im.onload=im.onerror=null;res(v)};const t=setTimeout(()=>fin(false),ms||12000);try{im.referrerPolicy='no-referrer'}catch(e){}im.onload=()=>fin(im.naturalWidth>0);im.onerror=()=>fin(false);im.src=url});
  const img=(url,extra)=>'<img data-xu="1" src="'+esc(url)+'" referrerpolicy="no-referrer" loading="lazy" alt=""'+(extra||'')+'>';
- document.addEventListener('error',e=>{const t=e.target;if(t&&t.tagName==='IMG'&&t.dataset&&t.dataset.xu&&t.getAttribute('src')!==PH){t.dataset.xbad='1';t.src=PH;t.title='外部圖片失效（收藏的文字、標籤、分類都還在）'}},true);
+ document.addEventListener('error',e=>{const t=e.target;if(t&&t.tagName==='IMG'&&t.dataset&&t.dataset.xu&&t.getAttribute('src')!==PH){t.dataset.xbad='1';t.src=PH;t.title='外部圖片失效（收藏的文字、標籤、資料夾都還在）'}},true);
  return{valid,probe,img,PH}})();
 window.snsXimg=XIMG;
 const xOf=p=>Array.isArray(p&&p.ximgs)?p.ximgs.filter(x=>typeof x==='string'&&/^https?:\/\//i.test(x)):[];
@@ -2340,7 +2374,7 @@ window.snsPlace=(trigger,pop,o)=>{o=o||{};const P=8,vv=window.visualViewport,VW=
 /* V2.8.3：依裝置決定開視窗時要不要自動聚焦。主要輸入是觸控（手機／平板：hover:none 且 pointer:coarse）→ 不自動聚焦，避免虛擬鍵盤自動彈出；
    電腦（有滑鼠／觸控板）→ 維持原本的自動聚焦。看的是裝置的輸入方式，不是視窗寬度，所以電腦把視窗拉窄也照樣自動聚焦。 */
 window.snsAutoFocusOK=()=>{try{return !matchMedia('(hover: none) and (pointer: coarse)').matches}catch(e){return true}};
-/* ---- 共用「新增資料夾」元件（左側資料夾區、分類管理共用） ---- */
+/* ---- 共用「新增資料夾」元件（左側資料夾區、資料夾管理共用） ---- */
 const MKF=(()=>{const el=$('#mkf');let par='',q='',open3=new Set(),done=null,fb=null;
  const draw=()=>{const all=fp(),f=FS.filter(all,q);$('#mkp').innerHTML='放在：<b>'+(par?esc(par.replace(/\//g,' → ')):'最上層')+'</b>';
   const top='<div class="pr"><span class="tg2"></span><button type="button" class="pk'+(par===''?' on':'')+'" data-mp="" role="option" aria-selected="'+(par==='')+'"><span>'+(par===''?'◉':'○')+'</span><span>🏠 最上層（不放在任何資料夾裡）</span></button></div>';
@@ -2360,7 +2394,7 @@ const MKF=(()=>{const el=$('#mkf');let par='',q='',open3=new Set(),done=null,fb=
  return{open:openF,close,isOpen:()=>el.classList.contains('o')}})();
 window.snsMkf=MKF;
 $('#fa').onclick=()=>MKF.open({parent:sel.c||'',onDone:p=>{const s=p.split('/');for(let i=1;i<s.length;i++)open.add(s.slice(0,i).join('/'));$('#fdm').textContent='已建立：'+p.replace(/\//g,' → ');setTimeout(()=>{if($('#fdm').textContent.startsWith('已建立：'))$('#fdm').textContent=''},6000);render()}});
-/* ---- 分類管理視窗（表單內只留已選分類＋「管理分類」） ---- */
+/* ---- 資料夾管理視窗（表單內只留已選資料夾＋「管理資料夾」） ---- */
 const CAT=(()=>{const el=$('#catm');let fb=null;
  const openC=()=>{fb=document.activeElement;$('#catmsg').textContent='';pkDraw();el.classList.add('o');if(snsAutoFocusOK())setTimeout(()=>{try{$('#csq').focus()}catch(e){}},0)};
  const close=()=>{el.classList.remove('o');$('#csq').value='';csq='';pkDraw();try{fb&&document.contains(fb)&&fb.focus()}catch(e){}fb=null};
@@ -2368,7 +2402,7 @@ const CAT=(()=>{const el=$('#catm');let fb=null;
  $('#catn').onclick=()=>MKF.open({parent:'',onDone:p=>{const a=pkSel();if(!a.includes(p))a.push(p);rcfTouch([p]);$('#c').value=a.join(', ');const s=p.split('/');for(let i=1;i<s.length;i++)open2.add(s.slice(0,i).join('/'));pkDraw();drawTg();$('#catmsg').textContent='已建立並選取：'+p.replace(/\//g,' → ')}});
  el.addEventListener('click',e=>{const r=e.target.closest('[data-rk]'),x=e.target.closest('[data-ck]');if(!r&&!x)return;const a=pkSel();if(r){const k=r.dataset.rk;if(!a.includes(k)){a.push(k);rcfTouch([k])}}else{const k=x.dataset.ck;a.splice(a.indexOf(k),1)}$('#c').value=a.join(', ');pkDraw();drawTg()});
  return{open:openC,close,isOpen:()=>el.classList.contains('o')}})();
-/* Esc：新視窗依層級關閉（建立資料夾 → 分類管理） */
+/* Esc：新視窗依層級關閉（建立資料夾 → 資料夾管理） */
 window.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if($('#askm').classList.contains('o')||$('#lbm').classList.contains('o'))return;if(MKF.isOpen()){MKF.close(false);e.preventDefault();e.stopImmediatePropagation();return}if(CAT.isOpen()){CAT.close();e.preventDefault();e.stopImmediatePropagation()}},true);
 $('#catslot').append($('#rcf'),$('#csq').parentNode,$('#cs'),$('#rn2'));
 /* ===== V2.7.0：主題狀態變數、品牌 Logo、相簿模式、分組選擇器直接新增 ===== */
@@ -3178,7 +3212,8 @@ window.snsInfo=(()=>{const C=new Map(),P=new Map();let autoT=null,curK='',openin
     2026-11-12 18:10（猴猴選 B）：Facebook、Threads、Instagram 改回會帶入——伺服器只回傳「為了取帳號而讀到的回應」裡剛好有的正文，不另外請求 */
  /* 2026-11-13：小紅書改為嘗試帶入「同一個頁面回應」裡的筆記標題＋正文（猴猴要求重新嘗試），因此不再排除 */
  /* V3.2.1：Facebook、Threads、Instagram 依猴猴決定停止搜尋文字自動擷取（伺服器也不回傳）；小紅書照常嘗試 */
- const NOTXT=new Set(['fb','th','ig']);
+ /* V3.2.2：Instagram 搜尋文字改為「同一份回應順便讀到就帶」（伺服器不另外請求）；Facebook、Threads 仍停用 */
+ const NOTXT=new Set(['fb','th']);
  const famOf=u=>{try{const h=new URL(String(u||'').trim()).hostname.toLowerCase();return FAM.find(f=>f[1].test(h))||null}catch(e){return null}};
  const keyOf=u=>{const v=String(u||'').trim();return /^https?:\/\//i.test(v)&&famOf(v)?nuU(v)+'|'+v:''};
  const ac=()=>$('#ac'),tx=()=>$('#t');
@@ -3344,6 +3379,71 @@ apply();
 MQ.addEventListener?MQ.addEventListener('change',apply):MQ.addListener(apply);
 new MutationObserver(()=>apply()).observe(R,{attributes:true,attributeFilter:['data-ui']});
 render();
+})();
+</script>
+<script>
+/* ---------- V3.2.2：目前篩選狀態列 ----------
+   只讀取原本真正影響收藏列表的篩選變數（不另存一份）：搜尋、平台、資料夾／無資料夾、分組、標籤、未讀、未下載、加星號、日期範圍。
+   待回顧區的「只看這些」「目前只看」不列入（仍由待回顧區自己顯示）。排序、顯示方式、收藏日／發布日顯示開關不算篩選。
+   位置：電腦＝第二排「收合」右邊，最寬到「＋新增」右側邊界；手機（≤900px）＝待回顧區正上方（收藏日／發布日控制列下方）。
+   固定一行：依實際可用寬度量測，放不下的條件收進「…更多」；沒有篩選時整列隱藏。 */
+(()=>{
+ const MQ=matchMedia('(max-width:900px)');
+ const bar=document.createElement('div');bar.id='fsb';bar.className='fsb';bar.hidden=true;bar.setAttribute('aria-label','目前篩選');
+ bar.innerHTML='<span class="fsbl">目前篩選：</span><button type="button" class="fsbm" aria-expanded="false" aria-controls="fsbp" hidden>…更多</button>';
+ const lab=bar.firstChild,more=bar.lastChild;
+ const pop=document.createElement('div');pop.id='fsbp';pop.className='fsbp';pop.hidden=true;pop.setAttribute('role','dialog');pop.setAttribute('aria-label','目前篩選條件');document.body.append(pop);
+ const fmtD=d=>String(d||'').replace(/-/g,'/');
+ const items=()=>{const r=[];const add=(k,v)=>r.push({k,v});
+  const q=$('#q').value.trim();if(q)add('搜尋',q);
+  if(plSel)add('平台',plSel);
+  if(sel.c)add('資料夾',sel.c.split('/').join(' → '));if(noFolder)add('資料夾','無資料夾');
+  if(gSel){const g=gSel==='_'?null:grps.find(x=>x.id===gSel);add('分組',gSel==='_'?'未分組':(g&&g.name)||gSel)}
+  if(sel.t)add('標籤','#'+sel.t);
+  if(sel.u)add('狀態','未讀');if(gotOnly)add('狀態','未下載');if(starOnly)add('狀態','加星號');
+  const f=$('#df').value,t=$('#dt').value;if(f||t){const k=$('#dk').value==='pub'?'發布日期':'收藏日期';add(k,f&&!t?fmtD(f):(fmtD(f)||'…')+'～'+(fmtD(t)||'…'))}
+  return r};
+ let last='',open=false;
+ const place=()=>{const ctl=$('#ctl0'),tbt=$('#tbt'),due=$('#due');
+  if(!MQ.matches&&ctl&&tbt&&ctl.offsetParent!==null&&tbt.parentElement){if(bar.previousElementSibling!==tbt)tbt.after(bar)}
+  else if(due&&due.parentElement){if(bar.nextElementSibling!==due)due.before(bar)}};
+ const closePop=()=>{if(!open)return;open=false;pop.hidden=true;more.setAttribute('aria-expanded','false');more.textContent='…更多';fit()};
+ const fit=()=>{if(bar.hidden)return;
+  const chips=[...bar.querySelectorAll('.fsbc')];
+  /* 電腦：最寬到「＋新增」右側邊界 */
+  bar.style.maxWidth='';
+  if(!MQ.matches&&bar.parentElement&&bar.parentElement.classList.contains('ctlr')){const a=$('#add');if(a&&a.offsetParent!==null){const w=a.getBoundingClientRect().right-bar.getBoundingClientRect().left;if(w>0)bar.style.maxWidth=Math.floor(w)+'px'}}
+  chips.forEach(c=>{c.hidden=false});more.hidden=false;
+  const gap=parseFloat(getComputedStyle(bar).columnGap)||0,W=bar.clientWidth;
+  const mtxt=more.textContent;more.textContent='…更多';const mw1=more.offsetWidth;more.textContent='收合';const mw=Math.max(mw1,more.offsetWidth);more.textContent=mtxt;
+  const ws=chips.map(c=>c.offsetWidth),trunc=chips.some(c=>c.scrollWidth>c.clientWidth+1);
+  const all=lab.offsetWidth+ws.reduce((s,w)=>s+gap+w,0);
+  if(all<=W&&!trunc){more.hidden=!open;return}
+  let k=0,acc=lab.offsetWidth+gap+mw;while(k<ws.length&&acc+gap+ws[k]<=W){acc+=gap+ws[k];k++}
+  chips.forEach((c,i)=>{c.hidden=i>=k});more.hidden=false};
+ const update=()=>{place();const it=items(),key=JSON.stringify(it);
+  if(!it.length){bar.hidden=true;last='';open=false;pop.hidden=true;more.setAttribute('aria-expanded','false');more.textContent='…更多';return}
+  if(key!==last){last=key;bar.querySelectorAll('.fsbc').forEach(e=>e.remove());
+   for(const x of it){const c=document.createElement('span');c.className='fsbc';const i=document.createElement('i');i.textContent=x.k;c.append(i,document.createTextNode(x.v));c.title=x.k+'：'+x.v;more.before(c)}
+   if(open)drawPop()}
+  bar.hidden=false;fit()};
+ const drawPop=()=>{const it=items(),by=new Map();it.forEach(x=>{by.has(x.k)||by.set(x.k,[]);by.get(x.k).push(x.v)});
+  pop.textContent='';const h=document.createElement('div');h.className='fsbpt';h.textContent='目前篩選';pop.append(h);
+  for(const [k,vs] of by){const r=document.createElement('div');r.className='fsbpr';const b=document.createElement('b');b.textContent=k+'：';r.append(b,document.createTextNode(vs.join('、')));pop.append(r)}
+  const br=more.getBoundingClientRect(),vw=document.documentElement.clientWidth,vh=window.innerHeight;pop.style.left='0px';pop.style.top='0px';
+  const pw=pop.offsetWidth,ph=pop.offsetHeight;let x=Math.min(Math.max(8,br.right-pw),vw-pw-8),y=br.bottom+6;if(y+ph>vh-8&&br.top-6-ph>8)y=br.top-6-ph;
+  pop.style.left=Math.max(8,x)+'px';pop.style.top=Math.max(8,y)+'px'};
+ more.addEventListener('click',e=>{e.stopPropagation();if(open){closePop();return}open=true;more.setAttribute('aria-expanded','true');more.textContent='收合';pop.hidden=false;drawPop();fit()});
+ document.addEventListener('click',e=>{if(open&&!pop.contains(e.target)&&e.target!==more)closePop()});
+ document.addEventListener('keydown',e=>{if(open&&e.key==='Escape'){e.stopPropagation();closePop();more.focus()}},true);
+ window.addEventListener('scroll',()=>{if(open)closePop()},{passive:true});
+ let raf=0;const sched=()=>{if(raf)return;raf=requestAnimationFrame(()=>{raf=0;update();if(open)drawPop()})};
+ if(window.ResizeObserver){const ro=new ResizeObserver(sched);['#tp','#tbrow','#ctl0','#mn'].forEach(s=>{const e=$(s);if(e)ro.observe(e)});ro.observe(document.documentElement)}
+ window.addEventListener('resize',sched);window.addEventListener('orientationchange',sched);if(window.visualViewport)visualViewport.addEventListener('resize',sched);
+ (MQ.addEventListener?MQ.addEventListener('change',sched):MQ.addListener(sched));
+ const r0=render;render=function(){const x=r0.apply(this,arguments);sched();return x};
+ window.snsFsb={update,items,fit,el:bar,pop};
+ update();
 })();
 </script>
 </body>

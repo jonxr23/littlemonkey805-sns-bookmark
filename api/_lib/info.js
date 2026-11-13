@@ -338,7 +338,7 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
     keep(ctx, { texts: [strip(p).replace(/\s*pic\.twitter\.com\/\w+\s*$/i, '').trim()] });
     return fin(ctx, 'x');
   }
-  // ---- 9. Instagram：只取 @帳號（搜尋文字依猴猴決定停用；發布日期由前端 shortcode 推算，不變）----
+  // ---- 9. Instagram：@帳號（最優先）；V3.2.2 起搜尋文字「能順便讀到就帶」（只用為了取帳號而讀到的同一份回應，不另外請求）；發布日期由前端 shortcode 推算（不變）----
   // V3.2.1 修正：
   //   ① 官方 oEmbed 文件列出的網址格式只有 /p/{shortcode}/ 和 /tv/{shortcode}/ —— 以前送 /reel/{code}/ 可能直接被拒，改送 /p/{code}/（Reel 的代碼在 /p/ 也通用）。
   //   ② 公開嵌入頁：CaptionUsername、UsernameText（都是貼文擁有者）；內嵌資料改成「正式解析 JSON」，只認 shortcode 等於這篇代碼的物件的 owner.username。
@@ -353,12 +353,15 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
       const mm = j && typeof j.html === 'string' && /\(@([\w.]{1,30})\)/.exec(strip(j.html));
       if (mm) acct = '@' + mm[1];
     }
+    let cap = '';
     if (!acct) {
       const html = await safe(() => getBigHTML(ctx, canon + 'embed/captioned/'));
       if (html) {
         const c = /<div\b[^>]*class="[^"]*\bCaption\b[^"]*"[^>]*>([\s\S]*?)<\/div>/i.exec(html);
         const un = c && /<a\b[^>]*class="[^"]*\bCaptionUsername\b[^"]*"[^>]*>([\s\S]*?)<\/a>/i.exec(c[1]);
         if (un && /^[\w.]{1,30}$/.test(strip(un[1]))) acct = '@' + strip(un[1]);
+        // V3.2.2：同一份嵌入頁裡、貼文擁有者名稱後面的說明文字（不含留言）
+        if (c) cap = strip(c[1].replace(/<a\b[^>]*class="[^"]*\bCaptionUsername\b[^"]*"[^>]*>[\s\S]*?<\/a>/i, '').replace(/<div\b[^>]*class="[^"]*\bCaptionComments\b[\s\S]*$/i, ''));
         if (!acct) { const un2 = /<span\b[^>]*class="[^"]*\bUsernameText\b[^"]*"[^>]*>([\w.]{1,30})<\/span>/i.exec(html); if (un2) acct = '@' + un2[1]; }
         if (!acct) {
           const objs = [];
@@ -376,13 +379,17 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
       if (html) {
         const urlAcct = (s) => { const mm = /^https:\/\/www\.instagram\.com\/([\w.]{1,30})\/(?:p|reels?|tv)\/([\w-]{5,40})/.exec(s || ''); return mm && mm[2] === code && !/^(p|reel|reels|tv|explore|stories)$/.test(mm[1]) ? mm[1] : ''; };
         const canonL = (/<link\b[^>]*rel="canonical"[^>]*href="([^"]+)"/i.exec(html) || [])[1] || '';
-        const d1 = /\s-\s([\w.]{1,30}) (?:on|於) [^:：]{3,40}[:：]/.exec(metaOf(html, 'name', 'description') || metaOf(html, 'property', 'og:description'));
+        const desc = metaOf(html, 'name', 'description') || metaOf(html, 'property', 'og:description');
+        const d1 = /\s-\s([\w.]{1,30}) (?:on|於) [^:：]{3,40}[:：]\s*["“]?([\s\S]*?)["”]?\s*\.?\s*$/.exec(desc);
         const t1 = /\(@([\w.]{1,30})\)/.exec(metaOf(html, 'property', 'og:title') || metaOf(html, 'name', 'twitter:title'));
         const a1 = urlAcct(metaOf(html, 'property', 'og:url')) || urlAcct(decode(canonL)) || (d1 && d1[1]) || (t1 && t1[1]) || '';
         if (a1) acct = '@' + a1;
+        // V3.2.2：同一頁 description「… - 帳號 on 日期: "說明"」裡的說明（只有帳號也是從這一句取得、且帳號相同時才用）
+        if (!cap && d1 && d1[2] && acct === '@' + d1[1]) cap = d1[2];
       }
     }
     keep(ctx, { acct });
+    keep(ctx, { texts: [cap] });
     return fin(ctx, 'instagram');
   }
 

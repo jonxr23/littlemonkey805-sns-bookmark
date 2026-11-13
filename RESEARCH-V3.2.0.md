@@ -1,4 +1,4 @@
-# SNS Bookmark V3.2.0｜九平台資料來源研究與比較（小克 × 小澄）＋第十平台小紅書可行性＋2026-11-13 重新研究＋V3.2.1
+# SNS Bookmark V3.2.0｜九平台資料來源研究與比較（小克 × 小澄）＋第十平台小紅書可行性＋2026-11-13 重新研究＋V3.2.1＋V3.2.2
 
 日期：2026-11-12　依據：小克《八平台研究報告 第一版》、小澄《九平台技術研究補充報告 第一版》、猴猴《七項問題最終決定》
 
@@ -159,6 +159,46 @@
 - [Open Graph protocol（article:published_time）](https://ogp.me/)
 - [Threads：Media（timestamp）](https://developers.facebook.com/docs/threads/threads-media)
 - [cnblogs：微博 tv/api/component](https://www.cnblogs.com/honlicc/articles/15761789.html)
+
+## 八、V3.2.2（2026-11-13）：Instagram 帳號——舊版比較與 Headless Chromium 可行性
+
+> 小克的環境連不到 Instagram（也不能安裝套件），以下是**自己保存的各版安裝包逐行比較＋官方文件**；沒有任何一項是對 Instagram 的實際連線測試。
+
+### 8-1. 各版 Instagram 帳號取得方式比較
+
+| 版本 | 帳號來源與順序 | `/reel/` vs `/p/` | 嵌入頁解析 | 公開貼文頁 | 搜尋文字 |
+|---|---|---|---|---|---|
+| V2.8.x～V3.1.0 | **只有前端 `inferAcct`**：網址是 `instagram.com/{帳號}/p\|reel/{代碼}/` 才讀得出帳號 | — | — | — | — |
+| V3.2.0 初版（complete-1） | 網址 → 官方 oEmbed 嵌入碼 `(@帳號)` → 公開嵌入頁（**一律讀**，為了說明） | oEmbed 送 `/reel/{代碼}/`（Reel）或 `/p/` | `Caption` 區塊裡的 `CaptionUsername`；`UsernameText` | 無 | 嵌入頁說明 |
+| complete-4（18:10） | 同上，但嵌入頁**只在沒有帳號時才讀** | 同上 | 同上 | 無 | 嵌入頁有讀時才帶 |
+| complete-5 | 同上 ＋ 嵌入頁 `"owner":{…"username"}`（正規表示式）＋ 公開貼文頁 meta（og:url／canonical／description／title） | 同上 | ＋owner 正規表示式（要求 `shortcode_media` 與 `owner` 之間不能有 `[`） | 新增 | 無（停用） |
+| complete-6（V3.2.1） | 同上 | **oEmbed 改送 `/p/{代碼}/`**（官方文件只列 `/p/`、`/tv/`） | owner 改成**正式解析 `contextJSON`**，只認 `shortcode` 相同 | 同上 | 無（停用） |
+| **V3.2.2** | 同 V3.2.1（帳號邏輯沒改） | 同上 | 同上 | 同上 | **恢復**：嵌入頁說明、公開頁 description 引號內說明（同一份回應才用） |
+
+**結論**：沒有任何一版的伺服器端 Instagram 帳號在猴猴的實機測試裡成功過；「以前曾經可以」最可能是 V3.1.0 以前用**網址裡帶帳號**的連結（例如從電腦版個人頁複製的 `instagram.com/帳號/reel/代碼/`）——這個方法一直保留。猴猴目前的兩個測試網址 `/reels/代碼`、`/reel/代碼?xtok=` 網址裡沒有帳號，只能靠伺服器向 Instagram 要資料，而 Instagram 對未登入的資料中心連線常回登入頁或空資料。V3.2.1 實機仍失敗，代表 oEmbed（`/p/`）、嵌入頁、公開頁三個來源在 Vercel 上都沒拿到帳號；要知道是哪一步被擋，請看回應的 `trace`（DEPLOY.md 第三節）。
+
+### 8-2. Headless Chromium 可行性
+
+| 項目 | 事實（Vercel 官方文件 2026-08） | 對本專案的影響 |
+|---|---|---|
+| 函式大小 | 解壓後 250 MB（Large functions Beta 可到 5 GB） | 完整 Playwright Chromium 超過；要改用 `@sparticuz/chromium` 這類精簡版＋`playwright-core`，並新增相依套件與建置設定（本專案目前沒有建置步驟） |
+| 記憶體 | Hobby：2 GB／1 vCPU | 夠開一個瀏覽器，但每次都要佔用 |
+| 執行時間 | Hobby：預設與上限 300 秒 | 時間上限夠，但… |
+| 冷啟動 | 公開教學：5～10 秒 | **超過目前自動帶入的 7 秒上限**；每次在手機貼 Instagram 網址都要等，或要大幅拉長等待 |
+| 費用 | 依 Active CPU 與記憶體時間計費（Hobby 有免費額度） | 一次載入 Instagram 頁面要數秒 CPU，遠高於現在的幾個小請求 |
+| 能不能拿到資料 | Instagram 對未登入、資料中心 IP、自動化瀏覽器有登入牆與機器人防護 | Headless Chromium 從 Vercel 連過去，看到的就是現在 HTTP 請求看到的同一個登入頁／空頁；**要過關只能偽裝、繞過反自動化**——依規則不做 |
+
+**結論：不整合。**技術上可以塞進 Vercel，但又慢又重，而且最可能的結果是同一個登入牆。依指令「部署環境不適合、或沒有合規公開資料可用，就不要強行整合」。小克也無法在本機實測（連不到 Instagram、不能安裝套件），所以沒有花額度反覆嘗試。
+
+**建議的實際作法**：① 在 Instagram App 裡用「分享 → 複製連結」以外的方式（例如從電腦版作者個人頁複製貼文連結），網址裡就會帶 `/{帳號}/`，網站可直接讀出；② 需要時請提供正式網址的 `trace`，可以判斷是哪一個來源、哪一種狀態碼被擋。
+
+### V3.2.2 參考來源
+
+- [Vercel：Functions Limits](https://vercel.com/docs/functions/limitations)
+- [Vercel：Deploying Puppeteer on Vercel](https://docs.vercel.com/guides/deploying-puppeteer-with-nextjs-on-vercel)
+- [ZenRows：How to Deploy Playwright on Vercel（冷啟動 5～10 秒）](https://www.zenrows.com/blog/playwright-vercel)
+- [Sparticuz/chromium](https://www.github.com/Sparticuz/chromium)
+- [Instagram Data Without the API（2026，登入牆與 IP 限制）](https://logiover.pages.dev/guides/instagram-data-without-api-2026/)
 
 ## 參考來源
 
