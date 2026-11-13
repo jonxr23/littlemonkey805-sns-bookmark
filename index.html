@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="app-version" content="3.2.3">
-<meta name="app-build" content="2026-11-13 13:50">
+<meta name="app-build" content="2026-11-13 14:05">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1514,7 +1514,7 @@ window.snsNormU=t=>{const s=String(t==null?'':t),r=s.trim();return /^(?:https?:\
 {const el=$('#u'),D=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value');Object.defineProperty(el,'value',{configurable:true,get(){return snsExt(snsNormU(D.get.call(this)))},set(v){D.set.call(this,v)}});el.snsRaw=()=>D.get.call(el)}
 const plat=u=>{try{const h=new URL(u).hostname.toLowerCase(),F=pfam(h);if(F){const inF=cplats.filter(c=>(c.hosts||[]).some(x=>F[1].test(String(x).toLowerCase())));const c=inF.find(c=>c.hosts.some(x=>x===F[2]||x==='www.'+F[2]))||inF[0];return c?c.name:(pren[F[0]]||F[0])}for(const c of cplats)if(c.hosts.some(x=>h===x||h.endsWith('.'+x)))return c.name;for(const[r,n]of PF)if(r.test(h))return pren[n]||n}catch(e){}return '網頁'};
 const list=s=>String(s||'').split(/[,，、]/).map(x=>x.trim()).filter(Boolean);
-let dueOpen=false,noFolder=false,sortAsc=ls('soa')==='1',gTarget='',gSel='',gArm='',bArm='',bmode=false,bsel=new Set(),lastShown=[],acAuto=false,delArm='',dueOnly=false,starOnly=false,gotOnly=false,sbMode='f',nset={c:ls('nc')!=='0',t:ls('nt2')!=='0',p:ls('np2')!=='0'},noteAuto=false,plSel='',tagsOn=false,pdAuto=false,show={s:ls('shs')!=='0',p:ls('shp')!=='0'},sortBy=ls('sob')||'t',open=new Set(),treeOn=true,folders=[],armed=false,posts=[],col=null,assets=null,dl=null,view=ls('vw')||'cards',sel={c:'',t:'',u:false},cur=null,shots=[];
+let dueOpen=false,noFolder=false,sortAsc=ls('soa')==='1',gTarget='',gSel='',gArm='',bArm='',bmode=false,bsel=new Set(),lastShown=[],acAuto=false,delArm='',dueOnly=false,starOnly=false,gotOnly=false,sbMode='f',nset={c:ls('nc')!=='0',t:ls('nt2')!=='0',p:ls('np2')!=='0'},noteAuto=false,plSel='',tagsOn=false,pdAuto=false,show={s:ls('shs')!=='0',p:ls('shp')!=='0'},sortBy=ls('sob')||'t',open=new Set(),treeOn=true,folders=[],armed=false,posts=[],col=null,assets=null,dl=null,view=ls('vw')||'cards',sel={c:'',t:[],u:false},cur=null,shots=[];
 document.documentElement.dataset.theme=(()=>{const OK=['warm','cute','dark','clean','mint','custom'];if(ls('thv')!=='2'){ls('thv','2');try{localStorage.removeItem('th')}catch(e){}}if(ls('thm281')!=='1'){if(ls('th')==='warm')ls('th','cute');ls('thm281','1')}const t=ls('th');return OK.includes(t)?t:'cute'})();
 $('#th').value=document.documentElement.dataset.theme;
 $('#th').onchange=e=>{document.documentElement.dataset.theme=e.target.value;ls('th',e.target.value);applyCust()};
@@ -1565,9 +1565,9 @@ function render(){isDue.c=0;posts.sort((a,b)=>{const pb=sortBy==='pub',ka=pb?a.p
  const today=new Date().toLocaleDateString('sv-SE'),cs=new Set(),ts=new Set();
  posts.forEach(p=>{(p.cats||[]).forEach(c=>{let a='';c.split('/').forEach(s=>{a+=(a?'/':'')+s;cs.add(a)})});(p.tags||[]).forEach(t=>ts.add(t))});
  const ch=(a,k,v,l)=>`<button class="chip ${a?'on':''}" data-${k}="${esc(v)}">${l}</button>`;
- const paths=fp(),vis=p=>{const a=p.split('/');return a.slice(0,-1).every((_,i)=>open.has(a.slice(0,i+1).join('/')))};const act=sel.c||sel.t||sel.u||plSel||dueOnly||dueRow||starOnly||gotOnly||gSel||noFolder||$('#q').value.trim()||$('#df').value||$('#dt').value;$('#chips').innerHTML=($('#qb').className=act?'clr':'','')+'<div class="sbq">'+ch(!act,'a','','<span class="ql">全部</span><span class="qn">'+posts.length+'</span>')+ch(sel.u,'u','1','<span class="ql">未讀</span><span class="qn">'+posts.filter(p=>!p.read).length+'</span>')+ch(gotOnly,'ndl','1','<span class="ql">未下載</span><span class="qn">'+posts.filter(p=>!p.got).length+'</span>')+'</div><div class="sbn">'+ch(sbMode==='f','f','1','📁 資料夾')+ch(noFolder,'nf','1','📂 無資料夾<span style="float:right;opacity:.6">'+posts.filter(p=>!(p.cats||[]).length).length+'</span>')+ch(starOnly,'sf','1','⭐ 加星號<span style="float:right;opacity:.6">'+posts.filter(p=>p.star).length+'</span>')+ch(sbMode==='g','gl','1','📚 分組'+(gSel?'<span class="gsn">'+(gSel==='_'?'未分組':esc((grps.find(g=>g.id===gSel)||{}).name||''))+'</span>':''))+ch(false,'gm','1','🔠 管理分組')+'</div>';srtDraw();if($('#sgll')){const gd=sortS.g.m==='custom'&&grps.length>1;$('#sgll').classList.toggle('gdr',gd);$('#sgll').innerHTML=grps.length?gOrd().map(g=>{const c=ch(gSel===g.id,'gf',g.id,'<span class="gd" style="background:'+esc(g.color)+'"></span>'+esc(g.name)+'<span style="float:right;opacity:.6">'+posts.filter(p=>gOf(p).includes(g.id)).length+'</span>');return gd?'<div class="sgr dz" data-gr="'+esc(g.id)+'">'+c+'</div>':c}).join('')+ch(gSel==='_','gf','_','未分組<span style="float:right;opacity:.6">'+posts.filter(p=>!gOf(p).length).length+'</span>'):'<div class="sge">還沒有分組。按上面的「🔠 管理分組」新增。</div>'}{const L=[...new Set([...['IG','Threads','X','YouTube'].map(n=>pren[n]||n),...cplats.map(c=>c.name),...posts.map(p=>p.platform).filter(Boolean),'網頁'])];$('#sdp').innerHTML='<option value="">全部平台</option>'+L.map(n=>`<option>${esc(n)}</option>`).join('');$('#sdp').value=plSel}$('#tgb').textContent='🏷️ 標籤 '+ts.size;/* V3.2.3：選了標籤時按鈕只亮起來、不再接「· #標籤」（選了什麼由「目前篩選」顯示，避免按鈕太長跑版） */$('#tgb').className='chip'+(tagsOn||sel.t?' on':'');$('#dtb').className='chip'+(($('#df').value||$('#dt').value)?' on':'');$('#tagp').style.display=tagsOn?'':'none';const tc={};posts.forEach(p=>(p.tags||[]).forEach(t=>tc[t]=(tc[t]||0)+1));$('#tagp').innerHTML=ts.size?[...ts].sort().map(t=>`<button class="chip ${sel.t===t?'on':''}" style="--h:${thue(t)}" data-t="${esc(t)}">#${esc(t)} <small>${tc[t]}</small></button>`).join(''):'<span style="color:var(--mut);font-size:calc(13px*var(--ui))">還沒有標籤。新增收藏時輸入標籤，就會出現在這裡。</span>';$('#tree').style.display=sbMode==='f'?'':'none';if($('#sgl'))$('#sgl').style.display=sbMode==='g'?'':'none';ps($('#fp'));drawSb();
+ const paths=fp(),vis=p=>{const a=p.split('/');return a.slice(0,-1).every((_,i)=>open.has(a.slice(0,i+1).join('/')))};const act=sel.c||selT().length||sel.u||plSel||dueOnly||dueRow||starOnly||gotOnly||gSel||noFolder||$('#q').value.trim()||$('#df').value||$('#dt').value;$('#chips').innerHTML=($('#qb').className=act?'clr':'','')+'<div class="sbq">'+ch(!act,'a','','<span class="ql">全部</span><span class="qn">'+posts.length+'</span>')+ch(sel.u,'u','1','<span class="ql">未讀</span><span class="qn">'+posts.filter(p=>!p.read).length+'</span>')+ch(gotOnly,'ndl','1','<span class="ql">未下載</span><span class="qn">'+posts.filter(p=>!p.got).length+'</span>')+'</div><div class="sbn">'+ch(sbMode==='f','f','1','📁 資料夾')+ch(noFolder,'nf','1','📂 無資料夾<span style="float:right;opacity:.6">'+posts.filter(p=>!(p.cats||[]).length).length+'</span>')+ch(starOnly,'sf','1','⭐ 加星號<span style="float:right;opacity:.6">'+posts.filter(p=>p.star).length+'</span>')+ch(sbMode==='g','gl','1','📚 分組'+(gSel?'<span class="gsn">'+(gSel==='_'?'未分組':esc((grps.find(g=>g.id===gSel)||{}).name||''))+'</span>':''))+ch(false,'gm','1','🔠 管理分組')+'</div>';srtDraw();if($('#sgll')){const gd=sortS.g.m==='custom'&&grps.length>1;$('#sgll').classList.toggle('gdr',gd);$('#sgll').innerHTML=grps.length?gOrd().map(g=>{const c=ch(gSel===g.id,'gf',g.id,'<span class="gd" style="background:'+esc(g.color)+'"></span>'+esc(g.name)+'<span style="float:right;opacity:.6">'+posts.filter(p=>gOf(p).includes(g.id)).length+'</span>');return gd?'<div class="sgr dz" data-gr="'+esc(g.id)+'">'+c+'</div>':c}).join('')+ch(gSel==='_','gf','_','未分組<span style="float:right;opacity:.6">'+posts.filter(p=>!gOf(p).length).length+'</span>'):'<div class="sge">還沒有分組。按上面的「🔠 管理分組」新增。</div>'}{const L=[...new Set([...['IG','Threads','X','YouTube'].map(n=>pren[n]||n),...cplats.map(c=>c.name),...posts.map(p=>p.platform).filter(Boolean),'網頁'])];$('#sdp').innerHTML='<option value="">全部平台</option>'+L.map(n=>`<option>${esc(n)}</option>`).join('');$('#sdp').value=plSel}$('#tgb').textContent='🏷️ 標籤 '+ts.size;/* V3.2.3：選了標籤時按鈕只亮起來、不再接「· #標籤」（選了什麼由「目前篩選」顯示，避免按鈕太長跑版） */$('#tgb').className='chip'+(tagsOn||selT().length?' on':'');$('#dtb').className='chip'+(($('#df').value||$('#dt').value)?' on':'');$('#tagp').style.display=tagsOn?'':'none';const tc={};posts.forEach(p=>(p.tags||[]).forEach(t=>tc[t]=(tc[t]||0)+1));$('#tagp').innerHTML=ts.size?[...ts].sort().map(t=>`<button class="chip ${selT().includes(t)?'on':''}" style="--h:${thue(t)}" data-t="${esc(t)}">#${esc(t)} <small>${tc[t]}</small></button>`).join(''):'<span style="color:var(--mut);font-size:calc(13px*var(--ui))">還沒有標籤。新增收藏時輸入標籤，就會出現在這裡。</span>';$('#tree').style.display=sbMode==='f'?'':'none';if($('#sgl'))$('#sgl').style.display=sbMode==='g'?'':'none';ps($('#fp'));drawSb();
  const q=$('#q').value.trim().toLowerCase();
- const _drs=dueRow?new Set(getDue().filter(x=>dueRK(x)===dueRow).map(x=>x.id)):null;const shown=posts.filter(p=>(!sel.c||(p.cats||[]).some(c=>c===sel.c||c.startsWith(sel.c+'/')))&&(!sel.t||(p.tags||[]).includes(sel.t))&&(!sel.u||!p.read)&&(!plSel||p.platform===plSel)&&dmatch(p)&&(!dueOnly||isDue(p))&&(!_drs||_drs.has(p.id))&&(!starOnly||p.star)&&(!gotOnly||!p.got)&&(!noFolder||!(p.cats||[]).length)&&(!gSel||(gSel==='_'?!gOf(p).length:gOf(p).includes(gSel)))&&(!q||[p.note,p.text,p.url,p.acct,...(p.cats||[]),...(p.tags||[])].join(' ').toLowerCase().includes(q)));
+ const _drs=dueRow?new Set(getDue().filter(x=>dueRK(x)===dueRow).map(x=>x.id)):null;const shown=posts.filter(p=>(!sel.c||(p.cats||[]).some(c=>c===sel.c||c.startsWith(sel.c+'/')))&&selT().every(t=>(p.tags||[]).includes(t))&&(!sel.u||!p.read)&&(!plSel||p.platform===plSel)&&dmatch(p)&&(!dueOnly||isDue(p))&&(!_drs||_drs.has(p.id))&&(!starOnly||p.star)&&(!gotOnly||!p.got)&&(!noFolder||!(p.cats||[]).length)&&(!gSel||(gSel==='_'?!gOf(p).length:gOf(p).includes(gSel)))&&(!q||[p.note,p.text,p.url,p.acct,...(p.cats||[]),...(p.tags||[])].join(' ').toLowerCase().includes(q)));
  const due=getDue();const _unused=(()=>{const y=today.slice(0,4),md=today.slice(5),r=[];posts.forEach(p=>{if(p.due){if(nset.c&&p.due<=today&&!p.read)r.push(p);return}const t=new Date(p.t||0).toLocaleDateString('sv-SE');if(nset.t&&t.slice(5)===md&&t.slice(0,4)<y)r.push({...p,why:'收藏 '+(y-t.slice(0,4))+' 週年'});else if(nset.p&&p.pub&&p.pub.slice(5)===md&&p.pub.slice(0,4)<y)r.push({...p,why:'發布 '+(y-p.pub.slice(0,4))+' 週年'})});return r})();
  $('#due').innerHTML=due.length?dueHTML(due):'';
  $('#ls').className=view==='cards'?'cards':'list';
@@ -1586,7 +1586,7 @@ $('#ls').className=cls;$('#ls').innerHTML=out;window.gHyd&&gHyd();lastShown=show
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-a],[data-c],[data-t],[data-u],[data-r],[data-e],[data-o],[data-f],[data-k],[data-n],[data-g],[data-z],[data-nt],[data-gt],[data-sr],[data-dl],[data-dq],[data-sf],[data-ac],[data-gp],[data-gf],[data-gm],[data-bs],[data-nf],[data-do],[data-ndl],[data-gl]');if(!b)return;
  const d=b.dataset;
- if('a'in d||'z'in d){noFolder=false;gSel='';dueRow='';dueOnly=starOnly=gotOnly=false;sel={c:'',t:'',u:false};plSel='';$('#sdp').value='';$('#q').value='';$('#df').value=$('#dt').value=''}
+ if('a'in d||'z'in d){noFolder=false;gSel='';dueRow='';dueOnly=starOnly=gotOnly=false;sel={c:'',t:[],u:false};plSel='';$('#sdp').value='';$('#q').value='';$('#df').value=$('#dt').value=''}
  else if('c'in d){noFolder=false;/* V3.2.2 修正：只改資料夾，保留標籤、未讀等其他篩選（不同篩選交集） */sel={...sel,c:sel.c===d.c?'':d.c};if(sel.c&&!fq)open.add(sel.c)}
  else if('o'in d){open.has(d.o)?open.delete(d.o):open.add(d.o)}
  else if('n'in d){renaming=d.n;$('#rv').value=d.n.split('/').pop();$('#rn').style.display='';$('#rh').textContent='重新命名：'+d.n.replace(/\//g,' → ');$('#rv').focus();return}
@@ -1608,7 +1608,7 @@ document.addEventListener('click',e=>{
  else if('gf'in d)gSel=gSel===d.gf?'':d.gf;
  else if('bs'in d){bsel.has(d.bs)?bsel.delete(d.bs):bsel.add(d.bs)}
  else if('k'in d){const i=$('#c'),a=list(i.value).map(nm);if(!a.includes(d.k))rcfTouch([d.k]);i.value=(a.includes(d.k)?a.filter(x=>x!==d.k):[...a,d.k]).join(', ');rc();drawTg();return}
- else if('t'in d)sel={...sel,t:sel.t===d.t?'':d.t};/* V3.2.2 修正：只改標籤，保留資料夾、未讀 */
+ else if('t'in d){const a=selT();sel={...sel,t:a.includes(d.t)?a.filter(x=>x!==d.t):[...a,d.t]}}/* V3.2.3：標籤可複選（同時符合所有選取的標籤），再點一次取消該標籤 *//* V3.2.2 修正：只改標籤，保留資料夾、未讀 */
  else if('u'in d){sel={...sel,u:!sel.u};if(sel.u)gotOnly=false}/* V3.2.2 修正：只切換未讀（與未下載仍互斥），保留資料夾、標籤 */
  else if('r'in d){const p=posts.find(x=>x.id===d.r);col&&p&&col.doc(p.id).update({read:!p.read});return}
  else if('e'in d){e.preventDefault();openDlg(d.e);return}
@@ -1716,7 +1716,7 @@ $('#rs2').onclick=async()=>{if(!ren2)return;const m=await renameFolder(ren2,$('#
 const casOn=el=>{$('#'+el.id+'w').onchange=e=>{const i=+e.target.dataset.lv,seg=el.value?el.value.split('/'):[];el.value=e.target.value||seg.slice(0,i).join('/');drawCas(el)}};
 casOn($('#dp'));casOn($('#fp'));
 document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const vis=s=>$(s).style.display!=='none';if(vis('#rn2')){$('#rx2').click()}else if($('#dlg').classList.contains('o')){$('#cx').click()}else if(vis('#rn')){$('#rx').click()}else if(vis('#fadd')){$('#fa').click()}});
-$('#qb').onclick=()=>{noFolder=false;gSel='';dueRow='';dueOnly=starOnly=gotOnly=false;sel={c:'',t:'',u:false};plSel='';$('#sdp').value='';$('#q').value='';$('#df').value=$('#dt').value='';render()};
+$('#qb').onclick=()=>{noFolder=false;gSel='';dueRow='';dueOnly=starOnly=gotOnly=false;sel={c:'',t:[],u:false};plSel='';$('#sdp').value='';$('#q').value='';$('#df').value=$('#dt').value='';render()};
 $('#q').onkeydown=e=>{if(e.key==='Enter'){render();e.target.blur()}};
 $('#tgb').onclick=()=>{tagsOn=!tagsOn;render()};
 $('#sdp').onchange=e=>{plSel=e.target.value;render()};
@@ -1751,7 +1751,9 @@ $('#bgx').onclick=()=>{const B=bgS();B.img='';B===cu?svC():svP();applyCust()};
 $('#cr').onclick=()=>{cu={...CD};svC();['c1','c2','c3','c4','c5','c6'].forEach((id,i)=>$('#'+id).value=cu[cks[i]]);$('#bgo').value=cu.op;applyCust()};
 applyCust();requestAnimationFrame(applyCust);addEventListener('load',applyCust);addEventListener('pageshow',applyCust);
 /* 卡片與明細共用的標籤篩選（V2.9.0 抽出成 tagPick；卡片維持「再點一次取消」，明細一律套用該標籤） */
-const tagPick=(t,force)=>{sel={...sel,t:(!force&&sel.t===t)?'':t};render()};/* V3.2.2 修正：卡片／明細點標籤只改標籤，保留資料夾、未讀 */
+/* V3.2.3：標籤可複選。sel.t 為陣列；選了多個標籤時只顯示「同時有這些標籤」的收藏 */
+function selT(){const t=sel.t;return Array.isArray(t)?t:(t?[t]:[])}
+const tagPick=(t,force)=>{const a=selT();sel={...sel,t:a.includes(t)?(force?a:a.filter(x=>x!==t)):[...a,t]};render()};/* V3.2.2 修正：卡片／明細點標籤只改標籤，保留資料夾、未讀 */
 $('#ls').addEventListener('click',e=>{const s=e.target.closest('.tp');if(!s)return;tagPick(s.textContent)});
 const PC={IG:'linear-gradient(135deg,#f58529,#dd2a7b,#8134af)',Threads:'#101010',X:'#2b2f36',YouTube:'#e62117','網頁':'#6c5ce7'};
 const inferLabel=u=>{let m;const dq=s=>decodeURIComponent(s.replace(/\+/g,' '));try{
@@ -3415,13 +3417,13 @@ render();
   if(plSel)add('平台',plSel,'pl');
   if(sel.c)add('資料夾',sel.c.split('/').join(' → '),'c');if(noFolder)add('資料夾','無資料夾','nf');
   if(gSel){const g=gSel==='_'?null:grps.find(x=>x.id===gSel);add('分組',gSel==='_'?'未分組':(g&&g.name)||gSel,'g')}
-  if(sel.t)add('標籤','#'+sel.t,'t');
+  selT().forEach(t=>add('標籤','#'+t,'t:'+t));
   if(sel.u)add('狀態','未讀','u');if(gotOnly)add('狀態','未下載','got');if(starOnly)add('狀態','加星號','star');
   const f=$('#df').value,t=$('#dt').value;if(f||t){const k=$('#dk').value==='pub'?'發布日期':'收藏日期';add(k,f&&!t?fmtD(f):(fmtD(f)||'…')+'～'+(fmtD(t)||'…'),'d')}
   return r};
  /* V3.2.3：單獨取消一個條件（× 按鈕）——只清掉那一項，其他篩選保留，再依剩下的條件重新篩選 */
- const clear1=id=>{if(id==='q')$('#q').value='';else if(id==='pl'){plSel='';$('#sdp').value=''}else if(id==='c')sel={...sel,c:''};else if(id==='nf')noFolder=false;
-  else if(id==='g')gSel='';else if(id==='t')sel={...sel,t:''};else if(id==='u')sel={...sel,u:false};else if(id==='got')gotOnly=false;else if(id==='star')starOnly=false;
+ const clear1=id=>{if(id.startsWith('t:')){const t=id.slice(2);sel={...sel,t:selT().filter(x=>x!==t)};render();return}if(id==='q')$('#q').value='';else if(id==='pl'){plSel='';$('#sdp').value=''}else if(id==='c')sel={...sel,c:''};else if(id==='nf')noFolder=false;
+  else if(id==='g')gSel='';else if(id==='t')sel={...sel,t:[]};else if(id==='u')sel={...sel,u:false};else if(id==='got')gotOnly=false;else if(id==='star')starOnly=false;
   else if(id==='d'){$('#df').value=$('#dt').value='';const p=$('#dpre');if(p)p.value=''}else return;render()};
  const xBtn=x=>{const b=document.createElement('button');b.type='button';b.className='fsbx';b.dataset.fx=x.id;b.textContent='×';b.title='取消這個條件';b.setAttribute('aria-label','取消'+x.k+' '+x.v);return b};
  let last='',open=false;
