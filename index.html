@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.2.4">
-<meta name="app-build" content="2026-11-13 17:30">
+<meta name="app-version" content="3.2.5">
+<meta name="app-build" content="2026-11-14 00:45">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -354,9 +354,10 @@ h1.brand #hlp{font-size:calc(12.5px*var(--ui));line-height:1}
 #ann:focus-visible{outline:calc(2px*var(--ui)) solid var(--focus);outline-offset:0}
 /* V3.2.4：新公告提醒——有 NEW 時喇叭換成鈴鐺、整顆按鈕加淡色底（強調色 30%＋卡片底色 70%，跟著目前主題／自訂顏色即時計算）；文字顏色、字重、字級、尺寸、內距、位置都不變 */
 #ann .anb{display:none!important}#ann.anw .anm{display:none!important}#ann.anw .anb{display:block!important}
-#ann.anw,#ann.anw:hover{background:color-mix(in srgb,var(--acc) 30%,var(--card))!important}
+/* V3.2.5：濃度 --annp 由程式依目前主題計算（見公告程式的 tone()），算不出來時用 30% */
+#ann.anw,#ann.anw:hover{background:color-mix(in oklab,var(--acc) var(--annp,30%),var(--card))!important}
 /* 手機 381–640px（及大／特大）：這個寬度的公告按鈕內距是 0、圖示放大後會略超出按鈕邊框，直接把底色塗在按鈕上會切到鈴鐺；改用不佔版面的底色層（左右各多 7px）把「鈴鐺＋公告」整個包起來。按鈕本身的尺寸、內距、位置完全不變 */
-@media(max-width:640px){h1.brand #ann.anw{position:relative;isolation:isolate;background:transparent!important}h1.brand #ann.anw::before{content:'';position:absolute;top:0;bottom:0;left:var(--anl,var(--anx,-7px));right:var(--anx,-7px);border-radius:999px;background:color-mix(in srgb,var(--acc) 30%,var(--card));z-index:-1;pointer-events:none}}
+@media(max-width:640px){h1.brand #ann.anw{position:relative;isolation:isolate;background:transparent!important}h1.brand #ann.anw::before{content:'';position:absolute;top:0;bottom:0;left:var(--anl,var(--anx,-7px));right:var(--anx,-7px);border-radius:999px;background:color-mix(in oklab,var(--acc) var(--annp,30%),var(--card));z-index:-1;pointer-events:none}}
 @media(max-width:380px){html:not([data-ui=l]):not([data-ui=xl]) h1.brand #ann.anw{--anx:0px}}
 @media(max-width:640px){html[data-ui=l] h1.brand #ann.anw,html[data-ui=xl] h1.brand #ann.anw{--anl:-2px}}/* 大／特大：與「使用說明」只隔 4px，左側少延伸一點，不碰到旁邊按鈕 */
 h1.brand #ann{font-size:calc(12.5px*var(--ui));line-height:1}
@@ -2575,14 +2576,34 @@ window.snsBatch=(()=>{const LS=$('#ls');let anchor=null,drag=null,td=null,lp=nul
  /* V3.2.4：開啟網站時在背景讀一次公告（同一個 /api/announcements，不跳任何視窗），之後每 30 分鐘、或回到分頁且超過 10 分鐘時再讀一次 */
  const bg=async()=>{if(el.classList.contains('o'))return;const my=++seq;try{const L=await load();if(my!==seq)return;mem={t:Date.now(),items:L};bell()}catch(e){bell()}};
  bg();setInterval(bg,30*60e3);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){if(!mem||Date.now()-mem.t>10*60e3)bg();else bell()}});
- window.snsAnn={open,close,draw:L=>draw(clean({items:L})),isNew,autoNew,bell,_set:L=>{mem={t:Date.now(),items:clean({items:L})};bell()}};})();
+ /* V3.2.5：NEW 底色自適應濃度。在 OKLab 色彩空間裡，讓「底色帶有多少強調色」（底色與卡片底色的色差 ΔE_OK）在每個主題都一樣；
+    比例＝目標色差 ÷ 強調色與卡片底色的色差，限制在 MIN～MAX；再檢查「公告」文字對比，必要時往下調。只讀目前實際的 --acc／--card／--fg，不寫死任何主題。 */
+ const TONE={target:.10,min:.12,max:.70,floor:.06};/* floor：底色和頁面背景至少要差這麼多（避免淡色主題的底色融進頁面） */
+ const lin=c=>(c/=255)<=.04045?c/12.92:((c+.055)/1.055)**2.4,dl=c=>{c=Math.max(0,Math.min(1,c));return 255*(c<=.0031308?12.92*c:1.055*c**(1/2.4)-.055)};
+ const ok=rgb=>{const[r,g,b]=rgb.map(lin),l=Math.cbrt(.4122214708*r+.5363325363*g+.0514459929*b),m=Math.cbrt(.2119034982*r+.6806995451*g+.1073969566*b),q=Math.cbrt(.0883024619*r+.2817188376*g+.6299787005*b);return[.2104542553*l+.793617785*m-.0040720468*q,1.9779984951*l-2.428592205*m+.4505937099*q,.0259040371*l+.7827717662*m-.808675766*q]};
+ const unok=([L,a,b])=>{const l=(L+.3963377774*a+.2158037573*b)**3,m=(L-.1055613458*a-.0638541728*b)**3,q=(L-.0894841775*a-1.291485548*b)**3;return[dl(4.0767416621*l-3.3077115913*m+.2309699292*q),dl(-1.2684380046*l+2.6097574011*m-.3413193965*q),dl(-.0041960863*l-.7034186147*m+1.707614701*q)]};
+ const dE=(x,y)=>Math.hypot(...ok(x).map((v,i)=>v-ok(y)[i])),Y=c=>{const[r,g,b]=c.map(lin);return .2126*r+.7152*g+.0722*b},CR=(x,y)=>{const a=Y(x),b=Y(y);return(Math.max(a,b)+.05)/(Math.min(a,b)+.05)};
+ const tone=()=>{const a=$('#ann');if(!a||!document.body)return;try{const pr=document.createElement('i');pr.style.display='none';document.body.appendChild(pr);
+  const rgba=v=>{pr.style.color='';pr.style.color=v;const s=getComputedStyle(pr).color,n=(s.match(/[\d.]+/g)||[0,0,0]).map(Number);return s.startsWith('color(')?n.slice(0,3).map(x=>x*255).concat([n[3]==null?1:n[3]]):n.slice(0,3).concat([n[3]==null?1:n[3]])};
+  const A=rgba('var(--acc)').slice(0,3),C=rgba('var(--card)').slice(0,3);let Bk=rgba(getComputedStyle(document.body).backgroundColor);if(Bk[3]<.5)Bk=rgba('var(--bg)');const B=Bk.slice(0,3);
+  const t=a.querySelector('.ant')||a,tc=rgba(getComputedStyle(t).color);pr.remove();const over=bg=>tc.slice(0,3).map((v,i)=>v*tc[3]+bg[i]*(1-tc[3]));
+  const d=dE(A,C);let p=d>1e-3?TONE.target/d:TONE.max;p=Math.max(TONE.min,Math.min(TONE.max,p));
+  const mixOk=p=>{const x=ok(A),y=ok(C);return unok(x.map((v,i)=>v*p+y[i]*(1-p)))};const c0=CR(over(B),B),floor=Math.min(4.5,c0)*.9;
+  while(p<TONE.max-1e-9&&dE(mixOk(p),B)<TONE.floor)p=Math.min(TONE.max,p+.01);/* 和頁面背景差太少 → 往上加（文字保護優先，下一行會再檢查） */
+  while(p>TONE.min+1e-9&&CR(over(mixOk(p)),mixOk(p))<floor)p=Math.max(TONE.min,p-.01);
+  p=Math.round(p*100);a.style.setProperty('--annp',p+'%');const M=mixOk(p/100);
+  a.dataset.tone=JSON.stringify({p,acc:A.map(Math.round),card:C.map(Math.round),bg:B.map(Math.round),hex:'#'+M.map(v=>Math.round(v).toString(16).padStart(2,'0')).join('').toUpperCase(),dTint:+dE(M,C).toFixed(4),dPage:+dE(M,B).toFixed(4),cr0:+c0.toFixed(2),cr1:+CR(over(M),M).toFixed(2)})}catch(e){}};
+ let toneQ=0;const toneSoon=()=>{cancelAnimationFrame(toneQ);toneQ=requestAnimationFrame(tone)};
+ new MutationObserver(toneSoon).observe(document.documentElement,{attributes:true,attributeFilter:['style','data-theme','class','data-ui']});
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',toneSoon);else toneSoon();
+ window.snsAnn={tone,TONE,open,close,draw:L=>draw(clean({items:L})),isNew,autoNew,bell,_set:L=>{mem={t:Date.now(),items:clean({items:L})};bell()}};})();
 /* ===== Google 串接：登入 / 雲端硬碟 / 試算表 / 容量 / 意見回饋 ===== */
 (()=>{
 const CID='840119973043-eo9lkljcu3bduvu9gae1ggri6i0hr4c7.apps.googleusercontent.com';
 const SCOPE='openid profile email https://www.googleapis.com/auth/drive.file';
 const D='https://www.googleapis.com/drive/v3/',U='https://www.googleapis.com/upload/drive/v3/',SH='https://sheets.googleapis.com/v4/spreadsheets/';
 const FOLDER='application/vnd.google-apps.folder',SHEET='application/vnd.google-apps.spreadsheet';
-const GG=window.snsGoogle;window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.2.4';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+const GG=window.snsGoogle;window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.2.5';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
