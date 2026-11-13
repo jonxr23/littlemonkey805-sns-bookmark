@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.2.2">
-<meta name="app-build" content="2026-11-13 13:00">
+<meta name="app-version" content="3.2.3">
+<meta name="app-build" content="2026-11-13 13:35">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1555,7 +1555,7 @@ function render(){isDue.c=0;posts.sort((a,b)=>{const pb=sortBy==='pub',ka=pb?a.p
  const today=new Date().toLocaleDateString('sv-SE'),cs=new Set(),ts=new Set();
  posts.forEach(p=>{(p.cats||[]).forEach(c=>{let a='';c.split('/').forEach(s=>{a+=(a?'/':'')+s;cs.add(a)})});(p.tags||[]).forEach(t=>ts.add(t))});
  const ch=(a,k,v,l)=>`<button class="chip ${a?'on':''}" data-${k}="${esc(v)}">${l}</button>`;
- const paths=fp(),vis=p=>{const a=p.split('/');return a.slice(0,-1).every((_,i)=>open.has(a.slice(0,i+1).join('/')))};const act=sel.c||sel.t||sel.u||plSel||dueOnly||dueRow||starOnly||gotOnly||gSel||noFolder||$('#q').value.trim()||$('#df').value||$('#dt').value;$('#chips').innerHTML=($('#qb').className=act?'clr':'','')+'<div class="sbq">'+ch(!act,'a','','<span class="ql">全部</span><span class="qn">'+posts.length+'</span>')+ch(sel.u,'u','1','<span class="ql">未讀</span><span class="qn">'+posts.filter(p=>!p.read).length+'</span>')+ch(gotOnly,'ndl','1','<span class="ql">未下載</span><span class="qn">'+posts.filter(p=>!p.got).length+'</span>')+'</div><div class="sbn">'+ch(sbMode==='f','f','1','📁 資料夾')+ch(noFolder,'nf','1','📂 無資料夾<span style="float:right;opacity:.6">'+posts.filter(p=>!(p.cats||[]).length).length+'</span>')+ch(starOnly,'sf','1','⭐ 加星號<span style="float:right;opacity:.6">'+posts.filter(p=>p.star).length+'</span>')+ch(sbMode==='g','gl','1','📚 分組'+(gSel?'<span class="gsn">'+(gSel==='_'?'未分組':esc((grps.find(g=>g.id===gSel)||{}).name||''))+'</span>':''))+ch(false,'gm','1','🔠 管理分組')+'</div>';srtDraw();if($('#sgll')){const gd=sortS.g.m==='custom'&&grps.length>1;$('#sgll').classList.toggle('gdr',gd);$('#sgll').innerHTML=grps.length?gOrd().map(g=>{const c=ch(gSel===g.id,'gf',g.id,'<span class="gd" style="background:'+esc(g.color)+'"></span>'+esc(g.name)+'<span style="float:right;opacity:.6">'+posts.filter(p=>gOf(p).includes(g.id)).length+'</span>');return gd?'<div class="sgr dz" data-gr="'+esc(g.id)+'">'+c+'</div>':c}).join('')+ch(gSel==='_','gf','_','未分組<span style="float:right;opacity:.6">'+posts.filter(p=>!gOf(p).length).length+'</span>'):'<div class="sge">還沒有分組。按上面的「🔠 管理分組」新增。</div>'}{const L=[...new Set([...['IG','Threads','X','YouTube'].map(n=>pren[n]||n),...cplats.map(c=>c.name),...posts.map(p=>p.platform).filter(Boolean),'網頁'])];$('#sdp').innerHTML='<option value="">全部平台</option>'+L.map(n=>`<option>${esc(n)}</option>`).join('');$('#sdp').value=plSel}$('#tgb').textContent='🏷️ 標籤 '+ts.size+(sel.t?' · #'+sel.t:'');$('#tgb').className='chip'+(tagsOn||sel.t?' on':'');$('#dtb').className='chip'+(($('#df').value||$('#dt').value)?' on':'');$('#tagp').style.display=tagsOn?'':'none';const tc={};posts.forEach(p=>(p.tags||[]).forEach(t=>tc[t]=(tc[t]||0)+1));$('#tagp').innerHTML=ts.size?[...ts].sort().map(t=>`<button class="chip ${sel.t===t?'on':''}" style="--h:${thue(t)}" data-t="${esc(t)}">#${esc(t)} <small>${tc[t]}</small></button>`).join(''):'<span style="color:var(--mut);font-size:calc(13px*var(--ui))">還沒有標籤。新增收藏時輸入標籤，就會出現在這裡。</span>';$('#tree').style.display=sbMode==='f'?'':'none';if($('#sgl'))$('#sgl').style.display=sbMode==='g'?'':'none';ps($('#fp'));drawSb();
+ const paths=fp(),vis=p=>{const a=p.split('/');return a.slice(0,-1).every((_,i)=>open.has(a.slice(0,i+1).join('/')))};const act=sel.c||sel.t||sel.u||plSel||dueOnly||dueRow||starOnly||gotOnly||gSel||noFolder||$('#q').value.trim()||$('#df').value||$('#dt').value;$('#chips').innerHTML=($('#qb').className=act?'clr':'','')+'<div class="sbq">'+ch(!act,'a','','<span class="ql">全部</span><span class="qn">'+posts.length+'</span>')+ch(sel.u,'u','1','<span class="ql">未讀</span><span class="qn">'+posts.filter(p=>!p.read).length+'</span>')+ch(gotOnly,'ndl','1','<span class="ql">未下載</span><span class="qn">'+posts.filter(p=>!p.got).length+'</span>')+'</div><div class="sbn">'+ch(sbMode==='f','f','1','📁 資料夾')+ch(noFolder,'nf','1','📂 無資料夾<span style="float:right;opacity:.6">'+posts.filter(p=>!(p.cats||[]).length).length+'</span>')+ch(starOnly,'sf','1','⭐ 加星號<span style="float:right;opacity:.6">'+posts.filter(p=>p.star).length+'</span>')+ch(sbMode==='g','gl','1','📚 分組'+(gSel?'<span class="gsn">'+(gSel==='_'?'未分組':esc((grps.find(g=>g.id===gSel)||{}).name||''))+'</span>':''))+ch(false,'gm','1','🔠 管理分組')+'</div>';srtDraw();if($('#sgll')){const gd=sortS.g.m==='custom'&&grps.length>1;$('#sgll').classList.toggle('gdr',gd);$('#sgll').innerHTML=grps.length?gOrd().map(g=>{const c=ch(gSel===g.id,'gf',g.id,'<span class="gd" style="background:'+esc(g.color)+'"></span>'+esc(g.name)+'<span style="float:right;opacity:.6">'+posts.filter(p=>gOf(p).includes(g.id)).length+'</span>');return gd?'<div class="sgr dz" data-gr="'+esc(g.id)+'">'+c+'</div>':c}).join('')+ch(gSel==='_','gf','_','未分組<span style="float:right;opacity:.6">'+posts.filter(p=>!gOf(p).length).length+'</span>'):'<div class="sge">還沒有分組。按上面的「🔠 管理分組」新增。</div>'}{const L=[...new Set([...['IG','Threads','X','YouTube'].map(n=>pren[n]||n),...cplats.map(c=>c.name),...posts.map(p=>p.platform).filter(Boolean),'網頁'])];$('#sdp').innerHTML='<option value="">全部平台</option>'+L.map(n=>`<option>${esc(n)}</option>`).join('');$('#sdp').value=plSel}$('#tgb').textContent='🏷️ 標籤 '+ts.size;/* V3.2.3：選了標籤時按鈕只亮起來、不再接「· #標籤」（選了什麼由「目前篩選」顯示，避免按鈕太長跑版） */$('#tgb').className='chip'+(tagsOn||sel.t?' on':'');$('#dtb').className='chip'+(($('#df').value||$('#dt').value)?' on':'');$('#tagp').style.display=tagsOn?'':'none';const tc={};posts.forEach(p=>(p.tags||[]).forEach(t=>tc[t]=(tc[t]||0)+1));$('#tagp').innerHTML=ts.size?[...ts].sort().map(t=>`<button class="chip ${sel.t===t?'on':''}" style="--h:${thue(t)}" data-t="${esc(t)}">#${esc(t)} <small>${tc[t]}</small></button>`).join(''):'<span style="color:var(--mut);font-size:calc(13px*var(--ui))">還沒有標籤。新增收藏時輸入標籤，就會出現在這裡。</span>';$('#tree').style.display=sbMode==='f'?'':'none';if($('#sgl'))$('#sgl').style.display=sbMode==='g'?'':'none';ps($('#fp'));drawSb();
  const q=$('#q').value.trim().toLowerCase();
  const _drs=dueRow?new Set(getDue().filter(x=>dueRK(x)===dueRow).map(x=>x.id)):null;const shown=posts.filter(p=>(!sel.c||(p.cats||[]).some(c=>c===sel.c||c.startsWith(sel.c+'/')))&&(!sel.t||(p.tags||[]).includes(sel.t))&&(!sel.u||!p.read)&&(!plSel||p.platform===plSel)&&dmatch(p)&&(!dueOnly||isDue(p))&&(!_drs||_drs.has(p.id))&&(!starOnly||p.star)&&(!gotOnly||!p.got)&&(!noFolder||!(p.cats||[]).length)&&(!gSel||(gSel==='_'?!gOf(p).length:gOf(p).includes(gSel)))&&(!q||[p.note,p.text,p.url,p.acct,...(p.cats||[]),...(p.tags||[])].join(' ').toLowerCase().includes(q)));
  const due=getDue();const _unused=(()=>{const y=today.slice(0,4),md=today.slice(5),r=[];posts.forEach(p=>{if(p.due){if(nset.c&&p.due<=today&&!p.read)r.push(p);return}const t=new Date(p.t||0).toLocaleDateString('sv-SE');if(nset.t&&t.slice(5)===md&&t.slice(0,4)<y)r.push({...p,why:'收藏 '+(y-t.slice(0,4))+' 週年'});else if(nset.p&&p.pub&&p.pub.slice(5)===md&&p.pub.slice(0,4)<y)r.push({...p,why:'發布 '+(y-p.pub.slice(0,4))+' 週年'})});return r})();
@@ -1577,7 +1577,7 @@ document.addEventListener('click',e=>{
  const b=e.target.closest('[data-a],[data-c],[data-t],[data-u],[data-r],[data-e],[data-o],[data-f],[data-k],[data-n],[data-g],[data-z],[data-nt],[data-gt],[data-sr],[data-dl],[data-dq],[data-sf],[data-ac],[data-gp],[data-gf],[data-gm],[data-bs],[data-nf],[data-do],[data-ndl],[data-gl]');if(!b)return;
  const d=b.dataset;
  if('a'in d||'z'in d){noFolder=false;gSel='';dueRow='';dueOnly=starOnly=gotOnly=false;sel={c:'',t:'',u:false};plSel='';$('#sdp').value='';$('#q').value='';$('#df').value=$('#dt').value=''}
- else if('c'in d){noFolder=false;sel={c:sel.c===d.c?'':d.c,t:'',u:false};if(sel.c&&!fq)open.add(sel.c)}
+ else if('c'in d){noFolder=false;/* V3.2.2 修正：只改資料夾，保留標籤、未讀等其他篩選（不同篩選交集） */sel={...sel,c:sel.c===d.c?'':d.c};if(sel.c&&!fq)open.add(sel.c)}
  else if('o'in d){open.has(d.o)?open.delete(d.o):open.add(d.o)}
  else if('n'in d){renaming=d.n;$('#rv').value=d.n.split('/').pop();$('#rn').style.display='';$('#rh').textContent='重新命名：'+d.n.replace(/\//g,' → ');$('#rv').focus();return}
  else if('f'in d){sbMode='f';treeOn=true}
@@ -1598,15 +1598,15 @@ document.addEventListener('click',e=>{
  else if('gf'in d)gSel=gSel===d.gf?'':d.gf;
  else if('bs'in d){bsel.has(d.bs)?bsel.delete(d.bs):bsel.add(d.bs)}
  else if('k'in d){const i=$('#c'),a=list(i.value).map(nm);if(!a.includes(d.k))rcfTouch([d.k]);i.value=(a.includes(d.k)?a.filter(x=>x!==d.k):[...a,d.k]).join(', ');rc();drawTg();return}
- else if('t'in d)sel={c:'',t:sel.t===d.t?'':d.t,u:false};
- else if('u'in d){sel={c:'',t:'',u:!sel.u};if(sel.u)gotOnly=false}
+ else if('t'in d)sel={...sel,t:sel.t===d.t?'':d.t};/* V3.2.2 修正：只改標籤，保留資料夾、未讀 */
+ else if('u'in d){sel={...sel,u:!sel.u};if(sel.u)gotOnly=false}/* V3.2.2 修正：只切換未讀（與未下載仍互斥），保留資料夾、標籤 */
  else if('r'in d){const p=posts.find(x=>x.id===d.r);col&&p&&col.doc(p.id).update({read:!p.read});return}
  else if('e'in d){e.preventDefault();openDlg(d.e);return}
  render();
 });
 async function paste(manual){const m=$('#pm');try{const t=(await Promise.race([navigator.clipboard.readText(),new Promise((_,r)=>setTimeout(r,2500))])).trim();if(/^https?:\/\//.test(snsExt(t))){$('#u').value=t;$('#u').oninput();if(manual)m.textContent=''}else if(manual){m.textContent='剪貼簿裡沒有連結，請先複製貼文連結';$('#u').focus()}}catch(e){if(manual){m.textContent='這裡讀不到剪貼簿：請點一下連結欄，手機長按選「貼上」，電腦按 Ctrl+V';$('#u').focus()}}}
 $('#ps').onclick=paste;
-$('#u').oninput=()=>{const v=$('#u').value;$('#pl').textContent=v?'→ '+plat(v):'';const i=v?inferDate(v):'';if(i&&(!$('#pd').value||pdAuto)){$('#pd').value=i;pdAuto=true;$('#pn').textContent='（自動推算，可修改）'}else if(!i&&pdAuto){$('#pd').value='';pdAuto=false;$('#pn').textContent=''}dupChk()};$('#pd').oninput=()=>{pdAuto=false;$('#pn').textContent=''};
+$('#u').oninput=()=>{const v=$('#u').value;$('#pl').textContent=v?'→ '+plat(v):'';const i=v?inferDate(v):'';if(i&&(!$('#pd').value||pdAuto)){$('#pd').value=i;pdAuto=true;$('#pn').textContent='（自動推算，可修改）'}else if(!i&&pdAuto){$('#pd').value='';pdAuto=false;$('#pn').textContent=''}dupChk()};$('#pd').oninput=()=>{pdAuto=false;$('#pn').textContent='';window.snsPnChk&&snsPnChk()};
 function drawShots(){window.gHyd&&setTimeout(gHyd,0);$('#sh').innerHTML=shots.map((id,i)=>`<div><a data-gid="${id}" href="#" target="_blank" rel="noopener"><img data-gid="${id}" alt=""></a><b data-x="${i}">×</b></div>`).join('')+xims.map((u,i)=>`<div class="xsh"><a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${XIMG.img(u)}</a><b data-xx="${i}" title="移除這張外部圖片（只移除引用，不影響 Google 雲端硬碟）">×</b><i>🔗 外部</i></div>`).join('')}
 $('#sh').onclick=e=>{const x=e.target.dataset.x,xx=e.target.dataset.xx;if(x!==undefined){shots.splice(+x,1);drawShots()}else if(xx!==undefined){xims.splice(+xx,1);drawShots()}};
 let origShots=[],sessUp=[];
@@ -1741,7 +1741,7 @@ $('#bgx').onclick=()=>{const B=bgS();B.img='';B===cu?svC():svP();applyCust()};
 $('#cr').onclick=()=>{cu={...CD};svC();['c1','c2','c3','c4','c5','c6'].forEach((id,i)=>$('#'+id).value=cu[cks[i]]);$('#bgo').value=cu.op;applyCust()};
 applyCust();requestAnimationFrame(applyCust);addEventListener('load',applyCust);addEventListener('pageshow',applyCust);
 /* 卡片與明細共用的標籤篩選（V2.9.0 抽出成 tagPick；卡片維持「再點一次取消」，明細一律套用該標籤） */
-const tagPick=(t,force)=>{sel={c:'',t:(!force&&sel.t===t)?'':t,u:false};render()};
+const tagPick=(t,force)=>{sel={...sel,t:(!force&&sel.t===t)?'':t};render()};/* V3.2.2 修正：卡片／明細點標籤只改標籤，保留資料夾、未讀 */
 $('#ls').addEventListener('click',e=>{const s=e.target.closest('.tp');if(!s)return;tagPick(s.textContent)});
 const PC={IG:'linear-gradient(135deg,#f58529,#dd2a7b,#8134af)',Threads:'#101010',X:'#2b2f36',YouTube:'#e62117','網頁':'#6c5ce7'};
 const inferLabel=u=>{let m;const dq=s=>decodeURIComponent(s.replace(/\+/g,' '));try{
@@ -1849,7 +1849,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#gmn').style.disp
 $('#fbo').onclick=()=>{$('#fbr').value=(G.user&&G.user.name)||'';$('#fbs2').textContent='';$('#fbm').style.display='flex';$('#fbn').focus()};
 $('#fbx').onclick=()=>{$('#fbm').style.display='none'};
 $('#fbs').onclick=async()=>{const msg=$('#fbt').value.trim();if(!msg){$('#fbs2').textContent='先寫點內容再送出哦～';return}const b=$('#fbs');b.disabled=true;$('#fbs2').textContent='送出中…';const p=new URLSearchParams();p.append('entry.936790019',$('#fbn').value.trim()||'（未填暱稱）');p.append('entry.540307403',msg);p.append('entry.1631816990',(G.user&&G.user.name)||'未登入');try{await fetch('https://docs.google.com/forms/d/e/1FAIpQLSfGLcB6f3QmmnXIhoUSuoQV9ASiEnVVHFbr4G_8WyYUnD2oAg/formResponse',{method:'POST',mode:'no-cors',body:p});$('#fbt').value='';$('#fbs2').textContent='';$('#fbm').style.display='none';note('已送出請求（無法確認 Google 表單是否收到）')}catch(e){$('#fbs2').textContent='送出失敗，請檢查網路後再試'}finally{b.disabled=false}};
-const _u6=$('#u').oninput;$('#u').oninput=()=>{_u6();const v=$('#u').value;if(v&&!$('#pd').value&&/youtube\.com|youtu\.be|weibo\.(com|cn)/.test(v))$('#pn').textContent='（這個平台的連結沒有日期資訊，請手動選）'}})();
+const _u6=$('#u').oninput;$('#u').oninput=()=>{_u6()/* V3.2.2：「沒有日期資訊」提示改由自動偵測完成後統一判斷（所有平台，見 snsInfo 的 pnChk） */}})();
 let renaming='';
 $('#rx').onclick=()=>{$('#rn').style.display='none';renaming=''};
 $('#rs').onclick=async()=>{const old=renaming;if(!old)return;const nn=nm($('#rv').value.trim()).replace(/\//g,'-');if(!nn)return;const np=(old.includes('/')?old.slice(0,old.lastIndexOf('/')+1):'')+nn;if(np===old){$('#rn').style.display='none';renaming='';return}if(fp().includes(np)){$('#rh').textContent='這一層已經有同名的資料夾了';return}if(!col){$('#rh').textContent='請先登入 Google，並等雲端同步完成';return}const re=c=>c===old?np:c.startsWith(old+'/')?np+c.slice(old.length):c;try{$('#rh').textContent='改名中…';const nf=[...new Set(fp().map(re))];for(const p of posts){if((p.cats||[]).some(c=>c===old||c.startsWith(old+'/')))await col.doc(p.id).update({cats:[...new Set(p.cats.map(re))]})}await col.doc('folders').set({list:nf});folders=nf;sortRe(old,re);sel.c=sel.c?re(sel.c):'';if(open.has(old))open.add(np);$('#rn').style.display='none';renaming='';render()}catch(x){$('#rh').textContent='改名失敗：'+(x.message||x.code||'')}};
@@ -3234,24 +3234,30 @@ window.snsInfo=(()=>{const C=new Map(),P=new Map();let autoT=null,curK='',openin
     if(j)C.set(k,v);return v});
   P.set(k,pr);return pr};
  const setT=v=>{const t=tx();t.value=v;t.dispatchEvent(new Event('input',{bubbles:true}));autoT=v};
+ /* V3.2.2：發布日提示——網址有內容、偵測（伺服器查詢、網址推算、分享文字）都結束後，日期欄還是空白就顯示；日期有值或網址清空就拿掉 */
+ const NODATE='（這個平台的連結沒有日期資訊，請手動選）';
+ const pnChk=()=>{const pn=$('#pn');if($('#u').value.trim()&&!$('#pd').value){pn.textContent=NODATE}else if(pn.textContent===NODATE)pn.textContent=''};
+ window.snsPnChk=pnChk;
  const apply=(F,v)=>{const a=ac();
   if(v.acct){if(!a.value.trim()||acAuto){if(a.value!==v.acct)a.value=v.acct;acAuto=true;$('#an').textContent='（自動偵測，可修改）'}hint(false)}
   else hint(!a.value.trim());
   /* V3.2.1：發布日期——欄位空白、或目前是系統帶入（含網址推算）且沒被改過時才填；手動日期不動 */
   if(v.pub){const d=$('#pd');if(!d.value||pdAuto){if(d.value!==v.pub)d.value=v.pub;pdAuto=true;$('#pn').textContent='（自動偵測，可修改）'}}
+  pnChk();
   if(NOTXT.has(F[0]))return;
   const txt=v.texts.join('\n').trim();
   if(txt&&(!tx().value.trim()||(autoT!==null&&tx().value===autoT)))setT(txt)};
- const run=()=>{const u=$('#u').value.trim(),F=famOf(u),my=++seq;if(!F){hint(false);return}
+ const run=()=>{const u=$('#u').value.trim(),F=famOf(u),my=++seq;if(!F){hint(false);pnChk();return}
   const raw=$('#u').snsRaw?$('#u').snsRaw():u,k=keyOf(u);
   get(u).then(v=>{if(my!==seq||!$('#dlg').classList.contains('o')||keyOf($('#u').value.trim())!==k)return;
    const s=fromShare(F[0],raw);apply(F,{acct:v.acct||s.acct,texts:v.texts.length?v.texts:s.texts,pub:v.pub})})};
  /* 換網址：先拿掉上一個網址系統帶入、且沒被改過的內容，再依新網址重新取得 */
- const onUrl=()=>{if(opening)return;const u=$('#u').value.trim(),k=keyOf(u),F=famOf(u);if(k===curK)return;curK=k;seq++;hint(false);
+ const onUrl=()=>{if(opening)return;const u=$('#u').value.trim(),k=keyOf(u),F=famOf(u);if(k===curK){if(!k)pnChk();return}curK=k;seq++;hint(false);
+  if($('#pn').textContent===NODATE)$('#pn').textContent='';/* 換網址：等這個網址偵測完再判斷 */
   const t=tx();if(autoT!==null&&t.value===autoT){t.value='';t.dispatchEvent(new Event('input',{bubbles:true}))}autoT=null;
   /* 顯示名稱平台：網址裡的 @帳號不算取得成功，先拿掉，等真正的顯示名稱 */
   if(F&&F[2]==='n'&&acAuto&&/^@/.test(ac().value)){ac().value='';acAuto=false;$('#an').textContent=''}
-  if(k)run()};
+  if(k)run();else pnChk()};
  {const u0=$('#u').oninput;$('#u').oninput=()=>{u0();onUrl()}}
  tx().addEventListener('input',()=>{if(autoT!==null&&tx().value!==autoT)autoT=null});
  ac().addEventListener('input',()=>{if(ac().value.trim())hint(false)});
@@ -3261,7 +3267,7 @@ window.snsInfo=(()=>{const C=new Map(),P=new Map();let autoT=null,curK='',openin
   if(au&&typeof au.text==='string'&&au.text&&tx().value===au.text&&!(famOf($('#u').value.trim())&&NOTXT.has(famOf($('#u').value.trim())[0])))autoT=au.text;
   /* V3.2.1：還原發布日期的自動狀態；舊資料沒有 auto.pub → 原本的發布日一律當手動 */
   if(au&&typeof au.pub==='string'&&au.pub&&$('#pd').value===au.pub){pdAuto=true;$('#pn').textContent='（自動偵測，可修改）'}
-  const u=$('#u').value.trim();curK=keyOf(u);if(curK){const F=famOf(u);if(F&&F[2]==='n'&&acAuto&&/^@/.test(ac().value)&&!(au&&au.acct===ac().value)){ac().value='';acAuto=false;$('#an').textContent=''}run()}return r};
+  const u=$('#u').value.trim();curK=keyOf(u);if(curK){const F=famOf(u);if(F&&F[2]==='n'&&acAuto&&/^@/.test(ac().value)&&!(au&&au.acct===ac().value)){ac().value='';acAuto=false;$('#an').textContent=''}run()}else pnChk();return r};
  return{famOf,state:()=>({acct:acAuto&&ac().value.trim()?ac().value:'',text:autoT!==null&&tx().value===autoT&&autoT?autoT:'',pub:pdAuto&&$('#pd').value?$('#pd').value:''}),_dbg:()=>({autoT,curK,acAuto,pdAuto})}})();
 /* V3.2.1：網址只差空白（或同一個網址又收到一次輸入事件）時不重跑任何網址處理——不清掉已帶入的帳號、文字、發布日期，也不重送查詢。
    開啟新增／編輯視窗時重設。 */
