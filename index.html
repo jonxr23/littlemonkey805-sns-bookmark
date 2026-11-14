@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.2.6">
-<meta name="app-build" content="2026-11-14 04:30">
+<meta name="app-version" content="3.2.7">
+<meta name="app-build" content="2026-11-14 12:00">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1166,7 +1166,25 @@ input.phfit::placeholder{font-size:var(--phf)}
 }
 /* 大／特大：側欄整塊上下捲動（原設計），資料夾清單只負責左右捲動，高度照內容 */
 html[data-ui=l] #sb #tl,html[data-ui=xl] #sb #tl{overflow-x:auto;overflow-y:hidden}
+/* V3.2.7：側邊欄寬度拖曳條——電腦、手機同一個外觀：3px 細線、顏色＝邊框色混一點主題色，滑過／拖曳時加深；
+   不用箭頭、三角形。手機只把「看不見的觸控範圍」加寬到 26px，細線本身不變粗。 */
+#sbrz{position:fixed;left:0;top:0;height:0;width:12px;z-index:21;display:flex;justify-content:center;cursor:col-resize;touch-action:none;-webkit-tap-highlight-color:transparent;outline:none}
+#sbrz[hidden]{display:none}
+#sbrz::after{content:"";width:3px;height:100%;border-radius:3px;background:color-mix(in srgb,var(--acc) 30%,var(--bd));transition:background-color .15s ease}
+#sbrz:hover::after,#sbrz.on::after{background:color-mix(in srgb,var(--acc) 80%,var(--bd))}
+#sbrz:focus-visible::after{background:color-mix(in srgb,var(--acc) 80%,var(--bd));box-shadow:0 0 0 2px var(--focus,var(--acc))}
+body.sbrzing,body.sbrzing *{cursor:col-resize!important;user-select:none!important;-webkit-user-select:none!important}
+@media(max-width:900px){#sbrz{width:26px}#ver{text-overflow:ellipsis}}/* 抽屜調窄時版本列以「…」結尾，不會切在半個字 */
 </style>
+<style id="sbws"></style>
+<script>/* V3.2.7：側邊欄寬度（只存在這台裝置的 localStorage：電腦「sbwd」、手機「sbwm」，數值是「中」介面大小下的寬度 px，套用時乘上介面大小）。
+   沒有調整過就不輸出任何規則＝維持 V3.2.6 預設寬度。範圍：電腦 200～420（另外保留卡片區至少 480，預設 232 一定可用）；手機 260～（螢幕寬−48px，至少預設寬）。 */
+window.snsSbwCss=function(d,m){var s='',U='var(--ui)';
+ if(d)s+='@media(min-width:901px){html:root body #sb{width:clamp(calc(200px*'+U+'),calc('+d+'px*'+U+'),max(calc(232px*'+U+'),min(calc(420px*'+U+'),calc(100vw - 66px - 480px*'+U+'))))}}';
+ if(m){var f=function(p){return 'clamp(min(min('+p+'vw,calc(320px*'+U+')),calc(260px*'+U+')),calc('+m+'px*'+U+'),max(min('+p+'vw,calc(320px*'+U+')),calc(100vw - 48px)))'};
+  s+='@media(max-width:900px){html:root body #sb{width:'+f(84)+'}html:root[data-ui=l] body #sb,html:root[data-ui=xl] body #sb{width:'+f(94)+'}}'}
+ return s};
+try{var g=function(k){var v=parseFloat(localStorage.getItem(k));return v>0?v:0};document.getElementById('sbws').textContent=window.snsSbwCss(g('sbwd'),g('sbwm'))}catch(e){}</script>
 </head>
 <body>
 <div id="iqw" style="display:none;position:sticky;top:0;z-index:29;background:#ffe9c7;color:#8a4b00;font-weight:600;font-size:calc(13px*var(--ui));text-align:center;padding:calc(6px*var(--ui)) calc(12px*var(--ui));border-bottom:1px solid #e6c27a"></div>
@@ -1891,6 +1909,42 @@ $('#gi').parentNode.querySelector('.xc').onclick=()=>{tgs=[];$('#gi').value='';d
 $('#sgm').onclick=e=>{const t=e.target.dataset.sg;if(!t)return;$('#sgm').style.display='none';$('#'+t).click()};
 document.addEventListener('click',e=>{if(!e.target.closest('#sgm,#sgb'))$('#sgm').style.display='none'});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#sgm').style.display='none'});
+/* V3.2.7：側邊欄寬度拖曳。拖曳條放在 body（固定定位），位置跟著側邊欄：電腦在側邊欄與卡片區之間的空隙正中，
+   手機在抽屜右邊緣（抽屜開著才出現，疊在半透明背景上方，所以按住它不會關掉抽屜）。
+   拖曳只改 #sbws 這段樣式（不碰 <html> 的主題設定）；放開後存到這台裝置，電腦、手機分開記。按兩下恢復預設寬度。 */
+(()=>{const sb=$('#sb'),st=$('#sbws'),R=document.documentElement,lay=$('#lay');if(!sb||!st||!window.snsSbwCss)return;
+ const h=document.createElement('div');h.id='sbrz';h.setAttribute('role','separator');h.setAttribute('aria-orientation','vertical');h.setAttribute('aria-label','調整側邊欄寬度');h.title='拖曳調整側邊欄寬度（按兩下恢復預設）';h.tabIndex=0;h.hidden=true;document.body.appendChild(h);
+ const K={d:'sbwd',m:'sbwm'},mob=()=>matchMedia('(max-width:900px)').matches,md=()=>mob()?'m':'d';
+ const ui=()=>parseFloat(getComputedStyle(R).getPropertyValue('--ui'))||1;
+ const rd=k=>{try{const v=parseFloat(localStorage.getItem(k));return v>0?v:0}catch(e){return 0}};
+ const wr=(k,v)=>{try{v?localStorage.setItem(k,String(Math.round(v*10)/10)):localStorage.removeItem(k)}catch(e){}};
+ const cur={d:rd(K.d),m:rd(K.m)};
+ const lim=()=>{const u=ui(),vw=R.clientWidth;if(mob()){const dw=Math.min(vw*(/^(l|xl)$/.test(R.dataset.ui||'')?.94:.84),320*u);return{min:Math.min(dw,260*u),max:Math.max(dw,vw-48),def:dw,u}}
+  const dw=232*u;return{min:200*u,max:Math.max(dw,Math.min(420*u,vw-66-480*u)),def:dw,u}};
+ const css=()=>{st.textContent=window.snsSbwCss(cur.d,cur.m)};
+ const setW=w=>{const L=lim(),v=Math.max(L.min,Math.min(L.max,w));cur[md()]=v/L.u;css();return v};
+ const aria=()=>{const L=lim(),w=sb.getBoundingClientRect().width;h.setAttribute('aria-valuemin',Math.round(L.min));h.setAttribute('aria-valuemax',Math.round(L.max));h.setAttribute('aria-valuenow',Math.round(w))};
+ const place=()=>{const r=sb.getBoundingClientRect(),m=mob(),L=lim(),show=r.width>0&&r.height>0&&(!m||sb.classList.contains('open'))&&getComputedStyle(sb).display!=='none'&&(L.max-L.min>=2||!!dg);/* 沒有可調整的空間（例如手機特大時抽屜已占滿畫面）就不顯示拖曳條 */h.hidden=!show;if(!show)return;
+  const hw=h.offsetWidth||(m?26:12);let x;if(m)x=r.right-1.5;else{const g=lay?parseFloat(getComputedStyle(lay).columnGap)||16:16;x=r.right+g/2}
+  const top=Math.max(0,r.top)+(m?0:8),bot=Math.min(innerHeight,r.bottom)-(m?0:8);h.style.left=(x-hw/2)+'px';h.style.top=top+'px';h.style.height=Math.max(0,bot-top)+'px'};
+ let raf=0,until=0;const follow=()=>{place();if(performance.now()<until)raf=requestAnimationFrame(follow);else raf=0};
+ const track=ms=>{until=performance.now()+ms;if(!raf)raf=requestAnimationFrame(follow)};
+ const done=()=>{wr(K[md()],cur[md()]);aria();try{window.dispatchEvent(new Event('resize'))}catch(e){}track(120)};
+ let dg=null,q=0,want=0;
+ const frame=()=>{q=0;if(!dg)return;setW(want);place()};
+ h.addEventListener('pointerdown',e=>{if(e.button>0)return;e.preventDefault();e.stopPropagation();dg={x:e.clientX,w:sb.getBoundingClientRect().width,id:e.pointerId};try{h.setPointerCapture(e.pointerId)}catch(x){}h.classList.add('on');document.body.classList.add('sbrzing')});
+ h.addEventListener('pointermove',e=>{if(!dg||e.pointerId!==dg.id)return;e.preventDefault();want=dg.w+(e.clientX-dg.x);if(!q)q=requestAnimationFrame(frame)});
+ const end=e=>{if(!dg||(e&&e.pointerId!==undefined&&e.pointerId!==dg.id))return;if(q){cancelAnimationFrame(q);q=0;setW(want||dg.w)}dg=null;h.classList.remove('on');document.body.classList.remove('sbrzing');done()};
+ h.addEventListener('pointerup',end);h.addEventListener('pointercancel',end);h.addEventListener('lostpointercapture',end);
+ h.addEventListener('click',e=>{e.stopPropagation()});
+ h.addEventListener('dblclick',e=>{e.preventDefault();e.stopPropagation();cur[md()]=0;css();done()});
+ h.addEventListener('keydown',e=>{const L=lim(),w=sb.getBoundingClientRect().width;let v=null;if(e.key==='ArrowLeft')v=w-16;else if(e.key==='ArrowRight')v=w+16;else if(e.key==='Home')v=L.min;else if(e.key==='End')v=L.max;if(v==null)return;e.preventDefault();e.stopPropagation();setW(v);done()});
+ new MutationObserver(()=>track(400)).observe(sb,{attributes:true,attributeFilter:['class','style']});
+ if(window.ResizeObserver)new ResizeObserver(()=>track(60)).observe(sb);
+ addEventListener('resize',()=>track(60));addEventListener('scroll',()=>track(30),{passive:true,capture:true});
+ sb.addEventListener('transitionend',()=>track(30));
+ window.snsSbw={lim,cur,place,setW,reset:()=>{cur.d=cur.m=0;css();wr(K.d,0);wr(K.m,0);track(60)}};
+ track(300);aria()})();
 (()=>{const h=document.querySelector('header'),b=document.createElement('button'),s=document.createElement('div'),k=document.createElement('div'),sb=$('#sb'),cl=()=>{sb.classList.remove('open');k.classList.remove('open')};b.id='hb';b.textContent='☰';b.title='選單';s.style.cssText='display:flex;align-items:center;gap:8px';h.insertBefore(s,h.firstChild);s.append(b,h.querySelector('h1'));k.id='sbk';document.body.appendChild(k);b.onclick=()=>{sb.classList.toggle('open');k.classList.toggle('open')};k.onclick=cl;sb.addEventListener('click',e=>{if(e.target.closest('[data-c],[data-a],[data-u],[data-nf],[data-sf],[data-gf],[data-gm],[data-ndl],#fa'))cl()});document.addEventListener('keydown',e=>{if(e.key==='Escape')cl()})})();
 (()=>{const hd=document.querySelector('header'),rw=hd.querySelector('.row'),gb=document.createElement('div');gb.id='gbox';gb.innerHTML='<button id="gin" class="bt"><b style="color:#4285F4">G</b> 登入 Google</button><button id="gav" style="display:none" aria-label="帳號選單"></button><div id="gmn"><div id="gnm"></div><button id="gsw">🔀 切換帳號</button><button id="gout">🚪 登出</button></div>';const mq=matchMedia('(max-width:900px)'),place=()=>{if(mq.matches){if(rw.parentNode===hd)hd.insertBefore(gb,rw);else hd.appendChild(gb)}else rw.insertBefore(gb,rw.firstChild)};place();mq.addEventListener('change',place);
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},4000)};
@@ -2650,7 +2704,7 @@ const CID='840119973043-eo9lkljcu3bduvu9gae1ggri6i0hr4c7.apps.googleusercontent.
 const SCOPE='openid profile email https://www.googleapis.com/auth/drive.file';
 const D='https://www.googleapis.com/drive/v3/',U='https://www.googleapis.com/upload/drive/v3/',SH='https://sheets.googleapis.com/v4/spreadsheets/';
 const FOLDER='application/vnd.google-apps.folder',SHEET='application/vnd.google-apps.spreadsheet';
-const GG=window.snsGoogle;window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.2.6';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+const GG=window.snsGoogle;window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.2.7';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
