@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.2.5">
-<meta name="app-build" content="2026-11-14 01:10">
+<meta name="app-version" content="3.2.6">
+<meta name="app-build" content="2026-11-14 04:30">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1135,6 +1135,38 @@ input.phfit::placeholder{font-size:var(--phf)}
  .due .drow{margin:calc(3px*var(--ui)) 0;line-height:1.55}
 }
 </style>
+<style id="v326-tree">
+/* V3.2.6：資料夾樹版面優化
+   ① 縮排：每層 16px → 12px（電腦、手機）。
+   ② 名稱固定單行：不換行；數量、⋮ 固定保留；名稱太長時才出現「…」。
+   ③ 水平捲動：平常每一列都放在清單可視範圍內（名稱單行＋「…」，數量與 ⋮ 都看得到）。
+      清單有被省略的名稱時才能左右捲動；往左捲 X，被省略的列就多出 X 的寬度（--sx），名稱逐步展開，
+      整列（箭頭、📁、名稱）跟著往左移，數量與 ⋮ 跟在名稱尾端；放得下的列整列一起往左移。
+      每列最多展開到「可視寬度＋12 個字」（--ex 由程式量出，最多 12em），再長的名稱維持「…」。
+      只有資料夾清單（#tl）會捲動；標題、A→Z／自訂、＋新增、搜尋框在 #tl 外面，不會跟著移動。
+   ④ 手機：資料夾面板左右內距、箭頭欄、名稱前的留白縮小，名稱可用寬度變多；字級不變。 */
+#tl{overflow-x:auto;overflow-y:auto;scrollbar-width:thin;overscroll-behavior-x:contain}
+#tl .tn{padding-left:calc(var(--dp,0) * 12px);box-sizing:border-box;width:max-content;min-width:100%;max-width:calc(100% + min(var(--sx,0px),12em))}
+#tl::after{content:'';display:block;width:calc(100% + var(--ex,0px));height:1px;margin-top:-1px;pointer-events:none}
+#tl .tn .chip{display:flex;align-items:center;flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;overflow-wrap:normal}
+#tl .tn .chip>i{font-style:normal}
+#tl .tn .chip .fic{flex:none;white-space:pre}
+#tl .tn .chip .fnm{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tl .tn .chip .fct{flex:none;white-space:pre}
+#tl .tn .fmn{flex:none}
+#tl .tn>span{flex:none}
+@media(max-width:900px){
+ #sb #tree{padding-left:calc(4px*var(--ui));padding-right:calc(4px*var(--ui))}
+ #sb .tn>span{width:calc(34px*var(--ui));margin-right:calc(-10px*var(--ui))}
+ #sb .tn .chip{padding-left:calc(6px*var(--ui));padding-right:calc(4px*var(--ui))}
+ #sb .tn .fmn{min-width:calc(32px*var(--ui));padding:0 calc(4px*var(--ui))}
+ html[data-ui=l] #sb .tn>span,html[data-ui=xl] #sb .tn>span{width:calc(36px*var(--ui))!important;margin-right:calc(-12px*var(--ui))!important}
+ html[data-ui=l] #sb .tn .chip,html[data-ui=xl] #sb .tn .chip{padding-left:calc(6px*var(--ui))!important;padding-right:calc(4px*var(--ui))!important}
+ html[data-ui=l] #sb .tn .fmn,html[data-ui=xl] #sb .tn .fmn{min-width:calc(32px*var(--ui))!important;padding:0 calc(4px*var(--ui))!important}
+}
+/* 大／特大：側欄整塊上下捲動（原設計），資料夾清單只負責左右捲動，高度照內容 */
+html[data-ui=l] #sb #tl,html[data-ui=xl] #sb #tl{overflow-x:auto;overflow-y:hidden}
+</style>
 </head>
 <body>
 <div id="iqw" style="display:none;position:sticky;top:0;z-index:29;background:#ffe9c7;color:#8a4b00;font-weight:600;font-size:calc(13px*var(--ui));text-align:center;padding:calc(6px*var(--ui)) calc(12px*var(--ui));border-bottom:1px solid #e6c27a"></div>
@@ -1986,7 +2018,19 @@ let fq='';
 function sbTree(paths){if(!paths.length)return '<span style="color:var(--mut);font-size:calc(13px*var(--ui))">還沒有資料夾，按上面的「＋新增」建立第一個。</span>';const f=FS.filter(paths,fq);if(f&&!f.hit.size)return '<span class="fqe">找不到名稱包含「'+esc(fq.trim())+'」的資料夾</span>';
  const cnt=p=>posts.filter(x=>(x.cats||[]).some(c=>under(c,p))).length;
  const dOn=sortS.f.m==='custom'&&!f;
- return FS.rows(paths,f,p=>open.has(p)).map(r=>{const nmx=esc(r.p.split('/').pop());return '<div class="tn'+(r.anc?' anc':'')+(dOn?' dz':'')+'" data-fp="'+esc(r.p)+'" style="padding-left:'+r.depth*16+'px"><span'+(r.kids&&!f?' data-o="'+esc(r.p)+'" role="button" aria-expanded="'+r.open+'" aria-label="'+(r.open?'收合':'展開')+'「'+nmx+'」"':'')+'>'+(r.kids?'<svg class="tri'+(r.open?' o':'')+'" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M5.5 4 16 10 5.5 16z"/></svg>':'')+'</span><button class="chip '+(sel.c===r.p?'on':'')+'" data-c="'+esc(r.p)+'" title="'+esc(r.p.replace(/\//g,' → '))+'">📁 '+r.label+' <small style="opacity:.65">'+cnt(r.p)+'</small></button><button type="button" class="ed fmn" data-fm="'+esc(r.p)+'" aria-haspopup="menu" aria-expanded="false" title="編輯／刪除" aria-label="「'+nmx+'」的更多操作">⋮</button></div>'}).join('')}
+ return FS.rows(paths,f,p=>open.has(p)).map(r=>{const nmx=esc(r.p.split('/').pop());return '<div class="tn'+(r.anc?' anc':'')+(dOn?' dz':'')+'" data-fp="'+esc(r.p)+'" style="--dp:'+r.depth+'"><span'+(r.kids&&!f?' data-o="'+esc(r.p)+'" role="button" aria-expanded="'+r.open+'" aria-label="'+(r.open?'收合':'展開')+'「'+nmx+'」"':'')+'>'+(r.kids?'<svg class="tri'+(r.open?' o':'')+'" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M5.5 4 16 10 5.5 16z"/></svg>':'')+'</span><button class="chip '+(sel.c===r.p?'on':'')+'" data-c="'+esc(r.p)+'" title="'+esc(r.p.replace(/\//g,' → '))+'"><i class="fic">📁 </i><i class="fnm">'+r.label+'</i><small class="fct" style="opacity:.65"> '+cnt(r.p)+'</small></button><button type="button" class="ed fmn" data-fm="'+esc(r.p)+'" aria-haspopup="menu" aria-expanded="false" title="編輯／刪除" aria-label="「'+nmx+'」的更多操作">⋮</button></div>'}).join('')}
+/* V3.2.6：資料夾清單水平捲動——量出「被省略的列完全展開還差多少寬度」（--ex），捲動時把捲動距離交給 CSS（--sx） */
+const tlFit=(()=>{let q=0;const tl=$('#tl');if(!tl)return()=>{};
+ const sync=()=>{tl.style.setProperty('--sx',tl.scrollLeft+'px')};
+ const measure=()=>{q=0;const keep=tl.scrollLeft;tl.style.setProperty('--sx','12em');tl.style.setProperty('--ex','0px');const cw=tl.clientWidth;let mx=0;
+  tl.querySelectorAll('.tn').forEach(r=>{const w=r.getBoundingClientRect().width;if(w>mx)mx=w});const ex=Math.max(0,Math.ceil(mx-cw));
+  tl.style.setProperty('--ex',ex+'px');tl.scrollLeft=Math.min(keep,ex);sync()};
+ const soon=()=>{if(!q)q=requestAnimationFrame(measure)};
+ tl.addEventListener('scroll',sync,{passive:true});
+ new MutationObserver(soon).observe(tl,{childList:true});
+ if(window.ResizeObserver)new ResizeObserver(soon).observe(tl);
+ return soon})();
+window.snsTlFit=tlFit;
 const drawSb=()=>{window.snsFpop&&snsFpop.close();$('#tl').innerHTML=sbTree(fOrd(fp()));srtDraw()};
 $('#fq').oninput=()=>{fq=$('#fq').value;drawSb()};
 $('#fqx').onclick=()=>{$('#fq').value='';fq='';drawSb();$('#fq').focus()};
@@ -2606,7 +2650,7 @@ const CID='840119973043-eo9lkljcu3bduvu9gae1ggri6i0hr4c7.apps.googleusercontent.
 const SCOPE='openid profile email https://www.googleapis.com/auth/drive.file';
 const D='https://www.googleapis.com/drive/v3/',U='https://www.googleapis.com/upload/drive/v3/',SH='https://sheets.googleapis.com/v4/spreadsheets/';
 const FOLDER='application/vnd.google-apps.folder',SHEET='application/vnd.google-apps.spreadsheet';
-const GG=window.snsGoogle;window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.2.5';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+const GG=window.snsGoogle;window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.2.6';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
