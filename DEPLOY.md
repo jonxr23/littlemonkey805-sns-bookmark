@@ -8,7 +8,7 @@
 | 項目 | 內容 |
 |---|---|
 | GitHub Repository | `jonxr23/littlemonkey805-sns-bookmark` |
-| 本次安裝包 | `sns-bookmark-v3.3.1-complete.zip`（解壓後唯一資料夾 `sns-bookmark-v3.3.1`；app-version 3.3.1、build 2026-11-15 04:35） |
+| 本次安裝包 | `sns-bookmark-v3.3.1-complete.zip`（解壓後唯一資料夾 `sns-bookmark-v3.3.1`；app-version 3.3.1、build 2026-11-15 13:50） |
 | 開發基準 | `sns-bookmark-v3.3.0-complete.zip`（V3.3.0，build 2026-11-15 04:05，保留不動）。**V3.3.1 已包含 V3.3.0 以前的全部修改**；如果 V3.3.0 還沒上線，可以直接上傳 V3.3.1 |
 | 目前 GitHub `main`／Vercel Production | **請上傳前自己確認**（Vercel → Deployments 標示 Production 的那一筆；GitHub `main` 最新 commit），記下來作為回復點 |
 | 正式網址 | https://littlemonkey805-sns-bookmark.vercel.app/（不變） |
@@ -30,7 +30,7 @@
    - 網站檔案（和 V3.2.8 比）：`index.html`、`package.json`。
    - 說明文件：`CHANGELOG.md`、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V3.2.8.md`、`TEST_REPORT-V3.2.7.md`、`TEST_REPORT-V3.2.6.md`、`TEST_REPORT-V3.2.5.md`、`TEST_REPORT-V3.2.4.md`、`TEST_REPORT-V3.2.3.md`（舊報告改名，**新檔要一起上傳**）、`admin-setup/ADMIN_SETUP.md`。
 3. commit 到 `main`（建議訊息：`Release SNS Bookmark V3.3.1`），Vercel 會自動部署。
-4. 正式網址側邊欄最底部應顯示 `版本：v3.3.1 / 更新：2026-11-15 04:35`；公告視窗最底部顯示「SNS文章收藏夾 V3.3.1」。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
+4. 正式網址側邊欄最底部應顯示 `版本：v3.3.1 / 更新：2026-11-15 13:50`；公告視窗最底部顯示「SNS文章收藏夾 V3.3.1」。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
 5. 實機驗收清單見 `TEST_REPORT.md` 第五節。
 
 ## 四、回復
@@ -40,7 +40,7 @@
 
 ## 五、更新時間的來源（沒有改）
 
-畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-15 04:35）。
+畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-15 13:50）。
 
 ---
 

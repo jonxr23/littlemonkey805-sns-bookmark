@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="app-version" content="3.3.1">
-<meta name="app-build" content="2026-11-15 04:35">
+<meta name="app-build" content="2026-11-15 13:50">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1207,6 +1207,17 @@ body.sbrzing,body.sbrzing *{cursor:col-resize!important;user-select:none!importa
 /* 抽屜調窄時版本列以「…」結尾，不會切在半個字 */
 </style>
 <style id="v331">
+/* V3.3.1 排版精簡：雲端空間彈窗裡的欄位（上方檔案數量／最後計算時間、下方已使用容量／總容量／資料時間）
+   一個欄位一列：左邊名稱、右邊數值靠右；列與列之間淡色細線；沒有底色卡片。手機也維持左右排列（不再改成上下兩行）。 */
+#cqm .kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:0;font-size:calc(14px*var(--ui))}
+#cqm .kv dt,#cqm .kv dd{margin:0;padding:calc(7px*var(--ui)) 0;line-height:1.45;background:none}
+#cqm .kv dt{color:var(--mut);white-space:nowrap;padding-right:calc(12px*var(--ui))}
+#cqm .kv dd{text-align:right;color:var(--fg);font-variant-numeric:tabular-nums;overflow-wrap:break-word;min-width:0}
+#cqm .kv dt~dt,#cqm .kv dt~dt+dd{border-top:1px solid color-mix(in srgb,var(--bd) 75%,transparent)}
+#cqm .ssk{padding-top:calc(2px*var(--ui))}
+#cqm .cqsec{gap:calc(6px*var(--ui))}
+#cqm .cqsc{margin:0}
+@media(max-width:480px){#cqm .kv{grid-template-columns:auto minmax(0,1fr);gap:0}#cqm .kv dd{margin-bottom:0}}
 /* V3.3.1：雲端空間彈窗上下兩區 */
 .cqsec{display:flex;flex-direction:column;gap:calc(8px*var(--ui));min-width:0}
 #cqa{border-top:1px solid var(--bd);padding-top:calc(14px*var(--ui));margin-top:calc(6px*var(--ui))}
@@ -1216,6 +1227,9 @@ body.sbrzing,body.sbrzing *{cursor:col-resize!important;user-select:none!importa
 .cqbr{display:flex}
 #cqsr{white-space:normal;text-align:center;max-width:100%}
 #cqsr[disabled]{opacity:.7;cursor:progress}
+.cqr b.wd{font-size:calc(18px*var(--ui));line-height:1.4;font-weight:700}
+.cqi{margin:0;font-size:calc(13px*var(--ui));line-height:1.6;color:var(--fg);overflow-wrap:anywhere}
+#cqs[data-st=busy] .cqr b:not(.wd){opacity:.55}
 </style>
 <style id="v330">
 /* V3.3.0：標籤篩選彈窗（標籤塊／搜尋雙模式）
@@ -3070,13 +3084,13 @@ window.snsFolderScan=onP=>scanP||(scanP=(async()=>{
  {const q=`name='SNS_Bookmark' and mimeType='${FOLDER}' and trashed=false and 'root' in parents`;const r=await J(D+'files?fields=files(id)&spaces=drive&pageSize=10&q='+encodeURIComponent(q));const L=r.files||[];multi=L.length;
   if(!root){if(!L.length){const e=new Error('找不到 SNS_Bookmark 資料夾');e.code='notfound';throw e}root=L[0].id}}
  const FL='nextPageToken,files(id,mimeType,size,quotaBytesUsed,ownedByMe)',SC='application/vnd.google-apps.shortcut';
- const seenF=new Set([root]),seen=new Set(),Q=[root];const o={bytes:0,files:0,folders:0,shortcuts:0,unknown:0,native:0,notMine:0,pages:0,multi};
+ const seenF=new Set([root]),seen=new Set(),Q=[root];const o={bytes:0,files:0,folders:0,shortcuts:0,unknown:0,native:0,notMine:0,notMineBytes:0,pages:0,multi};
  const one=async fid=>{let pt='';do{const q=`'${fid}' in parents and trashed=false`;
    const r=await J(D+'files?pageSize=1000&spaces=drive&fields='+encodeURIComponent(FL)+'&q='+encodeURIComponent(q)+(pt?'&pageToken='+encodeURIComponent(pt):''));o.pages++;
    for(const f of r.files||[]){if(f.mimeType===FOLDER){if(!seenF.has(f.id)){seenF.add(f.id);o.folders++;Q.push(f.id)}continue}
     if(f.mimeType===SC){o.shortcuts++;continue}
     if(seen.has(f.id))continue;seen.add(f.id);o.files++;if(String(f.mimeType||'').startsWith('application/vnd.google-apps.'))o.native++;
-    if(f.ownedByMe===false){o.notMine++;continue}
+    if(f.ownedByMe===false){o.notMine++;const z=f.size!=null&&f.size!==''?+f.size:NaN;if(Number.isFinite(z))o.notMineBytes+=z;continue}
     const b=f.quotaBytesUsed!=null&&f.quotaBytesUsed!==''?+f.quotaBytesUsed:(f.size!=null&&f.size!==''?+f.size:NaN);if(Number.isFinite(b)&&b>=0)o.bytes+=b;else o.unknown++}
    onP&&onP({files:o.files,folders:o.folders});pt=r.nextPageToken||''}while(pt)};
  /* 同時最多查 3 個資料夾；每次查詢都是非同步，頁面和彈窗不會卡住 */
@@ -3326,46 +3340,71 @@ CQ.draw=()=>{const q=window.snsQuota,mb=CQ.querySelector('.mb');let sa=mb.queryS
 CQ.open=()=>{CQ.draw();opn(CQ)};
 cqb.onclick=()=>CQ.open();
 /* ---- V3.3.1：Google 雲端同步資訊（SNS_Bookmark 資料夾容量）----
-   只在按「重新計算容量」時掃描；結果依 Google 帳號分開記在這台裝置（localStorage「sbq1」），重新開啟彈窗時顯示上一次的結果與時間。
+   自動計算（同一套 run() 與 snsFolderScan()，和手動按鈕共用，所以不會有兩套結果）：
+   ① 進入／重新整理網站：Google 登入狀態恢復（開機同步結束）後，自動算一次；之後才登入或換帳號，也會自動算一次。
+   ② 雲端空間彈窗「從關閉變成開啟」時自動算一次；彈窗開著時的重畫不會觸發。
+   ③ 按「重新計算容量」。
+   計算進行中再被觸發時，沿用正在跑的那一次，不會同時跑兩個掃描；沒有定時重複掃描。
+   結果依 Google 帳號記在這台裝置（localStorage「sbq1」），失敗時保留上一次成功的數字並標示可能不是最新。
    不會呼叫帳號容量查詢，也不會改動 window.snsQuota；帳號容量更新時也不會動到這一區。沒登入時不顯示任何數字。 */
 const CQS=(()=>{const LS='sbq1';let mem={};try{mem=JSON.parse(localStorage.getItem(LS)||'{}')||{}}catch(e){mem={}}
  const save=()=>{try{localStorage.setItem(LS,JSON.stringify(mem))}catch(e){}};
  const key=()=>{const u=window.snsGoogle&&snsGoogle.user;return u&&u.email?String(u.email).toLowerCase():''};
- let busy=false,err=null,prog=null;
- const fB=b=>{if(!(b>=0))return '—';const U=['B','KB','MB','GB','TB'];let i=0,v=b;while(v>=1024&&i<U.length-1){v/=1024;i++}return (i?v.toFixed(v<10?2:v<100?1:0):String(Math.round(v)))+' '+U[i]};
+ let busy=null,err=null,kind='',prog=null,fresh='',runs=0,lastKey=key();
+ const fB=b=>{const U=['B','KB','MB','GB','TB'];let i=0,v=+b||0;while(v>=1024&&i<U.length-1){v/=1024;i++}return (i?v.toFixed(v<10?2:v<100?1:0):String(Math.round(v)))+' '+U[i]};
  const N=n=>Number(n||0).toLocaleString('en-US');
  const why=e=>{const m=String(e&&e.message||e||''),st=e&&e.status;
-  if(e&&e.code==='login')return '尚未登入 Google，無法取得 SNS_Bookmark 容量。';
-  if(e&&e.code==='notfound')return '在你的 Google 雲端硬碟找不到 SNS_Bookmark 資料夾（App 尚未建立，或已被移到垃圾桶）。';
-  if(/登入已過期|reauth/.test(m)||st===401)return '登入已過期，請到頁首重新登入 Google 後再計算。';
-  if(st===429||(st===403&&/rate|quota|limit/i.test(m)))return 'Google 暫時限制查詢次數，請過一會兒再按「重新計算容量」。';
-  if(st===403)return 'Google 雲端硬碟權限不足，無法讀取 SNS_Bookmark。請登出後重新登入並允許存取。';
-  if(/Failed to fetch|NetworkError|網路/.test(m))return '連不上 Google，請檢查網路後再試一次。';
-  return '計算失敗：'+m};
+  if(e&&e.code==='login')return['login','尚未登入 Google。'];
+  if(e&&e.code==='notfound')return['notfound','在你的 Google 雲端硬碟找不到 SNS_Bookmark 資料夾（App 尚未建立，或已被移到垃圾桶）。'];
+  if(/登入已過期|reauth/.test(m)||st===401)return['fail','登入已過期，請到頁首重新登入 Google。'];
+  if(st===429||(st===403&&/rate|quota|limit/i.test(m)))return['fail','Google 暫時限制查詢次數，請過一會兒再按「重新計算容量」。'];
+  if(st===403)return['fail','Google 雲端硬碟權限不足，無法讀取 SNS_Bookmark。請登出後重新登入並允許存取。'];
+  if(/Failed to fetch|NetworkError|網路/.test(m))return['fail','連不上 Google，請檢查網路後再試一次。'];
+  return['fail','原因：'+m]};
  const sec=()=>CQ.querySelector('#cqs');
- const btnTxt=()=>busy?'計算中…'+(prog&&prog.files?'（已找到 '+N(prog.files)+' 個檔案）':''):'重新計算容量';
- const draw=()=>{const el=sec();if(!el)return;const k=key(),d=k&&mem[k];let h='<h3 class="cqh" id="cqst">Google 雲端同步資訊</h3>';
-  if(!k){h+='<p class="cqe" role="status">'+H(busy?'計算中…':'尚未登入 Google，無法取得 SNS_Bookmark 容量。請先使用頁首的「登入 Google」。')+'</p>';el.innerHTML=h;return}
-  h+='<div class="cqr"><small>SNS_Bookmark 使用容量</small><b id="cqsv">'+(d?fB(d.bytes):'—')+'</b></div>'+
-   '<dl class="kv ssk"><dt>檔案數量</dt><dd id="cqsn">'+(d?N(d.files)+' 個':'—')+'</dd><dt>最後計算時間</dt><dd id="cqst2">'+(d?fmtT(d.t):'還沒有計算過')+'</dd></dl>';
+ /* 目前狀態（規格第五節的表）：boot 等待登入狀態確認／ready 準備計算／busy 正在計算容量…／ok 計算成功／login 請先登入 Google／notfound 尚未找到資料夾／fail 暫時無法取得資料 */
+ const phase=()=>{const k=key();if(!k)return window.snsAuthBoot?'boot':'login';if(busy)return 'busy';if(kind)return kind;if(fresh===k)return 'ok';return 'ready'};
+ const STATE={boot:'等待登入狀態確認',ready:'準備計算',busy:'正在計算容量…',login:'請先登入 Google',notfound:'尚未找到 SNS_Bookmark 資料夾',fail:'暫時無法取得資料'};
+ const busyTxt=()=>'正在計算容量…'+(prog&&prog.files?'（已找到 '+N(prog.files)+' 個檔案）':'');
+ const draw=()=>{const el=sec();if(!el)return;const k=key(),ph=phase(),d=k?mem[k]:null;let h='<h3 class="cqh" id="cqst">Google 雲端同步資訊</h3>';
+  el.dataset.st=ph;
+  if(!k){h+='<div class="cqr"><small>SNS_Bookmark 使用容量</small><b id="cqsv" class="wd" role="status">'+STATE[ph]+'</b></div>'+
+    '<p class="ssn">'+(ph==='boot'?'正在確認 Google 登入狀態，確認後會自動計算。':'登入後會自動計算 SNS_Bookmark 使用的容量。請使用頁首的「登入 Google」。')+'</p>';el.innerHTML=h;return}
+  const big=d?fB(d.bytes):(ph==='busy'?busyTxt():STATE[ph]);
+  h+='<div class="cqr"><small>SNS_Bookmark 使用容量</small><b id="cqsv"'+(d?'':' class="wd"')+'>'+H(big)+'</b></div>'+
+   '<dl class="kv ssk"><dt>檔案數量</dt><dd id="cqsn">'+(d?N(d.files)+' 個':(ph==='busy'?'計算中…':ph==='ready'?'準備計算':'尚未取得'))+'</dd><dt>最後計算時間</dt><dd id="cqst2">'+(d?fmtT(d.t):(ph==='busy'?'計算中…':ph==='ready'?'準備計算':'尚未取得'))+'</dd></dl>';
+  /* 狀態列：計算中、失敗、找不到資料夾、或顯示的是上一次的結果 */
+  if(ph==='busy'&&d)h+='<p class="cqi" id="cqsm" role="status">'+H(busyTxt())+'<br>上面是上一次的結果，算好後會自動更新。</p>';
+  else if(ph==='busy')h+='<p class="cqi" id="cqsm" role="status">'+H(busyTxt())+'</p>';
+  else if(ph==='fail')h+='<p class="cqe" id="cqsm" role="alert">暫時無法取得資料。'+H(err||'')+(d?'<br>上面是上一次成功計算的結果，可能不是最新。':'')+'</p>';
+  else if(ph==='notfound')h+='<p class="cqe" id="cqsm" role="alert">'+H(err||STATE.notfound)+(d?'<br>上面是上一次成功計算的結果，可能不是最新。':'')+'</p>';
+  else if(ph==='ready'&&d)h+='<p class="cqi" id="cqsm" role="status">準備計算。上面是上一次的結果，算好後會自動更新。</p>';
   const notes=[];if(d){if(d.unknown)notes.push('有 '+N(d.unknown)+' 個檔案取不到容量，實際使用量可能比上面的數字多（統計不完整）。');
-   if(d.notMine)notes.push(N(d.notMine)+' 個檔案不是你擁有的，不佔你的空間：只算進檔案數量，沒有算進容量。');
+   if(d.notMine)notes.push(N(d.notMine)+' 個檔案不是你擁有的'+(d.notMineBytes?'（共 '+fB(d.notMineBytes)+'）':'')+'，不佔你的 Google 帳號空間：只算進檔案數量，沒有算進上面的使用容量。');
    if(d.shortcuts)notes.push(N(d.shortcuts)+' 個捷徑沒有計入（捷徑不佔空間，避免同一個檔案重複計算）。');
    if(d.multi>1)notes.push('雲端硬碟最上層有 '+d.multi+' 個 SNS_Bookmark 資料夾，這裡統計的是 App 正在使用的那一個。')}
-  if(err)h+='<p class="cqe" role="alert">'+H(err)+(d?'<br>下面的數字是上一次成功計算的結果，可能不是最新。':'')+'</p>';
   if(notes.length)h+='<ul class="cqn">'+notes.map(x=>'<li>'+H(x)+'</li>').join('')+'</ul>';
-  h+='<p class="ssn">只統計 App 自己建立的檔案（收藏試算表、圖片，含所有子資料夾）；你手動放進 SNS_Bookmark 的檔案 App 看不到，不會算進來。</p>';
-  h+='<div class="cqbr"><button type="button" id="cqsr"'+(busy?' disabled aria-busy="true"':'')+'>'+H(btnTxt())+'</button></div>';
-  el.innerHTML=h;el.querySelector('#cqsr').onclick=run};
- const run=async()=>{if(busy)return;const k=key();if(!k){err=null;draw();return}
-  busy=true;err=null;prog=null;draw();
-  try{const r=await window.snsFolderScan(p=>{prog=p;const b=CQ.querySelector('#cqsr');if(b)b.textContent=btnTxt()});
-   if(key()===k){mem[k]={bytes:r.bytes,files:r.files,folders:r.folders,shortcuts:r.shortcuts,unknown:r.unknown,native:r.native,notMine:r.notMine,multi:r.multi,pages:r.pages,t:r.t};save()}}
-  catch(e){err=why(e)}
-  finally{busy=false;prog=null;draw();const b=CQ.querySelector('#cqsr');if(b&&CQ.classList.contains('o')&&document.activeElement===document.body)try{b.focus({preventScroll:true})}catch(x){}}};
- /* 登入、登出、換帳號時重畫（彈窗開著也一樣），不會觸發任何查詢 */
- const GGx=window.snsGoogle;if(GGx&&GGx.setUser){const su=GGx.setUser.bind(GGx);GGx.setUser=u=>{su(u);err=null;draw()}}
- return{draw,run,busy:()=>busy,data:()=>{const k=key();return k?mem[k]||null:null},err:()=>err}})();
+  h+='<p class="ssn cqsc">僅統計 SNS收藏夾 建立的檔案（含子資料夾）。</p>';
+  h+='<div class="cqbr"><button type="button" id="cqsr"'+(ph==='busy'?' disabled aria-busy="true"':'')+'>'+H(ph==='busy'?'正在計算容量…':'重新計算容量')+'</button></div>';
+  el.innerHTML=h;el.querySelector('#cqsr').onclick=()=>run('manual')};
+ const paintProg=()=>{const t=busyTxt(),m=CQ.querySelector('#cqsm'),v=CQ.querySelector('#cqsv.wd');if(m&&m.firstChild&&m.firstChild.nodeType===3)m.firstChild.nodeValue=t;if(v)v.textContent=t};
+ /* 共用的計算流程：自動、開窗、手動都走這裡 */
+ const run=src=>{if(busy)return busy;const k=key();if(!k){draw();return Promise.resolve(null)}
+  runs++;err=null;kind='';prog=null;
+  busy=(async()=>{try{const r=await window.snsFolderScan(p=>{prog=p;paintProg()});
+    if(key()===k){mem[k]={bytes:r.bytes,files:r.files,folders:r.folders,shortcuts:r.shortcuts,unknown:r.unknown,native:r.native,notMine:r.notMine,notMineBytes:r.notMineBytes||0,multi:r.multi,pages:r.pages,t:r.t};save();fresh=k}return r}
+   catch(e){if(key()===k){const w=why(e);kind=w[0]==='login'?'':w[0];err=w[1]}return null}
+   finally{busy=null;prog=null;draw()}})();
+  draw();return busy};
+ /* 自動計算：開機同步（登入狀態確認）還沒結束時先等，結束後再算，避免和開機同步搶同一個登入程序 */
+ let wb=null;
+ const auto=src=>{if(!key()){draw();return}if(window.snsAuthBoot){if(!wb){let n=0;wb=setInterval(()=>{if(!window.snsAuthBoot||++n>480){clearInterval(wb);wb=null;if(key())run(src);else draw()}},250)}draw();return}run(src)};
+ /* 登入、登出、換帳號：換成新的帳號（含網站載入時恢復登入）就自動算一次；同一個帳號重複更新不會重算 */
+ const GGx=window.snsGoogle;if(GGx&&GGx.setUser){const su=GGx.setUser.bind(GGx);GGx.setUser=u=>{su(u);const k=key();if(k!==lastKey){lastKey=k;err=null;kind='';fresh='';if(k)auto('login')}draw()}}
+ /* 彈窗從關閉變成開啟才自動算；彈窗開著時 CQ.draw() 重畫不會觸發 */
+ const op=CQ.open;CQ.open=()=>{const was=CQ.classList.contains('o');op();if(!was)auto('open')};
+ if(lastKey)auto('load');
+ return{draw,run:()=>run('manual'),busy:()=>!!busy,phase,runs:()=>runs,data:()=>{const k=key();return k?mem[k]||null:null},err:()=>err}})();
 window.snsCQS=CQS;
 /* ---- 手機簡易模式：雲端資訊條（同步狀態｜剩餘容量），放在收藏控制區下方 ---- */
 const cib=mk('div',{id:'cib',class:'cib',role:'group','aria-label':'雲端資訊'},'<button type="button" id="cibs" class="cibs"></button><i class="cibd" aria-hidden="true"></i><button type="button" id="cibq" class="cibq"></button>');
