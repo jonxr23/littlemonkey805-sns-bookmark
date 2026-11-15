@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.3.1">
-<meta name="app-build" content="2026-11-15 13:50">
+<meta name="app-version" content="3.3.2">
+<meta name="app-build" content="2026-11-15 14:35">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1206,6 +1206,31 @@ body.sbrzing,body.sbrzing *{cursor:col-resize!important;user-select:none!importa
 @media(max-width:640px){.lgh:not(.lgh-d){display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:calc(8px*var(--ui));row-gap:calc(1px*var(--ui));align-items:center;padding:calc(6px*var(--ui)) calc(10px*var(--ui)) calc(7px*var(--ui))}.lgh:not(.lgh-d) .lgt{display:contents}.lgh:not(.lgh-d) .lgi{grid-column:1;grid-row:1}.lgh:not(.lgh-d) .lgt b{grid-column:2;grid-row:1}.lgh:not(.lgh-d) .lgt span{grid-column:1/-1;grid-row:2;font-size:calc(12.5px*var(--ui))}}/* 手機：第一行圖示＋標題，第二行說明（整列寬），卡片約兩行高 */
 /* 抽屜調窄時版本列以「…」結尾，不會切在半個字 */
 </style>
+<style id="v332">
+/* V3.3.2：標籤篩選 AND／OR（標題列左側：標題＋AND／OR 小切換器＋ⓘ；右側維持「標籤／搜尋」＋✕） */
+#tgm .tgml{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:calc(6px*var(--ui))}
+#tgm .tgml #tgmt{flex:0 1 auto}
+.tgsw.tgsw2{height:calc(26px*var(--ui));padding:calc(2px*var(--ui))}
+.tgsw.tgsw2 .tgsk{top:calc(2px*var(--ui));bottom:calc(2px*var(--ui));left:calc(2px*var(--ui));width:calc(50% - 2px*var(--ui))}
+.tgsw.tgsw2 button{min-width:calc(34px*var(--ui));padding:0 calc(6px*var(--ui));font-size:calc(12px*var(--ui));letter-spacing:.02em}
+/* 窄螢幕：標題放不下時只留 🏷️（文字仍給讀屏使用）；介面「大／特大」連這樣都放不下時，右側「標籤／搜尋＋✕」換到第二行（只在這種情況） */
+#tgm .mh.tgmc .tgmtx{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#tgm .mh.tgmc #tgmt{flex:none}
+@media(max-width:340px){#tgm .mh{gap:calc(4px*var(--ui))}#tgm .tgml{gap:calc(3px*var(--ui))}#tgm .tgmr{gap:calc(4px*var(--ui))}#tgsw button{padding:0 calc(6px*var(--ui));min-width:calc(36px*var(--ui))}.tgsw.tgsw2 button{padding:0 calc(4px*var(--ui));min-width:calc(30px*var(--ui))}}
+#tgm .mh.tgmw{flex-wrap:wrap;row-gap:calc(6px*var(--ui))}
+#tgm .mh.tgmw .tgmr{margin-left:auto}
+.tgsw[data-m=or] .tgsk{transform:translateX(100%)}
+.tgai{position:relative;flex:none;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:calc(20px*var(--ui));height:calc(20px*var(--ui));min-height:0;margin:0;padding:0;border-radius:50%;border:1.5px solid currentColor!important;background:transparent!important;box-shadow:none!important;color:var(--dlg-htx,var(--fg));font:italic 700 calc(12px*var(--ui))/1 Georgia,"Times New Roman",serif;cursor:help;opacity:.85}
+.tgai::after{content:"";position:absolute;inset:calc(-6px*var(--ui))}
+#tgm .mh .tgai{color:inherit!important}/* 和標題同色（標題列文字色），各主題都清楚 */
+.tgai:hover,.tgai[aria-expanded=true]{opacity:1}
+.tgai:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+/* 提示框不攔截點擊：蓋在標籤上時，點下去會照常選到標籤（同時關掉提示） */
+.tgap{pointer-events:none;width:min(calc(280px*var(--ui)),calc(100vw - 24px));min-width:0;padding:calc(10px*var(--ui)) calc(12px*var(--ui));gap:calc(6px*var(--ui));font-size:calc(13px*var(--ui));line-height:1.6}
+.tgap p{margin:0;color:var(--fg)}
+.tgap b{color:var(--fg)}
+@media(max-width:420px){#tgm .mh{gap:calc(5px*var(--ui))}#tgm .tgml{gap:calc(4px*var(--ui))}#tgm .tgmr{gap:calc(5px*var(--ui))}#tgsw button{padding:0 calc(8px*var(--ui));min-width:calc(40px*var(--ui))}.tgsw.tgsw2 button{padding:0 calc(5px*var(--ui));min-width:calc(32px*var(--ui))}}
+</style>
 <style id="v331">
 /* V3.3.1 排版精簡：雲端空間彈窗裡的欄位（上方檔案數量／最後計算時間、下方已使用容量／總容量／資料時間）
    一個欄位一列：左邊名稱、右邊數值靠右；列與列之間淡色細線；沒有底色卡片。手機也維持左右排列（不再改成上下兩行）。 */
@@ -1332,7 +1357,8 @@ try{localStorage.removeItem('sbwd');localStorage.removeItem('sbwm')}catch(e){}wi
 <div id="qfab" aria-label="快捷操作"><button type="button" class="qf" id="qfa" tabindex="-1" aria-label="新增收藏">＋新增</button><button type="button" class="qf" id="qft" tabindex="-1" aria-label="回到頁面最上方">↑Top</button><button type="button" id="qfm" aria-label="快捷操作（可拖曳移動）" aria-expanded="false" title="快捷操作（可拖曳移動）">…</button></div>
 <div id="pvm" class="ov" role="dialog" aria-modal="true" aria-labelledby="pvt"><div class="box pvb"><div class="row mh"><b id="pvt">收藏明細</b><button type="button" id="pvx" title="關閉" aria-label="關閉">✕</button></div><div class="mb" id="pvc"></div><div class="mf"><button type="button" id="pvd">刪除</button><button type="button" id="pve">編輯</button><button type="button" id="pvn">取消</button></div></div></div>
 <div id="annm" class="ov" role="dialog" aria-modal="true" aria-labelledby="annt"><div class="box hlpb"><div class="row mh"><b id="annt"><span class="att">📢 公 告 ：</span><span class="ats">(小猴的廢話時間🐵)</span></b><button type="button" id="annx" title="關閉" aria-label="關閉">✕</button></div><div class="mb" id="annc"></div></div></div>
-<div id="tgm" class="ov" role="dialog" aria-modal="true" aria-labelledby="tgmt"><div class="box"><div class="row mh"><b id="tgmt">🏷️ 標籤篩選</b><span class="tgmr"><span class="tgsw" id="tgsw" role="radiogroup" aria-label="顯示方式" data-m="b"><span class="tgsk" aria-hidden="true"></span><button type="button" role="radio" aria-checked="true" data-m="b">標籤塊</button><button type="button" role="radio" aria-checked="false" data-m="s" tabindex="-1">搜尋</button></span><button type="button" id="tgmx" title="關閉" aria-label="關閉">✕</button></span></div><div class="mb"><div class="tgmi" id="tgmi" aria-live="polite"></div><div class="tgpn" id="tgpb" role="group" aria-label="標籤塊"></div><div class="tgpn" id="tgps" hidden><div class="xw fqw"><input id="tgq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋標籤（例如 Fre 或 cky）" aria-label="搜尋標籤"><button type="button" class="xc" id="tgqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="tgl" role="group" aria-label="標籤清單"></div></div></div><div class="mf"><button type="button" id="tgcl">清除</button><span class="tgfr"><button type="button" id="tgcx">取消</button><button type="button" class="pri" id="tgok">套用</button></span></div></div></div>
+<div id="tgm" class="ov" role="dialog" aria-modal="true" aria-labelledby="tgmt"><div class="box"><div class="row mh"><span class="tgml"><b id="tgmt">🏷️<span class="tgmtx"> 標籤篩選</span></b><span class="tgsw tgsw2" id="tgaw" role="radiogroup" aria-label="篩選方式" data-m="and"><span class="tgsk" aria-hidden="true"></span><button type="button" role="radio" aria-checked="true" data-m="and" title="AND：全部符合">AND</button><button type="button" role="radio" aria-checked="false" data-m="or" tabindex="-1" title="OR：任一符合">OR</button></span><button type="button" class="tgai" id="tgai" aria-label="篩選方式說明" aria-expanded="false" aria-controls="tgap"><span aria-hidden="true">i</span></button></span><span class="tgmr"><span class="tgsw" id="tgsw" role="radiogroup" aria-label="顯示方式" data-m="b"><span class="tgsk" aria-hidden="true"></span><button type="button" role="radio" aria-checked="true" data-m="b">標籤</button><button type="button" role="radio" aria-checked="false" data-m="s" tabindex="-1">搜尋</button></span><button type="button" id="tgmx" title="關閉" aria-label="關閉">✕</button></span></div><div class="mb"><div class="tgmi" id="tgmi" aria-live="polite"></div><div class="tgpn" id="tgpb" role="group" aria-label="標籤塊"></div><div class="tgpn" id="tgps" hidden><div class="xw fqw"><input id="tgq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋標籤（例如 Fre 或 cky）" aria-label="搜尋標籤"><button type="button" class="xc" id="tgqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="tgl" role="group" aria-label="標籤清單"></div></div></div><div class="mf"><button type="button" id="tgcl">清除</button><span class="tgfr"><button type="button" id="tgcx">取消</button><button type="button" class="pri" id="tgok">套用</button></span></div></div></div>
+<div id="tgap" class="fpop tgap" role="tooltip" hidden><p><b>AND（全部符合）：</b>卡片必須同時具有所有選取的標籤。</p><p><b>OR（任一符合）：</b>卡片只要具有其中任一選取的標籤即可。</p></div>
 <div id="rnm" class="ov" role="dialog" aria-modal="true" aria-labelledby="rnmt"><div class="box"><div class="row mh"><b id="rnmt">✎ 資料夾改名</b><button type="button" id="rnmx" title="取消" aria-label="取消">✕</button></div></div></div>
 <div id="hlpm" class="ov" role="dialog" aria-modal="true" aria-labelledby="hlpt"><div class="box hlpb"><div class="row mh"><b id="hlpt">使用說明與常見問題</b><button type="button" id="hlpx" title="關閉" aria-label="關閉">✕</button></div><div class="mb" id="hlpc"></div></div></div>
 <div id="lbm" class="ov lb" role="dialog" aria-modal="true" aria-label="圖片放大"><button type="button" id="lbx" class="lbc" title="關閉" aria-label="關閉">✕</button><button type="button" id="lbp" class="lbn" aria-label="上一張">‹</button><img id="lbi" alt=""><button type="button" id="lbn" class="lbn" aria-label="下一張">›</button><div id="lbk" class="lbk"></div></div>
@@ -1737,7 +1763,7 @@ function render(){isDue.c=0;posts.sort((a,b)=>{const pb=sortBy==='pub',ka=pb?a.p
  const ch=(a,k,v,l)=>`<button class="chip ${a?'on':''}" data-${k}="${esc(v)}">${l}</button>`;
  const paths=fp(),vis=p=>{const a=p.split('/');return a.slice(0,-1).every((_,i)=>open.has(a.slice(0,i+1).join('/')))};const act=sel.c||selT().length||sel.u||plSel||dueOnly||dueRow||starOnly||gotOnly||gSel||noFolder||$('#q').value.trim()||$('#df').value||$('#dt').value;$('#chips').innerHTML=($('#qb').className=act?'clr':'','')+'<div class="sbq">'+ch(!act,'a','','<span class="ql">全部</span><span class="qn">'+posts.length+'</span>')+ch(sel.u,'u','1','<span class="ql">未讀</span><span class="qn">'+posts.filter(p=>!p.read).length+'</span>')+ch(gotOnly,'ndl','1','<span class="ql">未下載</span><span class="qn">'+posts.filter(p=>!p.got).length+'</span>')+'</div><div class="sbn">'+ch(sbMode==='f','f','1','📁 資料夾')+ch(noFolder,'nf','1','📂 無資料夾<span style="float:right;opacity:.6">'+posts.filter(p=>!(p.cats||[]).length).length+'</span>')+ch(starOnly,'sf','1','⭐ 加星號<span style="float:right;opacity:.6">'+posts.filter(p=>p.star).length+'</span>')+ch(sbMode==='g','gl','1','📚 分組'+(gSel?'<span class="gsn">'+(gSel==='_'?'未分組':esc((grps.find(g=>g.id===gSel)||{}).name||''))+'</span>':''))+ch(false,'gm','1','🔠 管理分組')+'</div>';srtDraw();if($('#sgll')){const gd=sortS.g.m==='custom'&&grps.length>1;$('#sgll').classList.toggle('gdr',gd);$('#sgll').innerHTML=grps.length?gOrd().map(g=>{const c=ch(gSel===g.id,'gf',g.id,'<span class="gd" style="background:'+esc(g.color)+'"></span>'+esc(g.name)+'<span style="float:right;opacity:.6">'+posts.filter(p=>gOf(p).includes(g.id)).length+'</span>');return gd?'<div class="sgr dz" data-gr="'+esc(g.id)+'">'+c+'</div>':c}).join('')+ch(gSel==='_','gf','_','未分組<span style="float:right;opacity:.6">'+posts.filter(p=>!gOf(p).length).length+'</span>'):'<div class="sge">還沒有分組。按上面的「🔠 管理分組」新增。</div>'}{const L=[...new Set([...['IG','Threads','X','YouTube'].map(n=>pren[n]||n),...cplats.map(c=>c.name),...posts.map(p=>p.platform).filter(Boolean),'網頁'])];$('#sdp').innerHTML='<option value="">全部平台</option>'+L.map(n=>`<option>${esc(n)}</option>`).join('');$('#sdp').value=plSel}$('#tgb').textContent='🏷️ 標籤 '+ts.size;/* V3.2.3：選了標籤時按鈕只亮起來、不再接「· #標籤」（選了什麼由「目前篩選」顯示，避免按鈕太長跑版） */$('#tgb').className='chip'+(tagsOn||selT().length?' on':'');$('#dtb').className='chip'+(($('#df').value||$('#dt').value)?' on':'');$('#tagp').style.display=tagsOn?'':'none';const tc={};posts.forEach(p=>(p.tags||[]).forEach(t=>tc[t]=(tc[t]||0)+1));$('#tagp').innerHTML=ts.size?[...ts].sort().map(t=>`<button class="chip ${selT().includes(t)?'on':''}" style="--h:${thue(t)}" data-t="${esc(t)}">#${esc(t)} <small>${tc[t]}</small></button>`).join(''):'<span style="color:var(--mut);font-size:calc(13px*var(--ui))">還沒有標籤。新增收藏時輸入標籤，就會出現在這裡。</span>';$('#tree').style.display=sbMode==='f'?'':'none';if($('#sgl'))$('#sgl').style.display=sbMode==='g'?'':'none';ps($('#fp'));drawSb();
  const q=$('#q').value.trim().toLowerCase();
- const _drs=dueRow?new Set(getDue().filter(x=>dueRK(x)===dueRow).map(x=>x.id)):null;const shown=posts.filter(p=>(!sel.c||(p.cats||[]).some(c=>c===sel.c||c.startsWith(sel.c+'/')))&&selT().every(t=>(p.tags||[]).includes(t))&&(!sel.u||!p.read)&&(!plSel||p.platform===plSel)&&dmatch(p)&&(!dueOnly||isDue(p))&&(!_drs||_drs.has(p.id))&&(!starOnly||p.star)&&(!gotOnly||!p.got)&&(!noFolder||!(p.cats||[]).length)&&(!gSel||(gSel==='_'?!gOf(p).length:gOf(p).includes(gSel)))&&(!q||[p.note,p.text,p.url,p.acct,...(p.cats||[]),...(p.tags||[])].join(' ').toLowerCase().includes(q)));
+ const _drs=dueRow?new Set(getDue().filter(x=>dueRK(x)===dueRow).map(x=>x.id)):null;if(sel.tm==='or'&&!selT().length)sel={...sel,tm:'and'};/* V3.3.2：標籤全部取消後，比對方式回到 AND，不留下舊條件 */const shown=posts.filter(p=>(!sel.c||(p.cats||[]).some(c=>c===sel.c||c.startsWith(sel.c+'/')))&&tagHit(p)&&(!sel.u||!p.read)&&(!plSel||p.platform===plSel)&&dmatch(p)&&(!dueOnly||isDue(p))&&(!_drs||_drs.has(p.id))&&(!starOnly||p.star)&&(!gotOnly||!p.got)&&(!noFolder||!(p.cats||[]).length)&&(!gSel||(gSel==='_'?!gOf(p).length:gOf(p).includes(gSel)))&&(!q||[p.note,p.text,p.url,p.acct,...(p.cats||[]),...(p.tags||[])].join(' ').toLowerCase().includes(q)));
  const due=getDue();const _unused=(()=>{const y=today.slice(0,4),md=today.slice(5),r=[];posts.forEach(p=>{if(p.due){if(nset.c&&p.due<=today&&!p.read)r.push(p);return}const t=new Date(p.t||0).toLocaleDateString('sv-SE');if(nset.t&&t.slice(5)===md&&t.slice(0,4)<y)r.push({...p,why:'收藏 '+(y-t.slice(0,4))+' 週年'});else if(nset.p&&p.pub&&p.pub.slice(5)===md&&p.pub.slice(0,4)<y)r.push({...p,why:'發布 '+(y-p.pub.slice(0,4))+' 週年'})});return r})();
  $('#due').innerHTML=due.length?dueHTML(due):'';
  $('#ls').className=view==='cards'?'cards':'list';
@@ -1923,6 +1949,9 @@ applyCust();requestAnimationFrame(applyCust);addEventListener('load',applyCust);
 /* 卡片與明細共用的標籤篩選（V2.9.0 抽出成 tagPick；卡片維持「再點一次取消」，明細一律套用該標籤） */
 /* V3.2.3：標籤可複選。sel.t 為陣列；選了多個標籤時只顯示「同時有這些標籤」的收藏 */
 function selT(){const t=sel.t;return Array.isArray(t)?t:(t?[t]:[])}
+/* V3.3.2：多個標籤之間的比對方式。sel.tm＝'or' 時任一符合（聯集），其他（含沒設定）都是 AND 全部符合（交集，V3.2.3 起的原本行為）。
+   只影響標籤彼此之間；和資料夾、平台、日期、未讀等其他篩選仍然是交集。沒選標籤時一律不篩。 */
+function tagHit(p){const a=selT();if(!a.length)return true;const pt=p.tags||[];return sel.tm==='or'?a.some(t=>pt.includes(t)):a.every(t=>pt.includes(t))}
 const tagPick=(t,force)=>{const a=selT();sel={...sel,t:a.includes(t)?(force?a:a.filter(x=>x!==t)):[...a,t]};render()};/* V3.2.2 修正：卡片／明細點標籤只改標籤，保留資料夾、未讀 */
 $('#ls').addEventListener('click',e=>{const s=e.target.closest('.tp');if(!s)return;tagPick(s.textContent)});
 const PC={IG:'linear-gradient(135deg,#f58529,#dd2a7b,#8134af)',Threads:'#101010',X:'#2b2f36',YouTube:'#e62117','網頁':'#6c5ce7'};
@@ -2828,7 +2857,7 @@ const GG=window.snsGoogle;
   const st=$('#st');if(st)st.classList.toggle('lgdup',show&&st.textContent.trim()===ST)};
  if(GG){const su=GG.setUser.bind(GG);GG.setUser=u=>{su(u);upd()}}
  const st=$('#st');if(st)new MutationObserver(upd).observe(st,{childList:true,characterData:true,subtree:true});
- window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.3.1';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+ window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.3.2';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
@@ -3837,14 +3866,14 @@ render();
    兩種模式共用同一份「暫存選取」draft：開窗時複製目前的標籤篩選，點標籤塊或勾選清單都只改 draft；
    切換模式只換顯示方式，不會套用、不會清掉、不會改動 draft。按「套用」才把 draft 寫回篩選（原本的 AND 交集邏輯不變）。
    取消、✕、Esc、點遮罩：直接關閉，放棄這次的改動。清除：只清空 draft，按「套用」後才生效。每次開窗都從「標籤塊」開始。 */
-window.snsTagm=(()=>{const el=$('#tgm'),sw=$('#tgsw'),pb=$('#tgpb'),ps=$('#tgps'),lst=$('#tgl'),q=$('#tgq'),info=$('#tgmi');
- let draft=[],mode='b',fb=null,tags=[],cnt={};
+window.snsTagm=(()=>{const el=$('#tgm'),aw=$('#tgaw'),tip=$('#tgap'),ib=$('#tgai'),sw=$('#tgsw'),pb=$('#tgpb'),ps=$('#tgps'),lst=$('#tgl'),q=$('#tgq'),info=$('#tgmi');
+ let draft=[],mode='b',lg='and',fb=null,tags=[],cnt={};/* V3.3.2：lg＝這次彈窗裡暫存的 AND／OR，按「套用」才寫回 sel.tm */
  const isOpen=()=>el.classList.contains('o');
  const norm=x=>String(x||'').toLowerCase().replace(/^#+/,'').replace(/\s+/g,'');
  const has=t=>draft.includes(t);
  const paint=()=>{pb.querySelectorAll('.chip[data-tt]').forEach(b=>{const on=has(b.dataset.tt);b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false')});
   lst.querySelectorAll('.tgr').forEach(r=>{const on=has(r.dataset.tt);r.classList.toggle('on',on);const c=r.querySelector('input');if(c.checked!==on)c.checked=on});
-  info.innerHTML=draft.length?'已選 <b>'+draft.length+'</b> 個標籤（卡片要同時有）・按「套用」才篩選':'還沒選標籤・可以複選，按「套用」才篩選'};
+  info.innerHTML=draft.length?'已選 <b>'+draft.length+'</b> 個標籤（'+(lg==='or'?'有其中一個就算':'卡片要同時有')+'）・按「套用」才篩選':'還沒選標籤・可以複選，按「套用」才篩選'};
  const filt=()=>{const k=norm(q.value);let n=0;lst.querySelectorAll('.tgr').forEach(r=>{const v=!k||norm(r.dataset.tt).includes(k);r.hidden=!v;if(v)n++});
   let e=lst.querySelector('.tge');if(!tags.length){return}if(!n){if(!e){e=document.createElement('div');e.className='tge';lst.appendChild(e)}e.textContent='找不到符合「'+q.value.trim()+'」的標籤';e.hidden=false}else if(e)e.hidden=true};
  const build=()=>{cnt={};posts.forEach(p=>(p.tags||[]).forEach(t=>cnt[t]=(cnt[t]||0)+1));tags=[...new Set([...Object.keys(cnt),...draft])].sort();
@@ -3865,13 +3894,40 @@ window.snsTagm=(()=>{const el=$('#tgm'),sw=$('#tgsw'),pb=$('#tgpb'),ps=$('#tgps'
   /* 先用主題自己的文字色；只有不到 4.5 時才改用黑或白 */
   const keep=(bg,L,best)=>{for(const v of L){const c=col(v);if(c&&cr(c,bg)>=4.5)return v}return best&&best.v};
   const vOn=keep(acc,['var(--dlg-htx)','var(--on)'],on),vOff=keep(card,['var(--mut)','var(--fg)'],off)/* 未選取用主題的次要文字色（對比不足 4.5 就用主文字色），選取的字再加粗，狀態更明確 */;
-  if(vOn)sw.style.setProperty('--tgsw-on',vOn);if(vOff)sw.style.setProperty('--tgsw-off',vOff)}catch(e){}};
+  [sw,aw].forEach(x=>{x.style.removeProperty('--tgsw-on');x.style.removeProperty('--tgsw-off');if(vOn)x.style.setProperty('--tgsw-on',vOn);if(vOff)x.style.setProperty('--tgsw-off',vOff)})}catch(e){}};
  const setMode=(m,focus)=>{mode=m==='s'?'s':'b';sw.dataset.m=mode;sw.querySelectorAll('button[data-m]').forEach(b=>{const on=b.dataset.m===mode;b.setAttribute('aria-checked',on?'true':'false');b.tabIndex=on?0:-1;if(on&&focus)b.focus()});
   pb.hidden=mode!=='b';ps.hidden=mode!=='s';paint()};
- const open=()=>{fb=document.activeElement;draft=selT().slice();q.value='';build();setMode('b');filt();pb.scrollTop=0;lst.scrollTop=0;el.classList.add('o');tone();
+ /* V3.3.2：AND／OR 切換——只改暫存的 lg 和說明文字，不套用、不清除已選標籤 */
+ const setLogic=(m,focus)=>{lg=m==='or'?'or':'and';aw.dataset.m=lg;aw.querySelectorAll('button[data-m]').forEach(b=>{const on=b.dataset.m===lg;b.setAttribute('aria-checked',on?'true':'false');b.tabIndex=on?0:-1;if(on&&focus)b.focus()});paint()};
+ /* ⓘ 說明：電腦滑鼠移上去顯示、移開關閉；點一下固定顯示，再點一次或點其他地方關閉（手機用點的）。提示框放在 body、位置跟著 ⓘ，不會被彈窗內容區裁切 */
+ let pin=false,hov=false,ht=0;
+ const place=()=>{const r=ib.getBoundingClientRect(),vw=document.documentElement.clientWidth,vh=innerHeight,m=8;tip.style.left='0px';tip.style.top='0px';const w=tip.offsetWidth,h=tip.offsetHeight;
+  let x=Math.min(Math.max(m,r.left+r.width/2-w*.25),vw-w-m),y=r.bottom+6;if(y+h>vh-m)y=Math.max(m,r.top-6-h);tip.style.left=Math.round(x)+'px';tip.style.top=Math.round(y)+'px'};
+ const tipShow=()=>{if(!isOpen())return;tip.hidden=false;ib.setAttribute('aria-expanded','true');place()};
+ const tipHide=()=>{clearTimeout(ht);pin=false;hov=false;tip.hidden=true;ib.setAttribute('aria-expanded','false')};
+ const tipOpen=()=>!tip.hidden;
+ ib.addEventListener('pointerenter',e=>{if(e.pointerType!=='mouse')return;clearTimeout(ht);hov=true;tipShow()});
+ ib.addEventListener('pointerleave',e=>{if(e.pointerType!=='mouse')return;hov=false;if(!pin)ht=setTimeout(()=>{if(!pin&&!hov)tipHide()},120)});
+ tip.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse'){clearTimeout(ht);hov=true}});
+ tip.addEventListener('pointerleave',e=>{if(e.pointerType!=='mouse')return;hov=false;if(!pin)ht=setTimeout(()=>{if(!pin&&!hov)tipHide()},120)});
+ ib.addEventListener('click',e=>{e.preventDefault();if(pin){tipHide();return}pin=true;tipShow()});
+ ib.addEventListener('focus',()=>{try{if(ib.matches(':focus-visible'))tipShow()}catch(x){}});
+ ib.addEventListener('blur',()=>{if(!pin&&!hov)tipHide()});
+ document.addEventListener('pointerdown',e=>{if(tipOpen()&&!ib.contains(e.target))tipHide()},true);
+ window.addEventListener('resize',()=>{if(tipOpen())place()});
+ el.querySelector('.mb').addEventListener('scroll',()=>{if(tipOpen())place()},true);
+ aw.addEventListener('click',e=>{const b=e.target.closest('button[data-m]');if(b)setLogic(b.dataset.m)});
+ aw.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key)){e.preventDefault();setLogic(e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='Home'?'and':'or',true)}});
+ /* 標題列排版：先完整顯示；標題被擠掉時改成只顯示 🏷️；控制項還是會互相重疊時才讓右側換行 */
+ const mh=el.querySelector('.mh'),tt=$('#tgmt');
+ const fit=()=>{if(!isOpen())return;mh.classList.remove('tgmc','tgmw');const R=x=>x.getBoundingClientRect();
+  if(tt.scrollWidth>tt.clientWidth+1)mh.classList.add('tgmc');
+  const a=R(ib),b=R(sw),c=R(mh),x=R($('#tgmx'));if(a.right>b.left-2||x.right>c.right+0.5||R(aw).left<R(tt).right-0.5)mh.classList.add('tgmw');if(tipOpen())place()};
+ window.addEventListener('resize',fit);
+ const open=()=>{fb=document.activeElement;draft=selT().slice();setLogic(draft.length&&sel.tm==='or'?'or':'and');q.value='';build();setMode('b');filt();pb.scrollTop=0;lst.scrollTop=0;el.classList.add('o');fit();tone();
   setTimeout(()=>{try{$('#tgmx').focus({preventScroll:true})}catch(e){}},0)};
- const close=()=>{if(!isOpen())return;el.classList.remove('o');draft=[];try{const b=fb&&document.contains(fb)&&fb.offsetParent!==null?fb:$('#tgb');b&&b.focus({preventScroll:true})}catch(e){}fb=null};
- const apply=()=>{const t=draft.slice();close();sel={...sel,t};render()};
+ const close=()=>{if(!isOpen())return;tipHide();el.classList.remove('o');draft=[];try{const b=fb&&document.contains(fb)&&fb.offsetParent!==null?fb:$('#tgb');b&&b.focus({preventScroll:true})}catch(e){}fb=null};
+ const apply=()=>{const t=draft.slice(),m=t.length?lg:'and';close();sel={...sel,t,tm:m};render()};/* 沒選標籤時 tm 回到 AND，不留下舊的比對方式 */
  sw.addEventListener('click',e=>{const b=e.target.closest('button[data-m]');if(b)setMode(b.dataset.m)});
  sw.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key)){e.preventDefault();setMode(e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='Home'?'b':'s',true)}});
  pb.addEventListener('click',e=>{const b=e.target.closest('.chip[data-tt]');if(b)toggle(b.dataset.tt)});
@@ -3881,9 +3937,9 @@ window.snsTagm=(()=>{const el=$('#tgm'),sw=$('#tgsw'),pb=$('#tgpb'),ps=$('#tgps'
  $('#tgcl').onclick=()=>{draft=[];paint()};
  $('#tgcx').onclick=close;$('#tgmx').onclick=close;$('#tgok').onclick=apply;
  el.addEventListener('mousedown',e=>{if(e.target===el)close()});
- window.addEventListener('keydown',e=>{if(e.key!=='Escape'||!isOpen())return;e.preventDefault();e.stopImmediatePropagation();if(document.activeElement===q&&q.value){q.value='';filt();return}close()},true);
+ window.addEventListener('keydown',e=>{if(e.key!=='Escape'||!isOpen())return;e.preventDefault();e.stopImmediatePropagation();if(tipOpen()){tipHide();return}if(document.activeElement===q&&q.value){q.value='';filt();return}close()},true);
  new MutationObserver(()=>{if(isOpen())tone()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','style','class']});
- return{open,close,isOpen,apply,draft:()=>draft.slice(),mode:()=>mode,setMode,tone}})();
+ return{open,close,isOpen,apply,draft:()=>draft.slice(),mode:()=>mode,setMode,logic:()=>lg,setLogic,tipOpen,tone}})();
 
 /* ---- V3.3.0：資料夾改名改成獨立小彈窗 ----
    沿用原本的改名欄位（#rn：輸入框、儲存、取消、提示文字）與原本的改名流程、驗證和錯誤提示，只把它從「搜尋框和資料夾清單中間」
