@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.2.9">
-<meta name="app-build" content="2026-11-15 02:00">
+<meta name="app-version" content="3.3.1">
+<meta name="app-build" content="2026-11-15 04:35">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1206,6 +1206,67 @@ body.sbrzing,body.sbrzing *{cursor:col-resize!important;user-select:none!importa
 @media(max-width:640px){.lgh:not(.lgh-d){display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:calc(8px*var(--ui));row-gap:calc(1px*var(--ui));align-items:center;padding:calc(6px*var(--ui)) calc(10px*var(--ui)) calc(7px*var(--ui))}.lgh:not(.lgh-d) .lgt{display:contents}.lgh:not(.lgh-d) .lgi{grid-column:1;grid-row:1}.lgh:not(.lgh-d) .lgt b{grid-column:2;grid-row:1}.lgh:not(.lgh-d) .lgt span{grid-column:1/-1;grid-row:2;font-size:calc(12.5px*var(--ui))}}/* 手機：第一行圖示＋標題，第二行說明（整列寬），卡片約兩行高 */
 /* 抽屜調窄時版本列以「…」結尾，不會切在半個字 */
 </style>
+<style id="v331">
+/* V3.3.1：雲端空間彈窗上下兩區 */
+.cqsec{display:flex;flex-direction:column;gap:calc(8px*var(--ui));min-width:0}
+#cqa{border-top:1px solid var(--bd);padding-top:calc(14px*var(--ui));margin-top:calc(6px*var(--ui))}
+.cqh{margin:0;font-size:calc(15px*var(--ui));font-weight:700;color:var(--fg);line-height:1.4}
+.cqe{margin:0;font-size:calc(13px*var(--ui));line-height:1.6;color:var(--err);font-weight:600;overflow-wrap:anywhere}
+.cqn{margin:0;padding-left:1.2em;font-size:calc(12.5px*var(--ui));line-height:1.6;color:var(--fg);display:grid;gap:calc(2px*var(--ui))}
+.cqbr{display:flex}
+#cqsr{white-space:normal;text-align:center;max-width:100%}
+#cqsr[disabled]{opacity:.7;cursor:progress}
+</style>
+<style id="v330">
+/* V3.3.0：標籤篩選彈窗（標籤塊／搜尋雙模式）
+   尺寸：寬度與公告彈窗相同（640×介面大小）；電腦高度固定＝公告彈窗（超過五則時的固定高度約 686）再多一列標籤 ≈ 720×介面大小，
+   一律不超過螢幕高度−24；手機：上下各留約 48px。兩種模式共用同一個外框，切換時外框不變，只有內容區捲動。 */
+#tgm .box{max-width:calc(640px*var(--ui));height:calc(720px*var(--ui))}
+@media(max-width:640px){#tgm .box{height:min(calc(100vh - 96px),calc(620px*var(--ui)))}@supports(height:100dvh){#tgm .box{height:min(calc(100dvh - 96px),calc(620px*var(--ui)))}}}
+#tgm .mh{gap:calc(8px*var(--ui))}
+#tgmt{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#tgm .tgmr{flex:none;display:flex;align-items:center;gap:calc(8px*var(--ui))}
+#tgm .mb{overflow:hidden;gap:calc(8px*var(--ui))}
+.tgmi{flex:none;font-size:calc(12.5px*var(--ui));color:var(--mut);min-height:1.5em;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tgmi b{color:var(--fg);font-weight:700}
+.tgpn{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain}
+#tgpb[hidden],#tgps[hidden]{display:none!important}
+#tgpb{display:flex;flex-wrap:wrap;align-content:flex-start;gap:calc(6px*var(--ui));padding:calc(2px*var(--ui))}
+#tgpb .chip{background:hsl(var(--h) 70% 55%/.15);border-color:hsl(var(--h) 65% 55%/.5);color:var(--fg)}
+#tgpb .chip.on{background:hsl(var(--h) 65% 45%);color:#fff}
+#tgps{display:flex;flex-direction:column;gap:calc(8px*var(--ui));overflow:hidden}
+#tgps .fqw{flex:none;margin:0}
+#tgl{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;border:1px solid var(--bd);border-radius:var(--r);background:var(--card)}
+.tgr{display:flex;align-items:center;gap:calc(10px*var(--ui));padding:calc(9px*var(--ui)) calc(12px*var(--ui));margin:0;font-weight:400!important;cursor:pointer;color:var(--fg);border-bottom:1px solid color-mix(in srgb,var(--bd) 70%,transparent)}
+.tgr:last-child{border-bottom:0}
+.tgr:hover{background:color-mix(in srgb,var(--acc) 8%,var(--card))}
+.tgr input{flex:none;width:calc(17px*var(--ui));height:calc(17px*var(--ui));margin:0;padding:0;accent-color:var(--sel,var(--acc))}
+.tgr .tgd{flex:none;width:calc(9px*var(--ui));height:calc(9px*var(--ui));border-radius:50%;background:hsl(var(--h) 65% 50%)}
+.tgr .tgn{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+.tgr .tgc{flex:none;font-size:calc(12px*var(--ui));color:var(--mut);font-variant-numeric:tabular-nums}
+.tgr.on{background:color-mix(in srgb,var(--acc) 12%,var(--card))}
+.tge{padding:calc(16px*var(--ui)) calc(8px*var(--ui));text-align:center;color:var(--mut);font-size:calc(13px*var(--ui))}
+#tgm .mf{justify-content:space-between;flex-wrap:nowrap}
+#tgm .mf .tgfr{display:flex;gap:calc(8px*var(--ui))}
+#tgm .mf button{white-space:nowrap}
+/* 標籤塊／搜尋 滑動切換器：軌道＝目前主題的卡片底色，選取區塊＝目前主題的強調色（--acc），文字顏色由程式依實際顏色挑對比最高的 */
+.tgsw{position:relative;display:inline-grid;grid-template-columns:1fr 1fr;flex:none;box-sizing:border-box;height:calc(30px*var(--ui));padding:calc(3px*var(--ui));border-radius:999px;background:var(--card);border:1px solid color-mix(in srgb,var(--dlg-htx,var(--fg)) 24%,transparent);isolation:isolate;box-shadow:inset 0 1px 2px rgba(0,0,0,.08)}
+.tgsk{position:absolute;top:calc(3px*var(--ui));bottom:calc(3px*var(--ui));left:calc(3px*var(--ui));width:calc(50% - 3px*var(--ui));border-radius:999px;background:var(--acc);box-shadow:0 1px 2px rgba(0,0,0,.18),0 0 0 1px color-mix(in srgb,var(--dlg-htx,var(--fg)) 14%,transparent);transition:transform .22s cubic-bezier(.3,.7,.3,1);z-index:0;pointer-events:none}
+.tgsw[data-m=s] .tgsk{transform:translateX(100%)}
+.tgsw button{position:relative;z-index:1;margin:0;border:0!important;border-radius:999px;background:transparent!important;box-shadow:none!important;min-height:0;height:100%;padding:0 calc(11px*var(--ui));min-width:calc(56px*var(--ui));font-size:calc(13px*var(--ui));font-weight:500;line-height:1;white-space:nowrap;color:var(--tgsw-off,var(--fg));transition:color .2s;cursor:pointer}
+.tgsw button[aria-checked=true]{color:var(--tgsw-on,var(--dlg-htx,var(--fg)));font-weight:700}
+.tgsw button:focus-visible{outline:2px solid var(--tgsw-on,var(--fg));outline-offset:-3px}
+@media(prefers-reduced-motion:reduce){.tgsk,.tgsw button{transition:none}}
+@media(max-width:380px){.tgsw button{padding:0 calc(8px*var(--ui));min-width:calc(46px*var(--ui))}}
+/* V3.3.0：資料夾改名獨立小彈窗（寬度與「管理分組」相同：.box 預設 520×介面大小） */
+#rnm .box{max-width:calc(520px*var(--ui))}
+#rnm #rn .bar{flex-wrap:nowrap;align-items:center}
+#rnm #rv{flex:1 1 auto;min-width:0;width:auto}
+#rnm #rn .bar button{flex:none;white-space:nowrap}
+#rnm #rh{overflow-wrap:anywhere;margin:calc(6px*var(--ui)) 0 0!important}
+/* 很窄的手機＋大／特大介面：縮小留白與按鈕左右內距，讓輸入框保有足夠寬度（仍是單列） */
+@media(max-width:380px){html[data-ui=l] #rnm,html[data-ui=xl] #rnm{padding-left:8px;padding-right:8px}html[data-ui=l] #rnm .box,html[data-ui=xl] #rnm .box{--bxp:10px;padding:10px}html[data-ui=l] #rnm #rn .bar,html[data-ui=xl] #rnm #rn .bar{gap:6px}html[data-ui=l] #rnm #rn .bar button,html[data-ui=xl] #rnm #rn .bar button{padding-left:10px;padding-right:10px}}
+</style>
 <style id="sbws"></style>
 <script>/* V3.2.8：側邊欄寬度只在這一次載入期間有效（不再存到下次）；每次載入都是 V3.2.6 預設寬度，#sbws 一開始是空的。
    數值是「中」介面大小下的寬度 px，套用時乘上介面大小。範圍：電腦 200～420（另外保留卡片區至少 480，預設 232 一定可用）；手機 260～（螢幕寬−48px，至少預設寬）。 */
@@ -1257,6 +1318,8 @@ try{localStorage.removeItem('sbwd');localStorage.removeItem('sbwm')}catch(e){}wi
 <div id="qfab" aria-label="快捷操作"><button type="button" class="qf" id="qfa" tabindex="-1" aria-label="新增收藏">＋新增</button><button type="button" class="qf" id="qft" tabindex="-1" aria-label="回到頁面最上方">↑Top</button><button type="button" id="qfm" aria-label="快捷操作（可拖曳移動）" aria-expanded="false" title="快捷操作（可拖曳移動）">…</button></div>
 <div id="pvm" class="ov" role="dialog" aria-modal="true" aria-labelledby="pvt"><div class="box pvb"><div class="row mh"><b id="pvt">收藏明細</b><button type="button" id="pvx" title="關閉" aria-label="關閉">✕</button></div><div class="mb" id="pvc"></div><div class="mf"><button type="button" id="pvd">刪除</button><button type="button" id="pve">編輯</button><button type="button" id="pvn">取消</button></div></div></div>
 <div id="annm" class="ov" role="dialog" aria-modal="true" aria-labelledby="annt"><div class="box hlpb"><div class="row mh"><b id="annt"><span class="att">📢 公 告 ：</span><span class="ats">(小猴的廢話時間🐵)</span></b><button type="button" id="annx" title="關閉" aria-label="關閉">✕</button></div><div class="mb" id="annc"></div></div></div>
+<div id="tgm" class="ov" role="dialog" aria-modal="true" aria-labelledby="tgmt"><div class="box"><div class="row mh"><b id="tgmt">🏷️ 標籤篩選</b><span class="tgmr"><span class="tgsw" id="tgsw" role="radiogroup" aria-label="顯示方式" data-m="b"><span class="tgsk" aria-hidden="true"></span><button type="button" role="radio" aria-checked="true" data-m="b">標籤塊</button><button type="button" role="radio" aria-checked="false" data-m="s" tabindex="-1">搜尋</button></span><button type="button" id="tgmx" title="關閉" aria-label="關閉">✕</button></span></div><div class="mb"><div class="tgmi" id="tgmi" aria-live="polite"></div><div class="tgpn" id="tgpb" role="group" aria-label="標籤塊"></div><div class="tgpn" id="tgps" hidden><div class="xw fqw"><input id="tgq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋標籤（例如 Fre 或 cky）" aria-label="搜尋標籤"><button type="button" class="xc" id="tgqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="tgl" role="group" aria-label="標籤清單"></div></div></div><div class="mf"><button type="button" id="tgcl">清除</button><span class="tgfr"><button type="button" id="tgcx">取消</button><button type="button" class="pri" id="tgok">套用</button></span></div></div></div>
+<div id="rnm" class="ov" role="dialog" aria-modal="true" aria-labelledby="rnmt"><div class="box"><div class="row mh"><b id="rnmt">✎ 資料夾改名</b><button type="button" id="rnmx" title="取消" aria-label="取消">✕</button></div></div></div>
 <div id="hlpm" class="ov" role="dialog" aria-modal="true" aria-labelledby="hlpt"><div class="box hlpb"><div class="row mh"><b id="hlpt">使用說明與常見問題</b><button type="button" id="hlpx" title="關閉" aria-label="關閉">✕</button></div><div class="mb" id="hlpc"></div></div></div>
 <div id="lbm" class="ov lb" role="dialog" aria-modal="true" aria-label="圖片放大"><button type="button" id="lbx" class="lbc" title="關閉" aria-label="關閉">✕</button><button type="button" id="lbp" class="lbn" aria-label="上一張">‹</button><img id="lbi" alt=""><button type="button" id="lbn" class="lbn" aria-label="下一張">›</button><div id="lbk" class="lbk"></div></div>
 <script type="text/plain" id="gifw">
@@ -1684,7 +1747,7 @@ document.addEventListener('click',e=>{
  else if('o'in d){open.has(d.o)?open.delete(d.o):open.add(d.o)}
  else if('n'in d){renaming=d.n;$('#rv').value=d.n.split('/').pop();$('#rn').style.display='';$('#rh').textContent='重新命名：'+d.n.replace(/\//g,' → ');$('#rv').focus();return}
  else if('f'in d){sbMode='f';treeOn=true}
- else if('g'in d)tagsOn=!tagsOn;
+ else if('g'in d){window.snsTagm&&window.snsTagm.open();return}/* V3.3.0：標籤篩選改成彈窗 */
  else if('nt'in d){noteOpen(d.nt);return}
  else if('gt'in d){const p=posts.find(x=>x.id===d.gt);col&&p&&col.doc(p.id).update({got:!p.got});return}
  else if('sr'in d){const p=posts.find(x=>x.id===d.sr);col&&p&&col.doc(p.id).update({star:!p.star});return}
@@ -1811,7 +1874,7 @@ casOn($('#dp'));casOn($('#fp'));
 document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const vis=s=>$(s).style.display!=='none';if(vis('#rn2')){$('#rx2').click()}else if($('#dlg').classList.contains('o')){$('#cx').click()}else if(vis('#rn')){$('#rx').click()}else if(vis('#fadd')){$('#fa').click()}});
 $('#qb').onclick=()=>{noFolder=false;gSel='';dueRow='';dueOnly=starOnly=gotOnly=false;sel={c:'',t:[],u:false};plSel='';$('#sdp').value='';$('#q').value='';$('#df').value=$('#dt').value='';render()};
 $('#q').onkeydown=e=>{if(e.key==='Enter'){render();e.target.blur()}};
-$('#tgb').onclick=()=>{tagsOn=!tagsOn;render()};
+$('#tgb').onclick=()=>{window.snsTagm&&window.snsTagm.open()};/* V3.3.0：標籤篩選改成彈窗（舊的 #tagp 面板不再顯示） */
 $('#sdp').onchange=e=>{plSel=e.target.value;render()};
 $('#dtb').onclick=()=>{const d=$('#dr');d.style.display=d.style.display==='none'?'':'none'};
 ['#dk','#df','#dt'].forEach(s=>{$(s).onchange=()=>render()});
@@ -2751,7 +2814,7 @@ const GG=window.snsGoogle;
   const st=$('#st');if(st)st.classList.toggle('lgdup',show&&st.textContent.trim()===ST)};
  if(GG){const su=GG.setUser.bind(GG);GG.setUser=u=>{su(u);upd()}}
  const st=$('#st');if(st)new MutationObserver(upd).observe(st,{childList:true,characterData:true,subtree:true});
- window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.2.9';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+ window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.3.1';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
@@ -2996,6 +3059,29 @@ dl={save:async({filename,data})=>{const a=document.createElement('a');a.href=URL
 
 /* ---- 容量警告 ---- */
 const quota=async()=>{try{const r=await J(D+'about?fields=storageQuota');const q=r.storageQuota||{},lim=+q.limit,used=+q.usage;$('#qw').style.display=(lim>0&&lim-used<100*1048576)?'block':'none';/* V3.0.0：把同一份容量資料提供給「雲端空間」視窗與資訊條（不另外查詢、計算方式相同） */window.snsQuota={lim,used,t:Date.now()};window.snsQuotaUpd&&snsQuotaUpd()}catch(e){}};
+/* V3.3.1：SNS_Bookmark 資料夾容量統計（只讀：不建立、不移動、不修改任何檔案；和上面的帳號容量 quota() 完全分開）。
+   權限沿用 drive.file：只看得到 App 自己建立／開啟過的檔案。從 SNS_Bookmark 根資料夾往下逐層（遞迴）列出所有子資料夾，每一層都把分頁讀完。
+   容量＝每個檔案的 quotaBytesUsed（沒有時才用 size）；資料夾本身不算檔案也不算容量；捷徑不算（不佔空間，也避免同一個檔案重複計算）；
+   同一個檔案出現在兩個資料夾只算一次；不是自己擁有的檔案只算數量、不算進容量；取不到容量的檔案另外計數，畫面會提示「可能不完整」。 */
+let scanP=null;
+window.snsFolderScan=onP=>scanP||(scanP=(async()=>{
+ if(!GG.user){const e=new Error('尚未登入 Google');e.code='login';throw e}
+ let root=ids&&ids.root,multi=0;
+ {const q=`name='SNS_Bookmark' and mimeType='${FOLDER}' and trashed=false and 'root' in parents`;const r=await J(D+'files?fields=files(id)&spaces=drive&pageSize=10&q='+encodeURIComponent(q));const L=r.files||[];multi=L.length;
+  if(!root){if(!L.length){const e=new Error('找不到 SNS_Bookmark 資料夾');e.code='notfound';throw e}root=L[0].id}}
+ const FL='nextPageToken,files(id,mimeType,size,quotaBytesUsed,ownedByMe)',SC='application/vnd.google-apps.shortcut';
+ const seenF=new Set([root]),seen=new Set(),Q=[root];const o={bytes:0,files:0,folders:0,shortcuts:0,unknown:0,native:0,notMine:0,pages:0,multi};
+ const one=async fid=>{let pt='';do{const q=`'${fid}' in parents and trashed=false`;
+   const r=await J(D+'files?pageSize=1000&spaces=drive&fields='+encodeURIComponent(FL)+'&q='+encodeURIComponent(q)+(pt?'&pageToken='+encodeURIComponent(pt):''));o.pages++;
+   for(const f of r.files||[]){if(f.mimeType===FOLDER){if(!seenF.has(f.id)){seenF.add(f.id);o.folders++;Q.push(f.id)}continue}
+    if(f.mimeType===SC){o.shortcuts++;continue}
+    if(seen.has(f.id))continue;seen.add(f.id);o.files++;if(String(f.mimeType||'').startsWith('application/vnd.google-apps.'))o.native++;
+    if(f.ownedByMe===false){o.notMine++;continue}
+    const b=f.quotaBytesUsed!=null&&f.quotaBytesUsed!==''?+f.quotaBytesUsed:(f.size!=null&&f.size!==''?+f.size:NaN);if(Number.isFinite(b)&&b>=0)o.bytes+=b;else o.unknown++}
+   onP&&onP({files:o.files,folders:o.folders});pt=r.nextPageToken||''}while(pt)};
+ /* 同時最多查 3 個資料夾；每次查詢都是非同步，頁面和彈窗不會卡住 */
+ let act=0;await new Promise((res,rej)=>{let dead=false;const pump=()=>{if(dead)return;if(!Q.length&&!act)return res();while(act<3&&Q.length){const id=Q.shift();act++;one(id).then(()=>{act--;pump()},e=>{dead=true;rej(e)})}};pump()});
+ o.t=Date.now();return o})().finally(()=>{scanP=null}));
 
 /* ---- 套用資料 ---- */
 const onSnap=s=>{$('#st').textContent='';try{imgs.warn()}catch(e){}folders=((s.docs.find(d=>d.id==='folders')||{data:()=>({})}).data()||{}).list||[];const sd=s.docs.find(d=>d.id==='settings'),S=sd&&sd.data()||{};if(!sav){cplats=JSON.parse(JSON.stringify(S.plats||[]));pren={...(S.pren||{})};grps=JSON.parse(JSON.stringify(S.grps||[]));sortS=sortNorm(S.sort)}posts=s.docs.filter(d=>d.id!=='folders'&&d.id!=='settings'&&d.id!=='imgq').map(d=>({id:d.id,...d.data()})).concat([...delHold.values()].filter(h=>!s.docs.some(d=>d.id===h.id))).sort((a,b)=>(b.t||0)-(a.t||0));render()};
@@ -3230,13 +3316,57 @@ syc.onclick=()=>SM.open();
 /* ---------- ④ 雲端空間（沿用原本 storageQuota 的資料） ---------- */
 const fmtB=b=>{const G=1024**3,M=1024**2;return b>=G?(b/G).toFixed(2)+' GB':b>=M?(b/M).toFixed(1)+' MB':Math.max(0,Math.round(b/1024))+' KB'};
 const CQ=dlg('cqm',ic(PI.cloud,'v3ti')+'<span>雲端空間</span>','cqb');simple(CQ);
-CQ.draw=()=>{const q=window.snsQuota,b=CQ.querySelector('.mb');
+/* V3.3.1：彈窗分成上下兩區——上方「Google 雲端同步資訊」（SNS_Bookmark 資料夾，見下方 CQS）、下方「Google 帳號雲端容量」（原本的 storageQuota，只改欄位名稱）。
+   兩區各自畫在自己的容器裡，互不覆蓋。 */
+CQ.draw=()=>{const q=window.snsQuota,mb=CQ.querySelector('.mb');let sa=mb.querySelector('#cqa');if(!sa){mb.innerHTML='<section class="cqsec" id="cqs" aria-labelledby="cqst"></section><section class="cqsec" id="cqa" aria-labelledby="cqat"><h3 class="cqh" id="cqat">Google 帳號雲端容量</h3><div class="cqab"></div></section>';sa=mb.querySelector('#cqa');window.snsCQS&&snsCQS.draw()}const b=sa.querySelector('.cqab');
  if(!q||!(q.used>=0)){b.innerHTML='<p class="ssn">還沒有取得雲端容量資料。登入 Google 並完成同步後就會顯示。</p>';return}
  const lim=q.lim>0?q.lim:0,rem=lim?lim-q.used:0,pct=lim?Math.min(100,Math.max(0,q.used/lim*100)):0,low=lim&&rem<100*1048576;
- b.innerHTML=(lim?'<div class="cqr'+(low?' low':'')+'"><small>剩餘容量</small><b>'+fmtB(rem)+'</b></div><div class="cqbar" role="progressbar" aria-label="已使用容量" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct.toFixed(1)+'"><i style="width:'+pct.toFixed(2)+'%"></i></div>':'')+
+ b.innerHTML=(lim?'<div class="cqr'+(low?' low':'')+'"><small>總剩餘容量</small><b>'+fmtB(rem)+'</b></div><div class="cqbar" role="progressbar" aria-label="已使用容量" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct.toFixed(1)+'"><i style="width:'+pct.toFixed(2)+'%"></i></div>':'')+
   '<dl class="kv ssk"><dt>已使用容量</dt><dd>'+fmtB(q.used)+(lim?'（'+pct.toFixed(1)+'%）':'')+'</dd><dt>總容量</dt><dd>'+(lim?fmtB(lim):'Google 沒有提供容量上限')+'</dd><dt>資料時間</dt><dd>'+fmtT(q.t)+'</dd></dl><p class="ssn">容量是整個 Google 帳號（雲端硬碟、Gmail、相簿）共用的空間。</p>'};
 CQ.open=()=>{CQ.draw();opn(CQ)};
 cqb.onclick=()=>CQ.open();
+/* ---- V3.3.1：Google 雲端同步資訊（SNS_Bookmark 資料夾容量）----
+   只在按「重新計算容量」時掃描；結果依 Google 帳號分開記在這台裝置（localStorage「sbq1」），重新開啟彈窗時顯示上一次的結果與時間。
+   不會呼叫帳號容量查詢，也不會改動 window.snsQuota；帳號容量更新時也不會動到這一區。沒登入時不顯示任何數字。 */
+const CQS=(()=>{const LS='sbq1';let mem={};try{mem=JSON.parse(localStorage.getItem(LS)||'{}')||{}}catch(e){mem={}}
+ const save=()=>{try{localStorage.setItem(LS,JSON.stringify(mem))}catch(e){}};
+ const key=()=>{const u=window.snsGoogle&&snsGoogle.user;return u&&u.email?String(u.email).toLowerCase():''};
+ let busy=false,err=null,prog=null;
+ const fB=b=>{if(!(b>=0))return '—';const U=['B','KB','MB','GB','TB'];let i=0,v=b;while(v>=1024&&i<U.length-1){v/=1024;i++}return (i?v.toFixed(v<10?2:v<100?1:0):String(Math.round(v)))+' '+U[i]};
+ const N=n=>Number(n||0).toLocaleString('en-US');
+ const why=e=>{const m=String(e&&e.message||e||''),st=e&&e.status;
+  if(e&&e.code==='login')return '尚未登入 Google，無法取得 SNS_Bookmark 容量。';
+  if(e&&e.code==='notfound')return '在你的 Google 雲端硬碟找不到 SNS_Bookmark 資料夾（App 尚未建立，或已被移到垃圾桶）。';
+  if(/登入已過期|reauth/.test(m)||st===401)return '登入已過期，請到頁首重新登入 Google 後再計算。';
+  if(st===429||(st===403&&/rate|quota|limit/i.test(m)))return 'Google 暫時限制查詢次數，請過一會兒再按「重新計算容量」。';
+  if(st===403)return 'Google 雲端硬碟權限不足，無法讀取 SNS_Bookmark。請登出後重新登入並允許存取。';
+  if(/Failed to fetch|NetworkError|網路/.test(m))return '連不上 Google，請檢查網路後再試一次。';
+  return '計算失敗：'+m};
+ const sec=()=>CQ.querySelector('#cqs');
+ const btnTxt=()=>busy?'計算中…'+(prog&&prog.files?'（已找到 '+N(prog.files)+' 個檔案）':''):'重新計算容量';
+ const draw=()=>{const el=sec();if(!el)return;const k=key(),d=k&&mem[k];let h='<h3 class="cqh" id="cqst">Google 雲端同步資訊</h3>';
+  if(!k){h+='<p class="cqe" role="status">'+H(busy?'計算中…':'尚未登入 Google，無法取得 SNS_Bookmark 容量。請先使用頁首的「登入 Google」。')+'</p>';el.innerHTML=h;return}
+  h+='<div class="cqr"><small>SNS_Bookmark 使用容量</small><b id="cqsv">'+(d?fB(d.bytes):'—')+'</b></div>'+
+   '<dl class="kv ssk"><dt>檔案數量</dt><dd id="cqsn">'+(d?N(d.files)+' 個':'—')+'</dd><dt>最後計算時間</dt><dd id="cqst2">'+(d?fmtT(d.t):'還沒有計算過')+'</dd></dl>';
+  const notes=[];if(d){if(d.unknown)notes.push('有 '+N(d.unknown)+' 個檔案取不到容量，實際使用量可能比上面的數字多（統計不完整）。');
+   if(d.notMine)notes.push(N(d.notMine)+' 個檔案不是你擁有的，不佔你的空間：只算進檔案數量，沒有算進容量。');
+   if(d.shortcuts)notes.push(N(d.shortcuts)+' 個捷徑沒有計入（捷徑不佔空間，避免同一個檔案重複計算）。');
+   if(d.multi>1)notes.push('雲端硬碟最上層有 '+d.multi+' 個 SNS_Bookmark 資料夾，這裡統計的是 App 正在使用的那一個。')}
+  if(err)h+='<p class="cqe" role="alert">'+H(err)+(d?'<br>下面的數字是上一次成功計算的結果，可能不是最新。':'')+'</p>';
+  if(notes.length)h+='<ul class="cqn">'+notes.map(x=>'<li>'+H(x)+'</li>').join('')+'</ul>';
+  h+='<p class="ssn">只統計 App 自己建立的檔案（收藏試算表、圖片，含所有子資料夾）；你手動放進 SNS_Bookmark 的檔案 App 看不到，不會算進來。</p>';
+  h+='<div class="cqbr"><button type="button" id="cqsr"'+(busy?' disabled aria-busy="true"':'')+'>'+H(btnTxt())+'</button></div>';
+  el.innerHTML=h;el.querySelector('#cqsr').onclick=run};
+ const run=async()=>{if(busy)return;const k=key();if(!k){err=null;draw();return}
+  busy=true;err=null;prog=null;draw();
+  try{const r=await window.snsFolderScan(p=>{prog=p;const b=CQ.querySelector('#cqsr');if(b)b.textContent=btnTxt()});
+   if(key()===k){mem[k]={bytes:r.bytes,files:r.files,folders:r.folders,shortcuts:r.shortcuts,unknown:r.unknown,native:r.native,notMine:r.notMine,multi:r.multi,pages:r.pages,t:r.t};save()}}
+  catch(e){err=why(e)}
+  finally{busy=false;prog=null;draw();const b=CQ.querySelector('#cqsr');if(b&&CQ.classList.contains('o')&&document.activeElement===document.body)try{b.focus({preventScroll:true})}catch(x){}}};
+ /* 登入、登出、換帳號時重畫（彈窗開著也一樣），不會觸發任何查詢 */
+ const GGx=window.snsGoogle;if(GGx&&GGx.setUser){const su=GGx.setUser.bind(GGx);GGx.setUser=u=>{su(u);err=null;draw()}}
+ return{draw,run,busy:()=>busy,data:()=>{const k=key();return k?mem[k]||null:null},err:()=>err}})();
+window.snsCQS=CQS;
 /* ---- 手機簡易模式：雲端資訊條（同步狀態｜剩餘容量），放在收藏控制區下方 ---- */
 const cib=mk('div',{id:'cib',class:'cib',role:'group','aria-label':'雲端資訊'},'<button type="button" id="cibs" class="cibs"></button><i class="cibd" aria-hidden="true"></i><button type="button" id="cibq" class="cibq"></button>');
 $('#ctl0').appendChild(cib);$('#cibs').onclick=()=>SM.open();$('#cibq').onclick=()=>CQ.open();
@@ -3662,6 +3792,72 @@ render();
  window.snsFsb={update,items,fit,el:bar,pop};
  update();
 })();
+</script>
+<script>
+/* ---- V3.3.0：標籤篩選彈窗（標籤塊／搜尋 雙模式）----
+   兩種模式共用同一份「暫存選取」draft：開窗時複製目前的標籤篩選，點標籤塊或勾選清單都只改 draft；
+   切換模式只換顯示方式，不會套用、不會清掉、不會改動 draft。按「套用」才把 draft 寫回篩選（原本的 AND 交集邏輯不變）。
+   取消、✕、Esc、點遮罩：直接關閉，放棄這次的改動。清除：只清空 draft，按「套用」後才生效。每次開窗都從「標籤塊」開始。 */
+window.snsTagm=(()=>{const el=$('#tgm'),sw=$('#tgsw'),pb=$('#tgpb'),ps=$('#tgps'),lst=$('#tgl'),q=$('#tgq'),info=$('#tgmi');
+ let draft=[],mode='b',fb=null,tags=[],cnt={};
+ const isOpen=()=>el.classList.contains('o');
+ const norm=x=>String(x||'').toLowerCase().replace(/^#+/,'').replace(/\s+/g,'');
+ const has=t=>draft.includes(t);
+ const paint=()=>{pb.querySelectorAll('.chip[data-tt]').forEach(b=>{const on=has(b.dataset.tt);b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false')});
+  lst.querySelectorAll('.tgr').forEach(r=>{const on=has(r.dataset.tt);r.classList.toggle('on',on);const c=r.querySelector('input');if(c.checked!==on)c.checked=on});
+  info.innerHTML=draft.length?'已選 <b>'+draft.length+'</b> 個標籤（卡片要同時有）・按「套用」才篩選':'還沒選標籤・可以複選，按「套用」才篩選'};
+ const filt=()=>{const k=norm(q.value);let n=0;lst.querySelectorAll('.tgr').forEach(r=>{const v=!k||norm(r.dataset.tt).includes(k);r.hidden=!v;if(v)n++});
+  let e=lst.querySelector('.tge');if(!tags.length){return}if(!n){if(!e){e=document.createElement('div');e.className='tge';lst.appendChild(e)}e.textContent='找不到符合「'+q.value.trim()+'」的標籤';e.hidden=false}else if(e)e.hidden=true};
+ const build=()=>{cnt={};posts.forEach(p=>(p.tags||[]).forEach(t=>cnt[t]=(cnt[t]||0)+1));tags=[...new Set([...Object.keys(cnt),...draft])].sort();
+  if(!tags.length){pb.innerHTML=lst.innerHTML='<div class="tge">還沒有標籤。新增收藏時輸入標籤，就會出現在這裡。</div>';return}
+  pb.innerHTML=tags.map(t=>`<button type="button" class="chip" style="--h:${thue(t)}" data-tt="${esc(t)}" aria-pressed="false">#${esc(t)} <small>${cnt[t]||0}</small></button>`).join('');
+  lst.innerHTML=tags.map(t=>`<label class="tgr" data-tt="${esc(t)}" style="--h:${thue(t)}"><input type="checkbox"><span class="tgd" aria-hidden="true"></span><span class="tgn">#${esc(t)}</span><span class="tgc">${cnt[t]||0}</span></label>`).join('')};
+ const toggle=t=>{draft=has(t)?draft.filter(x=>x!==t):[...draft,t];paint()};
+ /* 切換器文字顏色：在目前主題的實際顏色下，挑對比最高的（選取區塊＝強調色、軌道＝卡片底色），主題或自訂顏色改變時自動重算 */
+ const rgb=c=>{let m=String(c).match(/rgba?\(([^)]+)\)/);if(m){const a=m[1].split(/[\s,\/]+/).filter(Boolean).map(parseFloat);return a.slice(0,3)}m=String(c).match(/color\(srgb\s+([^)]+)\)/);if(m){return m[1].split(/\s+/).slice(0,3).map(x=>parseFloat(x)*255)}return null};
+ const lum=a=>{const f=v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)};return .2126*f(a[0])+.7152*f(a[1])+.0722*f(a[2])};
+ const cr=(a,b)=>{const x=lum(a),y=lum(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+ const probe=document.createElement('span');probe.style.cssText='position:absolute;width:0;height:0;overflow:hidden;visibility:hidden';
+ const col=v=>{probe.style.color='';probe.style.color=v;return rgb(getComputedStyle(probe).color)};
+ const tone=()=>{try{if(!probe.isConnected)sw.appendChild(probe);sw.style.removeProperty('--tgsw-on');sw.style.removeProperty('--tgsw-off');
+  const acc=rgb(getComputedStyle(sw.querySelector('.tgsk')).backgroundColor),card=rgb(getComputedStyle(sw).backgroundColor);if(!acc||!card)return;
+  const pick=(bg,L)=>{let best=null,bc=0;L.forEach(v=>{const c=col(v);if(!c)return;const k=cr(c,bg);if(k>bc+.01){bc=k;best=v}});return best&&{v:best,c:bc}};
+  const on=pick(acc,['var(--dlg-htx)','var(--on)','var(--fg)','#ffffff','#1d1d1f','#000000']),off=pick(card,['var(--fg)','var(--dlg-htx)','var(--acc-ink)','#1d1d1f','#ffffff','#000000']);
+  /* 先用主題自己的文字色；只有不到 4.5 時才改用黑或白 */
+  const keep=(bg,L,best)=>{for(const v of L){const c=col(v);if(c&&cr(c,bg)>=4.5)return v}return best&&best.v};
+  const vOn=keep(acc,['var(--dlg-htx)','var(--on)'],on),vOff=keep(card,['var(--mut)','var(--fg)'],off)/* 未選取用主題的次要文字色（對比不足 4.5 就用主文字色），選取的字再加粗，狀態更明確 */;
+  if(vOn)sw.style.setProperty('--tgsw-on',vOn);if(vOff)sw.style.setProperty('--tgsw-off',vOff)}catch(e){}};
+ const setMode=(m,focus)=>{mode=m==='s'?'s':'b';sw.dataset.m=mode;sw.querySelectorAll('button[data-m]').forEach(b=>{const on=b.dataset.m===mode;b.setAttribute('aria-checked',on?'true':'false');b.tabIndex=on?0:-1;if(on&&focus)b.focus()});
+  pb.hidden=mode!=='b';ps.hidden=mode!=='s';paint()};
+ const open=()=>{fb=document.activeElement;draft=selT().slice();q.value='';build();setMode('b');filt();pb.scrollTop=0;lst.scrollTop=0;el.classList.add('o');tone();
+  setTimeout(()=>{try{$('#tgmx').focus({preventScroll:true})}catch(e){}},0)};
+ const close=()=>{if(!isOpen())return;el.classList.remove('o');draft=[];try{const b=fb&&document.contains(fb)&&fb.offsetParent!==null?fb:$('#tgb');b&&b.focus({preventScroll:true})}catch(e){}fb=null};
+ const apply=()=>{const t=draft.slice();close();sel={...sel,t};render()};
+ sw.addEventListener('click',e=>{const b=e.target.closest('button[data-m]');if(b)setMode(b.dataset.m)});
+ sw.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key)){e.preventDefault();setMode(e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='Home'?'b':'s',true)}});
+ pb.addEventListener('click',e=>{const b=e.target.closest('.chip[data-tt]');if(b)toggle(b.dataset.tt)});
+ lst.addEventListener('change',e=>{const r=e.target.closest('.tgr');if(r){const on=e.target.checked;if(on!==has(r.dataset.tt))toggle(r.dataset.tt)}});
+ q.addEventListener('input',filt);q.addEventListener('keydown',e=>{if(e.key==='Enter')e.preventDefault()});
+ $('#tgqx').onclick=()=>{q.value='';filt();q.focus()};
+ $('#tgcl').onclick=()=>{draft=[];paint()};
+ $('#tgcx').onclick=close;$('#tgmx').onclick=close;$('#tgok').onclick=apply;
+ el.addEventListener('mousedown',e=>{if(e.target===el)close()});
+ window.addEventListener('keydown',e=>{if(e.key!=='Escape'||!isOpen())return;e.preventDefault();e.stopImmediatePropagation();if(document.activeElement===q&&q.value){q.value='';filt();return}close()},true);
+ new MutationObserver(()=>{if(isOpen())tone()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','style','class']});
+ return{open,close,isOpen,apply,draft:()=>draft.slice(),mode:()=>mode,setMode,tone}})();
+
+/* ---- V3.3.0：資料夾改名改成獨立小彈窗 ----
+   沿用原本的改名欄位（#rn：輸入框、儲存、取消、提示文字）與原本的改名流程、驗證和錯誤提示，只把它從「搜尋框和資料夾清單中間」
+   搬進一個小彈窗；原本顯示／隱藏 #rn 的程式不變，這裡跟著 #rn 的顯示狀態開關彈窗，所以資料夾清單不會再被往下推。 */
+(()=>{const ov=$('#rnm'),box=ov.querySelector('.box'),rn=$('#rn'),rv=$('#rv');if(!ov||!rn)return;box.appendChild(rn);
+ let last='';
+ const sync=()=>{const on=rn.style.display!=='none';if(on===ov.classList.contains('o'))return;ov.classList.toggle('o',on);
+  if(on){last=renaming;setTimeout(()=>{try{rv.focus({preventScroll:true});const n=rv.value.length;rv.setSelectionRange(n,n)}catch(e){}},0)}
+  else{const p=last;last='';setTimeout(()=>{try{const ae=document.activeElement;if(ae&&ae!==document.body&&!ov.contains(ae))return;const b=[...document.querySelectorAll('#tl .fmn[data-fm]')].find(x=>x.dataset.fm===p)||null;b&&b.offsetParent&&b.focus({preventScroll:true})}catch(e){}},0)}};
+ new MutationObserver(sync).observe(rn,{attributes:true,attributeFilter:['style']});sync();
+ $('#rnmx').onclick=()=>$('#rx').click();
+ ov.addEventListener('mousedown',e=>{if(e.target===ov)$('#rx').click()});
+ rv.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();$('#rs').click()}})})();
 </script>
 </body>
 </html>
