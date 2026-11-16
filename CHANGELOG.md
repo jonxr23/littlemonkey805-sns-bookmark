@@ -1,5 +1,31 @@
 # 更新紀錄
 
+## V3.4.6（平台篩選名稱＋選單底部提示）
+
+**安裝包**：`sns-bookmark-v3.4.6-complete.zip`（唯一資料夾 `sns-bookmark-v3.4.6`；app-version／package.json 3.4.6；build 2026-11-16 19:35）。
+**基準**：小克交付的 `sns-bookmark-v3.4.5-complete.zip`（app-version 3.4.5、build 2026-11-16 17:45）；V3.4.5 原始安裝包保留不動。
+**沒有部署**：沒有連接或修改 GitHub、Vercel、Production；沒有 Commit、Push、Deploy；沒有改環境變數或憑證。
+
+### 修改檔案清單
+
+| 檔案 | 變更 |
+|---|---|
+| `index.html` | 平台下拉 `#sdp` 第一個選項顯示「平台篩選」、另存展開時的名稱 `data-l="全部平台"`（HTML 與 `render()` 重建選項的那一處）；新增 `<style id="v346">` 與平台選單程式；工具箱的平台清單讀 `data-l` 並在底部加提示；版本 3.4.6 |
+| `package.json` | version 3.4.6 |
+| `README.md`、`CHANGELOG.md`、`USER_GUIDE.md`、`DEPLOY.md` | 版本與說明 |
+| `TEST_REPORT.md` | V3.4.6 測試報告（V3.4.5 的改名為 `TEST_REPORT-V3.4.5.md`） |
+| `api/*`、`admin-setup/`、`vercel.json`、`manifest.webmanifest`、`assets/` | **沒有改** |
+
+### 做法
+
+- 瀏覽器原生的下拉選單不能在底部加提示，也不能讓「收合時的文字」和「展開後的選項」不同。所以平台欄仍是原本的 `<select>`（值、`change` 事件、篩選、清除、工具箱都照舊），只是點它時改開一個自訂選單；選項由 `<select>` 現有的選項產生，**包含使用者自行新增的平台**。
+- 收合顯示：第一個選項文字改為「平台篩選」；選了平台時顯示平台名稱（和以前一樣）。
+- 選單：外框、陰影、圓角比照「設定 ▾」選單；目前選項用主題的選取底色（和工具箱清單相同）；寬約 250 px（提示單行所需；設定選單本來就是 220 px）。
+- 提示列：1px 主題邊框色細線；11.5 px 小字；顏色是主題次要文字色往文字色混 28%，所以 7 款主題與自訂顏色對比都 ≥ 4.5；上下留白 3 px／1 px；不是按鈕，點了沒有動作。
+- 鍵盤：焦點在平台欄按 ↓、↑、Enter、空白鍵打開；↑↓ 移動、Enter 選擇、Esc 關閉並回到平台欄。點外面、捲動、改視窗大小都會關閉。
+- 手機簡易工具列（工具箱 → 平台篩選）：清單第一項仍是「全部平台」，底部加同一條提示。
+- 沒有改：IG、Threads、X、YouTube、網頁五個選項與順序；沒有新增微博、抖音、小紅書；平台篩選邏輯、資料結構、自行新增／改名平台。
+
 ## V3.4.5（收藏圖片最佳化：WebP）
 
 **安裝包**：`sns-bookmark-v3.4.5-complete.zip`（唯一資料夾 `sns-bookmark-v3.4.5`；app-version／package.json 3.4.5；build 2026-11-16 17:45）。
