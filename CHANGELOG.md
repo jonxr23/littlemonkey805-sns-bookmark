@@ -1,5 +1,32 @@
 # 更新紀錄
 
+## V3.4.2（【電腦版】新增收藏視窗與背景卡片獨立捲動）
+
+**安裝包**：`sns-bookmark-v3.4.2-complete.zip`（唯一資料夾 `sns-bookmark-v3.4.2`；app-version／package.json 3.4.2；build 2026-11-16 13:30）。
+**基準**：小克交付的 `sns-bookmark-v3.4.1-complete.zip`（app-version 3.4.1、build 2026-11-16 03:25）；V3.4.1 原始安裝包保留不動。
+**沒有部署**：沒有連接或修改 GitHub、Vercel、Production；沒有 Commit、Push、Deploy；沒有改環境變數或憑證。
+
+### 修改檔案清單
+
+| 檔案 | 變更 |
+|---|---|
+| `index.html` | 檔案最後新增一段腳本（只監聽新增／編輯收藏視窗 `#dlg` 的滑鼠滾輪）；版本 3.4.2。**沒有改任何 CSS、HTML 版面** |
+| `package.json` | version 3.4.2 |
+| `README.md`、`CHANGELOG.md`、`USER_GUIDE.md`、`DEPLOY.md` | 版本與說明 |
+| `TEST_REPORT.md` | V3.4.2 測試報告（V3.4.1 的改名為 `TEST_REPORT-V3.4.1.md`） |
+| `api/*`、`admin-setup/`、`vercel.json`、`manifest.webmanifest`、`assets/`、`NETWORK_CHECKLIST-V3.4.1.md` | **沒有改** |
+
+### 原本的行為
+
+灰色遮罩（`#dlg`）本身就是捲動區域，表單在裡面跟著遮罩一起捲。所以滑鼠在任何位置滾動都只會移動表單，後方的卡片列表（`#mn`）完全不會動。
+
+### 新的行為（只在有滑鼠、可懸停的裝置：`(hover: hover) and (pointer: fine)`）
+
+- 滑鼠在視窗（`.box`）內：照原本方式捲動表單；表單內的欄位（例如「貼上的文字」）有自己的捲軸時先捲欄位。表單已在最上方或最下方時擋下滾輪，不帶動其他區域。
+- 滑鼠在灰色遮罩上：攔下滾輪，改為捲動後方的卡片列表（`#mn`）。表單位置不變、視窗不關閉；列表不重新整理，篩選條件不變。
+- 不處理：Ctrl＋滾輪（瀏覽器縮放）、橫向捲動、浮在視窗上方的其他元素、其他所有視窗。
+- 手機、平板（沒有滑鼠懸停）不啟用；觸控操作和 V3.4.1 相同。
+
 ## V3.4.1（減少 Vercel API 呼叫，自動偵測結果不變）
 
 **安裝包**：`sns-bookmark-v3.4.1-complete.zip`（唯一資料夾 `sns-bookmark-v3.4.1`；app-version／package.json 3.4.1；build 2026-11-16 03:25）。

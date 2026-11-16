@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.4.1">
-<meta name="app-build" content="2026-11-16 03:25">
+<meta name="app-version" content="3.4.2">
+<meta name="app-build" content="2026-11-16 13:30">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -2951,7 +2951,7 @@ const GG=window.snsGoogle;
   const st=$('#st');if(st)st.classList.toggle('lgdup',show&&st.textContent.trim()===ST)};
  if(GG){const su=GG.setUser.bind(GG);GG.setUser=u=>{su(u);upd()}}
  const st=$('#st');if(st)new MutationObserver(upd).observe(st,{childList:true,characterData:true,subtree:true});
- window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.1';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+ window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.2';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
@@ -4167,6 +4167,29 @@ window.snsVpv=(()=>{const V=window.snsVc,box=$('#vpv'),u=$('#u'),dlg=$('#dlg');i
   if(old&&c.url===url){o.vcov=old;return}
   delete o.vcov};
  return{patch,state:()=>({res,forUrl,shown:!box.hidden}),run}})();
+</script>
+<script>
+/* V3.4.2：【電腦版】新增收藏視窗與背景卡片獨立捲動（只處理滑鼠滾輪；不改版面、不影響觸控與其他視窗）
+   ・滑鼠在視窗（.box）內：照原本方式捲動表單；表單已到頂／底時擋下，不帶動其他區域。
+   ・滑鼠在灰色遮罩上：改為捲動後方的收藏卡片列表（#mn），表單位置不變、視窗不關閉、列表不重新整理。
+   ・只在有滑鼠、可懸停的裝置啟用（hover:hover 且 pointer:fine）；按 Ctrl（縮放）或橫向捲動時不處理。 */
+(()=>{const dlg=document.getElementById('dlg');if(!dlg)return;
+ const mq=window.matchMedia?matchMedia('(hover: hover) and (pointer: fine)'):null;
+ const px=(e,el)=>{const d=e.deltaY;return e.deltaMode===1?d*40:e.deltaMode===2?d*(el?el.clientHeight:innerHeight)*.9:d};
+ /* 從滑鼠下的元素往外找到 #dlg 為止，有沒有元素還能往這個方向捲 */
+ const canScroll=(t,dy)=>{for(let el=t;el&&el.nodeType===1;el=el.parentElement){
+   if(el===dlg||/(auto|scroll)/.test(getComputedStyle(el).overflowY)){const max=el.scrollHeight-el.clientHeight;
+    if(max>1&&(dy<0?el.scrollTop>0.5:el.scrollTop<max-0.5))return true}
+   if(el===dlg)return false}return false};
+ dlg.addEventListener('wheel',e=>{
+  if(!mq||!mq.matches||e.ctrlKey||!dlg.classList.contains('o'))return;
+  if(Math.abs(e.deltaX)>Math.abs(e.deltaY)||!e.deltaY)return;
+  const box=dlg.querySelector('.box'),t=e.target;
+  if(box&&box.contains(t)){if(!canScroll(t,e.deltaY))e.preventDefault();return}
+  if(t!==dlg)return; /* 只處理遮罩本身，其他浮在上面的元素照原本 */
+  e.preventDefault();const mn=document.getElementById('mn');if(!mn)return;
+  mn.scrollTop+=px(e,mn)},{passive:false});
+ window.snsDlgWheel={desktop:()=>!!(mq&&mq.matches)}})();
 </script>
 </body>
 </html>
