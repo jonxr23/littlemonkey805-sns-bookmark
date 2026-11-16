@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.4.9">
-<meta name="app-build" content="2026-11-17 00:05">
+<meta name="app-version" content="3.4.10">
+<meta name="app-build" content="2026-11-17 00:25">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -2729,9 +2729,10 @@ const MOSM_M={cards:[3,1],list:[3,3],wall:[3,3],album:[3,3],time:[3,3],table:[3,
 const mosMq=window.matchMedia?matchMedia('(max-width:640px)'):null;
 const mosOnMq=()=>{try{render()}catch(e){}};if(mosMq){mosMq.addEventListener?mosMq.addEventListener('change',mosOnMq):mosMq.addListener(mosOnMq)}
 const attL=p=>((p&&p.shots)||[]).filter(x=>typeof x==='string'&&x).map(g=>({g})).concat(xOf(p).map(u=>({u})));
+/* V3.4.10：拼貼張數改用 data-mosaic-count（原本的 data-n 會被全域點擊事件當成「資料夾改名」） */
 const mosaic=(p,mode)=>{const L=attL(p);if(L.length<2)return '';const T=mosMq&&mosMq.matches?MOSM_M:MOSM,M=T[mode]||T.cards,C=M[0],RW=M[1],n=Math.min(L.length,C*RW),r=Math.min(RW,Math.ceil(n/C)),base=Math.floor(n/r),ex=n%r;let k=0,mx=0,rows='';
  for(let i=0;i<r;i++){const c=base+(i<ex?1:0);mx=Math.max(mx,c);rows+='<div class="mrw">'+L.slice(k,k+c).map(o=>o.g?'<img loading="lazy" data-gid="'+esc(o.g)+'" alt="">':XIMG.img(o.u)).join('')+'</div>';k+=c}
- return '<div class="mimg" data-n="'+n+'" data-of="'+L.length+'" data-cr="'+C+'x'+RW+'" style="--mar:'+mx+'/'+r+'">'+rows+'</div>'};
+ return '<div class="mimg" data-mosaic-count="'+n+'" data-of="'+L.length+'" data-cr="'+C+'x'+RW+'" style="--mar:'+mx+'/'+r+'">'+rows+'</div>'};
 window.snsMos={MOSM,MOSM_M,attL,mosaic,mobile:()=>!!(mosMq&&mosMq.matches)};
 /* V3.4.9：收藏明細的「影片預覽（自動取得外部縮圖）」區塊——直接複製新增／編輯表單的同一個元件（#vpv），填入這筆收藏已存的 vcov；
    不重新查詢、不呼叫 API、不放進附件或拼貼。沒有有效 vcov（VC.of）就不顯示；沒有片長就拿掉片長欄位。 */
@@ -3035,7 +3036,7 @@ const GG=window.snsGoogle;
   const st=$('#st');if(st)st.classList.toggle('lgdup',show&&st.textContent.trim()===ST)};
  if(GG){const su=GG.setUser.bind(GG);GG.setUser=u=>{su(u);upd()}}
  const st=$('#st');if(st)new MutationObserver(upd).observe(st,{childList:true,characterData:true,subtree:true});
- window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.9';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+ window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.10';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});

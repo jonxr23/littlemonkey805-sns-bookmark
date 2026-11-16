@@ -1,5 +1,20 @@
 # 更新紀錄
 
+## V3.4.10（修正：點多圖片拼貼誤開資料夾改名）
+
+**安裝包**：`sns-bookmark-v3.4.10-complete.zip`（唯一資料夾 `sns-bookmark-v3.4.10`；app-version／package.json 3.4.10；build 2026-11-17 00:25）。
+**基準**：`sns-bookmark-v3.4.9-complete.zip`（build 2026-11-17 00:05），保留不動。**沒有部署**，沒有動 GitHub、Vercel、Production。
+
+| 檔案 | 變更 |
+|---|---|
+| `index.html` | `mosaic()` 產生的拼貼外框屬性 `data-n` 改為 `data-mosaic-count`（只有這一處；拼貼張數與排列不變）；版本 3.4.10 |
+| `package.json` | version 3.4.10 |
+| 說明文件 | 版本與說明；`TEST_REPORT.md`（V3.4.9 的改名為 `TEST_REPORT-V3.4.9.md`） |
+
+- 原因：V3.4.9 拼貼外框用了 `data-n`，而全域點擊事件把 `[data-n]` 當成「資料夾改名」（左側資料夾 ⋮ 選單的「編輯」按鈕 `#fpe` 就是用 `data-n` 帶資料夾名稱）。點拼貼時，開完收藏明細後事件往上傳，又被當成改名，名稱＝圖片張數。
+- 修正：只改拼貼自己的屬性名稱。全域點擊事件、`#fpe`、資料夾改名流程都沒有改。
+- 另外檢查：拼貼的另外兩個屬性 `data-of`、`data-cr` 不在任何點擊事件的監聽清單裡，不會衝突，所以沒有改。
+
 ## V3.4.9（多圖片縮圖拼貼＋收藏明細影片預覽）
 
 **安裝包**：`sns-bookmark-v3.4.9-complete.zip`（唯一資料夾 `sns-bookmark-v3.4.9`；app-version／package.json 3.4.9；build 2026-11-17 00:05）。
