@@ -295,6 +295,9 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
   // V3.2.1：① Meta 官方 oEmbed 嵌入碼的「Posted by／由…發佈」；② 公開貼文頁的 article:published_time／JSON-LD datePublished（沒有就留空，不用修改時間），
   //   作者沒取到時也看 JSON-LD author.name、article:author（不是網址、不是純數字才用）。分享網址的識別碼不會被當成日期。
   async function facebook(ctx, u) {
+    // V3.4.3：依猴猴決定停用 Facebook 的帳號、內文、日期自動偵測（含 Meta oEmbed、貼文頁）：直接回傳空結果、不對外連線。
+    // Facebook 分享短網址解析、正規化、重複收藏比對在 api/resolve.js（PLAT facebook），不受影響。以下原程式保留不執行，方便日後恢復。
+    if (FB_INFO_OFF) return fin(ctx, 'facebook');
     if (/^\/share\//.test(u.pathname) || u.hostname === 'fb.watch') { const r = await rsv(ctx, u.href); if (r.ok) u = safeUrl(r.url); }
     if (!u) return fin(ctx, 'facebook');
     const okName = (n) => { n = strip(n || ''); return n && !/^\d+$/.test(n) && !/^https?:/i.test(n) ? n : ''; };
@@ -462,7 +465,8 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
   ];
   // V3.4.1：opts.res＝同時回傳分享短網址／微博貼文的解析結果（前端重複比對用，原本要另外呼叫一次）；opts.noPub＝YouTube 不必再抓日期
   // 平台取得器本身就會解析這個短網址時共用那一次；不會的（小紅書 xhslink、微博貼文網址）就同時並行解析一次，不增加等待時間。
-  const SELF_RES = { tiktok: 1, threads: 1, douyin: 1, bilibili: 1, facebook: 1 };
+  const SELF_RES = { tiktok: 1, threads: 1, douyin: 1, bilibili: 1 }; // V3.4.3：Facebook 資訊停用後不再自行解析短網址，改由這裡並行解析
+  const FB_INFO_OFF = true;
   async function info(input, fetchFn, opts) {
     const u = safeUrl(input);
     if (!u) return { ok: false, reason: 'bad_url' };
