@@ -213,6 +213,35 @@ async function resolve(input, fetchFn = fetch) {
 }
 
 // V3.2.0：自動帶入資料（發文帳號／貼上的文字）
+// ---- V3.4.0：影片封面「網址」查詢（只回傳文字，不下載、不代理、不轉傳任何圖片）----
+// 目前只有 X 需要：前端瀏覽器直接向 X 的公開嵌入資料服務（cdn.syndication.twimg.com）查詢失敗時，才改由這裡查同一份 JSON。
+// 回傳內容只有：封面圖片網址（pbs.twimg.com，網址本身沒有期限）、內容類型、片長（毫秒）。圖片一律由使用者瀏覽器直接向 X 的 CDN 載入。
+const X_STABLE = /^https:\/\/pbs\.twimg\.com\/(?:ext_tw_video_thumb|amplify_video_thumb|tweet_video_thumb|media)\/[\w\/.-]+\.(?:jpg|jpeg|png|webp)(?:\?(?:(?:format|name)=[\w]+&?)*)?$/i;
+const xToken = (id) => ((Number(id) / 1e15) * Math.PI).toString(36).replace(/(0+|\.)/g, '');
+const xPick = (j) => {
+  const md = (j && Array.isArray(j.mediaDetails)) ? j.mediaDetails : [];
+  const v = md.find((m) => m && (m.type === 'video' || m.type === 'animated_gif'));
+  if (!v) return null;
+  const cover = String(v.media_url_https || (j.video && j.video.poster) || '');
+  if (!X_STABLE.test(cover)) return null;
+  const ms = Number((v.video_info && v.video_info.duration_millis) || (j.video && j.video.durationMs) || 0);
+  return { cover, kind: v.type === 'animated_gif' ? 'gif' : 'video', dur: v.type === 'video' && ms > 0 && ms < 864e5 ? Math.round(ms) : 0 };
+};
+const cover = async (url, fetchFn) => {
+  const u = safeUrl(url);
+  if (!u || !/^(?:www\.|mobile\.)?(?:x|twitter)\.com$/.test(u.hostname)) return { ok: false, reason: 'unsupported' };
+  const id = (/\/status(?:es)?\/(\d{5,25})(?:\/|$)/.exec(u.pathname) || [])[1];
+  if (!id) return { ok: false, reason: 'unsupported' };
+  const ac = new AbortController(); const tm = setTimeout(() => ac.abort(), 6000);
+  try {
+    const r = await fetchFn('https://cdn.syndication.twimg.com/tweet-result?id=' + id + '&lang=en&token=' + xToken(id), { headers: { accept: 'application/json', 'user-agent': UA }, redirect: 'manual', signal: ac.signal });
+    if (r.status !== 200 || !/json/i.test(r.headers.get('content-type') || '')) return { ok: false, reason: 'no_data' };
+    let j; try { j = JSON.parse(await readText(r)); } catch (e) { return { ok: false, reason: 'no_data' }; }
+    const x = xPick(j);
+    return x ? Object.assign({ ok: true, platform: 'x' }, x) : { ok: false, reason: 'no_video' };
+  } catch (e) { return { ok: false, reason: 'timeout' }; } finally { clearTimeout(tm); }
+};
+
 const info = require('./_lib/info')({ resolve, safeUrl, readText, wbPostId });
 
 // 同一個執行個體內：成功結果快取 6 小時、每個來源 IP 每 5 分鐘最多 60 次（Serverless 可能有多個執行個體；前端另有快取與節流）
@@ -242,13 +271,23 @@ const handler = async (req, res, fetchFn = fetch) => {
     if (limited(ip, now)) return S.json(res, 429, { ok: false, reason: 'rate_limited' });
     const b = await readBody(req);
     const url = String((b && b.url) || '').slice(0, 600);
-    const isInfo = !!(b && b.info);
-    const key = (isInfo ? 'i:' : '') + url.trim();
+    const isInfo = !!(b && b.info), isCover = !!(b && b.cover);
+    // V3.4.1：自動帶入（info:1）可以一次附帶：res＝分享短網址／微博貼文的解析結果、vc＝X 影片封面網址、noPub＝YouTube 不必再抓日期
+    const wRes = isInfo && !!b.res, wVc = isInfo && !!b.vc, noPub = isInfo && !!b.noPub;
+    const key = (isCover ? 'c:' : isInfo ? 'i' + (wRes ? 'r' : '') + (wVc ? 'v' : '') + (noPub ? 'n' : '') + ':' : '') + url.trim();
     const c = cache.get(key);
     if (c && now - c.t < 6 * 3600e3) return S.json(res, 200, c.v);
-    const v = isInfo ? await info(url, fetchFn) : await resolve(url, fetchFn);
+    let v;
+    if (isCover) v = await cover(url, fetchFn);
+    else if (isInfo) {
+      // X 封面和自動帶入同時查（並行，不增加等待時間）；只有 X 網址才會查
+      const [a, vc] = await Promise.all([info(url, fetchFn, { res: wRes, noPub }), wVc ? cover(url, fetchFn) : null]);
+      v = a; if (wVc) v = { ...a, vc: vc && vc.ok ? { cover: vc.cover, kind: vc.kind, dur: vc.dur } : null, vcReason: vc && !vc.ok ? vc.reason : undefined };
+    } else v = await resolve(url, fetchFn);
     // V3.2.1：逾時或出錯時回傳的是「部分結果」，不放進快取（下次還能再試完整的）
-    if (v.ok && !v.reason) { cache.set(key, { t: now, v }); if (cache.size > 2000) cache.clear(); }
+    // V3.4.1：附帶的短網址解析要成功、X 封面要確定（成功或確定不是影片）才放進快取
+    const okExtra = (!wRes || (v.res && v.res.ok)) && (!wVc || v.vc || v.vcReason === 'no_video' || v.vcReason === 'unsupported');
+    if (v.ok && !v.reason && okExtra) { cache.set(key, { t: now, v }); if (cache.size > 2000) cache.clear(); }
     return S.json(res, 200, v);
   } catch (e) {
     return S.json(res, 200, { ok: false, reason: 'server_error' });
@@ -262,4 +301,8 @@ module.exports._metaUrl = metaUrl;
 module.exports._safeUrl = safeUrl;
 module.exports._wbPostId = wbPostId;
 module.exports._info = info;
+module.exports._cover = cover;
+module.exports._xPick = xPick;
+module.exports._xToken = xToken;
+module.exports._X_STABLE = X_STABLE;
 module.exports._reset = () => { cache.clear(); hits.clear(); };

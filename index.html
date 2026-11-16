@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.3.3">
-<meta name="app-build" content="2026-11-15 21:25">
+<meta name="app-version" content="3.4.1">
+<meta name="app-build" content="2026-11-16 03:25">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1209,6 +1209,32 @@ body.sbrzing,body.sbrzing *{cursor:col-resize!important;user-select:none!importa
 @media(max-width:640px){.lgh:not(.lgh-d){display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:calc(8px*var(--ui));row-gap:calc(1px*var(--ui));align-items:center;padding:calc(6px*var(--ui)) calc(10px*var(--ui)) calc(7px*var(--ui))}.lgh:not(.lgh-d) .lgt{display:contents}.lgh:not(.lgh-d) .lgi{grid-column:1;grid-row:1}.lgh:not(.lgh-d) .lgt b{grid-column:2;grid-row:1}.lgh:not(.lgh-d) .lgt span{grid-column:1/-1;grid-row:2;font-size:calc(12.5px*var(--ui))}}/* 手機：第一行圖示＋標題，第二行說明（整列寬），卡片約兩行高 */
 /* 抽屜調窄時版本列以「…」結尾，不會切在半個字 */
 </style>
+<style id="v340">
+/* V3.4.0：外部影片封面預覽卡片（新增／編輯收藏表單，分組與「貼上的文字」之間）。底色、外框跟著主題；只有成功取得可靠封面才顯示 */
+.vpv{margin:calc(10px*var(--ui)) 0 calc(4px*var(--ui));padding:calc(10px*var(--ui)) calc(12px*var(--ui)) calc(12px*var(--ui));border-radius:var(--r);border:1px solid color-mix(in srgb,var(--acc) 40%,var(--bd));background:color-mix(in srgb,var(--acc) 12%,var(--card))}
+.vpv[hidden]{display:none}
+.vph{display:flex;align-items:center;gap:calc(6px*var(--ui));font-weight:700;font-size:calc(14px*var(--ui));color:var(--fg);margin-bottom:calc(8px*var(--ui))}
+.vpi{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:calc(17px*var(--ui));height:calc(17px*var(--ui));border:1.5px solid currentColor;border-radius:50%;font:italic 700 calc(11px*var(--ui))/1 Georgia,serif;color:var(--mut);cursor:help}
+.vpc{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:calc(12px*var(--ui));align-items:stretch}
+.vpt{position:relative;display:block;width:100%;align-self:start;aspect-ratio:16/9;border-radius:calc(10px*var(--ui));overflow:hidden;background:#111;text-decoration:none}
+.vpt img{display:block;width:100%;height:100%;object-fit:cover}
+.vpp{position:absolute;left:50%;top:50%;width:calc(44px*var(--ui));height:calc(44px*var(--ui));margin:calc(-22px*var(--ui)) 0 0 calc(-22px*var(--ui));border-radius:50%;background:rgba(255,255,255,.88);box-shadow:0 2px 10px rgba(0,0,0,.35)}
+.vpp::after{content:"";position:absolute;left:54%;top:50%;transform:translate(-50%,-50%);border-style:solid;border-width:calc(9px*var(--ui)) 0 calc(9px*var(--ui)) calc(14px*var(--ui));border-color:transparent transparent transparent #222}
+.vpd{position:absolute;right:calc(8px*var(--ui));bottom:calc(8px*var(--ui));padding:calc(2px*var(--ui)) calc(7px*var(--ui));border-radius:calc(6px*var(--ui));background:rgba(0,0,0,.72);color:#fff;font-size:calc(12px*var(--ui));font-weight:700;font-variant-numeric:tabular-nums}
+.vpd[hidden]{display:none}
+.vpm{position:relative;display:flex;flex-direction:column;gap:calc(6px*var(--ui));min-width:0;padding-right:calc(30px*var(--ui))}
+.vpx{position:absolute;right:0;top:0;display:inline-flex;align-items:center;justify-content:center;width:calc(30px*var(--ui));height:calc(30px*var(--ui));border-radius:calc(8px*var(--ui));color:var(--fg);border:1px solid color-mix(in srgb,var(--acc) 35%,var(--bd));background:var(--card)}
+.vpx:hover{background:var(--hover,var(--card))}
+.vpok{align-self:flex-start;display:inline-flex;align-items:center;gap:calc(4px*var(--ui));padding:calc(3px*var(--ui)) calc(9px*var(--ui));border-radius:999px;font-size:calc(12.5px*var(--ui));font-weight:700;color:var(--ok,#1E6B34);background:color-mix(in srgb,var(--ok,#1E6B34) 13%,var(--card));border:1px solid color-mix(in srgb,var(--ok,#1E6B34) 30%,var(--card))}
+:root[data-theme=dark]{--ok:#86D49A}
+.vpr{display:flex;align-items:center;gap:calc(7px*var(--ui));font-size:calc(13.5px*var(--ui));color:var(--fg);min-width:0}
+.vpr span{min-width:0;overflow-wrap:anywhere}.vpr svg{flex:none;color:var(--mut)}
+.vpr[hidden]{display:none}
+.vpn{margin:auto 0 0;font-size:calc(12px*var(--ui));line-height:1.55;color:var(--mut)}
+.vpn span{margin-right:calc(4px*var(--ui))}
+@media(max-width:520px){.vpc{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:calc(9px*var(--ui))}.vpok{white-space:nowrap;font-size:calc(11.5px*var(--ui));padding:calc(3px*var(--ui)) calc(7px*var(--ui));gap:calc(3px*var(--ui))}.vpr{font-size:calc(12.5px*var(--ui))}.vpn{font-size:calc(11.5px*var(--ui))}}
+@media(max-width:380px){.vpc{grid-template-columns:1fr}.vpm{padding-right:calc(34px*var(--ui))}}
+</style>
 <style id="v333">
 /* V3.3.3：新增收藏「連結」必填提示。顏色全部用主題變數：--err（各主題各自的錯誤色，深色主題是淺紅），底色／外框由 --err 和卡片色混出來，不寫死紅色 */
 #dlg .req{color:var(--err);font-weight:800;margin-left:calc(1px*var(--ui))}
@@ -1354,6 +1380,7 @@ try{localStorage.removeItem('sbwd');localStorage.removeItem('sbwm')}catch(e){}wi
 <label>資料夾（可多選）</label><input id="c" type="hidden"><div class="cbar"><div id="csel" class="csel"></div><button type="button" id="cmb">📁 選擇資料夾</button></div><div id="rcf" class="sg"></div><div class="xw fqw"><input id="csq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋資料夾（例如 Fre 或 cky）" aria-label="搜尋資料夾"><button type="button" class="xc" id="csqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="cs"></div><div id="rn2" style="display:none"><div class="bar"><input id="rv2" placeholder="新名稱"><button type="button" id="rs2" class="pri">儲存</button><button type="button" id="rx2">取消</button></div><div id="rh2" style="font-size:calc(12px*var(--ui));color:var(--mut);margin-top:calc(4px*var(--ui))"></div></div><div id="oldmk" hidden><input id="dp" type="hidden"><div id="dpw" class="cas"></div><div class="bar"><input id="dn" placeholder="新資料夾名稱"><button type="button" id="db">＋建立並選取</button></div></div>
 <label>標籤（打逗號或按 Enter 就會變成標籤塊，點 × 刪除）</label><input id="g" type="hidden"><div id="tgw" class="tw"><div id="tgc"></div><input id="gi" placeholder="輸入標籤…"></div><div id="tgs2"></div>
 <label>分組（可複選，可以不選）</label><div id="dgs" class="dgs" role="group" aria-label="分組"></div><div id="dgnf" class="dgnf" hidden><input id="dgni" type="text" maxlength="30" placeholder="新分組名稱（30 字以內）" aria-label="新分組名稱" autocomplete="off"><button type="button" id="dgno">建立</button><button type="button" id="dgnc">取消</button></div><div id="dgnm" class="dgnm" role="status"></div>
+<div id="vpv" class="vpv" hidden aria-live="polite"><div class="vph"><span>影片預覽（自動取得外部縮圖）</span><span class="vpi" title="封面由你的瀏覽器直接向原平台載入，不經過 SNS 收藏夾的伺服器，也不會存到你的雲端硬碟。" aria-hidden="true">i</span></div><div class="vpc"><a class="vpt" target="_blank" rel="noopener noreferrer" aria-label="在新分頁開啟原影片"><img alt="" referrerpolicy="no-referrer"><span class="vpp" aria-hidden="true"></span><span class="vpd" hidden></span></a><div class="vpm"><a class="vpx" target="_blank" rel="noopener noreferrer" aria-label="在新分頁開啟原影片" title="在新分頁開啟原影片"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="vpok"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>已取得預覽封面</span><div class="vpr vpr-p"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/></svg><span></span></div><div class="vpr vpr-k"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 6h16v12H4zM4 9h16M8 6l2 3M13 6l2 3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg><span></span></div><div class="vpr vpr-d" hidden><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="13" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 9v4l2.5 2M9.5 3h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span></span></div><p class="vpn"><span aria-hidden="true">ⓘ</span>此為外部圖片連結，未上傳至 SNS 收藏夾，不佔用儲存空間。點擊後將在新分頁開啟原影片。</p></div></div></div>
 <label>貼上的文字（選填，搜尋用）</label><textarea id="t"></textarea>
 <div class="g2"><div><label>原貼文發布日</label><input id="pd" type="date"><div id="pn" class="pdn" aria-live="polite"></div></div><div><label>待回顧日期（選填，每年）</label><div class="xw dt mdw"><select id="dm" aria-label="待回顧月份"><option value="">月</option><option value="01">1 月</option><option value="02">2 月</option><option value="03">3 月</option><option value="04">4 月</option><option value="05">5 月</option><option value="06">6 月</option><option value="07">7 月</option><option value="08">8 月</option><option value="09">9 月</option><option value="10">10 月</option><option value="11">11 月</option><option value="12">12 月</option></select><select id="ddy" aria-label="待回顧日期"><option value="">日</option><option value="01">1 日</option><option value="02">2 日</option><option value="03">3 日</option><option value="04">4 日</option><option value="05">5 日</option><option value="06">6 日</option><option value="07">7 日</option><option value="08">8 日</option><option value="09">9 日</option><option value="10">10 日</option><option value="11">11 日</option><option value="12">12 日</option><option value="13">13 日</option><option value="14">14 日</option><option value="15">15 日</option><option value="16">16 日</option><option value="17">17 日</option><option value="18">18 日</option><option value="19">19 日</option><option value="20">20 日</option><option value="21">21 日</option><option value="22">22 日</option><option value="23">23 日</option><option value="24">24 日</option><option value="25">25 日</option><option value="26">26 日</option><option value="27">27 日</option><option value="28">28 日</option><option value="29">29 日</option><option value="30">30 日</option><option value="31">31 日</option></select><input id="d" type="hidden"><button type="button" class="xc" id="dcl" title="清除待回顧日期" aria-label="清除待回顧日期">✕</button></div></div></div><div style="font-size:calc(12px*var(--ui));color:var(--mut)">待回顧日期只要選月／日，每年這一天都會回顧；不填，就會在每年的收藏日、發布日回顧</div><label style="display:flex;gap:calc(6px*var(--ui));align-items:center"><input id="nr" type="checkbox" style="width:calc(16px*var(--ui));height:calc(16px*var(--ui));padding:0"> 不回顧（這一篇不要跳回顧）</label>
 <div id="shw"><label>截圖（可多張，會自動壓縮）</label><input id="f" class="vh" type="file" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif" multiple tabindex="-1" aria-hidden="true"><div class="upb"><button type="button" id="ufb">📁 選擇檔案</button><button type="button" id="uxb">🔗 外部圖片網址</button><button type="button" id="pb">📋 剪貼簿圖片</button></div><div id="ust" class="ust" role="button" tabindex="0">未選擇任何檔案 · 點這裡可以改貼外部圖片網址</div><div id="xuw" class="bar" style="display:none"><input id="xu" type="url" inputmode="url" autocomplete="off" placeholder="貼上圖片網址 https://…" aria-label="外部圖片網址"><button type="button" id="xua" class="pri">加入</button><button type="button" id="xuc">取消</button></div><div class="ufmt">支援格式：JPG、JPEG、PNG、GIF；也可以直接引用公開的外部圖片網址（http／https）</div><div id="ferr" class="uerr" role="alert" aria-live="assertive"></div><div class="sh" id="sh"></div><div id="sm" style="font-size:calc(12px*var(--ui));color:var(--mut)"></div><div id="ih" style="font-size:calc(12px*var(--ui));color:var(--mut)">移除圖片後，儲存收藏時，若該圖片沒有被其他收藏使用，就會同步移至 Google Drive 垃圾桶。若圖片顯示「已在雲端移除」，按 × 即可移除這個失效的引用。</div></div>
@@ -1897,6 +1924,7 @@ $('#sv').onclick=async()=>{
  /* V3.1.0：貼上的是整段分享文字時，原文完整保留在 share；url 是從中擷取出的網址（卡片「原文」開這個網址） */{const raw=$('#u').snsRaw().trim();if(raw&&snsNormU(raw)!==url)o.share=raw;else delete o.share}
  /* V3.1.0：解析成功時記下內容識別（ck），換裝置也能比對；網址沒變又沒解析時保留原本的 */{const R=window.snsRes,v=R&&R.need(url)&&R.get(url);if(v&&v.st==='ok')o.ck=[...R.keys(url)];else if(!(cur&&cur.url===url))delete o.ck}
  /* V3.2.0：記下哪些內容是系統自動帶入的（隱藏欄位 auto），重新開啟編輯時才分得出自動與手動 */{const A=window.snsInfo&&snsInfo.state();if(A&&(A.acct||A.text||A.pub)){o.auto={};if(A.acct)o.auto.acct=A.acct;if(A.text)o.auto.text=A.text;/* V3.2.1 */if(A.pub&&o.pub===A.pub)o.auto.pub=A.pub}else delete o.auto}
+ /* V3.4.0：外部影片封面——只存原始網址文字；連結沒變就保留原本的，換了連結才用新的偵測結果 */{window.snsVpv&&snsVpv.patch(o,cur)}
  if(!col){$('#msg').textContent=$('#st').textContent||'請先登入 Google，並等雲端同步完成';return}const isNew=!cur;try{await col.doc(id).set(o);await window.gSync();window.snsAct&&snsAct(isNew?'add':'edit',true)}catch(x){$('#msg').textContent='儲存失敗：'+(x.message||x.code||'')+'（圖片沒有被刪除，你的修改也還在，可再按一次儲存）';return}
  $('#dlg').classList.remove('o');{const removed=origShots.filter(x=>!shots.includes(x)),dropped=sessUp.filter(x=>!shots.includes(x)),kept=sessUp.filter(x=>shots.includes(x));sessUp=[];origShots=[];if(window.gImgs)gImgs.afterSave(removed.concat(dropped),kept)}
 };
@@ -2594,10 +2622,52 @@ const XIMG=(()=>{
  document.addEventListener('error',e=>{const t=e.target;if(t&&t.tagName==='IMG'&&t.dataset&&t.dataset.xu&&t.getAttribute('src')!==PH){t.dataset.xbad='1';t.src=PH;t.title='外部圖片失效（收藏的文字、標籤、資料夾都還在）'}},true);
  return{valid,probe,img,PH}})();
 window.snsXimg=XIMG;
+/* ---- V3.4.0：外部影片封面（只存原始網址，圖片由瀏覽器直接向原平台載入，不經過 Vercel、不下載、不上傳）----
+   支援：YouTube（從網址算出 i.ytimg.com 封面，不用連線）、Instagram Reel／IGTV（instagram.com 的固定封面網址）、X（X 的公開嵌入資料服務，
+   瀏覽器直接查；查不到才請現有的 /api/resolve 回傳「封面網址文字」）。TikTok、Threads、抖音等平台拿得到的封面網址都有期限，不支援。
+   只接受「網址本身沒有期限」的白名單格式；帶 oe=、x-expires=、Expires=、簽章等參數的一律不接受。 */
+const VC=(()=>{
+ const YT=/^https:\/\/i\.ytimg\.com\/vi\/[\w-]{11}\/(?:hq|mq|sd|maxres)?default\.jpg$/,IG=/^https:\/\/www\.instagram\.com\/p\/[\w-]{5,40}\/media\/\?size=l$/,
+  XS=/^https:\/\/pbs\.twimg\.com\/(?:ext_tw_video_thumb|amplify_video_thumb|tweet_video_thumb|media)\/[\w\/.-]+\.(?:jpg|jpeg|png|webp)(?:\?(?:(?:format|name)=[\w]+&?)*)?$/i,
+  EXP=/[?&](?:oe|x-expires|expires|x-amz-expires|x-amz-signature|signature|sig|se|st|token|policy|key-pair-id|_nc_sid|_nc_ohc|tplv|lk3s|x-signature|ccb|dl)=/i;
+ const stable=u=>{u=String(u||'');if(u.length>600||EXP.test(u))return false;return YT.test(u)||IG.test(u)||XS.test(u)};
+ const LAB={youtube:'YouTube',instagram:'Instagram',x:'X'};
+ /* 從連結判斷平台與內容類型（不連線） */
+ const detect=raw=>{let u;try{u=new URL(String(raw||'').trim())}catch(e){return null}if(!/^https?:$/.test(u.protocol))return null;const h=u.hostname.toLowerCase().replace(/^(?:www|m|mobile|music)\./,''),p=u.pathname;let m;
+  if(h==='youtube.com'||h==='youtube-nocookie.com'){let id='',sub='';
+   if(p==='/watch')id=u.searchParams.get('v')||'';else if((m=/^\/(shorts|live|embed|v)\/([\w-]{11})(?:[/?]|$)/.exec(p))){id=m[2];sub=m[1]}
+   if(!/^[\w-]{11}$/.test(id))return null;return{plat:'youtube',id,sub:sub==='shorts'?'Shorts':'',kind:sub==='live'?'直播影片':'影片',cover:'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg',src:u.href}}
+  if(h==='youtu.be'){const id=p.slice(1).split('/')[0];if(!/^[\w-]{11}$/.test(id))return null;return{plat:'youtube',id,sub:'',kind:'影片',cover:'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg',src:u.href}}
+  if(h==='instagram.com'){m=/^\/(?:[\w.]{1,30}\/)?(reel|reels|tv)\/([\w-]{5,40})(?:\/|$)/.exec(p);if(!m)return null;return{plat:'instagram',id:m[2],sub:m[1]==='tv'?'':'Reel',kind:'影片',cover:'https://www.instagram.com/p/'+m[2]+'/media/?size=l',src:u.href}}
+  if(h==='x.com'||h==='twitter.com'){m=/\/status(?:es)?\/(\d{5,25})(?:\/|$)/.exec(p);if(!m)return null;return{plat:'x',id:m[1],sub:'',kind:'影片',cover:'',src:u.href,need:1}}
+  return null};
+ /* X：先由瀏覽器直接查 X 的公開嵌入資料；跨網域被擋或失敗才問現有的 /api/resolve（只回傳網址文字） */
+ const xTok=id=>((Number(id)/1e15)*Math.PI).toString(36).replace(/(0+|\.)/g,'');
+ const xPick=j=>{const md=j&&Array.isArray(j.mediaDetails)?j.mediaDetails:[],v=md.find(m=>m&&(m.type==='video'||m.type==='animated_gif'));if(!v)return null;const c=String(v.media_url_https||(j.video&&j.video.poster)||'');if(!XS.test(c))return null;const ms=+((v.video_info&&v.video_info.duration_millis)||(j.video&&j.video.durationMs)||0);return{cover:c,kind:v.type==='animated_gif'?'gif':'video',dur:v.type==='video'&&ms>0&&ms<864e5?Math.round(ms):0}};
+ const tmo=(p,ms)=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),ms))]);
+ const xLookup=async(d,signal,raw)=>{try{const r=await tmo(fetch('https://cdn.syndication.twimg.com/tweet-result?id='+d.id+'&lang=en&token='+xTok(d.id),{mode:'cors',credentials:'omit',referrerPolicy:'no-referrer',cache:'no-store',signal}),7000);if(r.ok){const x=xPick(await r.json());return x?{...x,via:'browser'}:{none:1,via:'browser'}}}catch(e){if(signal&&signal.aborted)throw e}
+  /* V3.4.1：瀏覽器查不到時，先用「自動帶入」那一次查詢順便帶回的封面（同一次 /api/resolve，不另外呼叫）；那次查詢本身失敗才另外問一次 */
+  if(raw!==undefined&&window.snsInfo&&snsInfo.vc){const w=await snsInfo.vc(raw);if(signal&&signal.aborted)throw new Error('abort');if(w&&XS.test(String(w.cover||'')))return{cover:w.cover,kind:w.kind,dur:+w.dur||0,via:'api'};if(w===null)return null}
+  try{const r=await tmo(fetch('/api/resolve',{method:'POST',credentials:'same-origin',signal,headers:{'Content-Type':'application/json','X-Requested-With':'sns'},body:JSON.stringify({url:d.src,cover:1})}),9000);const j=await r.json();if(j&&j.ok&&XS.test(String(j.cover||'')))return{cover:j.cover,kind:j.kind,dur:+j.dur||0,via:'api'}}catch(e){if(signal&&signal.aborted)throw e}return null};
+ /* 瀏覽器直接載入一次，確定真的看得到（YouTube 不存在的影片會回 120×90 的灰圖，視為沒有） */
+ const probe=(u,ms)=>new Promise(res=>{const im=new Image();let done=false;const fin=v=>{if(done)return;done=true;clearTimeout(t);im.onload=im.onerror=null;res(v)};const t=setTimeout(()=>fin(false),ms||10000);try{im.referrerPolicy='no-referrer'}catch(e){}im.onload=()=>fin(im.naturalWidth>120&&im.naturalHeight>90);im.onerror=()=>fin(false);im.src=u});
+ /* 完整流程：辨識 → 取得封面網址 → 檢查沒有期限 → 瀏覽器實際載入成功，才回傳結果 */
+ const find=async(raw,signal)=>{const d=detect(raw);if(!d)return null;let cover=d.cover,dur=0,kind=d.kind;
+  if(d.need){const x=await xLookup(d,signal,raw);if(!x||x.none)return null;cover=x.cover;dur=x.dur;if(x.kind==='gif')kind='GIF 動畫'}
+  if(!stable(cover))return null;if(!(await probe(cover)))return null;if(signal&&signal.aborted)return null;
+  return{u:cover,p:d.plat,s:d.sub||'',k:kind,d:dur?Math.round(dur/1000):0,src:d.src}};
+ const of=p=>{const v=p&&p.vcov;return v&&typeof v==='object'&&stable(v.u)?v:null};
+ const fmtD=s=>{s=Math.round(+s||0);if(!s)return '';const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return(h?h+':'+String(m).padStart(2,'0'):m)+':'+String(x).padStart(2,'0')};
+ const PH='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" viewBox="0 0 240 160"><rect width="240" height="160" fill="#ecebe8"/><circle cx="120" cy="70" r="22" fill="#fff" stroke="#999" stroke-width="2"/><path d="M114 59l18 11-18 11z" fill="#888"/><text x="120" y="122" font-size="14" fill="#666" text-anchor="middle" font-family="sans-serif">影片封面暫時無法顯示</text></svg>');
+ const img=(u,lazy)=>'<img data-vc="1" src="'+esc(u)+'" referrerpolicy="no-referrer"'+(lazy?' loading="lazy"':'')+' alt="">';
+ document.addEventListener('error',e=>{const t=e.target;if(t&&t.tagName==='IMG'&&t.dataset&&t.dataset.vc&&t.getAttribute('src')!==PH){t.src=PH;t.title='外部影片封面暫時無法顯示（收藏內容都還在）'}},true);
+ return{stable,detect,find,of,fmtD,img,LAB,xPick,xTok,PH}})();
+window.snsVc=VC;
 const xOf=p=>Array.isArray(p&&p.ximgs)?p.ximgs.filter(x=>typeof x==='string'&&/^https?:\/\//i.test(x)):[];
 const imgN=p=>((p&&p.shots)||[]).length+xOf(p).length;
-const hasImg=p=>!!((p.shots&&p.shots[0])||xOf(p)[0]);
-const thumbImg=(p,lazy)=>p.shots&&p.shots[0]?'<img'+(lazy?' loading="lazy"':'')+' data-gid="'+p.shots[0]+'" alt="">':XIMG.img(xOf(p)[0]);
+/* V3.4.0：收藏卡片封面順序＝使用者附件第一張（原本順序：上傳／剪貼簿的圖片、再來是外部圖片網址）＞ 外部影片封面 ＞ 原本的預設樣式 */
+const hasImg=p=>!!((p.shots&&p.shots[0])||xOf(p)[0]||VC.of(p));
+const thumbImg=(p,lazy)=>p.shots&&p.shots[0]?'<img'+(lazy?' loading="lazy"':'')+' data-gid="'+p.shots[0]+'" alt="">':xOf(p)[0]?XIMG.img(xOf(p)[0]):VC.img(VC.of(p).u,lazy);
 let xims=[];
 const xuOpen=on=>{$('#xuw').style.display=on?'flex':'none';$('#ust').style.display=on?'none':'';if(on){$('#xu').value='';setTimeout(()=>$('#xu').focus(),0)}};
 $('#ufb').onclick=()=>$('#f').click();
@@ -2881,7 +2951,7 @@ const GG=window.snsGoogle;
   const st=$('#st');if(st)st.classList.toggle('lgdup',show&&st.textContent.trim()===ST)};
  if(GG){const su=GG.setUser.bind(GG);GG.setUser=u=>{su(u);upd()}}
  const st=$('#st');if(st)new MutationObserver(upd).observe(st,{childList:true,characterData:true,subtree:true});
- window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.3.3';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+ window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.1';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
@@ -3173,8 +3243,14 @@ let actDirty=false,actType='';
 const ACT=(()=>{let off=false,tm=0,q=null;const last=new Map();
  const send=()=>{tm=0;const b=q;q=null;if(!b||off||!GG.user||A.locked||!A.tok||Date.now()>=A.exp)return;
   try{fetch('/api/activity',{method:'POST',credentials:'same-origin',keepalive:true,headers:{'X-Requested-With':'sns','Content-Type':'application/json','Authorization':'Bearer '+A.tok},body:JSON.stringify(b)}).then(r=>{if(r.status===503||r.status===403)off=true}).catch(()=>{})}catch(e){}};
- const fn=(type,data)=>{try{if(off||!GG.user)return;const k=A.sub+':'+type,n=Date.now();if(!data&&last.has(k)&&n-last.get(k)<10*60e3)return;last.set(k,n);if(q&&q.data&&!data)return;q={type,data:!!data};clearTimeout(tm);tm=setTimeout(send,data?1500:4000)}catch(e){}};
- fn.flush=()=>{if(tm){clearTimeout(tm);send()}};fn.reset=()=>{last.clear();q=null;clearTimeout(tm);tm=0};return fn})();
+ /* V3.4.1：資料類操作（新增、編輯、刪除、批次）的紀錄也節流——同一個帳號 10 分鐘內只送第一次，期間的最後一次在 10 分鐘到時補送一次
+    （關閉頁面時也會補送）。只影響管理者的使用狀況紀錄時間精細度；收藏本身照常立即寫入 Google 試算表／雲端硬碟。 */
+ const DWIN=10*60e3;let dLast=0,dSub='',dTm=0,dQ=null;
+ const dFire=()=>{dTm=0;const b=dQ;dQ=null;if(!b||off)return;dLast=Date.now();q=b;clearTimeout(tm);tm=setTimeout(send,0)};
+ const fn=(type,data)=>{try{if(off||!GG.user)return;const k=A.sub+':'+type,n=Date.now();
+  if(data){if(dSub===A.sub&&n-dLast<DWIN){dQ={type,data:true};if(!dTm)dTm=setTimeout(dFire,Math.max(0,dLast+DWIN-n));return}dLast=n;dSub=A.sub}
+  else if(last.has(k)&&n-last.get(k)<10*60e3)return;last.set(k,n);if(q&&q.data&&!data)return;q={type,data:!!data};clearTimeout(tm);tm=setTimeout(send,data?1500:4000)}catch(e){}};
+ fn.flush=()=>{if(dTm&&dQ){clearTimeout(dTm);dTm=0;q=dQ;dQ=null;dLast=Date.now();tm=tm||1}if(tm){clearTimeout(tm);send()}};fn.reset=()=>{last.clear();q=null;clearTimeout(tm);tm=0;clearTimeout(dTm);dTm=0;dQ=null;dLast=0;dSub=''};return fn})();
 window.snsAct=ACT;window.snsActIntent=t=>{actType=t};
 window.addEventListener('pagehide',()=>ACT.flush());
 let outArm=false;
@@ -3589,13 +3665,19 @@ window.snsRes=(()=>{const K='surl3',M=new Map(),P=new Map(),DAY=864e5,LZ=10;let 
  const FAM=[['tt',/(^|\.)tiktok\.com$/],['dy',/(^|\.)(douyin|iesdouyin)\.com$/],['wb',/(^|\.)weibo\.(com|cn)$|^t\.cn$/],['bl',/(^|\.)bilibili\.com$|^b23\.tv$/],['fb',/(^|\.)facebook\.com$|^fb\.(watch|me)$/],['th',/(^|\.)threads\.(com|net)$/],['xhs',/(^|\.)xiaohongshu\.com$|^xhslink\.(com|cn)$/]];
  const fam=u=>{const x=url(u),h=x?x.hostname.toLowerCase():'',f=h&&FAM.find(f=>f[1].test(h));return f?f[0]:''};
  const state=u=>{const v=M.get(norm(u));return v?v.st:(P.has(norm(u))?'pending':'')};
- const start=u=>{const k=norm(u);if(!k||M.has(k)||P.has(k)||!need(u))return P.get(k)||Promise.resolve();
-  const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),8000);
+ /* 解析結果寫入（不論來自單獨查詢或 V3.4.1 合併查詢，處理方式完全相同） */
+ const fin=(k,j)=>{if(j&&j.ok&&j.url&&/^https:\/\//.test(j.url)){M.set(k,{st:'ok',url:j.url,acct:typeof j.acct==='string'?j.acct:'',rel:Array.isArray(j.rel)?j.rel.filter(x=>typeof x==='string'&&/^wbv:\d{3,6}:\d{6,25}$/.test(x)):null,t:Date.now()});persist()}else M.set(k,{st:'fail',t:Date.now()});
+    if($('#dlg').classList.contains('o')){dupChk();if(norm($('#u').value)===k)post()}};
+ const plain=(u,k)=>{const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),8000);
   const pr=fetch('/api/resolve',{method:'POST',credentials:'same-origin',signal:ac.signal,headers:{'X-Requested-With':'sns','Content-Type':'application/json'},body:JSON.stringify({url:String(u).trim()})})
-   .then(r=>r.ok?r.json():{ok:false}).catch(()=>({ok:false})).then(j=>{clearTimeout(tm);P.delete(k);
-    if(j&&j.ok&&j.url&&/^https:\/\//.test(j.url)){M.set(k,{st:'ok',url:j.url,acct:typeof j.acct==='string'?j.acct:'',rel:Array.isArray(j.rel)?j.rel.filter(x=>typeof x==='string'&&/^wbv:\d{3,6}:\d{6,25}$/.test(x)):null,t:Date.now()});persist()}else M.set(k,{st:'fail',t:Date.now()});
-    if($('#dlg').classList.contains('o')){dupChk();if(norm($('#u').value)===k)post()}});
+   .then(r=>r.ok?r.json():{ok:false}).catch(()=>({ok:false})).then(j=>{clearTimeout(tm);P.delete(k);fin(k,j)});
   P.set(k,pr);return pr};
+ /* V3.4.1：正在輸入的網址改用「自動帶入」的同一次查詢（info＋res）取得解析結果，不再另外呼叫；
+    那次查詢失敗（網路、逾時）才用原本的單獨查詢備援；網址又改了（查詢被取消）就不處理。舊收藏的背景解析（lazy）照原本單獨查詢。 */
+ const start=(u,lazy)=>{const k=norm(u);if(!k||M.has(k)||P.has(k)||!need(u))return P.get(k)||Promise.resolve();
+  const I=window.snsInfo;
+  if(!lazy&&I&&I.res&&I.famOf(u)){const pr=I.res(u).then(r=>{if(P.get(k)!==pr)return;P.delete(k);if(r==='cancel'){const c=$('#u').value;if($('#dlg').classList.contains('o')&&norm(c)===k)return start(c);return}if(r)return fin(k,r);return plain(u,k)});P.set(k,pr);return pr}
+  return plain(u,k)};
  const get=u=>M.get(norm(u));
  const key=u=>{const v=get(u);return v&&v.st==='ok'?nuU(v.url):''};
  const keys=u=>{const s=new Set([nuU(u)]),v=get(u);if(v&&v.st==='ok'){s.add(nuU(v.url));(v.rel||[]).forEach(x=>s.add(x))}return s};
@@ -3611,7 +3693,7 @@ window.snsRes=(()=>{const K='surl3',M=new Map(),P=new Map(),DAY=864e5,LZ=10;let 
   if(f==='fb'&&!pend&&(isShort(v)||others.some(p=>isShort(p.url))))fail=true;
   const hasV=[...keys(v)].some(k=>/^wbv:/.test(k)),now=Date.now();lzT=lzT.filter(t=>now-t<3e5);
   const cand=others.filter(p=>!Array.isArray(p.ck)&&(isShort(p.url)||(isRel(p.url)&&hasV))).sort((a,b)=>(b.t||0)-(a.t||0));let n=0;
-  for(const p of cand){const s=state(p.url);if(s==='ok'){if(hasV&&relUnknown(p.url))fail=true}else if(s==='fail')fail=true;else if(s==='pending')pend=true;else if(n<LZ&&lzT.length<30){n++;lzT.push(now);start(p.url);pend=true}else fail=true}
+  for(const p of cand){const s=state(p.url);if(s==='ok'){if(hasV&&relUnknown(p.url))fail=true}else if(s==='fail')fail=true;else if(s==='pending')pend=true;else if(n<LZ&&lzT.length<30){n++;lzT.push(now);start(p.url,1);pend=true}else fail=true}
   return pend?'pending':fail?'fail':''};
  const MS='⚠️ 溫馨提醒：此網址為手機分享網址無法確認是否已收藏過，仍可繼續儲存。',MG='⚠️ 溫馨提醒：此網址目前無法確認是否已收藏過，仍可繼續儲存。',MF='⚠️目前無法偵測該連結是否重複，如需偵測是否重複請使用網頁連結，謝謝',MT='⚠️ 溫馨提醒：這是該平台手機分享的短網址，無法檢查是否已收藏過。';
  const mobile=u=>{if(isShort(u))return true;const x=url(u);if(!x)return false;const h=x.hostname.toLowerCase();return h==='video.weibo.com'||(/(^|\.)weibo\.com$/.test(h)&&/^\/\d{4,12}\/\d{12,20}\/?$/.test(x.pathname))};
@@ -3650,14 +3732,65 @@ window.snsInfo=(()=>{const C=new Map(),P=new Map();let autoT=null,curK='',openin
   /* 2026-11-13：也認得「的图文作品／的圖文作品」；描述去掉開頭的分享口令雜訊 */
   if(f==='dy'&&(m=raw.match(/【([^【】]{1,40}?)的(?:图文|圖文)?作品】([\s\S]*?)\s*https?:\/\//)))return{acct:m[1].trim(),texts:[m[2].replace(/^[\s:：]+/,'').trim()]};
   return{acct:'',texts:[]}};
- const get=u=>{const k=keyOf(u);if(C.has(k))return Promise.resolve(C.get(k));if(P.has(k))return P.get(k);
-  const a2=new AbortController(),tm=setTimeout(()=>a2.abort(),9000);
-  const pr=fetch('/api/resolve',{method:'POST',credentials:'same-origin',signal:a2.signal,headers:{'X-Requested-With':'sns','Content-Type':'application/json'},body:JSON.stringify({url:String(u).trim(),info:1})})
-   .then(r=>r.ok?r.json():null).catch(()=>null).then(j=>{clearTimeout(tm);P.delete(k);
+ /* ===== V3.4.1：減少 /api/resolve 呼叫（不改變偵測結果） =====
+    ① 輸入中：網址停止變動約 0.5 秒才查；一次貼上整段網址立即查。網址又改了，就取消上一個網址還沒完成的查詢（只取消別的網址，不影響最新網址）。
+    ② 同一次查詢一起帶回：發文帳號、文字、發布日期；分享短網址的正式網址（res，重複比對用）；X 影片封面網址（vc）。
+    ③ Threads 正式網址、網址裡已經有帳號的 Instagram：伺服器原本就只從網址讀帳號與日期、完全不對外連線 → 改在瀏覽器算，結果相同。
+    ④ 成功的結果存在這台裝置 30 天（sinfo1）；網址只去掉不影響內容辨識的追蹤參數後比對。逾時、部分結果、失敗都不存。
+    ⑤ YouTube：日期欄已是「這支影片」的有效日期時（noPub），伺服器不再下載影片頁抓日期。 */
+ const CANCEL={cancel:1};
+ const TRK={all:/^(utm_[a-z_]+|fbclid|gclid|mc_cid|mc_eid)$/i,yt:/^(si|feature|pp|t|ab_channel)$/,ig:/^(igsh|igshid|img_index)$/,x:/^(s|t|ref_src|ref_url)$/,th:/^(xmt|slof)$/,
+  tt:/^(is_from_webapp|sender_device|web_id|_r|_t|is_copy_url|u_code|share_app_id|share_link_id)$/,fb:/^(mibextid|rdid|share_url|sfnsn)$/,
+  bl:/^(spm_id_from|vd_source|share_source|share_medium|share_plat|share_session_id|share_tag|unique_k|from_spmid|bbid|ts)$/};
+ /* 快取用的網址：協定＋網域（小寫）＋路徑（原樣）＋其餘參數（排序）；路徑、影片／貼文 ID 參數都保留 */
+ const ck=u=>{let x;try{x=new URL(String(u||'').trim())}catch(e){return ''}const F=famOf(u),re=F&&TRK[F[0]],q=[];
+  x.searchParams.forEach((v,k)=>{if(TRK.all.test(k)||(re&&re.test(k)))return;q.push([k,v])});q.sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:a[1]<b[1]?-1:a[1]>b[1]?1:0);
+  return x.protocol+'//'+x.hostname.toLowerCase()+(x.pathname.replace(/\/+$/,'')||'')+(q.length?'?'+q.map(([k,v])=>encodeURIComponent(k)+'='+encodeURIComponent(v)).join('&'):'')};
+ const PK='sinfo1',PDAY=864e5,PMAX=200,PBYTES=600000;let PC=null;
+ const okRes=r=>r&&r.ok===true&&typeof r.url==='string'&&/^https:\/\//.test(r.url);
+ const pcLoad=()=>{if(PC)return PC;PC={};try{const o=JSON.parse(ls(PK)||'{}'),now=Date.now();for(const k in o){const e=o[k];if(e&&typeof e.t==='number'&&now-e.t<30*PDAY&&e.t<=now+PDAY&&typeof e.a==='string'&&Array.isArray(e.x)&&typeof e.p==='string')PC[k]=e}}catch(e){}return PC};
+ const pcSave=()=>{try{let a=Object.entries(PC).sort((x,y)=>y[1].t-x[1].t).slice(0,PMAX),t=JSON.stringify(Object.fromEntries(a));while(t.length>PBYTES&&a.length){a.pop();t=JSON.stringify(Object.fromEntries(a))}ls(PK,t)}catch(e){}};
+ const pcGet=(u,fl)=>{const e=pcLoad()[ck(u)];if(!e)return null;if(fl.res&&!okRes(e.r))return null;if(fl.vc&&!('v' in e))return null;
+  return{acct:e.a.slice(0,80),texts:e.x.filter(t=>typeof t==='string'&&t.trim()).map(t=>t.trim().slice(0,2000)).slice(0,4),pub:/^\d{4}-\d{2}-\d{2}$/.test(e.p)?e.p:'',res:fl.res?e.r:null,vc:fl.vc?(e.v&&typeof e.v==='object'?e.v:null):undefined,cached:1}};
+ const pcPut=(u,v,fl,j)=>{if(!j||j.ok!==true||j.reason||fl.noPub)return;if(fl.res&&!okRes(j.res))return;if(fl.vc&&v.vc===undefined)return;
+  if(v.texts.join('').length>8000)return;const k=ck(u);if(!k)return;pcLoad();PC[k]={t:Date.now(),a:v.acct,x:v.texts,p:v.pub};if(fl.res)PC[k].r={ok:true,url:j.res.url,acct:typeof j.res.acct==='string'?j.res.acct:'',rel:Array.isArray(j.res.rel)?j.res.rel:null};if(fl.vc)PC[k].v=v.vc||null;pcSave()};
+ /* Threads 正式網址、網址有帳號的 Instagram：和伺服器 info.js 的 threads()／instagram() 同一套規則（伺服器這兩種情況本來就不對外連線） */
+ const B64L='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+ const codeDate=c=>{let n=0n;for(const ch of String(c||'')){const i=B64L.indexOf(ch);if(i<0)return '';n=n*64n+BigInt(i)}if(!n)return '';const ms=Number((n>>23n)+1314220021721n);return ms>=Date.UTC(2004,0,1)&&ms<=Date.now()+864e5?new Date(ms).toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'}):''};
+ const clipA=a=>String(a||'').replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim().slice(0,80);
+ const local=u=>{let x;try{x=new URL(String(u||'').trim())}catch(e){return null}if(!/^https?:$/.test(x.protocol))return null;const h=x.hostname.toLowerCase(),p=x.pathname;let m;
+  if(/^(www\.)?threads\.(com|net)$/.test(h)&&!/^\/share\//.test(p)){const a=(/^\/@([\w.]{1,40})\//.exec(p)||[])[1],sc=(/^\/@[\w.]{1,40}\/post\/([\w-]{6,11})(?:\/|$)/.exec(p)||[])[1];return{acct:a?clipA('@'+a):'',texts:[],pub:sc?codeDate(sc):'',local:1}}
+  if(/^(www\.)?instagram\.com$/.test(h)&&(m=/^\/(?:([\w.]{1,30})\/)?(p|reel|reels|tv)\/([\w-]{5,40})/.exec(p))&&m[1]&&!/^(p|reel|reels|tv|explore|stories)$/.test(m[1]))return{acct:clipA('@'+m[1]),texts:[],pub:'',local:1};
+  return null};
+ const isXs=u=>{try{const x=new URL(String(u||'').trim());return /^(?:www\.|mobile\.)?(?:x|twitter)\.com$/.test(x.hostname.toLowerCase())&&/\/status(?:es)?\/\d{5,25}(?:\/|$)/.test(x.pathname)}catch(e){return false}};
+ /* 輸入中的等待時間：一次新增 6 個字以上（貼上、選取後貼上）立即查；逐字輸入、刪除等 0.5 秒 */
+ let prevV='';const delayFor=v=>{v=String(v||'');const a=prevV;let i=0;while(i<a.length&&i<v.length&&a[i]===v[i])i++;return v.length-i>=6?0:500};
+ const looksDone=u=>{try{const x=new URL(String(u||'').trim());return /^https?:$/.test(x.protocol)&&/\.[a-z]{2,}$/i.test(x.hostname)&&(x.pathname.length>1||!!x.search)}catch(e){return false}};
+ const FL=new Map(); /* 剛失敗的查詢（20 秒內）：影片封面直接改用原本的單獨查詢，不再重送同一個查詢 */
+ const cancelOthers=k=>{for(const [kk,e] of P)if(kk!==k){e.cx=1;clearTimeout(e.timer);try{e.ac.abort()}catch(_){}P.delete(kk);e.done(CANCEL)}};
+ const get=(u,o)=>{o=o||{};const k=keyOf(u);if(!k)return Promise.resolve({acct:'',texts:[],pub:'',fail:true});
+  const c=C.get(k);if(c&&!(c.np&&!o.noPub))return Promise.resolve(c);
+  const L=local(u);if(L){C.set(k,L);return Promise.resolve(L)}
+  const fl={res:!!(window.snsRes&&snsRes.need(u)),vc:isXs(u),noPub:!!o.noPub};
+  const pc=pcGet(u,fl);if(pc){C.set(k,pc);return Promise.resolve(pc)}
+  const e0=P.get(k);if(e0)return e0.pr;
+  const e={ac:new AbortController(),timer:0};e.pr=new Promise(r=>{e.done=r});P.set(k,e);
+  const go=()=>{e.timer=0;e.sent=1;const tm=setTimeout(()=>e.ac.abort(),fl.res?14000:9000);
+   const body={url:String(u).trim(),info:1};if(fl.res)body.res=1;if(fl.vc)body.vc=1;if(fl.noPub)body.noPub=1;
+   fetch('/api/resolve',{method:'POST',credentials:'same-origin',signal:e.ac.signal,headers:{'X-Requested-With':'sns','Content-Type':'application/json'},body:JSON.stringify(body)})
+   .then(r=>r.ok?r.json():null).catch(()=>null).then(j=>{clearTimeout(tm);if(e.cx)return;if(P.get(k)===e)P.delete(k);
     const v={acct:j&&j.acctOk&&typeof j.acct==='string'?j.acct.trim().slice(0,80):'',texts:j&&Array.isArray(j.texts)?j.texts.filter(t=>typeof t==='string'&&t.trim()).map(t=>t.trim().slice(0,2000)).slice(0,4):[],
-     /* V3.2.1：原文發布日期（伺服器已換成台北日期 YYYY-MM-DD） */pub:j&&typeof j.pub==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(j.pub)?j.pub:''};
-    if(j)C.set(k,v);return v});
-  P.set(k,pr);return pr};
+     /* V3.2.1：原文發布日期（伺服器已換成台北日期 YYYY-MM-DD） */pub:j&&typeof j.pub==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(j.pub)?j.pub:'',
+     res:j&&j.res&&typeof j.res==='object'?j.res:null,
+     vc:j&&fl.vc?(j.vc&&typeof j.vc==='object'?j.vc:(j.vcReason==='no_video'||j.vcReason==='unsupported'?null:undefined)):undefined,fail:!j,np:fl.noPub?1:0};
+    if(j){C.set(k,v);pcPut(u,v,fl,j)}else FL.set(k,Date.now());e.done(v)})};
+  const d=o.delay||0;if(d>0)e.timer=setTimeout(go,d);else go();return e.pr};
+ /* 給 snsRes（短網址解析）與影片封面共用同一次查詢 */
+ const resOf=async u=>{const v=await get(u,{delay:delayFor($('#u').value)});if(v===CANCEL)return 'cancel';if(v.fail)return null;return v.res&&typeof v.res==='object'?v.res:null};
+ const vcOf=async u=>{if(!isXs(u))return undefined;{const f=FL.get(keyOf(u));if(f&&Date.now()-f<20000)return undefined}const v=await get(u,{delay:0});if(v===CANCEL)return null;return v.fail?undefined:v.vc};
+ const ytv=u=>{const F=famOf(u);if(!F||F[0]!=='yt')return '';try{const x=new URL(String(u).trim()),h=x.hostname.replace(/^(www|m|music)\./,'');const id=h==='youtu.be'?x.pathname.split('/')[1]:(x.searchParams.get('v')||(/^\/(?:shorts|live|embed)\/([\w-]{11})/.exec(x.pathname)||[])[1]);return /^[\w-]{11}$/.test(id||'')?id:''}catch(e){return ''}};
+ let pubFor='';
+ const noPubFor=u=>{const id=ytv(u);return !!id&&/^\d{4}-\d{2}-\d{2}$/.test($('#pd').value)&&pubFor===id};
  const setT=v=>{const t=tx();t.value=v;t.dispatchEvent(new Event('input',{bubbles:true}));autoT=v};
  /* V3.2.2：發布日提示——網址有內容、偵測（伺服器查詢、網址推算、分享文字）都結束後，日期欄還是空白就顯示；日期有值或網址清空就拿掉 */
  const NODATE='（這個平台的連結沒有日期資訊，請手動選）';
@@ -3667,23 +3800,27 @@ window.snsInfo=(()=>{const C=new Map(),P=new Map();let autoT=null,curK='',openin
   if(v.acct){if(!a.value.trim()||acAuto){if(a.value!==v.acct)a.value=v.acct;acAuto=true;$('#an').textContent='（自動偵測，可修改）'}hint(false)}
   else hint(!a.value.trim());
   /* V3.2.1：發布日期——欄位空白、或目前是系統帶入（含網址推算）且沒被改過時才填；手動日期不動 */
-  if(v.pub){const d=$('#pd');if(!d.value||pdAuto){if(d.value!==v.pub)d.value=v.pub;pdAuto=true;$('#pn').textContent='（自動偵測，可修改）'}}
+  if(v.pub){const d=$('#pd');if(!d.value||pdAuto){if(d.value!==v.pub)d.value=v.pub;pdAuto=true;$('#pn').textContent='（自動偵測，可修改）'}if(d.value===v.pub)pubFor=ytv($('#u').value.trim())}
   pnChk();
   if(NOTXT.has(F[0]))return;
   const txt=v.texts.join('\n').trim();
   if(txt&&(!tx().value.trim()||(autoT!==null&&tx().value===autoT)))setT(txt)};
- const run=()=>{const u=$('#u').value.trim(),F=famOf(u),my=++seq;if(!F){hint(false);pnChk();return}
+ const run=dl=>{const u=$('#u').value.trim(),F=famOf(u),my=++seq;if(!F){hint(false);pnChk();return}
+  if(!looksDone(u))return; /* V3.4.1：網址還不完整（例如只打到網域）先不查 */
   const raw=$('#u').snsRaw?$('#u').snsRaw():u,k=keyOf(u);
-  get(u).then(v=>{if(my!==seq||!$('#dlg').classList.contains('o')||keyOf($('#u').value.trim())!==k)return;
+  get(u,{delay:dl||0,noPub:noPubFor(u)}).then(v=>{if(v===CANCEL||my!==seq||!$('#dlg').classList.contains('o')||keyOf($('#u').value.trim())!==k)return;
    const s=fromShare(F[0],raw);apply(F,{acct:v.acct||s.acct,texts:v.texts.length?v.texts:s.texts,pub:v.pub})})};
  /* 換網址：先拿掉上一個網址系統帶入、且沒被改過的內容，再依新網址重新取得 */
- const onUrl=()=>{if(opening)return;const u=$('#u').value.trim(),k=keyOf(u),F=famOf(u);if(k===curK){if(!k)pnChk();return}curK=k;seq++;hint(false);
+ const onUrl=()=>{if(opening)return;const dl=delayFor($('#u').value);prevV=$('#u').value;const u=$('#u').value.trim(),k=keyOf(u),F=famOf(u);cancelOthers(k);if(k===curK){if(!k)pnChk();return}curK=k;seq++;hint(false);
   if($('#pn').textContent===NODATE)$('#pn').textContent='';/* 換網址：等這個網址偵測完再判斷 */
   const t=tx();if(autoT!==null&&t.value===autoT){t.value='';t.dispatchEvent(new Event('input',{bubbles:true}))}autoT=null;
   /* 顯示名稱平台：網址裡的 @帳號不算取得成功，先拿掉，等真正的顯示名稱 */
   if(F&&F[2]==='n'&&acAuto&&/^@/.test(ac().value)){ac().value='';acAuto=false;$('#an').textContent=''}
-  if(k)run();else pnChk()};
+  if(k)run(dl);else pnChk()};
  {const u0=$('#u').oninput;$('#u').oninput=()=>{u0();onUrl()}}
+ const PUBSRV=new Set(['yt','tt','bl','wb','dy','fb','xhs']);
+ const filled=u=>{const F=famOf(u);if(!F)return true;if(!ac().value.trim())return false;if(!NOTXT.has(F[0])&&!tx().value.trim())return false;if(PUBSRV.has(F[0])&&!$('#pd').value)return false;return true};
+ $('#pd').addEventListener('input',()=>{pubFor=$('#pd').value?ytv($('#u').value.trim()):''});
  tx().addEventListener('input',()=>{if(autoT!==null&&tx().value!==autoT)autoT=null});
  ac().addEventListener('input',()=>{if(ac().value.trim())hint(false)});
  const od=openDlg;openDlg=function(id){opening=true;autoT=null;curK='';seq++;hint(false);let r;try{r=od.apply(this,arguments)}finally{opening=false}
@@ -3692,8 +3829,12 @@ window.snsInfo=(()=>{const C=new Map(),P=new Map();let autoT=null,curK='',openin
   if(au&&typeof au.text==='string'&&au.text&&tx().value===au.text&&!(famOf($('#u').value.trim())&&NOTXT.has(famOf($('#u').value.trim())[0])))autoT=au.text;
   /* V3.2.1：還原發布日期的自動狀態；舊資料沒有 auto.pub → 原本的發布日一律當手動 */
   if(au&&typeof au.pub==='string'&&au.pub&&$('#pd').value===au.pub){pdAuto=true;$('#pn').textContent='（自動偵測，可修改）'}
-  const u=$('#u').value.trim();curK=keyOf(u);if(curK){const F=famOf(u);if(F&&F[2]==='n'&&acAuto&&/^@/.test(ac().value)&&!(au&&au.acct===ac().value)){ac().value='';acAuto=false;$('#an').textContent=''}run()}else pnChk();return r};
- return{famOf,state:()=>({acct:acAuto&&ac().value.trim()?ac().value:'',text:autoT!==null&&tx().value===autoT&&autoT?autoT:'',pub:pdAuto&&$('#pd').value?$('#pd').value:''}),_dbg:()=>({autoT,curK,acAuto,pdAuto})}})();
+  const u=$('#u').value.trim();curK=keyOf(u);prevV=$('#u').value;cancelOthers(curK);
+  /* V3.4.1：編輯既有收藏時，日期屬於這筆收藏的影片 */pubFor=p&&$('#pd').value?ytv(p.url||''):'';
+  if(curK){const F=famOf(u);if(F&&F[2]==='n'&&acAuto&&/^@/.test(ac().value)&&!(au&&au.acct===ac().value)){ac().value='';acAuto=false;$('#an').textContent=''}
+   /* V3.4.1：編輯既有收藏、網址沒改，而且這個平台查得到的欄位都已經有內容 → 不重新查詢（查回來也不會寫入） */
+   if(p&&filled(u))pnChk();else run(0)}else pnChk();return r};
+ return{famOf,res:resOf,vc:vcOf,ck,local,state:()=>({acct:acAuto&&ac().value.trim()?ac().value:'',text:autoT!==null&&tx().value===autoT&&autoT?autoT:'',pub:pdAuto&&$('#pd').value?$('#pd').value:''}),_dbg:()=>({autoT,curK,acAuto,pdAuto,pubFor,pending:P.size}),_clearCache:()=>{C.clear();PC={};ls(PK,'{}')}}})();
 /* V3.2.1：網址只差空白（或同一個網址又收到一次輸入事件）時不重跑任何網址處理——不清掉已帶入的帳號、文字、發布日期，也不重送查詢。
    開啟新增／編輯視窗時重設。 */
 {const el=$('#u');let last=null;const prev=el.oninput;el.oninput=function(){const n=el.value;if(n===last)return;last=n;return prev.apply(this,arguments)};
@@ -3997,6 +4138,35 @@ window.snsTagm=(()=>{const el=$('#tgm'),aw=$('#tgaw'),tip=$('#tgap'),ib=$('#tgai
  const dlg=$('#dlg');new MutationObserver(()=>{if(dlg.classList.contains('o')&&!dlg.dataset.v333o){dlg.dataset.v333o='1';tried=false;clear()}else if(!dlg.classList.contains('o'))delete dlg.dataset.v333o}).observe(dlg,{attributes:true,attributeFilter:['class']});
  window.snsUrlCheck={check,clear,show,tried:()=>tried};
 })();
+</script>
+<script>
+/* ---- V3.4.0：表單裡的外部影片預覽卡片 ----
+   貼上（或打開編輯時已有）連結 → 辨識平台／類型 → 取得封面網址 → 確認網址沒有期限 → 瀏覽器實際載入成功 → 才顯示整張卡片；任何一步失敗就整張隱藏。
+   卡片的封面與「原文連結」都只是外部連結（新分頁開啟原影片），不內嵌播放、不下載、不上傳。 */
+window.snsVpv=(()=>{const V=window.snsVc,box=$('#vpv'),u=$('#u'),dlg=$('#dlg');if(!V||!box||!u)return null;
+ const ti=box.querySelector('.vpt'),im=ti.querySelector('img'),du=box.querySelector('.vpd'),xa=box.querySelector('.vpx'),rp=box.querySelector('.vpr-p span'),rk=box.querySelector('.vpr-k span'),rd=box.querySelector('.vpr-d');
+ let res=null,forUrl='',last='',ac=null,timer=0,poll=0,seq=0;
+ const norm=v=>{try{return window.snsNormU?snsNormU(v):String(v||'').trim()}catch(e){return String(v||'').trim()}};
+ const hide=()=>{box.hidden=true;im.removeAttribute('src')};
+ const show=v=>{const lab=V.LAB[v.p]+(v.s?' '+v.s:'');im.src=v.u;ti.href=v.src;xa.href=v.src;rp.textContent=lab;rk.textContent=v.k;const d=V.fmtD(v.d);du.hidden=!d;du.textContent=d;rd.hidden=!d;rd.querySelector('span').textContent=d?'片長：'+d:'';box.hidden=false};
+ im.addEventListener('error',()=>{if(!box.hidden){hide();res=null}});
+ const run=async(raw,keep)=>{const id=++seq;if(ac)try{ac.abort()}catch(e){}ac=new AbortController();const url=norm(raw);last=url;
+  if(keep&&keep.src&&norm(keep.src)===url){res=keep;forUrl=url;show(keep);return}
+  res=null;forUrl='';hide();if(!V.detect(url))return;
+  let v=null;try{v=await V.find(url,ac.signal)}catch(e){v=null}
+  if(id!==seq||!dlg.classList.contains('o'))return;if(v){res=v;forUrl=url;show(v)}};
+ const kick=()=>{const url=norm(u.value);if(url===last)return;last=url;clearTimeout(timer);timer=setTimeout(()=>run(u.value),500)};/* 先記下這次要查的連結，定時檢查不會一直重排 */
+ u.addEventListener('input',kick);
+ /* 表單打開／關閉：打開時依目前連結（編輯時用已存的封面），關閉時停止 */
+ const onOpen=()=>{seq++;last='';res=null;forUrl='';hide();const p=typeof cur!=='undefined'&&cur?cur:null;const keep=p?V.of(p):null;run(u.value,keep);clearInterval(poll);poll=setInterval(kick,500)};
+ new MutationObserver(()=>{const o=dlg.classList.contains('o');if(o&&!dlg.dataset.v340o){dlg.dataset.v340o='1';setTimeout(onOpen,0)}else if(!o&&dlg.dataset.v340o){delete dlg.dataset.v340o;clearInterval(poll);clearTimeout(timer);seq++;if(ac)try{ac.abort()}catch(e){}hide()}}).observe(dlg,{attributes:true,attributeFilter:['class']});
+ /* 儲存時：連結沒變、原本就有封面 → 原封不動保留；這次有偵測成功 → 存新的；其他情況 → 不存（不留下別的連結的封面） */
+ const patch=(o,c)=>{const url=o.url,old=c?V.of(c):null;
+  if(old&&c.url===url&&norm(old.src)===norm(url)){o.vcov=old;return}
+  if(res&&forUrl===norm(url)){o.vcov={u:res.u,p:res.p,s:res.s,k:res.k,d:res.d,src:res.src};return}
+  if(old&&c.url===url){o.vcov=old;return}
+  delete o.vcov};
+ return{patch,state:()=>({res,forUrl,shown:!box.hidden}),run}})();
 </script>
 </body>
 </html>

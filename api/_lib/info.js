@@ -139,12 +139,14 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
   const keep = (ctx, f) => { const P = ctx.part; if (f.acct && !P.acct) P.acct = f.acct; if (f.texts) for (const x of f.texts) if (x) P.texts.push(x); if (f.pub && !P.pub) P.pub = f.pub; };
   const fin = (ctx, platform) => out(platform, ctx.part.acct, ctx.part.texts, ctx.part.pub);
   const handleOf = (u, re) => { const m = re.exec(u.pathname); return m ? '@' + m[1] : ''; };
+  // V3.4.1：平台取得器內部解析分享短網址時，記下第一次的解析結果；前端要「重複比對用的正式網址」（res:1）時直接共用，不必再呼叫一次 /api/resolve。
+  const rsv = async (ctx, href) => { const r = await resolve(href, ctx.fetch); if (!ctx.res) ctx.res = r; return r; };
 
   // ---- 1. Bilibili：UP 主暱稱、影片標題、發布日期（三項各自獨立）----
   // V3.2.1：同一個 view 介面回應裡的 data.pubdate（秒）也傳回前端；介面缺任何一項時才讀一次公開影片頁（__INITIAL_STATE__ 的 videoData）。
   // 請求帶一般瀏覽器會送的 Referer（不帶 Cookie）。標題裡的日期（例如巡演日期）不會被當成發布日期。
   async function bilibili(ctx, u) {
-    if (u.hostname === 'b23.tv') { const r = await resolve(u.href, ctx.fetch); if (!r.ok) return fin(ctx, 'bilibili'); u = safeUrl(r.url); }
+    if (u.hostname === 'b23.tv') { const r = await rsv(ctx, u.href); if (!r.ok) return fin(ctx, 'bilibili'); u = safeUrl(r.url); }
     const m = u && /(?:^|\/)video\/(BV[0-9A-Za-z]{10})(?:\/|$)/i.exec(u.pathname); if (!m) return fin(ctx, 'bilibili');
     const bv = 'BV' + m[1].slice(2), P = ctx.part;
     const ref = { headers: { Referer: 'https://www.bilibili.com/video/' + bv + '/' } };
@@ -175,7 +177,8 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
     const j = await safe(() => getJSON(ctx, 'https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent(u.href)));
     if (j) keep(ctx, { acct: j.author_name, texts: [j.title] });
     const id = ytId(u);
-    if (id) {
+    // V3.4.1：前端確認日期欄已經是「這支影片」的有效日期（noPub）、而且 oEmbed 已取得頻道名稱時，不再下載影片頁（影片頁只用來取日期與頻道名稱備援）
+    if (id && !(ctx.noPub && ctx.part.acct)) {
       const html = await safe(() => getBigHTML(ctx, 'https://www.youtube.com/watch?v=' + id + '&hl=zh-TW'));
       const canon = html ? ((/<link\b[^>]*rel="canonical"[^>]*href="([^"]+)"/i.exec(html) || [])[1] || metaOf(html, 'property', 'og:url')) : '';
       if (html && new RegExp('[?&]v=' + id.replace(/-/g, '\\-') + '(?:&|$)').test(decode(canon))) {
@@ -191,7 +194,7 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
   // ---- 3. TikTok：@帳號（網址優先）、影片描述、發布日期 ----
   // V3.2.1：同一支影片（ID 相同）的物件裡，帳號、描述、createTime 各自取；公開資料都沒有日期時，才用影片 ID 前 32 位元推算（建立時間）。
   async function tiktok(ctx, u) {
-    if (!/\/@[\w.-]+\/(?:video|photo)\/\d/.test(u.pathname)) { const r = await resolve(u.href, ctx.fetch); if (r.ok) u = safeUrl(r.url); }
+    if (!/\/@[\w.-]+\/(?:video|photo)\/\d/.test(u.pathname)) { const r = await rsv(ctx, u.href); if (r.ok) u = safeUrl(r.url); }
     let acct = handleOf(u, /^\/@([\w.-]{1,40})\//);
     const vid = (/\/(?:video|photo)\/(\d{8,25})/.exec(u.pathname) || [])[1] || '';
     if (!acct) {
@@ -228,7 +231,7 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
   async function douyin(ctx, u) {
     const pick = (x) => { const m = /\/(?:share\/)?(?:video|note|slides)\/(\d{8,25})/.exec(x.pathname); return m ? m[1] : (/^\d{8,25}$/.test(x.searchParams.get('modal_id') || '') ? x.searchParams.get('modal_id') : ''); };
     let id = pick(u);
-    if (!id && u.hostname === 'v.douyin.com') { const r = await resolve(u.href, ctx.fetch); if (r.ok) { const x = safeUrl(r.url); id = x ? pick(x) : ''; } }
+    if (!id && u.hostname === 'v.douyin.com') { const r = await rsv(ctx, u.href); if (r.ok) { const x = safeUrl(r.url); id = x ? pick(x) : ''; } }
     if (!id) return fin(ctx, 'douyin');
     const page = (host) => safe(async () => {
       const r = await get(ctx, 'https://' + host + '/share/video/' + id + '/', 'text/html,application/xhtml+xml', MOBILE_UA);
@@ -259,7 +262,7 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
   // 請求帶手機網頁本來就會送的 Referer、X-Requested-With（不帶 Cookie）。影片頁 tv/show、video.weibo.com 反查需要訪客 Cookie，不做。
   async function weibo(ctx, u) {
     let id = wbPostId(u);
-    if (!id && u.hostname === 't.cn') { const r = await resolve(u.href, ctx.fetch); if (r.ok) { const x = safeUrl(r.url); id = x ? wbPostId(x) : ''; } }
+    if (!id && u.hostname === 't.cn') { const r = await rsv(ctx, u.href); if (r.ok) { const x = safeUrl(r.url); id = x ? wbPostId(x) : ''; } }
     if (!id) return fin(ctx, 'weibo');
     const H = { ua: MOBILE_UA, headers: { Referer: 'https://m.weibo.cn/detail/' + id, 'X-Requested-With': 'XMLHttpRequest', 'MWeibo-Pwa': '1' } };
     const j = await safe(() => getJSON(ctx, 'https://m.weibo.cn/statuses/show?id=' + encodeURIComponent(id), H));
@@ -292,7 +295,7 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
   // V3.2.1：① Meta 官方 oEmbed 嵌入碼的「Posted by／由…發佈」；② 公開貼文頁的 article:published_time／JSON-LD datePublished（沒有就留空，不用修改時間），
   //   作者沒取到時也看 JSON-LD author.name、article:author（不是網址、不是純數字才用）。分享網址的識別碼不會被當成日期。
   async function facebook(ctx, u) {
-    if (/^\/share\//.test(u.pathname) || u.hostname === 'fb.watch') { const r = await resolve(u.href, ctx.fetch); if (r.ok) u = safeUrl(r.url); }
+    if (/^\/share\//.test(u.pathname) || u.hostname === 'fb.watch') { const r = await rsv(ctx, u.href); if (r.ok) u = safeUrl(r.url); }
     if (!u) return fin(ctx, 'facebook');
     const okName = (n) => { n = strip(n || ''); return n && !/^\d+$/.test(n) && !/^https?:/i.test(n) ? n : ''; };
     const isVideo = /\/videos\/|^\/watch|^\/reel\//.test(u.pathname);
@@ -317,7 +320,7 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
   // ---- 7. Threads：@帳號（網址）、發布日期（正式貼文 shortcode 推算；手機 /share/ 先解析成正式網址）----
   // V3.2.1：/share/ 的代碼不是貼文 shortcode，解析失敗就不推算日期。
   async function threads(ctx, u) {
-    if (/^\/share\//.test(u.pathname)) { const r = await resolve(u.href, ctx.fetch); u = r.ok ? safeUrl(r.url) : null; }
+    if (/^\/share\//.test(u.pathname)) { const r = await rsv(ctx, u.href); u = r.ok ? safeUrl(r.url) : null; }
     if (!u) return fin(ctx, 'threads');
     const sc = (/^\/@[\w.]{1,40}\/post\/([\w-]{6,11})(?:\/|$)/.exec(u.pathname) || [])[1] || '';
     keep(ctx, { acct: handleOf(u, /^\/@([\w.]{1,40})\//), pub: sc ? codeDate(sc) : '' });
@@ -457,15 +460,28 @@ module.exports = function makeInfo({ resolve, safeUrl, readText, wbPostId }) {
     ['instagram', (h) => /^(www\.)?instagram\.com$/.test(h), instagram],
     ['xiaohongshu', (h) => /^xhslink\.(com|cn)$/.test(h) || /(^|\.)xiaohongshu\.com$/.test(h), xiaohongshu],
   ];
-  async function info(input, fetchFn) {
+  // V3.4.1：opts.res＝同時回傳分享短網址／微博貼文的解析結果（前端重複比對用，原本要另外呼叫一次）；opts.noPub＝YouTube 不必再抓日期
+  // 平台取得器本身就會解析這個短網址時共用那一次；不會的（小紅書 xhslink、微博貼文網址）就同時並行解析一次，不增加等待時間。
+  const SELF_RES = { tiktok: 1, threads: 1, douyin: 1, bilibili: 1, facebook: 1 };
+  async function info(input, fetchFn, opts) {
     const u = safeUrl(input);
     if (!u) return { ok: false, reason: 'bad_url' };
     const P = PLATS.find((p) => p[1](u.hostname));
     if (!P) return { ok: false, reason: 'unsupported' };
+    const o = opts || {};
+    if (o.res) {
+      const self = SELF_RES[P[0]] || (P[0] === 'weibo' && u.hostname === 't.cn');
+      const pr = self ? null : resolve(input, fetchFn).catch(() => ({ ok: false, reason: 'error' }));
+      const v = await info(input, fetchFn, { ...o, res: false, _ctxOut: (c) => { o._c = c; } });
+      let r = o._c && o._c.res; if (!r && pr) r = await pr;
+      if (!r) { try { r = await resolve(input, fetchFn); } catch (e) { r = { ok: false, reason: 'error' }; } }
+      return { ...v, res: r };
+    }
     const ac = new AbortController(); const tm = setTimeout(() => ac.abort(), TIMEOUT);
     // V3.2.1：ctx.part 記下已經取得的欄位——後面的請求逾時或出錯時，回傳已經取得的帳號／文字／日期，不整筆丟掉。
     // trace 只有「網域＋路徑開頭＋狀態碼」，不含任何內容，給正式環境排查用（瀏覽器開發者工具 → Network → resolve）。
-    const ctx = { fetch: fetchFn, signal: ac.signal, part: { acct: '', texts: [], pub: '' }, trace: [] };
+    const ctx = { fetch: fetchFn, signal: ac.signal, part: { acct: '', texts: [], pub: '' }, trace: [], noPub: !!o.noPub };
+    if (o._ctxOut) o._ctxOut(ctx);
     try {
       const r = await P[2](ctx, u);
       const v = r && typeof r === 'object' ? r : fin(ctx, P[0]);

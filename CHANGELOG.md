@@ -1,5 +1,98 @@
 # 更新紀錄
 
+## V3.4.1（減少 Vercel API 呼叫，自動偵測結果不變）
+
+**安裝包**：`sns-bookmark-v3.4.1-complete.zip`（唯一資料夾 `sns-bookmark-v3.4.1`；app-version／package.json 3.4.1；build 2026-11-16 03:25）。
+**基準**：小克交付的 `sns-bookmark-v3.4.0-complete.zip`（app-version 3.4.0、build 2026-11-16 02:20）；V3.4.0 原始安裝包保留不動。
+**沒有部署**：沒有連接或修改 GitHub、Vercel、Production；沒有 Commit、Push、Deploy；沒有改環境變數或憑證。
+
+### 修改檔案清單
+
+| 檔案 | 變更 |
+|---|---|
+| `index.html` | 自動帶入查詢（`snsInfo`）：輸入等待、取消舊查詢、本機帶入、這台裝置的快取、編輯不重查、YouTube noPub；短網址解析（`snsRes`）改用同一次查詢；影片封面（`snsVc`）改用同一次查詢；使用狀況紀錄（`ACT`）節流；版本 3.4.1 |
+| `api/resolve.js` | `info:1` 可以附帶 `res`、`vc`、`noPub`；伺服器快取依附帶內容分開 |
+| `api/_lib/info.js` | 解析短網址時記下結果供 `res` 共用；不會自己解析的平台並行解析；YouTube `noPub` |
+| `package.json` | version 3.4.1 |
+| `README.md`、`CHANGELOG.md`、`USER_GUIDE.md`、`DEPLOY.md` | 版本與說明 |
+| `TEST_REPORT.md` | V3.4.1 測試報告＋V3.4.0 vs V3.4.1 Vercel API 呼叫效益比較（V3.4.0 的改名為 `TEST_REPORT-V3.4.0.md`） |
+| `NETWORK_CHECKLIST-V3.4.1.md` | 新增：正式網站 Network 實測步驟 |
+| `api/activity.js`、`api/auth/*`、`api/announcements.js`、`api/help.js`、`api/_lib/session.js`、`api/_lib/admin.js`、`admin-setup/`、`vercel.json`、`manifest.webmanifest`、`assets/` | **沒有改** |
+
+### 改了什麼
+
+1. **逐字輸入不再每個字都查**：網址看起來完整（有網域和路徑）、停止輸入約 0.5 秒才查；一次貼上 6 個字以上立即查。網址又改了，就取消前一個網址還沒完成的查詢；只取消其他網址，晚回來的舊結果也不會蓋掉新網址。
+2. **短網址合併**：正在輸入的分享短網址，重複比對要的正式網址（`res`）和自動帶入共用同一次 `/api/resolve`。平台取得器本來就會解析短網址的（TikTok、Threads、抖音、Bilibili、Facebook、微博 t.cn）直接共用那一次；不會的（小紅書 xhslink、微博貼文網址）在伺服器並行解析一次。合併查詢失敗才用原本的單獨解析備援。舊收藏的背景解析照舊單獨查詢。
+3. **X 影片封面併入**：X 網址的自動帶入同時查封面（`vc`，伺服器並行）；瀏覽器自己查不到時直接用這一次的結果，不再另外呼叫 `cover:1`。合併查詢失敗才用原本的 `cover:1` 備援。
+4. **本機帶入**：Threads 正式網址、網址裡已經有帳號的 Instagram，伺服器原本就只從網址讀帳號與日期、完全不對外連線，改在瀏覽器用同一套規則算，結果相同。
+5. **編輯不重查**：打開既有收藏、網址沒改，而且這個平台查得到的欄位（帳號；不在停用清單的平台的文字；伺服器提供日期的平台的日期）都有內容，就不查。
+6. **這台裝置的快取（localStorage `sinfo1`）**：只存成功、完整的結果（逾時的部分結果、失敗、`noPub` 查詢都不存）；30 天到期；最多 200 筆、約 600KB，新的優先。比對時只去掉不影響內容辨識的追蹤參數（各平台分開列，例如 YouTube `si`、`feature`、`pp`、`t`；IG `igsh`；X `s`、`t`；共通 `utm_*`、`fbclid`），網域、路徑、影片／貼文 ID 一律保留。
+7. **YouTube 日期**：日期欄是有效日期、而且確定屬於目前這支影片（同一個影片 ID：系統為這支影片帶入的、編輯時這筆收藏原本的、或使用者在這支影片網址下手動填的）才帶 `noPub`；伺服器在 oEmbed 已取得頻道名稱時才略過影片頁（取不到頻道名稱仍會下載影片頁補上）。換了影片就重新辨識。
+8. **使用狀況紀錄節流**：新增、編輯、刪除、批次的紀錄，同一個帳號 10 分鐘內只送第一次，期間最後一次在 10 分鐘到時補送一次（關閉頁面時也補送）。收藏本身照常立即寫入 Google 試算表／雲端硬碟。
+
+### 沒有改的保護機制
+
+- 使用者手動填或改過的帳號、文字、日期（`acAuto`、`autoT`、`pdAuto`）照原本規則不被覆蓋；快取、本機帶入都走同一個 `apply()`。
+
+## V3.4.0（外部資源不經過 Vercel＋外部影片封面預覽）
+
+**安裝包**：`sns-bookmark-v3.4.0-complete.zip`（唯一資料夾 `sns-bookmark-v3.4.0`；app-version／package.json 3.4.0；build 2026-11-16 02:20）。
+**基準**：小克交付的 `sns-bookmark-v3.3.3-complete.zip`（app-version 3.3.3、build 2026-11-15 21:25），直接從這份 ZIP 解壓開發；V3.3.3 原始安裝包保留不動。
+**沒有部署**：沒有連接或修改 GitHub、Vercel、Production；沒有 Commit、Push、Deploy；沒有改環境變數或憑證。
+
+### 修改檔案清單
+
+| 檔案 | 變更 |
+|---|---|
+| `index.html` | 影片封面模組（辨識、白名單、瀏覽器探測、X 查詢）、表單「影片預覽」卡片（HTML＋CSS＋事件）、儲存時寫入／保留／移除 `vcov`、收藏卡片封面順序；版本 3.4.0 |
+| `api/resolve.js` | 新增 `cover:1` 模式：只查 X 公開嵌入資料（JSON），回傳封面網址文字、類型、片長；不下載圖片。原本的網址解析與帳號查詢不變 |
+| `package.json` | version 3.4.0 |
+| `README.md`、`CHANGELOG.md`、`USER_GUIDE.md`、`DEPLOY.md` | 版本與說明 |
+| `TEST_REPORT.md` | V3.4.0 測試報告（V3.3.3 的改名為 `TEST_REPORT-V3.3.3.md` 保留） |
+| `admin-setup/Code.gs`、`api/auth/*`（含 `/api/auth/token`）、`api/announcements.js`、`api/_lib/*`、`vercel.json`、`manifest.webmanifest`、`assets/` | **沒有改**（與 V3.3.3 逐位元相同） |
+
+### 開發前對 V3.3.3 實際程式碼的檢查（有沒有轉存外部圖片）
+
+| 檢查 | 結果 |
+|---|---|
+| 外部圖片網址（`ximgs`） | 只存網址文字；顯示用 `<img referrerpolicy="no-referrer">` 由瀏覽器直接向原網站載入 |
+| 編輯儲存 | 只把表單裡的網址清單原樣寫回；**沒有**下載、上傳到 Drive 或轉存的程式 |
+| 「同步移至 Google Drive 垃圾桶」 | 只針對使用者自己**上傳**的截圖，外部圖片按 × 只拿掉引用 |
+| Vercel | 沒有 Next.js、沒有 `/_next/image`、沒有圖片代理；`vercel.json` 只設定 API 不快取；伺服器只處理登入 Token、公告、網址解析／帳號查詢（文字） |
+| 結論 | **V3.3.3 沒有任何外部圖片轉存或經過 Vercel 的路徑**，所以這版沒有需要移除或停用的舊機制；新增的影片封面也照同一規則做，並加上網路請求測試 |
+
+### 一、外部影片封面預覽
+
+- 位置：新增／編輯收藏表單，「分組」與「貼上的文字」之間。橫式：左邊封面（播放圖示、片長）、右邊外連圖示、「已取得預覽封面」、平台、影片、片長（有可靠資料才顯示）與說明文字。
+- 支援：
+  - **YouTube**（watch、youtu.be、Shorts、embed、live）：在瀏覽器裡從網址算出 `i.ytimg.com/vi/{id}/hqdefault.jpg`，**不呼叫 Vercel**；YouTube 對不存在的影片回傳的灰色小圖（120×90）會被判定為沒有封面。
+  - **Instagram Reel**（/reel/、/reels/、/tv/）：使用 Instagram 的固定封面網址 `instagram.com/p/{代碼}/media/?size=l`，由瀏覽器直接載入測試；被導去登入或載入失敗就不顯示。
+  - **X 影片**：瀏覽器先直接查 X 公開嵌入資料（`cdn.syndication.twimg.com`）；被跨網域擋下或失敗時，才請現有的 `/api/resolve` 查一次，**只回傳封面網址文字、類型、片長**。封面一律由瀏覽器向 `pbs.twimg.com` 載入。
+- 只接受**沒有期限**的網址格式（白名單），帶 `oe=`、`x-expires`、`signature`、`token`、`X-Amz-*` 等期限或簽章參數的一律不用；伺服器回傳的網址前端也會再檢查一次。
+- 拿不到可靠封面時整張卡片隱藏，不顯示空白卡。
+- 點封面或外連圖示：在新分頁開原影片（`target=_blank`、`rel=noopener noreferrer`）；沒有內嵌播放器、沒有下載。
+- 儲存：成功取得時在收藏多存一個選填欄位 `vcov`（封面網址文字、平台、類型、片長、取得時的連結）。編輯時連結沒變就沿用、不重新查詢；換了連結就換成新連結的結果；新連結沒有封面就移除。
+
+### 二、收藏卡片封面順序
+
+1. 附件第一張（先看上傳的截圖，再看外部圖片網址，依原本順序）
+2. 外部影片封面（`vcov`，顯示前再檢查白名單）
+3. 原本的預設樣式
+
+卡片、列表、表格、圖片牆、相簿都用同一個判斷。影片封面載入失敗時顯示「影片封面暫時無法顯示」小圖，收藏內容不受影響。
+
+### 三、外部資源不經過 Vercel（維持＋測試固定）
+
+- 外部圖片、影片封面都是瀏覽器直接向原平台 CDN 載入；網站伺服器不下載、不代理、不轉存、不快取圖片。
+- 使用者自己上傳的圖片流程（壓縮、GIF、100 KB 原檔規則、背景圖、Drive 上傳／讀取、`/api/auth/token`）**完全沒有改**。
+
+### 已知限制
+
+- TikTok、Threads、抖音、小紅書等平台的封面網址都有期限，不支援（卡片不顯示）。
+- Instagram 一般貼文（/p/）無法事先知道是不是影片，不顯示；Reel 的固定封面網址可能要求登入 Instagram，要求時就不顯示。
+- 片長只有 X 拿得到；YouTube、Instagram 不顯示片長（不另外呼叫 API）。
+- X 公開嵌入資料服務在實際網路下是否允許瀏覽器直接查、回傳格式是否變動，**沒有實際連網測試**；查不到時改用 `/api/resolve`，仍查不到就不顯示。
+
 ## V3.3.3（連結必填提示＋晴空藍＋奶糖黃）
 
 **安裝包**：`sns-bookmark-v3.3.3-complete.zip`（唯一資料夾 `sns-bookmark-v3.3.3`；app-version／package.json 3.3.3；build 2026-11-15 21:25）。
