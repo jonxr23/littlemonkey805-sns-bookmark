@@ -1,4 +1,4 @@
-# SNS文章收藏夾 V3.4.4 部署指南（**等你驗收安裝包後再安排正式部署**）
+# SNS文章收藏夾 V3.4.5 部署指南（**等你驗收安裝包後再安排正式部署**）
 
 > **部署紀錄**：小克只完成開發、測試與安裝包。**沒有** commit、**沒有** push、**沒有**開分支、**沒有** Preview、**沒有**觸發 Vercel。沒有修改環境變數、Google Console、Service Account、管理試算表。
 > **正式環境版本由你確認**：小克看不到 GitHub／Vercel，不知道目前 `main` 與 Production 是哪一版、哪一個 commit，所以本文件**不寫死**任何正式版本號或 commit。
@@ -8,8 +8,8 @@
 | 項目 | 內容 |
 |---|---|
 | GitHub Repository | `jonxr23/littlemonkey805-sns-bookmark` |
-| 本次安裝包 | `sns-bookmark-v3.4.4-complete.zip`（解壓後唯一資料夾 `sns-bookmark-v3.4.4`；app-version 3.4.4、build 2026-11-16 16:00） |
-| 開發基準 | `sns-bookmark-v3.4.3-complete.zip`（V3.4.3，build 2026-11-16 15:25，保留不動）。**V3.4.4 已包含 V3.4.3 以前的全部修改**；如果 V3.4.1～V3.4.3 還沒上線，可以直接上傳 V3.4.4（V3.4.1 的 Network 實測清單仍然適用，但 Facebook 那幾項改成「只有分享短網址會呼叫 1 次」） |
+| 本次安裝包 | `sns-bookmark-v3.4.5-complete.zip`（解壓後唯一資料夾 `sns-bookmark-v3.4.5`；app-version 3.4.5、build 2026-11-16 17:45） |
+| 開發基準 | `sns-bookmark-v3.4.4-complete.zip`（V3.4.4，build 2026-11-16 16:00，保留不動）。**V3.4.5 已包含 V3.4.4 以前的全部修改**；如果 V3.4.1～V3.4.4 還沒上線，可以直接上傳 V3.4.5（V3.4.1 的 Network 實測清單仍然適用，但 Facebook 那幾項改成「只有分享短網址會呼叫 1 次」） |
 | 目前 GitHub `main`／Vercel Production | **請上傳前自己確認**（Vercel → Deployments 標示 Production 的那一筆；GitHub `main` 最新 commit），記下來作為回復點 |
 | 正式網址 | https://littlemonkey805-sns-bookmark.vercel.app/（不變） |
 
@@ -17,7 +17,7 @@
 
 | 項目 | 結果 |
 |---|---|
-| Apps Script `Code.gs`／管理試算表 | **免更新**（與 V3.2.4、V3.2.3 逐位元相同）。「公告管理」的欄位、資料、勾選都不用動 |
+| Apps Script `Code.gs`／管理試算表 | **程式免更新**（與 V3.2.4、V3.2.3 逐位元相同）。「公告管理」的欄位、資料、勾選都不用動。**建議**：管理試算表裡的線上使用說明「圖片格式及容量」「為什麼圖片上傳失敗？」兩則還是舊規則（1440 px、不收 WEBP），請照第六節貼上新文字；不改也能用，只是說明和實際行為不一致 |
 | `/api/announcements`、`/api/activity`、`/api/auth/*`（含 `/api/auth/token`）、`api/_lib/session.js`、`api/_lib/admin.js` | **沒有改**（與 V3.4.0 逐位元相同） |
 | `/api/resolve`、`api/_lib/info.js` | **有改**（V3.4.1）：自動帶入查詢（`info:1`）可以一次附帶 `res`（分享短網址解析，重複比對用）、`vc`（X 影片封面網址文字）、`noPub`（YouTube 日期已有時不下載影片頁）。不帶這些參數時行為和 V3.4.0 完全相同；原本的單獨解析（`{url}`）、封面查詢（`cover:1`）都保留作為備援。同源檢查、次數限制不變 |
 | `vercel.json` | **沒有改**（沒有新增圖片代理、`/_next/image` 或快取設定） |
@@ -28,21 +28,21 @@
 ## 三、上傳步驟（驗收後；GitHub main → Vercel Production）
 
 1. **先確認並記下目前正式版**：Vercel → Deployments 標示 **Production** 的那一筆（時間／網址／commit），GitHub `main` 最新 commit 也記下；目前的專案檔案先備份一份。
-2. 解壓縮 `sns-bookmark-v3.4.4-complete.zip`，把 `sns-bookmark-v3.4.4` 資料夾**裡面**所有檔案（含隱藏檔 `.vercelignore`）複製到 Git 專案根目錄覆蓋。
-   - 網站檔案（和 V3.4.3 比）：`index.html`、`package.json`。（如果 V3.4.3 以前的版本還沒上線，另外還有 `api/resolve.js`、`api/_lib/info.js`）
-   - 說明文件：`CHANGELOG.md`、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V3.4.3.md`（舊報告改名）。
-3. commit 到 `main`（建議訊息：`Release SNS Bookmark V3.4.4`），Vercel 會自動部署。
-4. 正式網址側邊欄最底部應顯示 `版本：v3.4.4 / 更新：2026-11-16 16:00`；公告視窗最底部顯示「SNS文章收藏夾 V3.4.4」。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
+2. 解壓縮 `sns-bookmark-v3.4.5-complete.zip`，把 `sns-bookmark-v3.4.5` 資料夾**裡面**所有檔案（含隱藏檔 `.vercelignore`）複製到 Git 專案根目錄覆蓋。
+   - 網站檔案（和 V3.4.4 比）：`index.html`、`package.json`。（如果 V3.4.3 以前的版本還沒上線，另外還有 `api/resolve.js`、`api/_lib/info.js`）
+   - 說明文件：`CHANGELOG.md`、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V3.4.4.md`（舊報告改名）。
+3. commit 到 `main`（建議訊息：`Release SNS Bookmark V3.4.5`），Vercel 會自動部署。
+4. 正式網址側邊欄最底部應顯示 `版本：v3.4.5 / 更新：2026-11-16 17:45`；公告視窗最底部顯示「SNS文章收藏夾 V3.4.5」。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
 5. 上線後照 `NETWORK_CHECKLIST-V3.4.1.md` 在正式網站 Network 面板實測 API 呼叫次數；實機驗收清單見 `TEST_REPORT.md` 第九節。上線後可以打開瀏覽器開發者工具的 Network，確認影片封面與外部圖片都是向 i.ytimg.com、www.instagram.com、pbs.twimg.com 或原網站載入，沒有任何圖片從 `littlemonkey805-sns-bookmark.vercel.app` 回來。
 
 ## 四、回復
 
-- Vercel → Deployments → 第三節第 1 步記下的那一筆 → **Promote to Production**（或 Instant Rollback），再在 GitHub Revert V3.4.4 的 commit（V3.4.4 只改外觀）。V3.4.3 沒有改資料格式；查無結果快取只存在各自瀏覽器的 `sinfo1`（鍵以 `n|` 開頭），舊版會忽略。
+- Vercel → Deployments → 第三節第 1 步記下的那一筆 → **Promote to Production**（或 Instant Rollback），再在 GitHub Revert V3.4.5 的 commit。V3.4.5 沒有改資料格式；用 V3.4.5 存的 WebP 圖片在舊版仍然能顯示（舊版本來就用瀏覽器直接顯示雲端的圖片檔，不限格式），只是舊版不能再「上傳」WebP。V3.4.4 只改外觀。V3.4.3 沒有改資料格式；查無結果快取只存在各自瀏覽器的 `sinfo1`（鍵以 `n|` 開頭），舊版會忽略。
 - V3.4.1 沒有改資料格式（只在這台裝置的瀏覽器多存 `sinfo1` 快取，舊版會忽略）；V3.4.0 只新增選填欄位 `vcov`；V3.3.3、V3.3.2、V3.3.1、V3.3.0、V3.2.9、V3.2.8、V3.2.7、V3.2.6、V3.2.5、V3.2.4 沒有改資料格式、沒有寫入公告資料，回到任何 V3.2.x 都不影響資料。
 
 ## 五、更新時間的來源（沒有改）
 
-畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-16 16:00）。
+畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-16 17:45）。
 
 ---
 
@@ -399,3 +399,30 @@ V2.7.0、V2.8.0 沒有單獨上線，這一次是 **V2.6.0 → V2.8.2** 一次�
 5. 照 `admin-setup/ADMIN_SETUP.md` 設定管理中心（可以之後再做）。
 
 登入流程、帳號安全規則、圖片生命週期管理的完整說明沒有變，請看 `HISTORY-V2.2.0.md` 第五～七節。
+
+## 六、線上使用說明建議更新的文字（管理試算表「使用說明」）
+
+App 內建說明已更新；線上說明由管理試算表提供，小克沒有權限也不會去改。請在試算表找到下面兩則，把「內容」整格換成：
+
+**注意事項「圖片格式及容量」**
+
+```
+支援 JPG、JPEG、PNG、WebP、GIF 五種格式；HEIC、BMP 等其他格式不會上傳。
+JPG、PNG、WebP：最長邊最多 1200 px（等比例縮小，不裁切、不放大）。100 KB 以下而且沒有超過 1200 px 的圖片保留原檔；其他會在你的瀏覽器裡轉成 WebP，畫質以點開大圖仍然清楚為準。
+Safari（Mac、iPhone、iPad）不能產生 WebP：一般圖片改存 JPG，透明背景的圖片改存 PNG，透明背景都會保留。
+轉換後沒有比原檔小、又不需要縮小時，會保留原檔。
+GIF：原始檔最多 25 MB；會處理成最長邊約 480 px 的動態 GIF（保留動畫、透明背景、循環設定和播放速度），一般在 3 MB 以下，最多 5 MB；壓縮後仍超過 5 MB 就不會上傳。雲端只存處理後的 GIF。
+外部圖片網址：可以直接引用公開的 http／https 圖片網址，不會下載或上傳到你的雲端硬碟；原網站刪除圖片後，卡片會顯示「外部圖片失效」，收藏的其他內容都還在。
+Google 雲端硬碟剩不到 100 MB 時，頁面最上方會出現黃色提醒。
+```
+
+**Q&A「為什麼圖片上傳失敗？」**
+
+```
+常見原因：
+・還沒登入 Google，或雲端同步還沒完成（等頁面上方的「同步雲端資料中…」消失）。
+・網路中斷，或登入已過期（依提示重新登入）。
+・Google 雲端硬碟空間不足（頁面最上方會出現黃色提醒）。
+・格式不是 JPG、JPEG、PNG、WebP、GIF（例如 iPhone 的 HEIC），上傳區會出現紅字提示，請先轉成 JPG 或 PNG。
+・GIF 原始檔超過 25 MB，或壓縮後仍超過 5 MB，請換一張較小或較短的 GIF。
+```

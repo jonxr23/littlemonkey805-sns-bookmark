@@ -1,5 +1,43 @@
 # 更新紀錄
 
+## V3.4.5（收藏圖片最佳化：WebP）
+
+**安裝包**：`sns-bookmark-v3.4.5-complete.zip`（唯一資料夾 `sns-bookmark-v3.4.5`；app-version／package.json 3.4.5；build 2026-11-16 17:45）。
+**基準**：小克交付的 `sns-bookmark-v3.4.4-complete.zip`（app-version 3.4.4、build 2026-11-16 16:00）；V3.4.4 原始安裝包保留不動。
+**沒有部署**：沒有連接或修改 GitHub、Vercel、Production；沒有 Commit、Push、Deploy；沒有改環境變數或憑證。
+
+### 修改檔案清單
+
+| 檔案 | 變更 |
+|---|---|
+| `index.html` | 圖片模組 `IMGF`：JPG、PNG 兩套流程合併成一套靜態圖片流程 `still()`；`sniff()` 認得 WebP；三道格式檢查加入 WebP；檔案選擇器 `accept` 加 `.webp`／`image/webp`；上傳區說明、格式錯誤訊息、內建使用說明（n3、q2）；版本 3.4.5 |
+| `package.json` | version 3.4.5 |
+| `README.md`、`CHANGELOG.md`、`USER_GUIDE.md`、`DEPLOY.md` | 版本與說明；DEPLOY 第六節附線上說明的建議文字 |
+| `TEST_REPORT.md` | V3.4.5 測試報告（V3.4.4 的改名為 `TEST_REPORT-V3.4.4.md`） |
+| `api/*`、`admin-setup/`、`vercel.json`、`manifest.webmanifest`、`assets/` | **沒有改** |
+
+### 新的靜態圖片規則（JPG、PNG、WebP）
+
+| 情況 | V3.4.4 | V3.4.5 |
+|---|---|---|
+| 可上傳格式 | JPG、PNG、GIF | JPG、PNG、**WebP**、GIF（副檔名、MIME、檔案內容三道檢查） |
+| 最長邊 | 1440 px | **1200 px**（等比例、不裁切、不放大） |
+| ≤ 100 KB | 一律保留原檔（不看尺寸） | 最長邊 ≤ 1200 才保留原檔；超過 1200 仍要縮小 |
+| > 100 KB 的 JPG | JPG，品質 0.92～0.72 找 ≤ 150 KB | **WebP 品質 0.85**（一次編碼） |
+| > 100 KB 的 PNG | PNG 無損（可能比原檔還大） | **WebP 品質 0.85**，透明保留 |
+| Safari（不能產生 WebP） | 同上 | 不透明 → **JPG 品質 0.93**；有透明像素 → **PNG** |
+| 沒縮尺寸、轉完沒變小 | 保留原檔 | 保留原檔（不變） |
+| GIF、背景圖片、既有圖片 | — | **不變**（GIF 引擎、背景圖 JPG 1920 px 程式逐字相同；舊圖不批次轉換） |
+
+- 是否支援 WebP：以 `canvas.toBlob('image/webp')` **實際產生的 `blob.type`** 判斷；Safari 要求 WebP 時會改給 PNG，程式不會把它當成 WebP 存。
+- Safari 退回的 JPG 品質 0.93：用 8 張不透明實驗圖校準，是「整張與最差區塊清晰度（SSIM）都不低於 WebP 85」的最低品質；不是直接沿用 85。
+- 檔名與 Drive 的 `mimeType` 跟著實際輸出：`img_<時間>.webp`／`image/webp`、`.jpg`／`image/jpeg`、`.png`／`image/png`。上傳、顯示、垃圾桶的程式沒有改（本來就不限格式）。
+- 動態 WebP：≤ 100 KB 且 ≤ 1200 px 保留原檔（動畫保留）；其他只保留第一格，提示裡會說明。
+
+### 效果（實驗用的 10 張真實圖片，最長邊 ≤ 1200）
+
+原檔合計 8,538 KB → Chrome／Edge（WebP 85）646 KB（−92%）；Safari 退回模擬 1,673 KB（−80%）。V3.4.4 同一批圖片合計 8,119 KB（PNG 無損重存，3 張反而變大）。
+
 ## V3.4.4（使用說明中心標題與內容視覺層次）
 
 **安裝包**：`sns-bookmark-v3.4.4-complete.zip`（唯一資料夾 `sns-bookmark-v3.4.4`；app-version／package.json 3.4.4；build 2026-11-16 16:00）。
