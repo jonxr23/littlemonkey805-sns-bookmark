@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.4.6">
-<meta name="app-build" content="2026-11-16 19:35">
+<meta name="app-version" content="3.4.8">
+<meta name="app-build" content="2026-11-16 23:00">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1362,6 +1362,15 @@ window.snsSbwCss=function(d,m){var s='',U='var(--ui)';
  return s};
 try{localStorage.removeItem('sbwd');localStorage.removeItem('sbwm')}catch(e){}window.snsAuthBoot=1;/* V3.2.9：開頁時的自動恢復登入檢查結束前，先不顯示未登入提醒 *//* 清掉 V3.2.7 曾經存下的寬度，只動這兩個，介面大小、主題等設定不受影響 */</script>
 <style id="v343">/* V3.4.3：「↻ 重新偵測」只在命中查無結果快取時顯示 */#ure[hidden]{display:none!important}#ure{white-space:nowrap;flex:none;font-size:calc(12px*var(--ui))}</style>
+<style id="v347">/* V3.4.7：無圖片占位（相簿：平台名稱＋標題兩列置中，標題最多兩行；表格：正方形色塊＝主題色 50%＋卡片底色 50%）、電腦版收藏視窗拖曳 */
+.album .at .ap span{-webkit-line-clamp:2;line-clamp:2;text-overflow:ellipsis;max-width:100%}
+.album[data-cols="10"] .ap span{display:-webkit-box}
+.album .at .ap b{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+td .tnp{display:flex;align-items:center;justify-content:center;text-align:center;color:var(--fg);color:oklch(from color-mix(in srgb,var(--acc) 50%,var(--card)) calc(clamp(0,(l - .56)*1000,1)*(l - .56)*.6 + (1 - clamp(0,(l - .56)*1000,1))*(1 - (.56 - l)*.3)) calc(c*.5) h);font-size:calc(10px*var(--ui));font-weight:700;line-height:1.15;/* V3.4.8：中間加「無圖片」；文字色依色塊本身的深淺自動算出同色系的深色或淺色字（由主題色算出，不寫死色碼），任何主題、自訂顏色都清楚；舊瀏覽器退回主題文字色 */width:calc(48px*var(--ui));height:calc(48px*var(--ui));border-radius:calc(6px*var(--ui));background:color-mix(in srgb,var(--acc) 50%,var(--card))}
+@media(max-width:640px){.tbl td .tnp{width:calc(44px*var(--ui));height:calc(44px*var(--ui))}}
+@media(hover:hover) and (pointer:fine){#dlg .box>.mh{cursor:move}#dlg .box>.mh button,#dlg .box>.mh a,#dlg .box>.mh input,#dlg .box>.mh select{cursor:pointer}}
+#dlg.drg,#dlg.drg *{user-select:none;-webkit-user-select:none}
+</style>
 <style id="v346">/* V3.4.6：平台篩選選單（收合時顯示「平台篩選」；展開為自訂選單，底部一條提示）。顏色全部來自主題變數 */
 #sdp{pointer-events:none}
 #sdpm{position:fixed;z-index:40;display:flex;flex-direction:column;gap:1px;background:var(--card);color:var(--fg);border:1px solid var(--bd);border-radius:calc(10px*var(--ui));box-shadow:0 calc(10px*var(--ui)) calc(28px*var(--ui)) rgba(0,0,0,.22);padding:calc(4px*var(--ui));width:max-content;max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);overflow:auto;box-sizing:border-box}
@@ -1840,7 +1849,7 @@ function render(){isDue.c=0;posts.sort((a,b)=>{const pb=sortBy==='pub',ka=pb?a.p
 const dkey=p=>sortBy==='pub'?(p.pub||''):new Date(p.t||0).toLocaleDateString('sv-SE');
 let out='<p style="color:var(--mut)">還沒有符合的收藏。</p>',cls='cards';
 if(shown.length){
-if(view==='table'){cls='tbl';out=`<div style="overflow-x:auto"><table><tr><th></th><th>平台</th><th>備註</th><th>資料夾</th><th>標籤</th><th>收藏日</th><th>發布日</th><th></th></tr>${shown.map(p=>`<tr data-cid="${p.id}"${bmode&&bsel.has(p.id)?' class="sel"':''}><td>${hasImg(p)?thumbImg(p):''}</td><td>${esc(p.platform)}</td><td>${esc(p.note||p.url)}${p.url?'':BADP}</td><td>${(p.cats||[]).map(c=>esc(c.replace(/\//g,' → '))).join('<br>')}</td><td>${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</td><td>${new Date(p.t||0).toLocaleDateString('sv-SE')}</td><td>${esc(p.pub||'')}</td><td>${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">原文</a> `:''}<button data-r="${p.id}">${p.read?'未讀':'已讀'}</button> <button data-e="${p.id}">編輯</button></td></tr>`).join('')}</table></div>`}
+if(view==='table'){cls='tbl';out=`<div style="overflow-x:auto"><table><tr><th></th><th>平台</th><th>備註</th><th>資料夾</th><th>標籤</th><th>收藏日</th><th>發布日</th><th></th></tr>${shown.map(p=>`<tr data-cid="${p.id}"${bmode&&bsel.has(p.id)?' class="sel"':''}><td>${hasImg(p)?thumbImg(p):'<span class="tnp" role="img" aria-label="無圖片"><span aria-hidden="true">無圖片</span></span>'}</td><td>${esc(p.platform)}</td><td>${esc(p.note||p.url)}${p.url?'':BADP}</td><td>${(p.cats||[]).map(c=>esc(c.replace(/\//g,' → '))).join('<br>')}</td><td>${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</td><td>${new Date(p.t||0).toLocaleDateString('sv-SE')}</td><td>${esc(p.pub||'')}</td><td>${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">原文</a> `:''}<button data-r="${p.id}">${p.read?'未讀':'已讀'}</button> <button data-e="${p.id}">編輯</button></td></tr>`).join('')}</table></div>`}
 else if(view==='time'){cls='tl';const g={},ks=[];shown.forEach(p=>{const k=dkey(p)||'';if(!g[k]){g[k]=[];ks.push(k)}g[k].push(p)});out=ks.sort((x,y)=>!x?1:!y?-1:sortAsc?x.localeCompare(y):y.localeCompare(x)).map(k=>{const m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(k),dt=m?new Date(+m[1],m[2]-1,+m[3]):null;return `<section class="tdg" data-day="${esc(k)}"><h3 class="gh tdh"><span class="tdt">${!k?'未填日期':m?m[1]+' 年 '+(+m[2])+' 月 '+(+m[3])+' 日':esc(k)}</span>${dt&&!isNaN(dt)?'<span class="twd">週'+'日一二三四五六'[dt.getDay()]+'</span>':''}<small>${g[k].length} 篇</small></h3><div class="list">${g[k].map(cardH).join('')}</div></section>`}).join('')}
 else if(view==='board'){cls='board';const g={};shown.forEach(p=>{const cs=(p.cats||[]).length?p.cats.map(c=>c.split('/')[0]):['無資料夾'];[...new Set(cs)].forEach(k=>(g[k]=g[k]||[]).push(p))});out=Object.keys(g).sort().map(k=>`<div class="col"><h3 class="gh">📁 ${esc(k)} <small>${g[k].length}</small></h3>${g[k].map(cardH).join('')}</div>`).join('')}
 else if(view==='album'&&window.snsAlbum){cls='alw';out=snsAlbum.html(shown)}
@@ -2834,7 +2843,7 @@ window.snsAlbum=(()=>{const OPTS=[3,5,7,10],mq=matchMedia('(max-width:640px)'),k
  const sty=n=>`--alc:${n};--alg:${G[n][0]};--alr:${G[n][1]};--alf:${G[n][2]}`;
  const bar=(n,c)=>`<div class="albar" role="group" aria-label="相簿每列欄數"><span>每列</span>${OPTS.map(o=>`<button type="button" class="chip${o===n?' on':''}" data-alc="${o}" aria-pressed="${o===n}" title="每列 ${o} 張">${o}</button>`).join('')}<span>張</span><span class="aln">${c} 筆收藏・點圖片看明細</span></div>`;
  const tile=p=>{const n=imgN(p),on=bmode&&bsel.has(p.id),bgc=PC[p.platform]||PC[Object.keys(pren).find(k=>pren[k]===p.platform)]||'hsl('+thue(p.platform)+' 45% 40%)';
-  return `<div class="at${on?' sel':''}${bmode?'':' cl'}" data-cid="${p.id}" tabindex="0" role="button" aria-label="${esc((p.platform||'')+'：'+(p.note||p.url||''))}" title="${esc(p.note||p.url||'')}">${hasImg(p)?thumbImg(p,1):`<div class="ap" style="background:${bgc}"><b>${esc(p.platform||'')}</b><span>${esc(String(p.note||p.url||'').slice(0,40))}</span></div>`}${n>1?`<span class="an">▣ ${n}</span>`:''}${p.star?'<span class="as" aria-label="已加星號">★</span>':''}</div>`};
+  return `<div class="at${on?' sel':''}${bmode?'':' cl'}" data-cid="${p.id}" tabindex="0" role="button" aria-label="${esc((p.platform||'')+'：'+(p.note||p.url||''))}" title="${esc(p.note||p.url||'')}">${hasImg(p)?thumbImg(p,1):`<div class="ap" style="background:${bgc}"><b>${esc(p.platform||'')}</b><span>${esc(String(p.note||p.url||'').slice(0,160))}</span></div>`}${n>1?`<span class="an">▣ ${n}</span>`:''}${p.star?'<span class="as" aria-label="已加星號">★</span>':''}</div>`};
  const html=list=>{const n=cols();return bar(n,list.length)+`<div class="album" data-cols="${n}" style="${sty(n)}">${list.map(tile).join('')}</div>`};
  const set=n=>{if(!OPTS.includes(n))return;ls(key(),String(n));const g=$('#ls .album');if(g){g.dataset.cols=n;g.setAttribute('style',sty(n))}document.querySelectorAll('#ls [data-alc]').forEach(x=>{const on=+x.dataset.alc===n;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on)})};
  $('#ls').addEventListener('click',e=>{const b=e.target.closest('[data-alc]');if(b)set(+b.dataset.alc)});
@@ -2990,7 +2999,7 @@ const GG=window.snsGoogle;
   const st=$('#st');if(st)st.classList.toggle('lgdup',show&&st.textContent.trim()===ST)};
  if(GG){const su=GG.setUser.bind(GG);GG.setUser=u=>{su(u);upd()}}
  const st=$('#st');if(st)new MutationObserver(upd).observe(st,{childList:true,characterData:true,subtree:true});
- window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.6';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+ window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.8';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
@@ -4296,6 +4305,35 @@ window.snsVpv=(()=>{const V=window.snsVc,box=$('#vpv'),u=$('#u'),dlg=$('#dlg');i
  addEventListener('resize',()=>close());addEventListener('scroll',e=>{if(!M.contains(e.target))close()},true);
  window.snsSdp={open,close,menu:M};
 })();
+</script>
+<script>/* V3.4.7：【電腦版】收藏視窗可以按住標題列拖曳（暫時移動，看被擋住的背景）
+   ・只在有滑鼠、可懸停的裝置（和 V3.4.2 的「電腦版」判斷相同），而且只接受滑鼠左鍵；手機、平板照原本。
+   ・只有標題列能拖；標題列上的 ✕ 等按鈕、表單內容都不會觸發。
+   ・用 transform 移動 .box，不改遮罩與背景，原本表單捲動、背景捲動（V3.4.2）都照舊。
+   ・標題列一定留在畫面內；位置不存任何地方，關閉後清除，下次開啟回到原本位置。 */
+(()=>{const dlg=document.getElementById('dlg');if(!dlg)return;const box=dlg.querySelector('.box');if(!box)return;
+ const mq=window.matchMedia?matchMedia('(hover: hover) and (pointer: fine)'):null;
+ let dx=0,dy=0,drag=null;
+ const head=()=>box.querySelector(':scope>.mh')||box.firstElementChild;
+ const apply=()=>{box.style.transform=dx||dy?'translate('+dx+'px,'+dy+'px)':''};
+ /* 讓標題列整條留在畫面內（量實際位置再修正） */
+ const clamp=()=>{const h=head();if(!h)return;apply();const r=h.getBoundingClientRect(),vw=document.documentElement.clientWidth,vh=document.documentElement.clientHeight;
+  let fx=0,fy=0;if(r.width<=vw){if(r.left<0)fx=-r.left;else if(r.right>vw)fx=vw-r.right}else fx=-r.left;
+  if(r.top<0)fy=-r.top;else if(r.bottom>vh)fy=vh-r.bottom;
+  if(fx||fy){dx+=fx;dy+=fy;apply()}};
+ const reset=()=>{dx=dy=0;drag=null;dlg.classList.remove('drg');apply()};
+ dlg.addEventListener('pointerdown',e=>{
+  if(!mq||!mq.matches||e.pointerType!=='mouse'||e.button!==0||!dlg.classList.contains('o'))return;
+  const h=head();if(!h||!h.contains(e.target))return;
+  if(e.target.closest('button,a,input,select,textarea,label,[contenteditable="true"]'))return;
+  e.preventDefault();drag={x:e.clientX,y:e.clientY,dx,dy,id:e.pointerId};dlg.classList.add('drg');try{h.setPointerCapture(e.pointerId)}catch(_){}});
+ dlg.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;e.preventDefault();dx=drag.dx+e.clientX-drag.x;dy=drag.dy+e.clientY-drag.y;clamp()});
+ const end=e=>{if(!drag||(e&&e.pointerId!==drag.id))return;drag=null;dlg.classList.remove('drg');clamp()};
+ dlg.addEventListener('pointerup',end);dlg.addEventListener('pointercancel',end);dlg.addEventListener('lostpointercapture',end);
+ /* 開啟或關閉都清掉暫時位置 */
+ let was=dlg.classList.contains('o');new MutationObserver(()=>{const o=dlg.classList.contains('o');if(o!==was){was=o;reset()}}).observe(dlg,{attributes:true,attributeFilter:['class']});
+ addEventListener('resize',()=>{if(dx||dy)clamp()});dlg.addEventListener('scroll',()=>{if(dx||dy)clamp()},{passive:true});
+ window.snsDlgDrag={pos:()=>({dx,dy}),reset}})();
 </script>
 </body>
 </html>

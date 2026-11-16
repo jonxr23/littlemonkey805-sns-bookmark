@@ -1,5 +1,49 @@
 # 更新紀錄
 
+## V3.4.8（表格無圖片色塊加「無圖片」）
+
+**安裝包**：`sns-bookmark-v3.4.8-complete.zip`（唯一資料夾 `sns-bookmark-v3.4.8`；app-version／package.json 3.4.8；build 2026-11-16 23:00）。
+**基準**：`sns-bookmark-v3.4.7-complete.zip`（build 2026-11-16 22:50），保留不動。**沒有部署**，沒有動 GitHub、Vercel、Production。
+
+| 檔案 | 變更 |
+|---|---|
+| `index.html` | 表格無圖片色塊 `.tnp` 中間加「無圖片」（`role="img"`、`aria-label="無圖片"`）；CSS 讓文字置中、10 px 粗體；版本 3.4.8 |
+| `package.json` | version 3.4.8 |
+| 說明文件 | 版本與說明；`TEST_REPORT.md`（V3.4.7 的改名為 `TEST_REPORT-V3.4.7.md`） |
+
+- 文字顏色：由色塊本身的顏色算出（CSS 相對色彩 `oklch(from …)`）——色塊偏淺就用同色系深字，偏深就用同色系淺字；不寫死色碼，7 款主題與自訂顏色對比都 ≥ 4.5。不支援這個語法的舊瀏覽器（約 2023 年以前的版本）改用主題文字色。
+- 色塊大小、顏色和 V3.4.7 相同；有圖片的收藏不變。
+
+## V3.4.7（無圖片占位＋電腦版收藏視窗拖曳）
+
+**安裝包**：`sns-bookmark-v3.4.7-complete.zip`（唯一資料夾 `sns-bookmark-v3.4.7`；app-version／package.json 3.4.7；build 2026-11-16 22:50）。
+**基準**：小克交付的 `sns-bookmark-v3.4.6-complete.zip`（app-version 3.4.6、build 2026-11-16 19:35）；V3.4.6 原始安裝包保留不動。
+**沒有部署**：沒有連接或修改 GitHub、Vercel、Production；沒有 Commit、Push、Deploy；沒有改環境變數或憑證。
+
+### 修改檔案清單
+
+| 檔案 | 變更 |
+|---|---|
+| `index.html` | 相簿無圖片格子的標題取用長度（40 → 160 字，交給兩行省略處理）；表格無圖片時輸出 `<span class="tnp">`；新增 `<style id="v347">` 與收藏視窗拖曳程式；版本 3.4.7 |
+| `package.json` | version 3.4.7 |
+| `README.md`、`CHANGELOG.md`、`USER_GUIDE.md`、`DEPLOY.md` | 版本與說明 |
+| `TEST_REPORT.md` | V3.4.7 測試報告（V3.4.6 的改名為 `TEST_REPORT-V3.4.6.md`） |
+| `api/*`、`admin-setup/`、`vercel.json`、`manifest.webmanifest`、`assets/` | **沒有改** |
+
+### 無圖片占位
+
+- 相簿：第一列平台名稱、第二列標題（備註；沒有備註時用網址，和原本相同），整組水平＋垂直置中；標題最多 2 行並加省略號（原本 3 行、且先截到 40 字）；每列 10 張原本隱藏標題，現在也顯示；平台名稱太長時單行省略。格子大小、比例、平台底色都沒變。
+- 表格：無圖片時顯示正方形色塊，大小與圓角和表格縮圖相同（電腦 48 px、手機 44 px），顏色 `color-mix(in srgb, var(--acc) 50%, var(--card))`，跟著主題與自訂顏色。
+- 有圖片的收藏：相簿、表格的 HTML 和 V3.4.6 完全相同。
+
+### 電腦版收藏視窗拖曳
+
+- 「有滑鼠、可懸停」的裝置（和 V3.4.2 的電腦版判斷相同）才啟用，而且只接受滑鼠左鍵；手機、平板照原本。
+- 只有標題列能拖（游標顯示「移動」）；標題列上的 ✕、表單內容、遮罩都不觸發。
+- 用 `transform` 移動視窗本身，遮罩與背景不動；V3.4.2 的表單捲動／遮罩捲動背景照舊；表單捲到下方時，固定在上方的標題列仍可拖曳。
+- 標題列整條一定留在畫面內（瀏覽器視窗縮小時自動拉回）。
+- 位置不存任何地方；關閉（✕、Esc、儲存）或重新開啟都回到原本位置。從卡片「編輯」打開的是同一個收藏視窗，也能拖。
+
 ## V3.4.6（平台篩選名稱＋選單底部提示）
 
 **安裝包**：`sns-bookmark-v3.4.6-complete.zip`（唯一資料夾 `sns-bookmark-v3.4.6`；app-version／package.json 3.4.6；build 2026-11-16 19:35）。
