@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.4.11">
-<meta name="app-build" content="2026-11-17 15:50">
+<meta name="app-version" content="3.4.12">
+<meta name="app-build" content="2026-11-18 02:35">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -754,7 +754,7 @@ h1.brand #ann svg path{stroke-width:.96}
 /* V3.4.11：霧灰藍（mist）——亮度介於淺色與深色主題之間；色碼依猴猴指定的色票（取自泰百宇宙資料庫）。
    背景 #C9CDD6、側欄 #BBC0CB、卡片 #D9DCE3、文字 #262C38、次要文字 #4E5666、線條 #AEB4C1、主色 #8C9EC2、副色 #C7B285（選取中的卡片外框）、
    主色按鈕上的文字 #18233A、強調色（標題、選中狀態）#34476E、側欄區塊底色 #CED2DA（標籤底色；各 #標籤 仍保留自己的顏色）、刪除紅 #9A2F12 */
-:root[data-theme=mist]{--bg:#C9CDD6;--fg:#262C38;--card:#D9DCE3;--mut:#4E5666;--acc:#8C9EC2;--on:#18233A;--bd:#AEB4C1;--r:calc(12px*var(--ui));--lnk:#34476E;--err:#9A2F12;--acc-ink:#34476E;--sel:#C7B285;--sel-bg:#D4CFC7;--focus:#34476E;--side:#BBC0CB;--blk:#CED2DA;color-scheme:light}
+:root[data-theme=mist]{--bg:#C9CDD6;--fg:#262C38;--card:#D9DCE3;--mut:#4E5666;--acc:#8C9EC2;--on:#18233A;--bd:#AEB4C1;--r:calc(12px*var(--ui));--lnk:#34476E;--err:#9A2F12;--acc-ink:#34476E;--sel:#4F6894;--sel-bg:#B9C4DB;--focus:#34476E;--side:#BBC0CB;--blk:#CED2DA;color-scheme:light}
 /* V2.10.3 的「簡約主題浮鈕白字」只適用舊的黑白簡約；薰衣紫改回依浮鈕底色自動選字色 */
 :root[data-theme=clean] #qfab .qf{color:var(--fab2-fg,var(--fg))}
 #tbhold,#tbhold[hidden]{display:none!important}
@@ -1260,6 +1260,10 @@ body.sbrzing,body.sbrzing *{cursor:col-resize!important;user-select:none!importa
 :root[data-theme=mist] #sb{background:var(--side);--mut:color-mix(in srgb,#4E5666 80%,#262C38)}
 @media(min-width:901px){:root[data-theme=mist] #sb{border-radius:var(--r);box-shadow:0 0 0 calc(8px*var(--ui)) var(--side)}}
 :root[data-theme=mist] #sb #chips .sbq .chip:not(.on),:root[data-theme=mist] #sb #chips .sbn .chip:not(.on){background:var(--blk)}
+/* V3.4.12：霧灰藍的批次選取色改成深霧藍。選取底色 #B9C4DB 上，次要文字 #4E5666 對比只有 4.3，所以只在選取中的卡片／表格列裡加深 20%（和側欄同樣做法）；
+   用選取色當底的小標示（相簿右下角 ✓、公告 NEW）改用淺色字，否則深字在 #4F6894 上看不清楚 */
+:root[data-theme=mist] #ls .card.sel,:root[data-theme=mist] #ls tr.sel{--mut:color-mix(in srgb,#4E5666 80%,#262C38)}
+:root[data-theme=mist] .album .at.sel::after,:root[data-theme=mist] #annc .anew{color:color-mix(in srgb,var(--card) 60%,#FFFFFF)}
 </style>
 <style id="v332">
 /* V3.3.2：標籤篩選 AND／OR（標題列左側：標題＋AND／OR 小切換器＋ⓘ；右側維持「標籤／搜尋」＋✕） */
@@ -2874,8 +2878,8 @@ $('#catslot').append($('#rcf'),$('#csq').parentNode,$('#cs'),$('#rn2'));
  const LAV={'--acc-ink':'#7D619C','--sel':'#9A7FB8','--sel-bg':'#EDE4F4','--focus':'#9A7FB8','--hover':'#F3EDF8','--acc-soft':'#E3D8EE','--acc-soft-fg':'#3B2A52'},MINT={'--acc-ink':'#3B8670','--sel':'#7FC7B2','--sel-bg':'#E6F5EF','--focus':'#5FAF98','--hover':'#EEF8F4','--acc-soft':'#D6ECE3','--acc-soft-fg':'#21403A'};
  /* V3.3.3：晴空藍、奶糖黃的狀態色直接用指定色票（選取＝#CFE2F8／#F7E7B9、滑過＝次要區塊、焦點＝主要按鈕色） */
  const SKY={'--acc-ink':'#344764','--sel':'#6CABED','--sel-bg':'#CFE2F8','--focus':'#6CABED','--hover':'#EBF3FC','--acc-soft':'#DCEAFA','--acc-soft-fg':'#344764'},HONEY={'--acc-ink':'#6B4F27','--sel':'#D8AA4E','--sel-bg':'#F7E7B9','--focus':'#D8AA4E','--hover':'#FFF4D6','--acc-soft':'#F7E7B9','--acc-soft-fg':'#6B4F27'};
- /* V3.4.11：霧灰藍——強調色 #34476E（標題、文字用的主色、焦點）；選取中的卡片外框用副色 #C7B285，選取底色＝副色 30%＋卡片色 */
- const MIST={'--acc-ink':'#34476E','--sel':'#C7B285','--sel-bg':'#D4CFC7','--focus':'#34476E','--acc-soft-fg':'#34476E'};
+ /* V3.4.11：霧灰藍——強調色 #34476E（標題、文字用的主色、焦點）。V3.4.12：批次選取改為框線深霧藍 #4F6894、底色淺霧藍 #B9C4DB（和泰百宇宙資料庫的霧灰藍一致；原本是副色 #C7B285／#D4CFC7） */
+ const MIST={'--acc-ink':'#34476E','--sel':'#4F6894','--sel-bg':'#B9C4DB','--focus':'#34476E','--acc-soft-fg':'#34476E'};
  for(const k in TH)Object.assign(TH[k],derive(TH[k],k==='cute'?PEACH:k==='clean'?LAV:k==='mint'?MINT:k==='sky'?SKY:k==='honey'?HONEY:k==='mist'?MIST:null));
  const TOK=Object.keys(TH.warm).filter(k=>!['--bg','--fg','--card','--mut','--acc','--on','--bd','--r','--lnk','--err'].includes(k));
  /* 實際背景類型 → Logo 素材（淺色／深色／自訂上傳背景） */
@@ -3049,7 +3053,7 @@ const GG=window.snsGoogle;
   const st=$('#st');if(st)st.classList.toggle('lgdup',show&&st.textContent.trim()===ST)};
  if(GG){const su=GG.setUser.bind(GG);GG.setUser=u=>{su(u);upd()}}
  const st=$('#st');if(st)new MutationObserver(upd).observe(st,{childList:true,characterData:true,subtree:true});
- window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.11';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+ window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.12';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
