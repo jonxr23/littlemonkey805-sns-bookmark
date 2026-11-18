@@ -1,4 +1,4 @@
-# SNS文章收藏夾 V3.4.16 使用者操作說明
+# SNS文章收藏夾 V3.4.17 使用者操作說明
 
 **SNS文章收藏夾 / SNS Bookmark / by littlemonkey805**
 
