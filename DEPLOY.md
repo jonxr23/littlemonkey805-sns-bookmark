@@ -1,4 +1,4 @@
-# SNS文章收藏夾 V3.4.13 部署指南（**等你驗收安裝包後再安排正式部署**）
+# SNS文章收藏夾 V3.4.14 部署指南（**等你驗收安裝包後再安排正式部署**）
 
 > **部署紀錄**：小克只完成開發、測試與安裝包。**沒有** commit、**沒有** push、**沒有**開分支、**沒有** Preview、**沒有**觸發 Vercel。沒有修改環境變數、Google Console、Service Account、管理試算表。
 > **正式環境版本由你確認**：小克看不到 GitHub／Vercel，不知道目前 `main` 與 Production 是哪一版、哪一個 commit，所以本文件**不寫死**任何正式版本號或 commit。
@@ -8,7 +8,7 @@
 | 項目 | 內容 |
 |---|---|
 | GitHub Repository | `jonxr23/littlemonkey805-sns-bookmark` |
-| 本次安裝包 | `sns-bookmark-v3.4.13-complete.zip`（解壓後唯一資料夾 `sns-bookmark-v3.4.13`；app-version 3.4.13、build 2026-11-18 13:45） |
+| 本次安裝包 | `sns-bookmark-v3.4.14-complete.zip`（解壓後唯一資料夾 `sns-bookmark-v3.4.14`；app-version 3.4.14、build 2026-11-18 14:15） |
 | 開發基準 | `sns-bookmark-v3.4.12-complete.zip`（V3.4.12，build 2026-11-18 02:35，保留不動）。**V3.4.13 已包含 V3.4.12 以前的全部修改**；如果 V3.4.1～V3.4.12 還沒上線，可以直接上傳 V3.4.13（V3.4.1 的 Network 實測清單仍然適用，但 Facebook 那幾項改成「只有分享短網址會呼叫 1 次」） |
 | 目前 GitHub `main`／Vercel Production | **請上傳前自己確認**（Vercel → Deployments 標示 Production 的那一筆；GitHub `main` 最新 commit），記下來作為回復點 |
 | 正式網址 | https://littlemonkey805-sns-bookmark.vercel.app/（不變） |
@@ -28,11 +28,11 @@
 ## 三、上傳步驟（驗收後；GitHub main → Vercel Production）
 
 1. **先確認並記下目前正式版**：Vercel → Deployments 標示 **Production** 的那一筆（時間／網址／commit），GitHub `main` 最新 commit 也記下；目前的專案檔案先備份一份。
-2. 解壓縮 `sns-bookmark-v3.4.13-complete.zip`，把 `sns-bookmark-v3.4.13` 資料夾**裡面**所有檔案（含隱藏檔 `.vercelignore`）複製到 Git 專案根目錄覆蓋。
+2. 解壓縮 `sns-bookmark-v3.4.14-complete.zip`，把 `sns-bookmark-v3.4.14` 資料夾**裡面**所有檔案（含隱藏檔 `.vercelignore`）複製到 Git 專案根目錄覆蓋。
    - 網站檔案（和 V3.4.12 比）：`index.html`、`package.json`。（如果 V3.4.3 以前的版本還沒上線，另外還有 `api/resolve.js`、`api/_lib/info.js`）
    - 說明文件：`CHANGELOG.md`、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V3.4.12.md`（舊報告改名）。
-3. commit 到 `main`（建議訊息：`Release SNS Bookmark V3.4.13`），Vercel 會自動部署。
-4. 正式網址側邊欄最底部應顯示 `版本：v3.4.13 / 更新：2026-11-18 13:45`；公告視窗最底部顯示「SNS文章收藏夾 V3.4.13」。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
+3. commit 到 `main`（建議訊息：`Release SNS Bookmark V3.4.14`），Vercel 會自動部署。
+4. 正式網址側邊欄最底部應顯示 `版本：v3.4.14 / 更新：2026-11-18 14:15`；公告視窗最底部顯示「SNS文章收藏夾 V3.4.14」。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
 5. 上線後照 `NETWORK_CHECKLIST-V3.4.1.md` 在正式網站 Network 面板實測 API 呼叫次數；實機驗收清單見 `TEST_REPORT.md` 第九節。上線後可以打開瀏覽器開發者工具的 Network，確認影片封面與外部圖片都是向 i.ytimg.com、www.instagram.com、pbs.twimg.com 或原網站載入，沒有任何圖片從 `littlemonkey805-sns-bookmark.vercel.app` 回來。
 
 ## 四、回復
@@ -42,7 +42,7 @@
 
 ## 五、更新時間的來源（沒有改）
 
-畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-18 13:45）。
+畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-18 14:15）。
 
 ---
 
