@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.4.14">
-<meta name="app-build" content="2026-11-18 14:15">
+<meta name="app-version" content="3.4.15">
+<meta name="app-build" content="2026-11-18 14:23">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1376,7 +1376,7 @@ window.snsSbwCss=function(d,m){var s='',U='var(--ui)';
 try{localStorage.removeItem('sbwd');localStorage.removeItem('sbwm')}catch(e){}window.snsAuthBoot=1;/* V3.2.9：開頁時的自動恢復登入檢查結束前，先不顯示未登入提醒 *//* 清掉 V3.2.7 曾經存下的寬度，只動這兩個，介面大小、主題等設定不受影響 */</script>
 <style id="v343">/* V3.4.3：「↻ 重新偵測」只在命中查無結果快取時顯示 */#ure[hidden]{display:none!important}#ure{white-space:nowrap;flex:none;font-size:calc(12px*var(--ui))}</style>
 <style id="v3413">/* V3.4.13：快速編輯「編輯標題與備註」；V3.4.14：標題＋網址放進主題色標題列（和公告等視窗相同），標題列與「標題」欄位之間加大間距 */
-#nd .box{display:flex;flex-direction:column;gap:calc(6px*var(--ui));width:min(560px,100%)}#nd .ndh{font-weight:700;font-size:calc(16px*var(--ui))}#nd .box>.mh.ndhd{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:calc(2px*var(--ui));position:static;cursor:auto}#nd .ndu{margin:0;font-size:calc(12.5px*var(--ui));overflow-wrap:anywhere;word-break:break-all}#nd label{font-weight:600;margin-top:calc(4px*var(--ui))}#nd .mh+label{margin-top:calc(10px*var(--ui))}#nd .row{margin-top:calc(6px*var(--ui))}
+#nd .box{display:flex;flex-direction:column;gap:calc(12px*var(--ui));width:min(560px,100%)}#nd .ndh{font-weight:700;font-size:calc(16px*var(--ui))}#nd .box>.mh.ndhd{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:calc(2px*var(--ui));position:static;cursor:auto}#nd .ndu{margin:0;font-size:calc(12.5px*var(--ui));overflow-wrap:anywhere;word-break:break-all}#nd label{font-weight:600;margin-top:0}#nd .mh+label{margin-top:calc(-2px*var(--ui))}/* V3.4.15：視窗內所有間距統一 12 px（標題列→標題、欄位名稱→輸入框、標題欄→備註、備註欄→按鈕） */#nd .row{margin-top:0}
 /* V3.4.14：預設大小依猴猴的圖一（電腦）、圖二（手機）：備註／貼文內容欄電腦約 170 px、手機約 140 px 高，四行貼文不用捲動就看得完；寬度不變 */
 #nd #ntx{min-height:calc(170px*var(--ui))}@media(max-width:640px){#nd #ntx{min-height:calc(140px*var(--ui))}}
 </style>
@@ -3059,7 +3059,7 @@ const GG=window.snsGoogle;
   const st=$('#st');if(st)st.classList.toggle('lgdup',show&&st.textContent.trim()===ST)};
  if(GG){const su=GG.setUser.bind(GG);GG.setUser=u=>{su(u);upd()}}
  const st=$('#st');if(st)new MutationObserver(upd).observe(st,{childList:true,characterData:true,subtree:true});
- window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.14';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+ window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.15';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
