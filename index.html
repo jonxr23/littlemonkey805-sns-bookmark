@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.4.19">
-<meta name="app-build" content="2026-11-20 14:45">
+<meta name="app-version" content="3.4.20">
+<meta name="app-build" content="2026-11-20 16:55">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1451,6 +1451,18 @@ td .tnp{display:flex;align-items:center;justify-content:center;text-align:center
 #cp>span{margin-top:calc(-6px*var(--ui));margin-bottom:calc(2px*var(--ui))}
 @media(max-width:900px){#cp>span{margin-bottom:calc(4px*var(--ui))}}
 </style>
+<style id="v3420">
+/* V3.4.20：表單圖片拖曳排序 */
+#sh .sht{cursor:grab;touch-action:pan-x pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#sh .sht img,#sh .sht a{-webkit-user-drag:none;-webkit-touch-callout:none}
+#sh .sht b{cursor:pointer}
+#sh.shsort .sht{transition:transform .12s}
+#sh .sht.shdrag{opacity:.35;outline:calc(2px*var(--ui)) dashed var(--acc);outline-offset:calc(2px*var(--ui));border-radius:calc(8px*var(--ui))}
+.shghost{opacity:.9;box-shadow:0 8px 20px rgba(0,0,0,.35);border-radius:calc(8px*var(--ui));transform:scale(1.06);cursor:grabbing}
+.shghost img{width:100%;height:100%;object-fit:cover;border-radius:calc(8px*var(--ui))}
+.shghost b{display:none}
+.shghost i{position:absolute;left:calc(4px*var(--ui));bottom:calc(4px*var(--ui));font-style:normal;font-size:calc(11px*var(--ui));background:rgba(0,0,0,.55);color:#fff;border-radius:calc(6px*var(--ui));padding:1px calc(5px*var(--ui))}
+</style>
 </head>
 <body>
 <div id="iqw" style="display:none;position:sticky;top:0;z-index:29;background:#ffe9c7;color:#8a4b00;font-weight:600;font-size:calc(13px*var(--ui));text-align:center;padding:calc(6px*var(--ui)) calc(12px*var(--ui));border-bottom:1px solid #e6c27a"></div>
@@ -1950,13 +1962,33 @@ document.addEventListener('click',e=>{
 async function paste(manual){const m=$('#pm');try{const t=(await Promise.race([navigator.clipboard.readText(),new Promise((_,r)=>setTimeout(r,2500))])).trim();if(/^https?:\/\//.test(snsExt(t))){$('#u').value=t;$('#u').oninput();if(manual)m.textContent=''}else if(manual){m.textContent='剪貼簿裡沒有連結，請先複製貼文連結';$('#u').focus()}}catch(e){if(manual){m.textContent='這裡讀不到剪貼簿：請點一下連結欄，手機長按選「貼上」，電腦按 Ctrl+V';$('#u').focus()}}}
 $('#ps').onclick=paste;
 $('#u').oninput=()=>{const v=$('#u').value;$('#pl').textContent=v?'→ '+plat(v):'';const i=v?inferDate(v):'';if(i&&(!$('#pd').value||pdAuto)){$('#pd').value=i;pdAuto=true;$('#pn').textContent='（自動推算，可修改）'}else if(!i&&pdAuto){$('#pd').value='';pdAuto=false;$('#pn').textContent=''}dupChk()};$('#pd').oninput=()=>{pdAuto=false;$('#pn').textContent='';window.snsPnChk&&snsPnChk()};
-function drawShots(){window.gHyd&&setTimeout(gHyd,0);$('#sh').innerHTML=shots.map((id,i)=>`<div><a data-gid="${id}" href="#" target="_blank" rel="noopener"><img data-gid="${id}" alt=""></a><b data-x="${i}">×</b></div>`).join('')+xims.map((u,i)=>`<div class="xsh"><a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${XIMG.img(u)}</a><b data-xx="${i}" title="移除這張外部圖片（只移除引用，不影響 Google 雲端硬碟）">×</b><i>🔗 外部</i></div>`).join('')}
-$('#sh').onclick=e=>{const x=e.target.dataset.x,xx=e.target.dataset.xx;if(x!==undefined){shots.splice(+x,1);drawShots()}else if(xx!==undefined){xims.splice(+xx,1);drawShots()}};
+/* V3.4.20：上傳／剪貼簿的圖片（shots）和外部圖片網址（xims）放在同一個順序 ford（'g:雲端ID'／'x:網址'），可以拖曳交錯排序 */
+let ford=[];
+function drawShots(){window.gHyd&&setTimeout(gHyd,0);ford=ordTok(shots,xims,ford);$('#sh').innerHTML=ford.map((t,k)=>{const v=t.slice(2);return t.charAt(0)==='g'?`<div class="sht" data-sk="${k}" title="按住拖曳可以調整順序"><a data-gid="${esc(v)}" href="#" target="_blank" rel="noopener" draggable="false"><img data-gid="${esc(v)}" alt="" draggable="false"></a><b data-rm="${k}">×</b></div>`:`<div class="xsh sht" data-sk="${k}" title="按住拖曳可以調整順序"><a href="${esc(v)}" target="_blank" rel="noopener noreferrer" draggable="false">${XIMG.img(v)}</a><b data-rm="${k}" title="移除這張外部圖片（只移除引用，不影響 Google 雲端硬碟）">×</b><i>🔗 外部</i></div>`}).join('');$('#sh').querySelectorAll('img').forEach(i=>i.setAttribute('draggable','false'))}
+$('#sh').onclick=e=>{const r=e.target.dataset.rm;if(r===undefined)return;const t=ford[+r];if(t===undefined)return;ford.splice(+r,1);const v=t.slice(2),a=t.charAt(0)==='g'?shots:xims,i=a.indexOf(v);if(i>=0)a.splice(i,1);drawShots()};
+/* V3.4.20：拖曳排序——電腦用滑鼠按住拖（移動超過 5 px 才開始，單純點一下照舊開圖片）；手機用手指按住約 0.3 秒再拖（直接滑動＝捲動頁面）。
+   拖曳中原位置變淡、手指／滑鼠下有一張跟著走的縮圖，其他縮圖即時讓位；放開後才更新順序。× 移除按鈕不會觸發拖曳。只改順序，不重新上傳。 */
+(()=>{const box=$('#sh');let st=null,sup=0;
+ const its=()=>[...box.querySelectorAll('.sht')];
+ const begin=()=>{const el=st.el,r=el.getBoundingClientRect(),g=el.cloneNode(true);g.removeAttribute('data-sk');g.classList.add('shghost');g.style.cssText='position:fixed;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;margin:0;pointer-events:none;z-index:2147483000';document.body.appendChild(g);st.g=g;st.dx=st.x-r.left;st.dy=st.y-r.top;st.on=true;el.classList.add('shdrag');box.classList.add('shsort');try{navigator.vibrate&&navigator.vibrate(10)}catch(e){}};
+ const move=(x,y)=>{st.g.style.left=(x-st.dx)+'px';st.g.style.top=(y-st.dy)+'px';const h=document.elementFromPoint(x,y),t=h&&h.closest&&h.closest('#sh .sht');if(!t||t===st.el)return;const r=t.getBoundingClientRect(),after=x>r.left+r.width/2;if(after){if(t.nextSibling!==st.el)box.insertBefore(st.el,t.nextSibling)}else if(t.previousSibling!==st.el)box.insertBefore(st.el,t)};
+ const finish=ok=>{if(!st)return;clearTimeout(st.tm);if(st.on){st.g.remove();st.el.classList.remove('shdrag');box.classList.remove('shsort');if(ok){const o=its().map(e=>ford[+e.dataset.sk]);if(o.every(x=>x!==undefined))ford=o}drawShots();if(st.m){sup=1;setTimeout(()=>{sup=0},0)}/* 只吃掉滑鼠拖曳放開後緊接的那一下 click（同一個事件流程內）；手機放開時已經 preventDefault */}st=null};
+ box.addEventListener('dragstart',e=>e.preventDefault());
+ box.addEventListener('click',e=>{if(sup){e.preventDefault();e.stopPropagation();sup=0}},true);
+ box.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'||e.button!==0)return;const el=e.target.closest('.sht');if(!el||e.target.closest('[data-rm]'))return;st={el,x:e.clientX,y:e.clientY,m:1};e.preventDefault()});
+ document.addEventListener('pointermove',e=>{if(!st||!st.m)return;if(!st.on){if(Math.hypot(e.clientX-st.x,e.clientY-st.y)<5)return;begin()}move(e.clientX,e.clientY)});
+ document.addEventListener('pointerup',e=>{if(st&&st.m)finish(true)});
+ box.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;const el=e.target.closest('.sht');if(!el||e.target.closest('[data-rm]'))return;const t=e.touches[0];st={el,x:t.clientX,y:t.clientY};st.tm=setTimeout(()=>{if(st&&!st.on)begin()},300)},{passive:true});
+ box.addEventListener('touchmove',e=>{if(!st||st.m)return;const t=e.touches[0];if(!st.on){if(Math.hypot(t.clientX-st.x,t.clientY-st.y)>10){clearTimeout(st.tm);st=null}return}e.preventDefault();move(t.clientX,t.clientY)},{passive:false});
+ box.addEventListener('touchend',e=>{if(!st||st.m)return;if(st.on){e.preventDefault();finish(true)}else{clearTimeout(st.tm);st=null}});
+ box.addEventListener('touchcancel',()=>{if(st&&!st.m)finish(false)});
+ box.addEventListener('contextmenu',e=>{if(e.target.closest('.sht'))e.preventDefault()});
+})();
 let origShots=[],sessUp=[];
 function openDlg(id){
  cur=id?posts.find(p=>p.id===id):null;const p=cur||{};
  $('#u').value=(p.share&&snsExt(p.share)===p.url)?p.share:(p.url||'');$('#n').value=p.note||'';$('#c').value=(p.cats||[]).join(', ');tgs=[...(p.tags||[])];$('#gi').value='';pkReset();drawTg();rc();$('#rn2').style.display='none';armed=false;$('#del').textContent='刪除';$('#t').value=p.text||'';$('#d').value=p.due||'';$('#pd').value=p.pub||'';pdAuto=false;noteAuto=false;$('#nr').checked=!!p.noRev;$('#ac').value=p.acct||'';acAuto=false;$('#an').textContent='';$('#pn').textContent='';
- window.gImgs&&sessUp.length&&gImgs.abandon(sessUp.splice(0));origShots=[...(p.shots||[])];sessUp=[];shots=[...(p.shots||[])];xims=xOf(p);xuOpen(false);drawShots();$('#dh').style.display=cur?'':'none';$('#msg').textContent=col?'':($('#st').textContent||'還在連線儲存空間，請稍候');$('#del').style.display=cur?'':'none';$('#shw').style.display='';$('#ferr').textContent='';$('#sm').textContent='';
+ window.gImgs&&sessUp.length&&gImgs.abandon(sessUp.splice(0));origShots=[...(p.shots||[])];sessUp=[];shots=[...(p.shots||[])];xims=xOf(p);ford=ordTok(shots,xims,p.iord);xuOpen(false);drawShots();$('#dh').style.display=cur?'':'none';$('#msg').textContent=col?'':($('#st').textContent||'還在連線儲存空間，請稍候');$('#del').style.display=cur?'':'none';$('#shw').style.display='';$('#ferr').textContent='';$('#sm').textContent='';
  $('#u').oninput();$('#dlg').classList.add('o');$('#dlg').scrollTop=0;requestAnimationFrame(()=>{$('#dlg').scrollTop=0});if(!cur)paste();
 }
 $('#add').onclick=()=>openDlg();
@@ -2010,7 +2042,7 @@ $('#sv').onclick=async()=>{
  if(window.snsRes){snsRes.unsure(url);if(snsRes.pending(url)){$('#msg').textContent='正在檢查這個網址是否收藏過…';await snsRes.wait(url);$('#msg').textContent='';if($('#u').value.trim()!==url)return;dupChk()}}
  if(dupFind().length){dupChk();const pr=snsAsk({title:'網址重複',main:'⚠️ 這個網址已經收藏過囉；確定要再存一筆嗎？',cancel:'取消',ok:'確定'});const am=document.querySelector('#askc .askm');if(am)am.classList.add('dupw');if(!(await pr))return}
  const id=cur?cur.id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
- const o={...(cur&&window.gStore&&gStore()?(gStore().get(cur.id)||{}):{}),url,platform:plat(url),note:$('#n').value.trim(),text:$('#t').value.trim(),cats:list($('#c').value).map(c=>c.replace(/\s*(→|＞|>|\/)\s*/g,'/')),tags:(addTg(),[...tgs]),due:$('#d').value,pub:$('#pd').value,noRev:$('#nr').checked,acct:$('#ac').value.trim(),shots,read:cur?!!cur.read:false,t:cur?cur.t:Date.now(),...gPatch(dgSel)};if(xims.length)o.ximgs=[...xims];else delete o.ximgs;
+ const o={...(cur&&window.gStore&&gStore()?(gStore().get(cur.id)||{}):{}),url,platform:plat(url),note:$('#n').value.trim(),text:$('#t').value.trim(),cats:list($('#c').value).map(c=>c.replace(/\s*(→|＞|>|\/)\s*/g,'/')),tags:(addTg(),[...tgs]),due:$('#d').value,pub:$('#pd').value,noRev:$('#nr').checked,acct:$('#ac').value.trim(),shots,read:cur?!!cur.read:false,t:cur?cur.t:Date.now(),...gPatch(dgSel)};/* V3.4.20：依排序結果存回 shots、ximgs 各自的順序；兩種來源有交錯時才另外存 iord（全部順序）。沒有 iord 的舊收藏＝上傳圖片在前、外部網址在後 */{ford=ordTok(shots,xims,ford);o.shots=ford.filter(t=>t.charAt(0)==='g').map(t=>t.slice(2));const xs=ford.filter(t=>t.charAt(0)==='x').map(t=>t.slice(2));shots=o.shots;xims=xs;if(JSON.stringify(ford)!==JSON.stringify(ordTok(o.shots,xs)))o.iord=[...ford];else delete o.iord}if(xims.length)o.ximgs=[...xims];else delete o.ximgs;
  /* V3.1.0：貼上的是整段分享文字時，原文完整保留在 share；url 是從中擷取出的網址（卡片「原文」開這個網址） */{const raw=$('#u').snsRaw().trim();if(raw&&snsNormU(raw)!==url)o.share=raw;else delete o.share}
  /* V3.1.0：解析成功時記下內容識別（ck），換裝置也能比對；網址沒變又沒解析時保留原本的 */{const R=window.snsRes,v=R&&R.need(url)&&R.get(url);if(v&&v.st==='ok')o.ck=[...R.keys(url)];else if(!(cur&&cur.url===url))delete o.ck}
  /* V3.2.0：記下哪些內容是系統自動帶入的（隱藏欄位 auto），重新開啟編輯時才分得出自動與手動 */{const A=window.snsInfo&&snsInfo.state();if(A&&(A.acct||A.text||A.pub)){o.auto={};if(A.acct)o.auto.acct=A.acct;if(A.text)o.auto.text=A.text;/* V3.2.1 */if(A.pub&&o.pub===A.pub)o.auto.pub=A.pub}else delete o.auto}
@@ -2313,8 +2345,8 @@ const askBatchDel=()=>{const ids=[...bsel];if(!ids.length){$('#bmm').textContent
 /* ---- 明細預覽（唯讀） ---- */
 let pvId='',pvKey='',pvFb=null;
 const pvEl=$('#pvm');
-const pvHTML=p=>{const gL=gOf(p).map(id=>grps.find(x=>x.id===id)).filter(Boolean),none='<span class="pvn">未設定</span>',row=(k,v)=>'<dt>'+k+'</dt><dd>'+v+'</dd>',shots=(p.shots||[]).filter(x=>typeof x==='string'),xs=xOf(p),t=new Date(p.t||0);
- return (shots.length||xs.length?'<div class="pvi">'+shots.map((id,i)=>'<button type="button" class="pvim" data-lb="'+i+'" aria-label="放大第 '+(i+1)+' 張圖片"><img data-gid="'+esc(id)+'" alt=""></button>').join('')+xs.map((u,j)=>'<button type="button" class="pvim" data-lb="'+(shots.length+j)+'" aria-label="放大第 '+(shots.length+j+1)+' 張圖片（外部圖片）">'+XIMG.img(u)+'<i>🔗 外部</i></button>').join('')+'</div>':'')
+const pvHTML=p=>{const gL=gOf(p).map(id=>grps.find(x=>x.id===id)).filter(Boolean),none='<span class="pvn">未設定</span>',row=(k,v)=>'<dt>'+k+'</dt><dd>'+v+'</dd>',AO=attOrd(p)/* V3.4.20：依排序 */,t=new Date(p.t||0);
+ return (AO.length?'<div class="pvi">'+AO.map((o,i)=>o.g?'<button type="button" class="pvim" data-lb="'+i+'" aria-label="放大第 '+(i+1)+' 張圖片"><img data-gid="'+esc(o.g)+'" alt=""></button>':'<button type="button" class="pvim" data-lb="'+i+'" aria-label="放大第 '+(i+1)+' 張圖片（外部圖片）">'+XIMG.img(o.u)+'<i>🔗 外部</i></button>').join('')+'</div>':'')
  +vpHTML(p)+'<div class="pvh">'+esc(p.note||'（沒有標題）')+'</div><dl class="kv">'
  +row('平台',esc(p.platform||'網頁'))
  +row('發文帳號',p.acct?esc(p.acct):none)
@@ -2339,7 +2371,7 @@ $('#pvd').onclick=()=>{if(pvId)askDelPosts([pvId])};
 $('#pve').onclick=()=>{const id=pvId;if(!id)return;pvClose();openDlg(id)};
 pvEl.addEventListener('mousedown',e=>{if(e.target===pvEl)pvClose()});
 $('#pvc').addEventListener('click',e=>{const t=e.target.closest('.tp');if(t){e.preventDefault();e.stopPropagation();const v=t.textContent;pvClose();tagPick(v,true);return}});
-$('#pvc').addEventListener('click',e=>{const b=e.target.closest('[data-lb]');if(!b)return;const p=posts.find(x=>x.id===pvId);if(p)lbOpen((p.shots||[]).filter(x=>typeof x==='string').concat(xOf(p).map(u=>({x:u}))),+b.dataset.lb)});
+$('#pvc').addEventListener('click',e=>{const b=e.target.closest('[data-lb]');if(!b)return;const p=posts.find(x=>x.id===pvId);if(p)lbOpen(attOrd(p).map(o=>o.g?o.g:{x:o.u}),+b.dataset.lb)});
 /* 點卡片任意非操作區域開啟明細；批次模式時維持原本的「點卡片＝選取」 */
 const pvSkip=t=>!!t.closest('button,a,input,select,textarea,label,.tp,[data-gid][href]');
 $('#ls').addEventListener('click',e=>{if(bmode||pvSkip(e.target))return;const c=e.target.closest('[data-cid]');if(!c)return;try{const s=getSelection();if(s&&String(s).trim()&&c.contains(s.anchorNode))return}catch(x){}pvOpen(c.dataset.cid)});
@@ -2773,9 +2805,13 @@ const VC=(()=>{
 window.snsVc=VC;
 const xOf=p=>Array.isArray(p&&p.ximgs)?p.ximgs.filter(x=>typeof x==='string'&&/^https?:\/\//i.test(x)):[];
 const imgN=p=>((p&&p.shots)||[]).length+xOf(p).length;
+/* V3.4.20：一般圖片附件的順序。sh＝雲端圖片 ID、xs＝外部圖片網址、io＝存下來的順序（'g:ID'／'x:網址'）；
+   io 裡找得到的照 io 排，找不到（舊收藏、或之後新加的）接在後面，維持原本「上傳圖片→外部網址」順序。io 裡已不存在的項目直接略過，不會遺失或重複圖片 */
+function ordTok(sh,xs,io){const left=[...(sh||[]).map(g=>'g:'+g),...(xs||[]).map(u=>'x:'+u)],out=[];(Array.isArray(io)?io:[]).forEach(t=>{const i=typeof t==='string'?left.indexOf(t):-1;if(i>=0){out.push(t);left.splice(i,1)}});return out.concat(left)}
+const attOrd=p=>ordTok(((p&&p.shots)||[]).filter(x=>typeof x==='string'&&x),xOf(p),p&&p.iord).map(t=>t.charAt(0)==='g'?{g:t.slice(2)}:{u:t.slice(2)});
 /* V3.4.0：收藏卡片封面順序＝使用者附件第一張（原本順序：上傳／剪貼簿的圖片、再來是外部圖片網址）＞ 外部影片封面 ＞ 原本的預設樣式 */
 const hasImg=p=>!!((p.shots&&p.shots[0])||xOf(p)[0]||VC.of(p));
-const thumbImg=(p,lazy)=>p.shots&&p.shots[0]?'<img'+(lazy?' loading="lazy"':'')+' data-gid="'+p.shots[0]+'" alt="">':xOf(p)[0]?XIMG.img(xOf(p)[0]):VC.img(VC.of(p).u,lazy);
+const thumbImg=(p,lazy)=>{const f=attOrd(p)[0];/* V3.4.20：封面＝排序後的第一張 */return f&&f.g?'<img'+(lazy?' loading="lazy"':'')+' data-gid="'+f.g+'" alt="">':f&&f.u?XIMG.img(f.u):VC.img(VC.of(p).u,lazy)};
 /* V3.4.9：多圖片縮圖拼貼（只改外層顯示）。來源＝收藏明細同一份附件：上傳的圖片（shots）＋外部圖片網址（ximgs），順序相同；
    外部影片封面（vcov）不算附件。只有 2 張以上才拼貼；超過模式上限只顯示前面幾張，不加「+N」。
    排列：模式上限「欄 × 列」內，列數＝ceil(張數／欄數)，每列張數盡量平均（多的放前面），每列撐滿寬度，所以整個圖片區永遠填滿、卡片大小不變。 */
@@ -2783,7 +2819,7 @@ const MOSM={cards:[3,2],list:[1,3],wall:[3,3],album:[3,3],time:[1,3],table:[3,3]
 const MOSM_M={cards:[3,1],list:[3,3],wall:[3,3],album:[3,3],time:[3,3],table:[3,3],board:[3,1]};/* 手機版（畫面寬 ≤ 640 px，和相簿、表格等原本的手機版分界相同） */
 const mosMq=window.matchMedia?matchMedia('(max-width:640px)'):null;
 const mosOnMq=()=>{try{render()}catch(e){}};if(mosMq){mosMq.addEventListener?mosMq.addEventListener('change',mosOnMq):mosMq.addListener(mosOnMq)}
-const attL=p=>((p&&p.shots)||[]).filter(x=>typeof x==='string'&&x).map(g=>({g})).concat(xOf(p).map(u=>({u})));
+const attL=p=>attOrd(p);/* V3.4.20：拼貼依使用者排好的順序 */
 /* V3.4.10：拼貼張數改用 data-mosaic-count（原本的 data-n 會被全域點擊事件當成「資料夾改名」） */
 const mosaic=(p,mode)=>{const L=attL(p);if(L.length<2)return '';const T=mosMq&&mosMq.matches?MOSM_M:MOSM,M=T[mode]||T.cards,C=M[0],RW=M[1],n=Math.min(L.length,C*RW),r=Math.min(RW,Math.ceil(n/C)),base=Math.floor(n/r),ex=n%r;let k=0,mx=0,rows='';
  for(let i=0;i<r;i++){const c=base+(i<ex?1:0);mx=Math.max(mx,c);rows+='<div class="mrw">'+L.slice(k,k+c).map(o=>o.g?'<img loading="lazy" data-gid="'+esc(o.g)+'" alt="">':XIMG.img(o.u)).join('')+'</div>';k+=c}
@@ -3093,7 +3129,7 @@ const GG=window.snsGoogle;
   const st=$('#st');if(st)st.classList.toggle('lgdup',show&&st.textContent.trim()===ST)};
  if(GG){const su=GG.setUser.bind(GG);GG.setUser=u=>{su(u);upd()}}
  const st=$('#st');if(st)new MutationObserver(upd).observe(st,{childList:true,characterData:true,subtree:true});
- window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.19';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+ window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.20';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
@@ -3403,7 +3439,7 @@ $('#gout').onclick=async()=>{$('#gmn').style.display='none';
  try{const r=await fetch('/api/auth/logout',{method:'POST',credentials:'same-origin',headers:{'X-Requested-With':'sns'}});if(!r.ok)throw new Error('http '+r.status)}catch(e){$('#st').textContent='登出失敗：連不上登入服務，請稍後再試';return}
  doOut()};
 /* ---- 跨裝置衝突視窗 ---- */
-const FL={note:'標題',cats:'資料夾',tags:'標籤',star:'星號',read:'已讀',got:'已下載',grp:'分組',gs:'分組',share:'分享原文',ck:'內容識別',auto:'自動帶入標記',due:'回顧日期',noRev:'不回顧',text:'備註／貼文內容',acct:'發文帳號',pub:'發布日',platform:'平台',url:'連結',shots:'截圖',list:'資料夾清單',grps:'分組',plats:'平台',pren:'平台名稱'};
+const FL={note:'標題',cats:'資料夾',tags:'標籤',star:'星號',read:'已讀',got:'已下載',grp:'分組',gs:'分組',share:'分享原文',ck:'內容識別',auto:'自動帶入標記',due:'回顧日期',noRev:'不回顧',text:'備註／貼文內容',acct:'發文帳號',pub:'發布日',platform:'平台',url:'連結',shots:'截圖',iord:'圖片順序',list:'資料夾清單',grps:'分組',plats:'平台',pren:'平台名稱'};
 let confList=[];
 const confShow=()=>confUI(confList);
 const doRes=async mode=>{if(!store)return;store.resolve(mode);$('#cfs').textContent='處理中…';try{await store.flush();$('#cfs').textContent=''}catch(e){$('#cfs').textContent='儲存失敗：'+(e.message||'')}};
