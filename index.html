@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.4.23">
-<meta name="app-build" content="2026-11-20 18:30">
+<meta name="app-version" content="3.4.25">
+<meta name="app-build" content="2026-11-20 18:42">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1490,6 +1490,11 @@ td .tnp{display:flex;align-items:center;justify-content:center;text-align:center
 /* V3.4.22：列表／時間軸的地圖圖示改放在第一行資訊（平台・帳號・收藏日・N 張）的最後面，縮圖大小恢復原樣 */
 .meta a.mpmt{display:inline-flex;vertical-align:middle;align-items:center;justify-content:center;margin:calc(-4px*var(--ui)) 0 calc(-4px*var(--ui)) calc(6px*var(--ui));/* 上下負邊距：不把這一行撐高 */padding:calc(1px*var(--ui)) calc(7px*var(--ui));border:1px solid var(--bd);border-radius:calc(99px*var(--ui));background:var(--card);text-decoration:none;line-height:1}
 .meta a.mpmt .mpic{width:calc(15px*var(--ui));height:calc(15px*var(--ui))}
+/* V3.4.24：列表／時間軸——手機（640 px 以下）圖示放在「刪除」左邊；電腦維持在第一行「N 張」後面 */
+.act .ed2 a.mped{display:none}
+@media(max-width:640px){.meta a.mpmt{display:none}.act .ed2 a.mped{display:inline-flex}}
+/* V3.4.25：手機列表／時間軸——「地圖／刪除／編輯」不再浮在卡片右下角，改成跟在按鈕列最後、靠右；空間不夠就自己換到下一行，不會壓到其他按鈕 */
+@media(max-width:640px){.list .card .act .ed2,.tl .card .act .ed2{position:static;margin-left:auto;order:99}}
 /* V3.4.23：表格表頭全部水平置中；平台、收藏日、發布日、地圖欄的內容水平置中（其他欄維持靠左） */
 .tbl table tr:first-child>th{text-align:center}
 .tbl table tr[data-cid]>td:nth-child(2),.tbl table tr[data-cid]>td:nth-child(6),.tbl table tr[data-cid]>td:nth-child(7),.tbl table tr[data-cid]>td:nth-child(8){text-align:center}
@@ -1951,7 +1956,7 @@ function render(){isDue.c=0;tagScopeSync();posts.sort((a,b)=>{const pb=sortBy===
  const due=getDue();const _unused=(()=>{const y=today.slice(0,4),md=today.slice(5),r=[];posts.forEach(p=>{if(p.due){if(nset.c&&p.due<=today&&!p.read)r.push(p);return}const t=new Date(p.t||0).toLocaleDateString('sv-SE');if(nset.t&&t.slice(5)===md&&t.slice(0,4)<y)r.push({...p,why:'收藏 '+(y-t.slice(0,4))+' 週年'});else if(nset.p&&p.pub&&p.pub.slice(5)===md&&p.pub.slice(0,4)<y)r.push({...p,why:'發布 '+(y-p.pub.slice(0,4))+' 週年'})});return r})();
  $('#due').innerHTML=due.length?dueHTML(due):'';
  $('#ls').className=view==='cards'?'cards':'list';
- const cardH=(p=>`<article class="card${bmode&&bsel.has(p.id)?' sel':''}${bmode?'':' cl'}" data-cid="${p.id}"${bmode?'':' tabindex="0"'}><div class="th${mosaic(p,view==="time"?"time":view)?' thm':''}" style="${hasImg(p)?'':'background:'+(PC[p.platform]||PC[Object.keys(pren).find(k=>pren[k]===p.platform)]||'hsl('+thue(p.platform)+' 45% 40%)')+';color:#fff'}">${mosaic(p,view==="time"?"time":view)||(hasImg(p)?thumbImg(p,1):`<span style="text-align:center;padding:6px;overflow-wrap:anywhere"><b>${esc(p.platform)}</b>${(inferLabel(p.url)||{}).show?`<br><small>${esc(inferLabel(p.url).show)}</small>`:''}</span>`)}</div><div class="bd"><div class="meta">${esc(p.platform)}${p.acct?' · <a href="#" data-ac="'+esc(p.acct)+'">'+esc(p.acct)+'</a>':''}${dates(p)?' · '+dates(p):''}${p.read?' · 已讀':''}${imgN(p)>1?' · '+imgN(p)+' 張':''}${(view==='list'||view==='time')&&MAPS.of(p)?MAPS.a(MAPS.of(p),'mpi mpmt'):''}</div><div class="note">${esc(ttl(p))}${p.url?'':BADP}</div>${p.text?`<div class="snip">${esc(String(p.text).slice(0,90))}</div>`:''}<div class="tg">${(p.cats||[]).map(c=>`<span class="fc">📁 ${esc(c.replace(/\//g,' → '))}</span>`).join('　')}${(p.cats||[]).length&&(p.tags||[]).length?'　':''}${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</div><div class="act">${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">開啟原文</a>`:''}<button data-r="${p.id}">${p.read?'標為未讀':'標為已讀'}</button><button data-sr="${p.id}"${p.star?' class="st-on"':''}>${p.star?'★':'☆'}</button>${gdot(p)}<button data-gt="${p.id}"${p.got?' class="got-on"':''}>已下載</button><button data-nt="${p.id}">編輯文字</button><span class="ed2">${(view==='cards'||view==='wall'||view==='board')&&MAPS.of(p)?MAPS.a(MAPS.of(p),'mpi'):''}<button data-dl="${p.id}">刪除</button><button data-e="${p.id}">編輯</button></span></div></div></article>`);
+ const cardH=(p=>`<article class="card${bmode&&bsel.has(p.id)?' sel':''}${bmode?'':' cl'}" data-cid="${p.id}"${bmode?'':' tabindex="0"'}><div class="th${mosaic(p,view==="time"?"time":view)?' thm':''}" style="${hasImg(p)?'':'background:'+(PC[p.platform]||PC[Object.keys(pren).find(k=>pren[k]===p.platform)]||'hsl('+thue(p.platform)+' 45% 40%)')+';color:#fff'}">${mosaic(p,view==="time"?"time":view)||(hasImg(p)?thumbImg(p,1):`<span style="text-align:center;padding:6px;overflow-wrap:anywhere"><b>${esc(p.platform)}</b>${(inferLabel(p.url)||{}).show?`<br><small>${esc(inferLabel(p.url).show)}</small>`:''}</span>`)}</div><div class="bd"><div class="meta">${esc(p.platform)}${p.acct?' · <a href="#" data-ac="'+esc(p.acct)+'">'+esc(p.acct)+'</a>':''}${dates(p)?' · '+dates(p):''}${p.read?' · 已讀':''}${imgN(p)>1?' · '+imgN(p)+' 張':''}${(view==='list'||view==='time')&&MAPS.of(p)?MAPS.a(MAPS.of(p),'mpi mpmt'):''}</div><div class="note">${esc(ttl(p))}${p.url?'':BADP}</div>${p.text?`<div class="snip">${esc(String(p.text).slice(0,90))}</div>`:''}<div class="tg">${(p.cats||[]).map(c=>`<span class="fc">📁 ${esc(c.replace(/\//g,' → '))}</span>`).join('　')}${(p.cats||[]).length&&(p.tags||[]).length?'　':''}${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</div><div class="act">${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">開啟原文</a>`:''}<button data-r="${p.id}">${p.read?'標為未讀':'標為已讀'}</button><button data-sr="${p.id}"${p.star?' class="st-on"':''}>${p.star?'★':'☆'}</button>${gdot(p)}<button data-gt="${p.id}"${p.got?' class="got-on"':''}>已下載</button><button data-nt="${p.id}">編輯文字</button><span class="ed2">${(view==='cards'||view==='wall'||view==='board')&&MAPS.of(p)?MAPS.a(MAPS.of(p),'mpi'):(view==='list'||view==='time')&&MAPS.of(p)?MAPS.a(MAPS.of(p),'mpi mped'):''}<button data-dl="${p.id}">刪除</button><button data-e="${p.id}">編輯</button></span></div></div></article>`);
 const dkey=p=>sortBy==='pub'?(p.pub||''):new Date(p.t||0).toLocaleDateString('sv-SE');
 let out='<p style="color:var(--mut)">還沒有符合的收藏。</p>',cls='cards';
 if(shown.length){
@@ -3195,7 +3200,7 @@ const GG=window.snsGoogle;
   const st=$('#st');if(st)st.classList.toggle('lgdup',show&&st.textContent.trim()===ST)};
  if(GG){const su=GG.setUser.bind(GG);GG.setUser=u=>{su(u);upd()}}
  const st=$('#st');if(st)new MutationObserver(upd).observe(st,{childList:true,characterData:true,subtree:true});
- window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.23';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+ window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.25';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
