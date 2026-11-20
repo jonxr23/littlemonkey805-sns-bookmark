@@ -1,6 +1,8 @@
-# SNS文章收藏夾 V3.4.22
+# SNS文章收藏夾 V3.4.23
 
 **SNS文章收藏夾 / SNS Bookmark / by littlemonkey805**
+
+**V3.4.23**（以 V3.4.22 build 2026-11-20 18:15 為基底；build 2026-11-20 18:30）：表格模式在「發布日」和「操作」中間多一欄「地圖」；表頭全部水平置中，平台、收藏日、發布日、地圖欄內容水平置中。**只改 `index.html`**。
 
 **V3.4.22**（以 V3.4.21 build 2026-11-20 18:10 為基底；build 2026-11-20 18:15）：列表、時間軸模式的地圖圖示改放在第一行資訊「… · N 張」的最後面，左邊縮圖恢復原本大小。**只改 `index.html`**。
 
@@ -129,11 +131,11 @@ Google 登入、帳號綁定、Google Drive／Sheets 同步、圖片／GIF／外
 | 平台修正＋多分組 | **V3.1.0** | 平台識別／重複比對（TikTok、抖音、微博、Bilibili、Facebook）、分享文字擷取、多分組、月／日回顧、標籤換行 | 待驗收 |
 | 重大改版（V6） | **V3.0.0** | ① 工具列簡易／詳細／自訂 ② 工具箱 ③ 自訂工具列管理器 ④ 手機收藏控制區一行＋收合 ⑤ 雲端同步狀態／雲端空間 ⑥ 電腦表格欄寬拖曳 ⑦ 彈窗依顏色設定套色 ⑧ 薰衣紫／奶霜綠 ⑨ 社群短網址解析 | 本包（待實機驗收） |
 
-## 資料夾結構（`sns-bookmark-v3.4.22` 資料夾的內容放在 Git 專案根目錄）
+## 資料夾結構（`sns-bookmark-v3.4.23` 資料夾的內容放在 Git 專案根目錄）
 
 ```
-sns-bookmark-v3.4.22/
-├─ index.html              ← V3.4.22 前端
+sns-bookmark-v3.4.23/
+├─ index.html              ← V3.4.23 前端
 ├─ manifest.webmanifest    ← 新增：手機「加到主畫面」的名稱與圖示
 ├─ assets/                 ← 新增：網站實際讀取的品牌圖檔
 │  ├─ monkey-logo.png      ← V2.8.3 新增：手機漢堡選單小猴 Logo（＝ 猴子Logo.png／參考附件 00 原圖，逐位元相同）
@@ -143,7 +145,7 @@ sns-bookmark-v3.4.22/
 │  ├─ favicon.png          ← Fav小.png 左右各補 1px 透明成 109×109（圖案像素不動）
 │  └─ apple-touch-icon.png ← 同上，透明處補純白（iPhone 主畫面用）
 ├─ brand-assets/           ← 新增：你提供的原始品牌素材（存檔，不部署）
-├─ package.json            ← version 3.4.22
+├─ package.json            ← version 3.4.23
 ├─ vercel.json             ← 未變更
 ├─ .vercelignore           ← 與 V2.7.0 相同（brand-assets/ 原始素材不上傳到網站）
 ├─ api/
@@ -155,7 +157,7 @@ sns-bookmark-v3.4.22/
 │  ├─ Code.gs              ← V2.8.0 更新：公告管理、意見回饋紀錄、六個工作表檢查
 │  └─ ADMIN_SETUP.md       ← 新增「V2.8.0 更新步驟」
 ├─ README.md／DEPLOY.md／CHANGELOG.md／USER_GUIDE.md
-├─ TEST_REPORT.md          ← V3.4.22 測試報告（以前的報告改名保留，V3.4.1 的效益比較在 TEST_REPORT-V3.4.1.md）
+├─ TEST_REPORT.md          ← V3.4.23 測試報告（以前的報告改名保留，V3.4.1 的效益比較在 TEST_REPORT-V3.4.1.md）
 ├─ NETWORK_CHECKLIST-V3.4.1.md ← 上線後在正式網站 Network 面板實測呼叫次數的步驟
 ├─ RESEARCH-V3.2.0.md      ← V3.2.0 八（九）平台研究與小澄研究比較
 ├─ TEST_REPORT-V3.1.0.md   ← V3.1.0 測試報告（保留參考）

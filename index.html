@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.4.22">
-<meta name="app-build" content="2026-11-20 18:15">
+<meta name="app-version" content="3.4.23">
+<meta name="app-build" content="2026-11-20 18:30">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1490,6 +1490,9 @@ td .tnp{display:flex;align-items:center;justify-content:center;text-align:center
 /* V3.4.22：列表／時間軸的地圖圖示改放在第一行資訊（平台・帳號・收藏日・N 張）的最後面，縮圖大小恢復原樣 */
 .meta a.mpmt{display:inline-flex;vertical-align:middle;align-items:center;justify-content:center;margin:calc(-4px*var(--ui)) 0 calc(-4px*var(--ui)) calc(6px*var(--ui));/* 上下負邊距：不把這一行撐高 */padding:calc(1px*var(--ui)) calc(7px*var(--ui));border:1px solid var(--bd);border-radius:calc(99px*var(--ui));background:var(--card);text-decoration:none;line-height:1}
 .meta a.mpmt .mpic{width:calc(15px*var(--ui));height:calc(15px*var(--ui))}
+/* V3.4.23：表格表頭全部水平置中；平台、收藏日、發布日、地圖欄的內容水平置中（其他欄維持靠左） */
+.tbl table tr:first-child>th{text-align:center}
+.tbl table tr[data-cid]>td:nth-child(2),.tbl table tr[data-cid]>td:nth-child(6),.tbl table tr[data-cid]>td:nth-child(7),.tbl table tr[data-cid]>td:nth-child(8){text-align:center}
 a.mptb{display:inline-flex;vertical-align:middle;align-items:center;justify-content:center;border:1px solid var(--bd);border-radius:calc(99px*var(--ui));background:var(--card);padding:calc(4.5px*var(--ui)) calc(8px*var(--ui));text-decoration:none}
 a.mptb .mpic{width:calc(17px*var(--ui));height:calc(17px*var(--ui))}
 a.mpo{display:inline-flex;align-items:center;gap:calc(6px*var(--ui));color:var(--lnk,var(--fg))}
@@ -1952,7 +1955,7 @@ function render(){isDue.c=0;tagScopeSync();posts.sort((a,b)=>{const pb=sortBy===
 const dkey=p=>sortBy==='pub'?(p.pub||''):new Date(p.t||0).toLocaleDateString('sv-SE');
 let out='<p style="color:var(--mut)">還沒有符合的收藏。</p>',cls='cards';
 if(shown.length){
-if(view==='table'){cls='tbl';out=`<div style="overflow-x:auto"><table><tr><th></th><th>平台</th><th>標題</th><th>資料夾</th><th>標籤</th><th>收藏日</th><th>發布日</th><th></th></tr>${shown.map(p=>`<tr data-cid="${p.id}"${bmode&&bsel.has(p.id)?' class="sel"':''}><td>${mosaic(p,'table')?'<span class="tmi">'+mosaic(p,'table')+'</span>':hasImg(p)?thumbImg(p):'<span class="tnp" role="img" aria-label="無圖片"><span aria-hidden="true">無圖片</span></span>'}</td><td>${esc(p.platform)}</td><td>${esc(p.note||p.url)}${p.url?'':BADP}</td><td>${(p.cats||[]).map(c=>esc(c.replace(/\//g,' → '))).join('<br>')}</td><td>${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</td><td>${new Date(p.t||0).toLocaleDateString('sv-SE')}</td><td>${esc(p.pub||'')}</td><td>${MAPS.of(p)?MAPS.a(MAPS.of(p),'mpi mptb')+' ':''}${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">原文</a> `:''}<button data-r="${p.id}">${p.read?'未讀':'已讀'}</button> <button data-e="${p.id}">編輯</button></td></tr>`).join('')}</table></div>`}
+if(view==='table'){cls='tbl';out=`<div style="overflow-x:auto"><table><tr><th></th><th>平台</th><th>標題</th><th>資料夾</th><th>標籤</th><th>收藏日</th><th>發布日</th><th>地圖</th><th></th></tr>${shown.map(p=>`<tr data-cid="${p.id}"${bmode&&bsel.has(p.id)?' class="sel"':''}><td>${mosaic(p,'table')?'<span class="tmi">'+mosaic(p,'table')+'</span>':hasImg(p)?thumbImg(p):'<span class="tnp" role="img" aria-label="無圖片"><span aria-hidden="true">無圖片</span></span>'}</td><td>${esc(p.platform)}</td><td>${esc(p.note||p.url)}${p.url?'':BADP}</td><td>${(p.cats||[]).map(c=>esc(c.replace(/\//g,' → '))).join('<br>')}</td><td>${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</td><td>${new Date(p.t||0).toLocaleDateString('sv-SE')}</td><td>${esc(p.pub||'')}</td><td class="tmp">${MAPS.of(p)?MAPS.a(MAPS.of(p),'mpi mptb'):''}</td><td>${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">原文</a> `:''}<button data-r="${p.id}">${p.read?'未讀':'已讀'}</button> <button data-e="${p.id}">編輯</button></td></tr>`).join('')}</table></div>`}
 else if(view==='time'){cls='tl';const g={},ks=[];shown.forEach(p=>{const k=dkey(p)||'';if(!g[k]){g[k]=[];ks.push(k)}g[k].push(p)});out=ks.sort((x,y)=>!x?1:!y?-1:sortAsc?x.localeCompare(y):y.localeCompare(x)).map(k=>{const m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(k),dt=m?new Date(+m[1],m[2]-1,+m[3]):null;return `<section class="tdg" data-day="${esc(k)}"><h3 class="gh tdh"><span class="tdt">${!k?'未填日期':m?m[1]+' 年 '+(+m[2])+' 月 '+(+m[3])+' 日':esc(k)}</span>${dt&&!isNaN(dt)?'<span class="twd">週'+'日一二三四五六'[dt.getDay()]+'</span>':''}<small>${g[k].length} 篇</small></h3><div class="list">${g[k].map(cardH).join('')}</div></section>`}).join('')}
 else if(view==='board'){cls='board';const g={};shown.forEach(p=>{const cs=(p.cats||[]).length?p.cats.map(c=>c.split('/')[0]):['無資料夾'];[...new Set(cs)].forEach(k=>(g[k]=g[k]||[]).push(p))});out=Object.keys(g).sort().map(k=>`<div class="col"><h3 class="gh">📁 ${esc(k)} <small>${g[k].length}</small></h3>${g[k].map(cardH).join('')}</div>`).join('')}
 else if(view==='album'&&window.snsAlbum){cls='alw';out=snsAlbum.html(shown)}
@@ -3192,7 +3195,7 @@ const GG=window.snsGoogle;
   const st=$('#st');if(st)st.classList.toggle('lgdup',show&&st.textContent.trim()===ST)};
  if(GG){const su=GG.setUser.bind(GG);GG.setUser=u=>{su(u);upd()}}
  const st=$('#st');if(st)new MutationObserver(upd).observe(st,{childList:true,characterData:true,subtree:true});
- window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.22';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+ window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.23';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
@@ -3835,15 +3838,15 @@ const MG=(()=>{const o=dlg('tbmm',ic(PI.box,'v3ti')+'<span>自訂工具列</span
 window.snsTb={apply,state:()=>JSON.parse(JSON.stringify(ST)),layout:d=>layout(d||dev()),box:()=>BOX.slice(),mgr:MG,ss:SS,cq:CQ,sm:SM,bx:BXM};
 
 /* ---------- ⑥ 表格欄寬（電腦版）與圖片牆顯示設定 ---------- */
-const TW='tblw3',MINW=[48,56,120,80,80,90,90,0];
-const twGet=()=>{try{const o=JSON.parse(ls(TW)||'null');return o&&Array.isArray(o.w)&&o.w.length===8&&o.w.every(n=>typeof n==='number'&&n>0)?o.w:null}catch(e){return null}};
+const TW='tblw3',MINW=[48,56,120,80,80,90,90,52,0];/* V3.4.23：發布日和操作中間多一欄「地圖」 */
+const twGet=()=>{try{const o=JSON.parse(ls(TW)||'null');if(!o||!Array.isArray(o.w)||!o.w.every(n=>typeof n==='number'&&n>0))return null;/* V3.4.23：之前存的 8 欄寬度保留，在發布日後面補上地圖欄預設寬度 */if(o.w.length===8)return o.w.slice(0,7).concat([Math.round(60*(parseFloat(getComputedStyle(R).getPropertyValue('--ui'))||1)),o.w[7]]);return o.w.length===9?o.w:null}catch(e){return null}};
 let tws=null;
-function tblAfter(){if(view!=='table'||MQ.matches)return;const L=$('#ls'),wrap=L.querySelector(':scope>div'),t=wrap&&wrap.querySelector('table');if(!t)return;const ths=t.querySelectorAll('tr:first-child>th');if(ths.length!==8)return;
- wrap.classList.add('tblw');t.classList.add('tblx');ths[7].textContent='操作';
+function tblAfter(){if(view!=='table'||MQ.matches)return;const L=$('#ls'),wrap=L.querySelector(':scope>div'),t=wrap&&wrap.querySelector('table');if(!t)return;const ths=t.querySelectorAll('tr:first-child>th');if(ths.length!==9)return;
+ wrap.classList.add('tblw');t.classList.add('tblx');ths[8].textContent='操作';
  t.querySelectorAll('tr[data-cid]>td:last-child').forEach(td=>{const s=document.createElement('span');s.className='tops';while(td.firstChild)s.appendChild(td.firstChild);td.appendChild(s)});
- const u=parseFloat(getComputedStyle(R).getPropertyValue('--ui'))||1,pad=16*u+2;let opMin=0;t.querySelectorAll('.tops').forEach((s,i)=>{if(i<40)opMin=Math.max(opMin,s.scrollWidth)});opMin=Math.ceil(Math.max(opMin,ths[7].scrollWidth)+pad);
- const mins=MINW.map((m,i)=>i===7?opMin:Math.round(m*u)),saved=twGet(),W=wrap.clientWidth||1000;
- let w=saved?saved.slice():(()=>{const b=[64,84,0,150,150,104,104,0].map(x=>Math.round(x*u));b[7]=opMin+Math.round(8*u);b[2]=Math.max(mins[2],W-b.reduce((a,c)=>a+c,0)-2);return b})();
+ const u=parseFloat(getComputedStyle(R).getPropertyValue('--ui'))||1,pad=16*u+2;let opMin=0;t.querySelectorAll('.tops').forEach((s,i)=>{if(i<40)opMin=Math.max(opMin,s.scrollWidth)});opMin=Math.ceil(Math.max(opMin,ths[8].scrollWidth)+pad);
+ const mins=MINW.map((m,i)=>i===8?opMin:Math.round(m*u)),saved=twGet(),W=wrap.clientWidth||1000;
+ let w=saved?saved.slice():(()=>{const b=[64,84,0,150,150,104,104,60,0].map(x=>Math.round(x*u));b[8]=opMin+Math.round(8*u);b[2]=Math.max(mins[2],W-b.reduce((a,c)=>a+c,0)-2);return b})();
  w=w.map((x,i)=>Math.max(mins[i],Math.round(x)));tws={w,mins};
  const cg=document.createElement('colgroup');cg.innerHTML=w.map(x=>'<col style="width:'+x+'px">').join('');t.insertBefore(cg,t.firstChild);t.style.width=w.reduce((a,c)=>a+c,0)+'px';
  ths.forEach((th,i)=>{th.classList.add('crh');th.insertAdjacentHTML('beforeend','<span class="crz" data-ci="'+i+'" role="separator" aria-orientation="vertical" aria-label="拖曳調整欄寬" title="拖曳調整欄寬"></span>')});
