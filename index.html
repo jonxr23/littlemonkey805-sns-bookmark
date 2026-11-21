@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.4.25">
-<meta name="app-build" content="2026-11-20 18:42">
+<meta name="app-version" content="3.4.26">
+<meta name="app-build" content="2026-11-21 11:44">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1503,6 +1503,50 @@ a.mptb .mpic{width:calc(17px*var(--ui));height:calc(17px*var(--ui))}
 a.mpo{display:inline-flex;align-items:center;gap:calc(6px*var(--ui));color:var(--lnk,var(--fg))}
 a.mpo .mpic{width:calc(20px*var(--ui));height:calc(20px*var(--ui))}
 </style>
+
+<style id="v3426">
+/* V3.4.26：多地點管理入口保持單行，與發文帳號欄位同高，不隨地點數增加而撐高主表單。 */
+#dlg .mpm-entry{display:flex;align-items:center;justify-content:space-between;gap:calc(8px*var(--ui));min-width:0;min-height:calc(36px*var(--ui));padding:calc(2px*var(--ui)) calc(4px*var(--ui)) calc(2px*var(--ui)) calc(10px*var(--ui));border:1px solid var(--bd);border-radius:var(--r);background:var(--card);box-sizing:border-box}
+#dlg #mpmanstatus{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(13px*var(--ui));color:var(--mut)}
+#dlg #mpmanopen{flex:none;white-space:nowrap;padding:calc(6px*var(--ui)) calc(11px*var(--ui));font-size:calc(12.5px*var(--ui))}
+.mpmbox{width:min(100%,calc(460px*var(--ui)))}
+.mpchoosebox{width:min(100%,calc(420px*var(--ui)))}
+#mpmanbody{gap:calc(8px*var(--ui))}
+#mpmanlist{display:flex;flex-direction:column;gap:0;min-width:0}
+.mpman-empty{padding:calc(12px*var(--ui)) calc(4px*var(--ui));text-align:center;color:var(--mut);font-size:calc(13px*var(--ui))}
+.mpman-row{display:flex;align-items:center;justify-content:space-between;gap:calc(8px*var(--ui));min-width:0;padding:calc(9px*var(--ui)) calc(2px*var(--ui));border-bottom:1px solid var(--bd)}
+.mpman-row:last-child{border-bottom:0}
+.mpman-name{flex:1;min-width:0;overflow-wrap:anywhere;font-size:calc(14px*var(--ui));color:var(--fg)}
+.mpman-actions{display:flex;align-items:center;gap:calc(6px*var(--ui));flex:none}
+.mpman-actions button{padding:calc(4px*var(--ui)) calc(9px*var(--ui));font-size:calc(12px*var(--ui));white-space:nowrap}
+#mpmanedit{display:flex;flex-direction:column;gap:calc(7px*var(--ui))}
+#mpmanedit[hidden],#mpmaneditactions[hidden]{display:none!important}
+#mpmanedit label{margin-top:calc(2px*var(--ui))}
+#mpmanerr{color:var(--err);font-size:calc(12px*var(--ui));line-height:1.45}
+#mpmanerr[hidden]{display:none}
+#mpchoosebody{gap:0}
+.mp-place-row{display:flex;align-items:center;justify-content:space-between;gap:calc(10px*var(--ui));min-width:0;padding:calc(10px*var(--ui)) calc(2px*var(--ui));border-bottom:1px solid var(--bd)}
+.mp-place-row:last-child{border-bottom:0}
+.mp-place-name{flex:1;min-width:0;overflow-wrap:anywhere;font-size:calc(14px*var(--ui));line-height:1.4;color:var(--fg)}
+.mp-place-go{display:inline-flex;align-items:center;justify-content:flex-end;gap:calc(5px*var(--ui));flex:none;color:var(--lnk,var(--fg));text-decoration:none;white-space:nowrap;font-size:calc(12.5px*var(--ui));font-weight:600}
+.mp-place-go .mpic{width:calc(20px*var(--ui));height:calc(20px*var(--ui))}
+.mp-choice{cursor:pointer;font:inherit}
+button.mpi{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--fg);background:var(--card);border:1px solid var(--bd);text-decoration:none}
+button.mpi .mpic{width:calc(16px*var(--ui));height:calc(16px*var(--ui))}
+.act .ed2 button.mpi{order:7;padding-top:0;padding-bottom:0}
+.act .ed2 button.mpi .mpic{width:calc(17px*var(--ui));height:calc(17px*var(--ui))}
+/* 列表／時間軸在桌機只顯示資訊列的地圖入口；多地點改成 button 後也必須遵守與舊連結相同的隱藏規則。 */
+.act .ed2 a.mped,.act .ed2 button.mped{display:none}
+.meta button.mpmt{display:inline-flex;vertical-align:middle;align-items:center;justify-content:center;margin:calc(-4px*var(--ui)) 0 calc(-4px*var(--ui)) calc(6px*var(--ui));padding:calc(1px*var(--ui)) calc(7px*var(--ui));border:1px solid var(--bd);border-radius:calc(99px*var(--ui));background:var(--card);line-height:1;cursor:pointer}
+.meta button.mpmt .mpic{width:calc(15px*var(--ui));height:calc(15px*var(--ui))}
+button.mptb{display:inline-flex;vertical-align:middle;align-items:center;justify-content:center;border:1px solid var(--bd);border-radius:calc(99px*var(--ui));background:var(--card);padding:calc(4.5px*var(--ui)) calc(8px*var(--ui));cursor:pointer}
+button.mptb .mpic{width:calc(17px*var(--ui));height:calc(17px*var(--ui))}
+button.mpo{display:inline-flex;align-items:center;gap:calc(6px*var(--ui));color:var(--lnk,var(--fg));cursor:pointer}
+button.mpo .mpic{width:calc(20px*var(--ui));height:calc(20px*var(--ui))}
+@media(max-width:640px){.meta a.mpmt,.meta button.mpmt{display:none}.act .ed2 a.mped,.act .ed2 button.mped{display:inline-flex}}
+@media(max-width:560px){#mpman .mpmbox{width:100%;max-width:none;height:100%;max-height:100%;border-radius:var(--r)}#mpchoose .mpchoosebox{width:100%;max-width:none}}
+@supports(height:100dvh){@media(max-width:560px){#mpman .mpmbox{height:100%;max-height:100dvh}}}
+</style>
 </head>
 <body>
 <div id="iqw" style="display:none;position:sticky;top:0;z-index:29;background:#ffe9c7;color:#8a4b00;font-weight:600;font-size:calc(13px*var(--ui));text-align:center;padding:calc(6px*var(--ui)) calc(12px*var(--ui));border-bottom:1px solid #e6c27a"></div>
@@ -1517,7 +1561,7 @@ a.mpo .mpic{width:calc(20px*var(--ui));height:calc(20px*var(--ui))}
 <div id="dlg"><div class="box"><div class="row" style="justify-content:space-between;align-items:center"><b>收藏</b><button type="button" id="dx" title="關閉">✕</button></div>
 <div id="dlgh1" class="lgh lgh-d" role="note" hidden><svg class="lgi" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 18.5h9.25a4.25 4.25 0 0 0 .55-8.46A5.75 5.75 0 0 0 6.2 9.1 4.75 4.75 0 0 0 7.5 18.5z" fill="#fff" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 11.2v4.4M9.9 13.4 12 11.3l2.1 2.1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="lgt"><b>尚未登入 Google</b><span>登入後才能使用雲端收藏。你的收藏資料會儲存在自己的 Google 雲端硬碟。請先使用頁面右上角的『登入 Google』完成登入。</span></div></div>
 <label for="u">連結 <span class="req" aria-hidden="true">*</span><span class="reqh">（唯一必填欄位）</span> <span id="pl"></span></label>
-<div class="bar"><input id="u" type="url" placeholder="https://…" aria-required="true" aria-describedby="uerr"><button id="ps">貼上</button><button type="button" id="ure" hidden title="這一篇 3 天內查過、沒有取得資料。按這裡略過紀錄，重新偵測">↻ 重新偵測</button></div><div id="uerr" class="ferr" role="alert" hidden></div><div id="pm" style="font-size:calc(12px*var(--ui));color:var(--mut)"></div><div id="uex" class="uex" hidden></div><div id="udup" class="udup" role="status" hidden></div><div id="pqw" class="bar" style="display:none;flex-wrap:wrap;align-items:center"><span id="pqt" style="font-size:calc(12px*var(--ui));flex-basis:100%;overflow-wrap:anywhere"></span><select id="pq"></select><input id="pqn" placeholder="新平台名稱" style="display:none"><button type="button" id="pqb" style="display:none">建立</button></div><div class="g2 g2n"><div><label>標題</label><input id="n"></div><div><div class="amg"><div class="amc"><label for="ac">發文帳號 <span id="an"></span></label><div class="ach">會自動偵測，無法取得時可自行填寫（選填）</div><input id="ac" placeholder="例如 @username"></div><div class="amc amc2"><label for="mpu">Google Maps 地點連結</label><div class="ach">貼上 Google Maps 分享網址（選填）</div><input id="mpu" type="url" inputmode="url" autocomplete="off" enterkeyhint="done" placeholder="貼上網址" aria-describedby="mperr"><div id="mperr" class="uerr" role="alert" aria-live="assertive" hidden></div></div></div></div></div>
+<div class="bar"><input id="u" type="url" placeholder="https://…" aria-required="true" aria-describedby="uerr"><button id="ps">貼上</button><button type="button" id="ure" hidden title="這一篇 3 天內查過、沒有取得資料。按這裡略過紀錄，重新偵測">↻ 重新偵測</button></div><div id="uerr" class="ferr" role="alert" hidden></div><div id="pm" style="font-size:calc(12px*var(--ui));color:var(--mut)"></div><div id="uex" class="uex" hidden></div><div id="udup" class="udup" role="status" hidden></div><div id="pqw" class="bar" style="display:none;flex-wrap:wrap;align-items:center"><span id="pqt" style="font-size:calc(12px*var(--ui));flex-basis:100%;overflow-wrap:anywhere"></span><select id="pq"></select><input id="pqn" placeholder="新平台名稱" style="display:none"><button type="button" id="pqb" style="display:none">建立</button></div><div class="g2 g2n"><div><label>標題</label><input id="n"></div><div><div class="amg"><div class="amc"><label for="ac">發文帳號 <span id="an"></span></label><div class="ach">會自動偵測，無法取得時可自行填寫（選填）</div><input id="ac" placeholder="例如 @username"></div><div class="amc amc2"><label for="mpmanopen">Google Maps 地點</label><div class="ach">可新增多個地點（選填）</div><div class="mpm-entry"><span id="mpmanstatus" aria-live="polite">尚未新增地點</span><button type="button" id="mpmanopen">管理地點</button></div></div></div></div></div>
 
 <label>資料夾（可多選）</label><input id="c" type="hidden"><div class="cbar"><div id="csel" class="csel"></div><button type="button" id="cmb">📁 選擇資料夾</button></div><div id="rcf" class="sg"></div><div class="xw fqw"><input id="csq" type="text" enterkeyhint="search" autocomplete="off" placeholder="搜尋資料夾（例如 Fre 或 cky）" aria-label="搜尋資料夾"><button type="button" class="xc" id="csqx" title="清除搜尋" aria-label="清除搜尋">✕</button></div><div id="cs"></div><div id="rn2" style="display:none"><div class="bar"><input id="rv2" placeholder="新名稱"><button type="button" id="rs2" class="pri">儲存</button><button type="button" id="rx2">取消</button></div><div id="rh2" style="font-size:calc(12px*var(--ui));color:var(--mut);margin-top:calc(4px*var(--ui))"></div></div><div id="oldmk" hidden><input id="dp" type="hidden"><div id="dpw" class="cas"></div><div class="bar"><input id="dn" placeholder="新資料夾名稱"><button type="button" id="db">＋建立並選取</button></div></div>
 <label class="flb-tag">標籤（打逗號或按 Enter 就會變成標籤塊，點 × 刪除）</label><input id="g" type="hidden"><div id="tgw" class="tw"><div id="tgc"></div><input id="gi" placeholder="輸入標籤…"></div><div id="tgs2"></div>
@@ -1531,6 +1575,8 @@ a.mpo .mpic{width:calc(20px*var(--ui));height:calc(20px*var(--ui))}
 <div id="dlgh2" class="lgs" role="note" hidden><svg class="lgi lgi-s" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 9v4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="6.3" r="1.1" fill="currentColor"/></svg><span>尚未登入 Google，無法儲存收藏。</span></div>
 <div class="row"><button id="del">刪除</button><button id="cx">取消</button><button class="pri" id="sv">儲存</button></div>
 </div></div>
+<div id="mpman" class="ov" role="dialog" aria-modal="true" aria-labelledby="mpmanh" style="z-index:var(--z-top,27)"><div class="box mpmbox"><div class="row mh"><b id="mpmanh">管理 Google Maps 地點</b><button type="button" id="mpmanx" title="關閉" aria-label="關閉">✕</button></div><div class="mb" id="mpmanbody"><div id="mpmanlist"></div><div id="mpmanedit" hidden><label for="mpmanname">地點名稱</label><input id="mpmanname" type="text" maxlength="80" autocomplete="off" placeholder="例如：曼谷大皇宮"><label for="mpmanurl">Google Maps 分享網址</label><input id="mpmanurl" type="url" inputmode="url" autocomplete="off" placeholder="貼上 Google Maps 分享網址"><div id="mpmanerr" class="uerr" role="alert" aria-live="assertive" hidden></div></div></div><div class="mf"><button type="button" id="mpmanadd">＋新增地點</button><span id="mpmaneditactions" hidden><button type="button" id="mpmancancel">取消</button> <button type="button" class="pri" id="mpmansave">加入地點</button></span><button type="button" class="pri" id="mpmandone">完成</button></div></div></div>
+<div id="mpchoose" class="ov" role="dialog" aria-modal="true" aria-labelledby="mpchooset" style="z-index:calc(var(--z-top,27) + 1)"><div class="box mpchoosebox"><div class="row mh"><b id="mpchooset">收藏地點</b><button type="button" id="mpchoosex" title="關閉" aria-label="關閉">✕</button></div><div class="mb" id="mpchoosebody"></div></div></div>
 <div id="nd" style="display:none;position:fixed;inset:0;background:#0008;z-index:var(--z-sheet,23);align-items:center;justify-content:center;padding:calc(12px*var(--ui))"><div class="box" role="dialog" aria-modal="true" aria-labelledby="ndh"><div class="mh ndhd"><div id="ndh" class="ndh">編輯標題與備註</div><div id="nl" class="ndu"></div></div><label for="nt">標題</label><input id="nt" type="text"><label for="ntx">備註／貼文內容</label><textarea id="ntx"></textarea><div class="row"><button id="nx">取消</button><button class="pri" id="ns">儲存</button></div></div></div>
 <div id="bkp" style="display:none;position:fixed;inset:0;background:#0008;z-index:var(--z-sheet,23);align-items:center;justify-content:center;padding:calc(12px*var(--ui))"><div class="box"><div class="row" style="justify-content:space-between;align-items:center"><b>備份與還原</b><button id="bkx" title="關閉">✕</button></div><button id="bkd">⬇ 下載備份檔</button><label>⬆ 從備份檔還原</label><div class="bkr"><b>還原規則：</b><ul><li>備份中有、但目前已不存在的收藏：會重新還原加入。</li><li>備份中有、目前也存在的相同收藏：會以備份內容覆蓋目前內容。</li><li>目前存在、但備份中沒有的收藏：會繼續保留，不會被刪除。</li></ul></div><input id="bku" type="file" accept=".json,application/json"><div id="bkm" style="font-size:calc(13px*var(--ui));color:var(--mut)"></div></div></div>
 <div id="pfm" style="display:none;position:fixed;inset:0;background:#0008;z-index:var(--z-sheet,23);align-items:center;justify-content:center;padding:calc(12px*var(--ui))"><div class="box"><div class="row" style="justify-content:space-between;align-items:center"><b>🌐 平台管理</b><button id="pfx" title="關閉">✕</button></div><div id="pfl" style="display:flex;flex-direction:column;gap:calc(6px*var(--ui))"></div><div id="pfh" style="font-size:calc(12px*var(--ui));color:var(--mut);white-space:pre-line">平台建立時會記錄當下連結的網域。改名後，該平台下所有收藏的顯示名稱會同步更新，網址辨識不變。
@@ -1871,7 +1917,7 @@ else if (typeof self !== 'undefined' && typeof document === 'undefined' && typeo
 </script>
 <script>
 const $=s=>document.querySelector(s);
-document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const q=s=>document.querySelector(s),on=s=>{const x=q(s);return !!x&&x.style.display!=='none'};let h=1;if(on('#fbm'))q('#fbx').click();else if(on('#nd'))q('#nx').click();else if(on('#np'))q('#nq').click();else if(on('#bkp'))q('#bkx').click();else if(on('#pfm'))q('#pfx').click();else if(on('#gpm'))q('#gpx').click();else if(on('#bm'))q('#bmx').click();else if(on('#rn2'))q('#rx2').click();else if(q('#dlg')&&q('#dlg').classList.contains('o'))q('#cx').click();else if(on('#rn'))q('#rx').click();else if(on('#fadd'))q('#fa').click();else h=0;if(h){e.preventDefault();e.stopPropagation()}},true);
+document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const q=s=>document.querySelector(s),on=s=>{const x=q(s);return !!x&&x.style.display!=='none'};let h=1;if(q('#mpchoose')&&q('#mpchoose').classList.contains('o'))q('#mpchoosex').click();else if(q('#mpman')&&q('#mpman').classList.contains('o')){if(!q('#mpmanedit').hidden)q('#mpmancancel').click();else q('#mpmandone').click()}else if(on('#fbm'))q('#fbx').click();else if(on('#nd'))q('#nx').click();else if(on('#np'))q('#nq').click();else if(on('#bkp'))q('#bkx').click();else if(on('#pfm'))q('#pfx').click();else if(on('#gpm'))q('#gpx').click();else if(on('#bm'))q('#bmx').click();else if(on('#rn2'))q('#rx2').click();else if(q('#dlg')&&q('#dlg').classList.contains('o'))q('#cx').click();else if(on('#rn'))q('#rx').click();else if(on('#fadd'))q('#fa').click();else h=0;if(h){e.preventDefault();e.stopPropagation()}},true);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ls=(k,v)=>{try{return v===undefined?localStorage.getItem(k):localStorage.setItem(k,v)}catch(e){return null}};
 const PF=[[/instagram\.com/,'IG'],[/threads\.(net|com)/,'Threads'],[/(^|\.)(x|twitter)\.com$/,'X'],[/youtube\.com|youtu\.be/,'YouTube']];
@@ -1956,11 +2002,11 @@ function render(){isDue.c=0;tagScopeSync();posts.sort((a,b)=>{const pb=sortBy===
  const due=getDue();const _unused=(()=>{const y=today.slice(0,4),md=today.slice(5),r=[];posts.forEach(p=>{if(p.due){if(nset.c&&p.due<=today&&!p.read)r.push(p);return}const t=new Date(p.t||0).toLocaleDateString('sv-SE');if(nset.t&&t.slice(5)===md&&t.slice(0,4)<y)r.push({...p,why:'收藏 '+(y-t.slice(0,4))+' 週年'});else if(nset.p&&p.pub&&p.pub.slice(5)===md&&p.pub.slice(0,4)<y)r.push({...p,why:'發布 '+(y-p.pub.slice(0,4))+' 週年'})});return r})();
  $('#due').innerHTML=due.length?dueHTML(due):'';
  $('#ls').className=view==='cards'?'cards':'list';
- const cardH=(p=>`<article class="card${bmode&&bsel.has(p.id)?' sel':''}${bmode?'':' cl'}" data-cid="${p.id}"${bmode?'':' tabindex="0"'}><div class="th${mosaic(p,view==="time"?"time":view)?' thm':''}" style="${hasImg(p)?'':'background:'+(PC[p.platform]||PC[Object.keys(pren).find(k=>pren[k]===p.platform)]||'hsl('+thue(p.platform)+' 45% 40%)')+';color:#fff'}">${mosaic(p,view==="time"?"time":view)||(hasImg(p)?thumbImg(p,1):`<span style="text-align:center;padding:6px;overflow-wrap:anywhere"><b>${esc(p.platform)}</b>${(inferLabel(p.url)||{}).show?`<br><small>${esc(inferLabel(p.url).show)}</small>`:''}</span>`)}</div><div class="bd"><div class="meta">${esc(p.platform)}${p.acct?' · <a href="#" data-ac="'+esc(p.acct)+'">'+esc(p.acct)+'</a>':''}${dates(p)?' · '+dates(p):''}${p.read?' · 已讀':''}${imgN(p)>1?' · '+imgN(p)+' 張':''}${(view==='list'||view==='time')&&MAPS.of(p)?MAPS.a(MAPS.of(p),'mpi mpmt'):''}</div><div class="note">${esc(ttl(p))}${p.url?'':BADP}</div>${p.text?`<div class="snip">${esc(String(p.text).slice(0,90))}</div>`:''}<div class="tg">${(p.cats||[]).map(c=>`<span class="fc">📁 ${esc(c.replace(/\//g,' → '))}</span>`).join('　')}${(p.cats||[]).length&&(p.tags||[]).length?'　':''}${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</div><div class="act">${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">開啟原文</a>`:''}<button data-r="${p.id}">${p.read?'標為未讀':'標為已讀'}</button><button data-sr="${p.id}"${p.star?' class="st-on"':''}>${p.star?'★':'☆'}</button>${gdot(p)}<button data-gt="${p.id}"${p.got?' class="got-on"':''}>已下載</button><button data-nt="${p.id}">編輯文字</button><span class="ed2">${(view==='cards'||view==='wall'||view==='board')&&MAPS.of(p)?MAPS.a(MAPS.of(p),'mpi'):(view==='list'||view==='time')&&MAPS.of(p)?MAPS.a(MAPS.of(p),'mpi mped'):''}<button data-dl="${p.id}">刪除</button><button data-e="${p.id}">編輯</button></span></div></div></article>`);
+ const cardH=(p=>`<article class="card${bmode&&bsel.has(p.id)?' sel':''}${bmode?'':' cl'}" data-cid="${p.id}"${bmode?'':' tabindex="0"'}><div class="th${mosaic(p,view==="time"?"time":view)?' thm':''}" style="${hasImg(p)?'':'background:'+(PC[p.platform]||PC[Object.keys(pren).find(k=>pren[k]===p.platform)]||'hsl('+thue(p.platform)+' 45% 40%)')+';color:#fff'}">${mosaic(p,view==="time"?"time":view)||(hasImg(p)?thumbImg(p,1):`<span style="text-align:center;padding:6px;overflow-wrap:anywhere"><b>${esc(p.platform)}</b>${(inferLabel(p.url)||{}).show?`<br><small>${esc(inferLabel(p.url).show)}</small>`:''}</span>`)}</div><div class="bd"><div class="meta">${esc(p.platform)}${p.acct?' · <a href="#" data-ac="'+esc(p.acct)+'">'+esc(p.acct)+'</a>':''}${dates(p)?' · '+dates(p):''}${p.read?' · 已讀':''}${imgN(p)>1?' · '+imgN(p)+' 張':''}${(view==='list'||view==='time')&&MAPS.has(p)?MAPS.a(p,'mpi mpmt'):''}</div><div class="note">${esc(ttl(p))}${p.url?'':BADP}</div>${p.text?`<div class="snip">${esc(String(p.text).slice(0,90))}</div>`:''}<div class="tg">${(p.cats||[]).map(c=>`<span class="fc">📁 ${esc(c.replace(/\//g,' → '))}</span>`).join('　')}${(p.cats||[]).length&&(p.tags||[]).length?'　':''}${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</div><div class="act">${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">開啟原文</a>`:''}<button data-r="${p.id}">${p.read?'標為未讀':'標為已讀'}</button><button data-sr="${p.id}"${p.star?' class="st-on"':''}>${p.star?'★':'☆'}</button>${gdot(p)}<button data-gt="${p.id}"${p.got?' class="got-on"':''}>已下載</button><button data-nt="${p.id}">編輯文字</button><span class="ed2">${(view==='cards'||view==='wall'||view==='board')&&MAPS.has(p)?MAPS.a(p,'mpi'):(view==='list'||view==='time')&&MAPS.has(p)?MAPS.a(p,'mpi mped'):''}<button data-dl="${p.id}">刪除</button><button data-e="${p.id}">編輯</button></span></div></div></article>`);
 const dkey=p=>sortBy==='pub'?(p.pub||''):new Date(p.t||0).toLocaleDateString('sv-SE');
 let out='<p style="color:var(--mut)">還沒有符合的收藏。</p>',cls='cards';
 if(shown.length){
-if(view==='table'){cls='tbl';out=`<div style="overflow-x:auto"><table><tr><th></th><th>平台</th><th>標題</th><th>資料夾</th><th>標籤</th><th>收藏日</th><th>發布日</th><th>地圖</th><th></th></tr>${shown.map(p=>`<tr data-cid="${p.id}"${bmode&&bsel.has(p.id)?' class="sel"':''}><td>${mosaic(p,'table')?'<span class="tmi">'+mosaic(p,'table')+'</span>':hasImg(p)?thumbImg(p):'<span class="tnp" role="img" aria-label="無圖片"><span aria-hidden="true">無圖片</span></span>'}</td><td>${esc(p.platform)}</td><td>${esc(p.note||p.url)}${p.url?'':BADP}</td><td>${(p.cats||[]).map(c=>esc(c.replace(/\//g,' → '))).join('<br>')}</td><td>${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</td><td>${new Date(p.t||0).toLocaleDateString('sv-SE')}</td><td>${esc(p.pub||'')}</td><td class="tmp">${MAPS.of(p)?MAPS.a(MAPS.of(p),'mpi mptb'):''}</td><td>${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">原文</a> `:''}<button data-r="${p.id}">${p.read?'未讀':'已讀'}</button> <button data-e="${p.id}">編輯</button></td></tr>`).join('')}</table></div>`}
+if(view==='table'){cls='tbl';out=`<div style="overflow-x:auto"><table><tr><th></th><th>平台</th><th>標題</th><th>資料夾</th><th>標籤</th><th>收藏日</th><th>發布日</th><th>地圖</th><th></th></tr>${shown.map(p=>`<tr data-cid="${p.id}"${bmode&&bsel.has(p.id)?' class="sel"':''}><td>${mosaic(p,'table')?'<span class="tmi">'+mosaic(p,'table')+'</span>':hasImg(p)?thumbImg(p):'<span class="tnp" role="img" aria-label="無圖片"><span aria-hidden="true">無圖片</span></span>'}</td><td>${esc(p.platform)}</td><td>${esc(p.note||p.url)}${p.url?'':BADP}</td><td>${(p.cats||[]).map(c=>esc(c.replace(/\//g,' → '))).join('<br>')}</td><td>${(p.tags||[]).map(t=>`<span class="tp" style="--h:${thue(t)}">${esc(t)}</span>`).join('')}</td><td>${new Date(p.t||0).toLocaleDateString('sv-SE')}</td><td>${esc(p.pub||'')}</td><td class="tmp">${MAPS.has(p)?MAPS.a(p,'mpi mptb'):''}</td><td>${/^https?:/.test(p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener">原文</a> `:''}<button data-r="${p.id}">${p.read?'未讀':'已讀'}</button> <button data-e="${p.id}">編輯</button></td></tr>`).join('')}</table></div>`}
 else if(view==='time'){cls='tl';const g={},ks=[];shown.forEach(p=>{const k=dkey(p)||'';if(!g[k]){g[k]=[];ks.push(k)}g[k].push(p)});out=ks.sort((x,y)=>!x?1:!y?-1:sortAsc?x.localeCompare(y):y.localeCompare(x)).map(k=>{const m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(k),dt=m?new Date(+m[1],m[2]-1,+m[3]):null;return `<section class="tdg" data-day="${esc(k)}"><h3 class="gh tdh"><span class="tdt">${!k?'未填日期':m?m[1]+' 年 '+(+m[2])+' 月 '+(+m[3])+' 日':esc(k)}</span>${dt&&!isNaN(dt)?'<span class="twd">週'+'日一二三四五六'[dt.getDay()]+'</span>':''}<small>${g[k].length} 篇</small></h3><div class="list">${g[k].map(cardH).join('')}</div></section>`}).join('')}
 else if(view==='board'){cls='board';const g={};shown.forEach(p=>{const cs=(p.cats||[]).length?p.cats.map(c=>c.split('/')[0]):['無資料夾'];[...new Set(cs)].forEach(k=>(g[k]=g[k]||[]).push(p))});out=Object.keys(g).sort().map(k=>`<div class="col"><h3 class="gh">📁 ${esc(k)} <small>${g[k].length}</small></h3>${g[k].map(cardH).join('')}</div>`).join('')}
 else if(view==='album'&&window.snsAlbum){cls='alw';out=snsAlbum.html(shown)}
@@ -2027,7 +2073,7 @@ $('#sh').onclick=e=>{const r=e.target.dataset.rm;if(r===undefined)return;const t
 let origShots=[],sessUp=[];
 function openDlg(id){
  cur=id?posts.find(p=>p.id===id):null;const p=cur||{};
- $('#u').value=(p.share&&snsExt(p.share)===p.url)?p.share:(p.url||'');$('#n').value=p.note||'';$('#c').value=(p.cats||[]).join(', ');tgs=[...(p.tags||[])];$('#gi').value='';pkReset();drawTg();rc();$('#rn2').style.display='none';armed=false;$('#del').textContent='刪除';$('#t').value=p.text||'';$('#d').value=p.due||'';$('#pd').value=p.pub||'';pdAuto=false;noteAuto=false;$('#nr').checked=!!p.noRev;$('#ac').value=p.acct||'';acAuto=false;window.snsMap&&snsMap.load(p.mapsUrl);$('#an').textContent='';$('#pn').textContent='';
+ $('#u').value=(p.share&&snsExt(p.share)===p.url)?p.share:(p.url||'');$('#n').value=p.note||'';$('#c').value=(p.cats||[]).join(', ');tgs=[...(p.tags||[])];$('#gi').value='';pkReset();drawTg();rc();$('#rn2').style.display='none';armed=false;$('#del').textContent='刪除';$('#t').value=p.text||'';$('#d').value=p.due||'';$('#pd').value=p.pub||'';pdAuto=false;noteAuto=false;$('#nr').checked=!!p.noRev;$('#ac').value=p.acct||'';acAuto=false;window.snsMap&&snsMap.load(p);$('#an').textContent='';$('#pn').textContent='';
  window.gImgs&&sessUp.length&&gImgs.abandon(sessUp.splice(0));origShots=[...(p.shots||[])];sessUp=[];shots=[...(p.shots||[])];xims=xOf(p);ford=ordTok(shots,xims,p.iord);xuOpen(false);drawShots();$('#dh').style.display=cur?'':'none';$('#msg').textContent=col?'':($('#st').textContent||'還在連線儲存空間，請稍候');$('#del').style.display=cur?'':'none';$('#shw').style.display='';$('#ferr').textContent='';$('#sm').textContent='';
  $('#u').oninput();$('#dlg').classList.add('o');$('#dlg').scrollTop=0;requestAnimationFrame(()=>{$('#dlg').scrollTop=0});if(!cur)paste();
 }
@@ -2077,13 +2123,13 @@ $('#f').onchange=async e=>{
 };
 $('#sv').onclick=async()=>{
  const url=$('#u').value.trim();if(!/^https?:\/\//.test(url)){$('#msg').textContent='請貼上 http 或 https 開頭的連結';return}
- /* V3.4.21：Google Maps 欄位裡還有沒辦法辨識的文字時先不儲存，請使用者改貼或清掉 */if(window.snsMap&&!snsMap.ready()){snsMap.err();$('#msg').textContent='Google Maps 地點連結無法辨識，請改貼 Google Maps 分享網址，或按 ✕ 清除';return}
+ /* V3.4.26：地點在管理視窗中先驗證完成，只有具名且有效的網址會進入草稿。 */if(window.snsMap&&!snsMap.ready())return
  /* V2.10.4：只要網址重複，按儲存時一律跳出確認彈窗（不管上方提醒有沒有出現）；按「確定」才新增，按「取消」回到表單、內容保留 */
  /* V3.0.0：短網址還在解析中時，先等結果（最多約 8 秒；失敗或逾時都照常儲存，不會擋住收藏） */
  if(window.snsRes){snsRes.unsure(url);if(snsRes.pending(url)){$('#msg').textContent='正在檢查這個網址是否收藏過…';await snsRes.wait(url);$('#msg').textContent='';if($('#u').value.trim()!==url)return;dupChk()}}
  if(dupFind().length){dupChk();const pr=snsAsk({title:'網址重複',main:'⚠️ 這個網址已經收藏過囉；確定要再存一筆嗎？',cancel:'取消',ok:'確定'});const am=document.querySelector('#askc .askm');if(am)am.classList.add('dupw');if(!(await pr))return}
  const id=cur?cur.id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
- const o={...(cur&&window.gStore&&gStore()?(gStore().get(cur.id)||{}):{}),url,platform:plat(url),note:$('#n').value.trim(),text:$('#t').value.trim(),cats:list($('#c').value).map(c=>c.replace(/\s*(→|＞|>|\/)\s*/g,'/')),tags:(addTg(),[...tgs]),due:$('#d').value,pub:$('#pd').value,noRev:$('#nr').checked,acct:$('#ac').value.trim(),shots,read:cur?!!cur.read:false,t:cur?cur.t:Date.now(),...gPatch(dgSel)};/* V3.4.20：依排序結果存回 shots、ximgs 各自的順序；兩種來源有交錯時才另外存 iord（全部順序）。沒有 iord 的舊收藏＝上傳圖片在前、外部網址在後 */{ford=ordTok(shots,xims,ford);o.shots=ford.filter(t=>t.charAt(0)==='g').map(t=>t.slice(2));const xs=ford.filter(t=>t.charAt(0)==='x').map(t=>t.slice(2));shots=o.shots;xims=xs;if(JSON.stringify(ford)!==JSON.stringify(ordTok(o.shots,xs)))o.iord=[...ford];else delete o.iord}if(xims.length)o.ximgs=[...xims];else delete o.ximgs;/* V3.4.21：Google Maps 地點連結（每筆最多一個，和原始貼文網址分開存） */{const mu=window.snsMap?snsMap.val():'';if(mu)o.mapsUrl=mu;else delete o.mapsUrl}
+ const o={...(cur&&window.gStore&&gStore()?(gStore().get(cur.id)||{}):{}),url,platform:plat(url),note:$('#n').value.trim(),text:$('#t').value.trim(),cats:list($('#c').value).map(c=>c.replace(/\s*(→|＞|>|\/)\s*/g,'/')),tags:(addTg(),[...tgs]),due:$('#d').value,pub:$('#pd').value,noRev:$('#nr').checked,acct:$('#ac').value.trim(),shots,read:cur?!!cur.read:false,t:cur?cur.t:Date.now(),...gPatch(dgSel)};/* V3.4.20：依排序結果存回 shots、ximgs 各自的順序；兩種來源有交錯時才另外存 iord（全部順序）。沒有 iord 的舊收藏＝上傳圖片在前、外部網址在後 */{ford=ordTok(shots,xims,ford);o.shots=ford.filter(t=>t.charAt(0)==='g').map(t=>t.slice(2));const xs=ford.filter(t=>t.charAt(0)==='x').map(t=>t.slice(2));shots=o.shots;xims=xs;if(JSON.stringify(ford)!==JSON.stringify(ordTok(o.shots,xs)))o.iord=[...ford];else delete o.iord}if(xims.length)o.ximgs=[...xims];else delete o.ximgs;/* V3.4.26：多地點清單；mapsUrl 同步保存第一個網址，供舊版相容。 */{const ml=window.snsMap?snsMap.places():[];if(ml.length){o.mapsPlaces=ml.map(x=>({id:x.id,name:x.name,url:x.url}));o.mapsUrl=ml[0].url}else{delete o.mapsPlaces;delete o.mapsUrl}}
  /* V3.1.0：貼上的是整段分享文字時，原文完整保留在 share；url 是從中擷取出的網址（卡片「原文」開這個網址） */{const raw=$('#u').snsRaw().trim();if(raw&&snsNormU(raw)!==url)o.share=raw;else delete o.share}
  /* V3.1.0：解析成功時記下內容識別（ck），換裝置也能比對；網址沒變又沒解析時保留原本的 */{const R=window.snsRes,v=R&&R.need(url)&&R.get(url);if(v&&v.st==='ok')o.ck=[...R.keys(url)];else if(!(cur&&cur.url===url))delete o.ck}
  /* V3.2.0：記下哪些內容是系統自動帶入的（隱藏欄位 auto），重新開啟編輯時才分得出自動與手動 */{const A=window.snsInfo&&snsInfo.state();if(A&&(A.acct||A.text||A.pub)){o.auto={};if(A.acct)o.auto.acct=A.acct;if(A.text)o.auto.text=A.text;/* V3.2.1 */if(A.pub&&o.pub===A.pub)o.auto.pub=A.pub}else delete o.auto}
@@ -2261,7 +2307,7 @@ $('#t').addEventListener('input',()=>drawTg());
 const _u4=$('#u').oninput;$('#u').oninput=()=>{_u4();drawTg()};
 $('#sdd').value=sortAsc?'a':'d';$('#sdd').onchange=e=>{sortAsc=e.target.value==='a';ls('soa',sortAsc?'1':'0');render()};
 $('#ls').addEventListener('click',e=>{if(!bmode)return;if(e.target.closest('button,a,input,.tp'))return;const c=e.target.closest('[data-cid]');if(!c)return;const id=c.dataset.cid;bsel.has(id)?bsel.delete(id):bsel.add(id);render()});
-['u','n','ac','mpu','t','pd','gi','dn','pqn'].forEach(id=>{const el=$('#'+id),w=document.createElement('div'),b=document.createElement('button');w.className='xw'+(id==='pd'||id==='d'||id==='gi'?' dt':'');b.type='button';b.className='xc';b.textContent='✕';b.title='清除';b.onclick=()=>{el.value='';el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));el.focus()};el.parentNode.insertBefore(w,el);w.appendChild(el);w.appendChild(b)});
+['u','n','ac','t','pd','gi','dn','pqn'].forEach(id=>{const el=$('#'+id),w=document.createElement('div'),b=document.createElement('button');w.className='xw'+(id==='pd'||id==='d'||id==='gi'?' dt':'');b.type='button';b.className='xc';b.textContent='✕';b.title='清除';b.onclick=()=>{el.value='';el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));el.focus()};el.parentNode.insertBefore(w,el);w.appendChild(el);w.appendChild(b)});
 $('#dx').onclick=()=>$('#cx').click();
 const _u5=$('#u').oninput;$('#u').oninput=()=>{_u5();const v=$('#u').value;if(v&&!$('#ac').value&&/threads\.(net|com)|instagram\.com/.test(v)&&!inferAcct(v))$('#an').textContent='（這種連結裡沒有帳號，請手動填）'};
 $('#gi').parentNode.querySelector('.xc').onclick=()=>{tgs=[];$('#gi').value='';drawTg();$('#gi').focus()};
@@ -2393,7 +2439,7 @@ const pvHTML=p=>{const gL=gOf(p).map(id=>grps.find(x=>x.id===id)).filter(Boolean
  +row('發文帳號',p.acct?esc(p.acct):none)
  +(p.share?row('分享原文','<span class="pvsh">'+esc(p.share)+'</span>'):'')
  +row('原始網址',/^https?:\/\//.test(p.url||'')?'<a href="'+esc(p.url)+'" target="_blank" rel="noopener noreferrer">'+esc(p.url)+'</a>':(p.url?esc(p.url):none))
- +(MAPS.of(p)?row('地點',MAPS.a(MAPS.of(p),'mpo','開啟 Google Maps')):'')/* V3.4.21 */
+ +(MAPS.has(p)?row('地點',MAPS.a(p,'mpo','開啟 Google Maps')):'')/* V3.4.26 */
  +row('資料夾',(p.cats||[]).length?p.cats.map(c=>'<span class="fc">📁 '+esc(c.replace(/\//g,' → '))+'</span>').join(''):'<span class="pvn">📂 無資料夾</span>')
  +row('標籤',(p.tags||[]).length?p.tags.map(x=>'<span class="tp" style="--h:'+thue(x)+'">'+esc(x)+'</span>').join(''):none)
  +row('分組',gL.length?gL.map(g=>'<span class="pvg"><span class="gd" style="background:'+esc(g.color)+'"></span>'+esc(g.name)+'</span>').join(''):'<span class="pvn">未分組</span>')
@@ -2850,35 +2896,43 @@ const imgN=p=>((p&&p.shots)||[]).length+xOf(p).length;
 /* V3.4.20：一般圖片附件的順序。sh＝雲端圖片 ID、xs＝外部圖片網址、io＝存下來的順序（'g:ID'／'x:網址'）；
    io 裡找得到的照 io 排，找不到（舊收藏、或之後新加的）接在後面，維持原本「上傳圖片→外部網址」順序。io 裡已不存在的項目直接略過，不會遺失或重複圖片 */
 function ordTok(sh,xs,io){const left=[...(sh||[]).map(g=>'g:'+g),...(xs||[]).map(u=>'x:'+u)],out=[];(Array.isArray(io)?io:[]).forEach(t=>{const i=typeof t==='string'?left.indexOf(t):-1;if(i>=0){out.push(t);left.splice(i,1)}});return out.concat(left)}
-/* V3.4.21：Google Maps 地點連結——只在本機辨識網址（不連線、不展開短網址），開啟時直接用原始 https 網址，交給系統決定開 App 或網頁 */
+/* V3.4.26：多地點 Google Maps。mapsUrl 保留第一個地點網址供舊版相容；mapsPlaces 保存完整具名清單。 */
 const MAPS=(()=>{
  const G=/^(?:www\.|maps\.)?google\.(?:com|[a-z]{2}|co\.[a-z]{2}|com\.[a-z]{2})$/;
- const ok=raw=>{let u;try{u=new URL(String(raw||'').trim())}catch(e){return false}if(!/^https?:$/.test(u.protocol)||u.username||u.password)return false;const h=u.hostname.toLowerCase().replace(/\.$/,''),pa=u.pathname;
-  if(h==='maps.app.goo.gl')return pa.length>1;
-  if(h==='goo.gl')return /^\/maps(\/|$)/.test(pa)&&pa.length>6;
-  if(!G.test(h))return false;
-  if(h.startsWith('maps.'))return true;
-  return /^\/maps(\/|$|\?)/.test(pa)};
- /* 貼上的可能是整段分享文字（地點名稱＋網址）：取出第一個可辨識的 Google Maps 網址 */
+ const ok=raw=>{let u;try{u=new URL(String(raw||'').trim())}catch(e){return false}if(!/^https?:$/.test(u.protocol)||u.username||u.password)return false;const h=u.hostname.toLowerCase().replace(/\.$/,''),pa=u.pathname;if(h==='maps.app.goo.gl')return pa.length>1;if(h==='goo.gl')return /^\/maps(\/|$)/.test(pa)&&pa.length>6;if(!G.test(h))return false;if(h.startsWith('maps.'))return true;return /^\/maps(\/|$|\?)/.test(pa)};
  const pick=t=>{t=String(t||'').trim();if(ok(t))return t;const L=t.match(/https?:\/\/[^\s<>"'「」]+/gi)||[];for(const x of L){const y=x.replace(/[)\]}>,.;!?，。、！？）】]+$/,'');if(ok(y))return y}return ''};
- const of=p=>{const v=p&&p.mapsUrl;return typeof v==='string'&&ok(v)?v.trim():''};
+ const hash=t=>{let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)};
+ const cleanPlace=(x,i=0)=>{if(!x||typeof x!=='object')return null;const url=pick(x.url||x.mapsUrl||'');if(!url)return null;const name=String(x.name||'').trim().slice(0,80)||'Google Maps 地點',rawId=String(x.id||'').trim(),id=/^[\w-]{1,80}$/.test(rawId)?rawId:'mp-'+hash(url+'|'+i);return{id,name,url}};
+ const list=p=>{if(!p||typeof p!=='object')return[];const legacy=pick(p.mapsUrl||'');if(Array.isArray(p.mapsPlaces)){const L=p.mapsPlaces.map((x,i)=>cleanPlace(x,i)).filter(Boolean);/* 舊版客戶端只認得 mapsUrl；若它被舊版更新，優先同步第一個地點網址，保留新欄位名稱及其餘地點。 */if(L.length){if(legacy&&legacy!==L[0].url)L[0]={...L[0],url:legacy};return L}return legacy?[{id:'mp-legacy-'+hash(legacy),name:'Google Maps 地點',url:legacy}]:[]}return legacy?[{id:'mp-legacy-'+hash(legacy),name:'Google Maps 地點',url:legacy}]:[]};
+ const of=p=>{const L=list(p);return L.length?L[0].url:''};
  const ICON='<svg class="mpic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#FFF1EA" stroke="#8B5E4A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M2.5 14.2l5.8-2 7.4 2 5.8-2v8l-5.8 2-7.4-2-5.8 2z"/><path fill="none" stroke="#8B5E4A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M8.3 12.2v8M15.7 14.2v8"/><g transform="translate(2.4 -1.4) scale(0.8)"><circle fill="#E8A77A" stroke="#8B5E4A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" cx="4.6" cy="9.4" r="2.3"/><circle fill="#E8A77A" stroke="#8B5E4A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" cx="19.4" cy="9.4" r="2.3"/><path fill="#E8A77A" stroke="#8B5E4A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 21.6c-.5 0-7.3-5.9-7.3-11.6a7.3 7.3 0 0 1 14.6 0c0 5.7-6.8 11.6-7.3 11.6z"/><path fill="#FFF1EA" d="M12 6.2c2.6 0 4.6 1.8 4.6 4.1 0 2.4-2 4-4.6 4s-4.6-1.6-4.6-4c0-2.3 2-4.1 4.6-4.1z"/><path stroke="#8B5E4A" stroke-width="1.03" stroke-linecap="round" fill="none" d="M9.21 9.80q0.68 -0.99 1.35 0M13.44 9.80q0.68 -0.99 1.35 0"/><path stroke="#8B5E4A" stroke-width="1.03" stroke-linecap="round" fill="none" d="M11.37 11.06q0.63 0.63 1.26 0"/><ellipse fill="#F29AAE" cx="8.94" cy="11.33" rx="0.81" ry="0.54"/><ellipse fill="#F29AAE" cx="15.06" cy="11.33" rx="0.81" ry="0.54"/></g></svg>';
- /* 一般連結（沒有 target、沒有 window.open、沒有中介頁）：手機由系統判斷是否交給 Google Maps App，電腦用瀏覽器開 */
- const a=(u,cls,label)=>'<a class="'+cls+'" href="'+esc(u)+'" title="開啟 Google Maps" aria-label="開啟 Google Maps">'+ICON+(label?'<span>'+label+'</span>':'')+'</a>';
- return{ok,pick,of,ICON,a}})();
+ const listData=L=>esc(encodeURIComponent(JSON.stringify(L.map(x=>({name:x.name,url:x.url})))));
+ const a=(p,cls,label)=>{const L=typeof p==='string'?(pick(p)?[{name:'Google Maps 地點',url:pick(p)}]:[]):list(p);if(!L.length)return'';if(L.length===1)return'<a class="'+cls+'" href="'+esc(L[0].url)+'" target="_blank" rel="noopener noreferrer" title="在新分頁／Google Maps App 開啟" aria-label="在新分頁或 Google Maps App 開啟">'+ICON+(label?'<span>'+esc(label)+'</span>':'')+'</a>';return'<button type="button" class="'+cls+' mp-choice" data-mpplaces="'+listData(L)+'" title="選擇 Google Maps 地點" aria-label="選擇 Google Maps 地點">'+ICON+(label?'<span>選擇地點</span>':'')+'</button>'};
+ let chooseFb=null;
+ const chooseClose=()=>{const el=$('#mpchoose');if(!el||!el.classList.contains('o'))return;el.classList.remove('o');$('#mpchoosebody').innerHTML='';const b=chooseFb;chooseFb=null;try{b&&document.contains(b)&&b.focus({preventScroll:true})}catch(e){}};
+ const chooseOpen=(L,fb)=>{if(!Array.isArray(L)||L.length<2)return;chooseFb=fb||document.activeElement;$('#mpchoosebody').innerHTML=L.map(x=>'<div class="mp-place-row"><span class="mp-place-name">'+esc(x.name)+'</span><a class="mp-place-go" href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer" title="在新分頁／Google Maps App 開啟" aria-label="在新分頁或 Google Maps App 開啟">'+ICON+'<span>點擊前往</span></a></div>').join('');$('#mpchoose').classList.add('o');const x=$('#mpchoosex');try{x.focus()}catch(e){}};
+ $('#mpchoosex').onclick=chooseClose;$('#mpchoose').addEventListener('mousedown',e=>{if(e.target===$('#mpchoose'))chooseClose()});
+ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mpplaces]');if(!b)return;e.preventDefault();e.stopPropagation();try{chooseOpen(JSON.parse(decodeURIComponent(b.dataset.mpplaces)),b)}catch(x){}},true);
+ return{ok,pick,list,of,has:p=>list(p).length>0,a,ICON,chooseOpen,chooseClose};
+})();
 window.snsMaps=MAPS;
-/* V3.4.21：表單的 Google Maps 欄位。沒加入時是輸入框；貼上可辨識的網址就自動變成「已加入地點連結」狀態列（同一個框、同樣高度），
-   狀態列：地點圖示＋文字＋開啟圖示（一般連結）＋✕ 移除（恢復輸入框）。按「取消」不會寫入，按「儲存」才存。 */
-window.snsMap=(()=>{let v='',bar=null;const inp=()=>$('#mpu'),er=()=>$('#mperr');
- const OPEN='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14 4h6v6M20 4l-8.5 8.5M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/></svg>';
- const mk=()=>{if(bar)return bar;const w=inp().parentElement;bar=document.createElement('div');bar.className='mps';bar.hidden=true;w.appendChild(bar);return bar};
- const draw=()=>{const b=mk(),w=inp().parentElement;w.classList.toggle('mpon',!!v);b.hidden=!v;if(v){b.innerHTML='<span class="mpsi">'+MAPS.ICON+'</span><span class="mpst">已加入地點連結</span><a class="mpso" href="'+esc(v)+'" title="開啟 Google Maps" aria-label="開啟 Google Maps">'+OPEN+'</a><button type="button" class="mpsx" title="移除地點連結" aria-label="移除地點連結">✕</button>';b.querySelector('.mpsx').onclick=()=>{v='';inp().value='';draw();try{inp().focus()}catch(e){}}}else b.innerHTML='';inp().tabIndex=v?-1:0};
- const clr=()=>{const e=er();e.textContent='';e.hidden=true};
- const err=()=>{const e=er();e.textContent='這不是可辨識的 Google Maps 網址。請在 Google Maps 按「分享」後複製網址，再貼上一次（例如 https://maps.app.goo.gl/…）。';e.hidden=false};
- const take=()=>{const t=inp().value;if(!t.trim()){clr();return true}const u=MAPS.pick(t);if(u){v=u;inp().value='';clr();draw();return true}return false};
- setTimeout(()=>{const i=inp();if(!i)return;i.addEventListener('input',()=>{if(!take()&&/^\s*https?:\/\/\S+\s*$/.test(i.value)&&!/^https?:\/\/(maps\.app\.goo\.gl|goo\.gl|(www\.|maps\.)?google\.)/i.test(i.value.trim()))err();else if(!i.value.trim())clr()});
-  i.addEventListener('paste',()=>setTimeout(()=>{if(!take())err()},0));i.addEventListener('change',()=>{if(!take())err()})},0);
- return{load:u=>{v=MAPS.ok(u)?String(u).trim():'';if(inp())inp().value='';clr();draw()},val:()=>v,ready:()=>!inp()||!inp().value.trim()||take(),err}})();
+/* V3.4.26：表單採精簡入口；管理中的變更先保留在表單草稿，只有按主表單「儲存」才寫入收藏。 */
+window.snsMap=(()=>{
+ let places=[],editAt=-1,fb=null;
+ const makeId=()=> 'mp-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9);
+ const status=()=>{const n=places.length;$('#mpmanstatus').textContent=n?('已設定 '+n+' 個地點'):'尚未新增地點'};
+ const err=(t='')=>{const e=$('#mpmanerr');e.textContent=t;e.hidden=!t};
+ const editorOn=on=>{$('#mpmanedit').hidden=!on;$('#mpmanlist').hidden=on;$('#mpmanadd').hidden=on;$('#mpmandone').hidden=on;$('#mpmaneditactions').hidden=!on;if(!on)err('')};
+ const render=()=>{const L=$('#mpmanlist');if(!places.length){L.innerHTML='<div class="mpman-empty">尚未新增地點</div>';return}L.innerHTML=places.map((x,i)=>'<div class="mpman-row"><span class="mpman-name">'+esc(x.name)+'</span><span class="mpman-actions"><button type="button" data-mpe="'+i+'">編輯</button><button type="button" data-mpd="'+i+'">刪除</button></span></div>').join('')};
+ const open=()=>{fb=document.activeElement;editAt=-1;render();editorOn(false);$('#mpman').classList.add('o');try{$('#mpmanx').focus()}catch(e){}};
+ const close=()=>{if(!$('#mpman').classList.contains('o'))return;$('#mpman').classList.remove('o');editorOn(false);try{fb&&document.contains(fb)&&fb.focus({preventScroll:true})}catch(e){}fb=null;status()};
+ const startEdit=i=>{editAt=i;const x=i>=0?places[i]:{name:'',url:''};$('#mpmanname').value=x.name||'';$('#mpmanurl').value=x.url||'';err('');editorOn(true);$('#mpmansave').textContent=i>=0?'儲存地點':'加入地點';setTimeout(()=>$('#mpmanname').focus(),0)};
+ $('#mpmanopen').onclick=open;$('#mpmanx').onclick=close;$('#mpmandone').onclick=close;$('#mpmanadd').onclick=()=>startEdit(-1);$('#mpmancancel').onclick=()=>{editorOn(false);render()};
+ $('#mpmanlist').addEventListener('click',e=>{const ed=e.target.closest('[data-mpe]'),del=e.target.closest('[data-mpd]');if(ed){startEdit(+ed.dataset.mpe);return}if(del){const i=+del.dataset.mpd;if(Number.isInteger(i)&&i>=0&&i<places.length){places.splice(i,1);render();status()}}});
+ $('#mpmansave').onclick=()=>{const name=$('#mpmanname').value.trim(),raw=$('#mpmanurl').value.trim(),url=MAPS.pick(raw);if(!name){err('請輸入地點名稱。');$('#mpmanname').focus();return}if(!url){err('請貼上可辨識的 Google Maps 分享網址。');$('#mpmanurl').focus();return}const x={id:editAt>=0&&editAt<places.length?places[editAt].id:makeId(),name:name.slice(0,80),url};if(editAt>=0&&editAt<places.length)places[editAt]=x;else places.push(x);editorOn(false);render();status()};
+ $('#mpman').addEventListener('mousedown',e=>{if(e.target===$('#mpman'))close()});
+ return{load:p=>{places=MAPS.list(p).map(x=>({id:x.id,name:x.name,url:x.url}));status()},places:()=>places.map(x=>({id:x.id,name:x.name,url:x.url})),ready:()=>true,open,close};
+})();
 const attOrd=p=>ordTok(((p&&p.shots)||[]).filter(x=>typeof x==='string'&&x),xOf(p),p&&p.iord).map(t=>t.charAt(0)==='g'?{g:t.slice(2)}:{u:t.slice(2)});
 /* V3.4.0：收藏卡片封面順序＝使用者附件第一張（原本順序：上傳／剪貼簿的圖片、再來是外部圖片網址）＞ 外部影片封面 ＞ 原本的預設樣式 */
 const hasImg=p=>!!((p.shots&&p.shots[0])||xOf(p)[0]||VC.of(p));
@@ -3200,7 +3254,7 @@ const GG=window.snsGoogle;
   const st=$('#st');if(st)st.classList.toggle('lgdup',show&&st.textContent.trim()===ST)};
  if(GG){const su=GG.setUser.bind(GG);GG.setUser=u=>{su(u);upd()}}
  const st=$('#st');if(st)new MutationObserver(upd).observe(st,{childList:true,characterData:true,subtree:true});
- window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.25';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+ window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.26';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
@@ -3510,7 +3564,7 @@ $('#gout').onclick=async()=>{$('#gmn').style.display='none';
  try{const r=await fetch('/api/auth/logout',{method:'POST',credentials:'same-origin',headers:{'X-Requested-With':'sns'}});if(!r.ok)throw new Error('http '+r.status)}catch(e){$('#st').textContent='登出失敗：連不上登入服務，請稍後再試';return}
  doOut()};
 /* ---- 跨裝置衝突視窗 ---- */
-const FL={note:'標題',cats:'資料夾',tags:'標籤',star:'星號',read:'已讀',got:'已下載',grp:'分組',gs:'分組',share:'分享原文',ck:'內容識別',auto:'自動帶入標記',due:'回顧日期',noRev:'不回顧',text:'備註／貼文內容',acct:'發文帳號',pub:'發布日',platform:'平台',url:'連結',shots:'截圖',iord:'圖片順序',mapsUrl:'Google Maps 地點連結',list:'資料夾清單',grps:'分組',plats:'平台',pren:'平台名稱'};
+const FL={note:'標題',cats:'資料夾',tags:'標籤',star:'星號',read:'已讀',got:'已下載',grp:'分組',gs:'分組',share:'分享原文',ck:'內容識別',auto:'自動帶入標記',due:'回顧日期',noRev:'不回顧',text:'備註／貼文內容',acct:'發文帳號',pub:'發布日',platform:'平台',url:'連結',shots:'截圖',iord:'圖片順序',mapsUrl:'Google Maps 地點連結（相容欄位）',mapsPlaces:'Google Maps 地點清單',list:'資料夾清單',grps:'分組',plats:'平台',pren:'平台名稱'};
 let confList=[];
 const confShow=()=>confUI(confList);
 const doRes=async mode=>{if(!store)return;store.resolve(mode);$('#cfs').textContent='處理中…';try{await store.flush();$('#cfs').textContent=''}catch(e){$('#cfs').textContent='儲存失敗：'+(e.message||'')}};

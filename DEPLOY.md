@@ -1,48 +1,42 @@
-# SNS文章收藏夾 V3.4.25 部署指南（**等你驗收安裝包後再安排正式部署**）
+# SNS文章收藏夾 V3.4.26 交付與手動上傳說明
 
-> **部署紀錄**：小克只完成開發、測試與安裝包。**沒有** commit、**沒有** push、**沒有**開分支、**沒有** Preview、**沒有**觸發 Vercel。沒有修改環境變數、Google Console、Service Account、管理試算表。
-> **正式環境版本由你確認**：小克看不到 GitHub／Vercel，不知道目前 `main` 與 Production 是哪一版、哪一個 commit，所以本文件**不寫死**任何正式版本號或 commit。
+> 本次只製作本機完整安裝包與測試報告。**沒有**建立 Git 分支、沒有 commit／push、沒有操作 GitHub／Vercel、沒有部署 Production。正式上傳由猴猴自行手動處理。
 
-## 一、基準與回復
+## 一、版本與基準
 
 | 項目 | 內容 |
 |---|---|
-| GitHub Repository | `jonxr23/littlemonkey805-sns-bookmark` |
-| 本次安裝包 | `sns-bookmark-v3.4.25-complete.zip`（解壓後唯一資料夾 `sns-bookmark-v3.4.25`；app-version 3.4.25、build 2026-11-20 18:42） |
-| 開發基準 | `sns-bookmark-v3.4.12-complete.zip`（V3.4.12，build 2026-11-18 02:35，保留不動）。**V3.4.13 已包含 V3.4.12 以前的全部修改**；如果 V3.4.1～V3.4.12 還沒上線，可以直接上傳 V3.4.13（V3.4.1 的 Network 實測清單仍然適用，但 Facebook 那幾項改成「只有分享短網址會呼叫 1 次」） |
-| 目前 GitHub `main`／Vercel Production | **請上傳前自己確認**（Vercel → Deployments 標示 Production 的那一筆；GitHub `main` 最新 commit），記下來作為回復點 |
-| 正式網址 | https://littlemonkey805-sns-bookmark.vercel.app/（不變） |
+| 本次版本 | `sns-bookmark-v3.4.26-complete.zip`（解壓後資料夾 `sns-bookmark-v3.4.26`；app-version 3.4.26；build 2026-11-21 11:44） |
+| 開發基準 | V3.4.25 完整安裝包；原始包未修改 |
+| 交付方式 | 猴猴手動上傳；不建立分支 |
+| 正式網址 | https://littlemonkey805-sns-bookmark.vercel.app/（本次未存取或部署） |
 
-## 二、要不要另外設定？
+## 二、本次修改範圍
 
-| 項目 | 結果 |
-|---|---|
-| Apps Script `Code.gs`／管理試算表 | **程式免更新**（與 V3.2.4、V3.2.3 逐位元相同）。「公告管理」的欄位、資料、勾選都不用動。**建議**：管理試算表裡的線上使用說明「圖片格式及容量」「為什麼圖片上傳失敗？」兩則還是舊規則（1440 px、不收 WEBP），請照第六節貼上新文字；不改也能用，只是說明和實際行為不一致 |
-| `/api/announcements`、`/api/activity`、`/api/auth/*`（含 `/api/auth/token`）、`api/_lib/session.js`、`api/_lib/admin.js` | **沒有改**（與 V3.4.0 逐位元相同） |
-| `/api/resolve`、`api/_lib/info.js` | **有改**（V3.4.1）：自動帶入查詢（`info:1`）可以一次附帶 `res`（分享短網址解析，重複比對用）、`vc`（X 影片封面網址文字）、`noPub`（YouTube 日期已有時不下載影片頁）。不帶這些參數時行為和 V3.4.0 完全相同；原本的單獨解析（`{url}`）、封面查詢（`cover:1`）都保留作為備援。同源檢查、次數限制不變 |
-| `vercel.json` | **沒有改**（沒有新增圖片代理、`/_next/image` 或快取設定） |
-| Vercel 環境變數 | **不用新增或修改** |
-| Vercel 專案設定、Google Cloud Console／OAuth／Service Account | **不用動** |
-| 使用者資料 | **不需要轉換**。新存的收藏可能多一個選填欄位 `vcov`（影片封面網址文字）；舊收藏沒有它照常顯示。回到舊版時這個欄位會被忽略（舊版編輯儲存時會原樣保留），不影響其他資料 |
+- `index.html`：多地點管理、外部地圖選單、舊資料相容與版本號。
+- `package.json`：版本號更新。
+- `README.md`、`CHANGELOG.md`、`USER_GUIDE.md`、`TEST_REPORT.md`、`TEST_REPORT-V3.4.26.md`：更新說明。
+- 不改 `api/`、`admin-setup/Code.gs`、OAuth／Google 權限、Vercel Function、環境變數或 Google 試算表欄位。
 
-## 三、上傳步驟（驗收後；GitHub main → Vercel Production）
+## 三、資料相容性
 
-1. **先確認並記下目前正式版**：Vercel → Deployments 標示 **Production** 的那一筆（時間／網址／commit），GitHub `main` 最新 commit 也記下；目前的專案檔案先備份一份。
-2. 解壓縮 `sns-bookmark-v3.4.25-complete.zip`，把 `sns-bookmark-v3.4.25` 資料夾**裡面**所有檔案（含隱藏檔 `.vercelignore`）複製到 Git 專案根目錄覆蓋。
-   - 網站檔案（和 V3.4.12 比）：`index.html`、`package.json`。（如果 V3.4.3 以前的版本還沒上線，另外還有 `api/resolve.js`、`api/_lib/info.js`）
-   - 說明文件：`CHANGELOG.md`、`README.md`、`DEPLOY.md`、`USER_GUIDE.md`、`TEST_REPORT.md`（新）、`TEST_REPORT-V3.4.12.md`（舊報告改名）。
-3. commit 到 `main`（建議訊息：`Release SNS Bookmark V3.4.25`），Vercel 會自動部署。
-4. 正式網址側邊欄最底部應顯示 `版本：v3.4.25 / 更新：2026-11-20 18:42`；公告視窗最底部顯示「SNS文章收藏夾 V3.4.25」。舊版本號就按 Ctrl＋F5，手機完全關掉分頁再開。
-5. 上線後照 `NETWORK_CHECKLIST-V3.4.1.md` 在正式網站 Network 面板實測 API 呼叫次數；實機驗收清單見 `TEST_REPORT.md` 第九節。上線後可以打開瀏覽器開發者工具的 Network，確認影片封面與外部圖片都是向 i.ytimg.com、www.instagram.com、pbs.twimg.com 或原網站載入，沒有任何圖片從 `littlemonkey805-sns-bookmark.vercel.app` 回來。
+- 舊欄位 `mapsUrl` 保留，繼續保存第一個地點網址。
+- 新增可選欄位 `mapsPlaces`，內容為具名地點陣列（每筆包含內部識別碼 `id`、名稱 `name` 與網址 `url`）。
+- 舊收藏只有 `mapsUrl` 時不需要資料遷移；新版會以「Google Maps 地點」作為預設名稱，之後可在管理地點視窗修改名稱。
+- 多地點不需要 Apps Script 或雲端資料表遷移，收藏原本就以 JSON 文件保存，新增欄位沿用既有文件儲存機制。
+- 舊版仍可讀取 `mapsUrl` 第一個地點；若舊版編輯後更新了 `mapsUrl`，新版讀取時會同步更新第一筆網址並保留其他具名地點。
 
-## 四、回復
+## 四、手動上傳前檢查
 
-- Vercel → Deployments → 第三節第 1 步記下的那一筆 → **Promote to Production**（或 Instant Rollback），再在 GitHub Revert V3.4.13 的 commit（V3.4.13～V3.4.7 只改顯示與操作，沒有改資料結構）。退回舊版時，選了霧灰藍的人會自動改回品牌桃（舊版不認得這個主題），不會壞掉。注意：退回 V3.4.9 會再出現「點拼貼誤開資料夾改名」的問題。V3.4.5：V3.4.5 沒有改資料格式；用 V3.4.5 存的 WebP 圖片在舊版仍然能顯示（舊版本來就用瀏覽器直接顯示雲端的圖片檔，不限格式），只是舊版不能再「上傳」WebP。V3.4.4 只改外觀。V3.4.3 沒有改資料格式；查無結果快取只存在各自瀏覽器的 `sinfo1`（鍵以 `n|` 開頭），舊版會忽略。
-- V3.4.1 沒有改資料格式（只在這台裝置的瀏覽器多存 `sinfo1` 快取，舊版會忽略）；V3.4.0 只新增選填欄位 `vcov`；V3.3.3、V3.3.2、V3.3.1、V3.3.0、V3.2.9、V3.2.8、V3.2.7、V3.2.6、V3.2.5、V3.2.4 沒有改資料格式、沒有寫入公告資料，回到任何 V3.2.x 都不影響資料。
+1. 解壓 `sns-bookmark-v3.4.26-complete.zip`，確認資料夾名稱為 `sns-bookmark-v3.4.26`。
+2. 上傳前保留目前正式版的備份，並確認正式環境當下版本與回復方式。
+3. 將安裝包內容依猴猴原本的手動上傳流程更新；本次沒有代為操作遠端儲存庫或部署。
+4. 上線後先用測試收藏確認：0 個地點不顯示圖示；1 個地點直接開啟；2 個以上顯示緊湊清單；管理地點新增／編輯／刪除後按收藏儲存可以保留。
+5. 再用舊收藏確認原本 `mapsUrl` 仍可開啟，並在桌機、手機各驗收一次。
 
-## 五、更新時間的來源（沒有改）
+## 五、未完成驗收項目
 
-畫面上的更新時間來自 `index.html` 的 `<meta name="app-build">`（小克打包時寫入的台北時間 2026-11-20 18:42）。
+請參考 `TEST_REPORT.md`。目前已完成 Node 模組測試與靜態檢查；瀏覽器導覽在開發環境受到管理政策阻擋，因此未完成桌機／手機真實 UI 驗收，也未連正式 Google Sheets 做雲端寫入或跨裝置驗收。
 
 ---
 
