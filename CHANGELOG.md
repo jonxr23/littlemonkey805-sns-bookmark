@@ -1,5 +1,13 @@
 # 更新紀錄
 
+## V3.4.29（標籤搜尋顯示修正）
+
+**安裝包**：`sns-bookmark-v3.4.29-complete.zip`（build 2026-11-25 20:45）。基準：V3.4.28 正式版（`sns-bookmark-v3.4.28-complete-docfix.zip`，程式與 `sns-bookmark-v3.4.28-complete.zip` 相同），保留不動。
+
+- 問題：標籤篩選視窗的「搜尋」模式，輸入關鍵字後不符合的標籤仍然顯示（例如輸入「食」還看得到 #AI、#Any、#Apink）。原因：搜尋程式用 `r.hidden=!v` 隱藏項目，但 `.tgr` 的 CSS `display:flex` 蓋過了 `hidden` 屬性的預設隱藏。
+- 修正：在 `.tgr` 相關 CSS 後面加一行 `.tgr[hidden]{display:none!important}`。
+- 沒有修改搜尋 JavaScript、AND／OR、勾選、清除、套用、標籤數量、資料夾／分組範圍、不需下載、多地點等其他程式（測試已比對：除了這一行 CSS 與版本號，`index.html` 和 V3.4.28 完全相同）。
+
 ## V3.4.28（不需下載的取消規則、批次提醒）
 
 **安裝包**：`sns-bookmark-v3.4.28-complete.zip`（build 2026-11-25 04:45）。基準：`sns-bookmark-v3.4.27-complete.zip`，保留不動。只改 `index.html`（＋版本號、說明文件）。

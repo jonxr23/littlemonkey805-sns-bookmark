@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="3.4.28">
-<meta name="app-build" content="2026-11-25 04:45">
+<meta name="app-version" content="3.4.29">
+<meta name="app-build" content="2026-11-25 20:45">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SNS文章收藏夾｜SNS Bookmark</title>
 <meta name="application-name" content="SNS文章收藏夾">
@@ -1343,6 +1343,7 @@ body.sbrzing,body.sbrzing *{cursor:col-resize!important;user-select:none!importa
 .tgr .tgn{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
 .tgr .tgc{flex:none;font-size:calc(12px*var(--ui));color:var(--mut);font-variant-numeric:tabular-nums}
 .tgr.on{background:color-mix(in srgb,var(--acc) 12%,var(--card))}
+.tgr[hidden]{display:none!important}/* V3.4.29：搜尋時不符合的標籤要真的隱藏（.tgr 的 display:flex 會蓋過 hidden 屬性） */
 .tge{padding:calc(16px*var(--ui)) calc(8px*var(--ui));text-align:center;color:var(--mut);font-size:calc(13px*var(--ui))}
 #tgm .mf{justify-content:space-between;flex-wrap:nowrap}
 #tgm .mf .tgfr{display:flex;gap:calc(8px*var(--ui))}
@@ -3259,7 +3260,7 @@ const GG=window.snsGoogle;
   const st=$('#st');if(st)st.classList.toggle('lgdup',show&&st.textContent.trim()===ST)};
  if(GG){const su=GG.setUser.bind(GG);GG.setUser=u=>{su(u);upd()}}
  const st=$('#st');if(st)new MutationObserver(upd).observe(st,{childList:true,characterData:true,subtree:true});
- window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.28';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
+ window.snsLoginHint=upd;upd()})();window.SNS_VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||'3.4.29';/* V3.2.4：版本號改讀 app-version，公告視窗底部不再停在 3.2.0 */
 const note=t=>{$('#st').textContent=t;setTimeout(()=>{if($('#st').textContent===t)$('#st').textContent=''},5000)};
 const A={tok:'',exp:0,sub:'',tsub:'',locked:false};
 const gisReady=()=>new Promise((res,rej)=>{let n=0;(function w(){if(window.google&&google.accounts&&google.accounts.oauth2)return res();if(++n>100)return rej(new Error('Google 登入元件載入失敗，請檢查網路'));setTimeout(w,100)})()});
